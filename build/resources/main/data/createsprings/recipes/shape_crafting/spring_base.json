@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "sm ",
+    "chm",
+    "tcs"
+  ],
+  "key": {
+    "t": {
+      "item": "create:speedometer"
+    },
+    "m": {
+      "item": "create:precision_mechanism"
+    },
+    "s": {
+      "item": "createsprings:spring_alloy"
+    },
+    "h": {
+      "item": "create:shaft"
+    },
+    "c": {
+      "item": "create:andesite_casing"
+    }
+  },
+  "result": {
+    "item": "createsprings:spring_base"
+  }
+}

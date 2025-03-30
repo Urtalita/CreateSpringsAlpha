@@ -1,0 +1,45 @@
+{
+  "item.createsprings.spring_alloy": "Spring alloy",
+  "item.createsprings.spring_alloy_nugget": "Spring alloy nugget",
+  "item.createsprings.spring_alloy_sheet": "Spring alloy sheet",
+  "item.createsprings.punchcard": "Punchcard",
+  "item.createsprings.spring_drill": "Spring Drill",
+  "item.createsprings.spring_launcher": "Spring Launcher",
+  "item.createsprings.spring_saw": "Spring Saw",
+  "item.createsprings.spring_base": "Spring Base",
+
+  "block.createsprings.obsidian_plate": "Obsidian Plate",
+  "block.createsprings.spring_alloy_block": "Spring alloy block",
+  "block.createsprings.unfinished_spring": "Unfinished spring",
+  "block.createsprings.spring": "Spring",
+  "block.createsprings.obsidian_slab": "Obsidian slab",
+  "block.createsprings.friction_welder": "Friction welder",
+  "block.createsprings.reinforced_track": "Reinforced track",
+  "block.createsprings.andesite_mold": "Andesite casting mold",
+
+  "creativetab.create_springs_main_tab": "Create springs",
+
+  "item.createsprings.spring_alloy_bucket": "Bucket of liquid spring alloy",
+
+  "advancement.createsprings.create_spring.title": "Create spring!",
+  "advancement.createsprings.create_spring.description": "Create your first spring",
+
+  "advancement.createsprings.create_springs.title": "Create springs!",
+  "advancement.createsprings.create_springs.description": "Create 8 springs",
+
+  "createsprings.recipe.welding": "Welding",
+  "createsprings.recipe.speed": "Recipe speed: %s",
+  "createsprings.speed.fast": "Fast",
+  "createsprings.speed.normal": "Normal",
+  "createsprings.speed.slow": "Slow",
+
+  "tooltip.create.hold_for_details1": "Hold [",
+  "tooltip.create.hold_for_details2": "] for Summary",
+  "tooltip.springstuf.needsprings1": "can accept up to ",
+  "tooltip.springstuf.needsprings2": " springs",
+  "tooltip.springstuf.modifiers": "Contains:",
+
+  "tooltip.springstuf.createsprings:punchcard": "allows you to program spring tools",
+  "tooltip.springstuf.createsprings:spring_alloy_block": "an explosive ammo",
+  "tooltip.springstuf.minecraft:spyglass": "spring launcher sight"
+}

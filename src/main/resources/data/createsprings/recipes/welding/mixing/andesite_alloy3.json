@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:granite"
+  },
+  "second_block": {
+    "item": "create:crimsite"
+  },
+  "result": {
+    "item": "create:andesite_alloy",
+    "count": 2
+  },
+  "speed": "NORMAL"
+}

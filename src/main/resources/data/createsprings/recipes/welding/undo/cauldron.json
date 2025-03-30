@@ -1,0 +1,13 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:cauldron"
+  },
+  "second_block": {
+    "item": "minecraft:cauldron"
+  },
+  "result": {
+    "item": "minecraft:iron_block"
+  },
+  "speed": "FAST"
+}

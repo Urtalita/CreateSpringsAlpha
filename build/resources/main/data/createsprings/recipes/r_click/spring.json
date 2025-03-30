@@ -1,0 +1,16 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createsprings:unfinished_spring"
+    },
+    {
+      "item": "createsprings:spring_alloy"
+    }
+  ],
+  "results": [
+    {
+      "item": "createsprings:spring"
+    }
+  ]
+}

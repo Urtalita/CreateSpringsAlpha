@@ -1,0 +1,19 @@
+Java Launcher: C:\Users\roman\.gradle\jdks\eclipse_adoptium-17-amd64-windows\jdk-17.0.13+11\bin\java.exe
+Arguments: '--task, SRG_TO_MCP, --input, C:\Users\roman\.gradle\caches\modules-2\files-2.1\com.simibubi.create\create-1.20.1\6.0.0-4\570027bd6c2a3060bd7276c451b880a1e022a731\create-1.20.1-6.0.0-4.jar, --output, C:\Users\roman\.gradle\caches\forge_gradle\deobf_dependencies\com\simibubi\create\create-1.20.1\6.0.0-4_mapped_official_1.20.1\create-1.20.1-6.0.0-4_mapped_official_1.20.1.jar, --mcp, C:\Users\roman\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip, --strip-signatures'
+Classpath:
+ - C:\Users\roman\.gradle\caches\forge_gradle\maven_downloader\net\minecraftforge\installertools\1.4.4\installertools-1.4.4-fatjar.jar
+Working directory: D:\мод\untitled\build\_RenameSrg2Mcp_-75475914
+Main class: net.minecraftforge.installertools.ConsoleTool
+====================================
+Task: SRG_TO_MCP
+Input:  C:\Users\roman\.gradle\caches\modules-2\files-2.1\com.simibubi.create\create-1.20.1\6.0.0-4\570027bd6c2a3060bd7276c451b880a1e022a731\create-1.20.1-6.0.0-4.jar
+Output: C:\Users\roman\.gradle\caches\forge_gradle\deobf_dependencies\com\simibubi\create\create-1.20.1\6.0.0-4_mapped_official_1.20.1\create-1.20.1-6.0.0-4_mapped_official_1.20.1.jar
+MCP:    C:\Users\roman\.gradle\caches\forge_gradle\mcp_repo\net\minecraft\mapping\1.20.1\mapping-1.20.1-mapping.zip
+Loading MCP Data
+Processing ZIP file
+Stripped Manifest of sha digests
+Stripped Manifest of sha digests
+Stripped Manifest of sha digests
+Stripped Manifest of sha digests
+Stripped Manifest of sha digests
+Process complete

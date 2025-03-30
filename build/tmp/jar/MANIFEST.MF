@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: createsprings
+Specification-Vendor: Portality
+Specification-Version: 1
+Implementation-Title: untitled
+Implementation-Version: 0.3
+Implementation-Vendor: Portality
+Implementation-Timestamp: 2025-03-29T13:22:22+0300
+

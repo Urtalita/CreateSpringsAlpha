@@ -1,0 +1,13 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:basin"
+  },
+  "second_block": {
+    "item": "create:basin"
+  },
+  "result": {
+    "item": "create:andesite_alloy_block"
+  },
+  "speed": "NORMAL"
+}

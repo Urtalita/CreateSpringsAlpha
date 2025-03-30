@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:dried_kelp_block"
+  },
+  "second_block": {
+    "item": "minecraft:dried_kelp_block"
+  },
+  "result": {
+    "item": "create:belt_connector",
+    "count": 4
+  },
+  "speed": "NORMAL"
+}

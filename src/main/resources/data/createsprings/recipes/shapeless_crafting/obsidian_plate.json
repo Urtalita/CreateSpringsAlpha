@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create:sturdy_sheet"
+    },
+    {
+      "item": "minecraft:smooth_stone_slab"
+    }
+  ],
+  "result": {
+    "item": "createsprings:obsidian_plate",
+    "count": 4
+  }
+}

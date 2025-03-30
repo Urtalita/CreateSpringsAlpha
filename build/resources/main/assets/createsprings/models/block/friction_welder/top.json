@@ -1,0 +1,47 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"3": "createsprings:block/frictionwelder/top",
+		"4": "createsprings:block/frictionwelder/side",
+		"5": "createsprings:block/frictionwelder/shaft",
+		"6": "createsprings:block/frictionwelder/shafttop",
+		"8": "createsprings:block/frictionwelder/topbottom",
+		"particle": "block/pasted"
+	},
+	"elements": [
+		{
+			"from": [6, 2, 6],
+			"to": [10, 13, 10],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 10.75, 8]},
+			"faces": {
+				"north": {"uv": [6, 0, 10, 12], "texture": "#5"},
+				"east": {"uv": [6, 0, 10, 12], "texture": "#5"},
+				"south": {"uv": [6, 0, 10, 12], "texture": "#5"},
+				"west": {"uv": [6, 0, 10, 12], "texture": "#5"},
+				"up": {"uv": [6, 6, 10, 10], "texture": "#6"},
+				"down": {"uv": [6, 6, 10, 10], "texture": "#6"}
+			}
+		},
+		{
+			"from": [0, 13, 0],
+			"to": [16, 17, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 10.75, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 4], "texture": "#4"},
+				"east": {"uv": [0, 0, 16, 4], "texture": "#4"},
+				"south": {"uv": [0, 0, 16, 4], "texture": "#4"},
+				"west": {"uv": [0, 0, 16, 4], "texture": "#4"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#3"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#8"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "frictionWelder",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

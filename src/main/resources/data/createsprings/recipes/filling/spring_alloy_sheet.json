@@ -1,0 +1,17 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "create:sail_frame"
+    },
+    {
+      "amount": 100,
+      "fluid": "createsprings:spring_alloy_fluid"
+    }
+  ],
+  "results": [
+    {
+      "item": "createsprings:spring_alloy_sheet"
+    }
+  ]
+}

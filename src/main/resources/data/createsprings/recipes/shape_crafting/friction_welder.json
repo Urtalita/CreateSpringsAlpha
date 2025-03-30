@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " p ",
+    "hmh",
+    "scs"
+  ],
+  "key": {
+    "m": {
+      "item": "create:mechanical_bearing"
+    },
+    "p": {
+      "item": "createsprings:obsidian_plate"
+    },
+    "h": {
+      "item": "create:shaft"
+    },
+    "s": {
+      "item": "createsprings:spring_alloy_sheet"
+    },
+    "c": {
+      "item": "create:brass_casing"
+    }
+  },
+  "result": {
+    "item": "createsprings:friction_welder"
+  }
+}

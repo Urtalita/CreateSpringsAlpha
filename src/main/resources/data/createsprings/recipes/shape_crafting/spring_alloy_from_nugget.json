@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ooo",
+    "ooo",
+    "ooo"
+  ],
+  "key": {
+    "o": {
+      "item": "createsprings:spring_alloy_nugget"
+    }
+  },
+  "result": {
+    "item": "createsprings:spring_alloy"
+  }
+}
