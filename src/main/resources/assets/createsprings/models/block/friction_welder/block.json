@@ -1,0 +1,91 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"1": "createsprings:block/frictionwelder/bottom",
+		"4": "createsprings:block/frictionwelder/side",
+		"particle": "createsprings:block/frictionwelder/side"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 4],
+			"to": [16, 16, 15],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 12.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 15], "rotation": 180, "texture": "#1"},
+				"east": {"uv": [0, 4, 16, 15], "rotation": 90, "texture": "#4"},
+				"south": {"uv": [0, 0, 16, 15], "texture": "#1"},
+				"west": {"uv": [0, 4, 16, 15], "rotation": 270, "texture": "#4"},
+				"up": {"uv": [0, 4, 16, 15], "texture": "#4"},
+				"down": {"uv": [0, 4, 16, 15], "rotation": 180, "texture": "#4"}
+			}
+		},
+		{
+			"from": [0, 1, 15],
+			"to": [1, 16, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 12.5]},
+			"faces": {
+				"north": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"east": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"south": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"west": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#4"},
+				"up": {"uv": [0, 15, 1, 16], "texture": "#4"},
+				"down": {"uv": [0, 15, 1, 16], "rotation": 180, "texture": "#4"}
+			}
+		},
+		{
+			"from": [15, 0, 15],
+			"to": [16, 15, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 12.5]},
+			"faces": {
+				"north": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"east": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"south": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"},
+				"west": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#4"},
+				"up": {"uv": [0, 15, 1, 16], "texture": "#4"},
+				"down": {"uv": [0, 15, 1, 16], "rotation": 180, "texture": "#4"}
+			}
+		},
+		{
+			"from": [1, 15, 15],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 12.5]},
+			"faces": {
+				"north": {"uv": [1, 15, 16, 16], "rotation": 180, "texture": "#4"},
+				"east": {"uv": [0, 15, 1, 16], "rotation": 90, "texture": "#4"},
+				"south": {"uv": [1, 15, 16, 16], "texture": "#4"},
+				"west": {"uv": [0, 15, 1, 16], "rotation": 270, "texture": "#4"},
+				"up": {"uv": [1, 15, 16, 16], "texture": "#4"},
+				"down": {"uv": [1, 15, 16, 16], "rotation": 180, "texture": "#4"}
+			}
+		},
+		{
+			"from": [0, 0, 15],
+			"to": [15, 1, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 12.5]},
+			"faces": {
+				"north": {"uv": [1, 15, 16, 16], "rotation": 180, "texture": "#4"},
+				"east": {"uv": [0, 15, 1, 16], "rotation": 90, "texture": "#4"},
+				"south": {"uv": [1, 15, 16, 16], "texture": "#4"},
+				"west": {"uv": [0, 15, 1, 16], "rotation": 270, "texture": "#4"},
+				"up": {"uv": [1, 15, 16, 16], "texture": "#4"},
+				"down": {"uv": [1, 15, 16, 16], "rotation": 180, "texture": "#4"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "frictionWelder",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [
+				0,
+				{
+					"name": "bottom",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": [1, 2, 3, 4]
+				}
+			]
+		}
+	]
+}

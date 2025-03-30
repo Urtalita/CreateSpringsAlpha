@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:empty_blaze_burner"
+  },
+  "second_block": {
+    "item": "create:empty_blaze_burner"
+  },
+  "result": {
+    "item": "minecraft:iron_ingot",
+    "count": 6
+  },
+  "speed": "NORMAL"
+}

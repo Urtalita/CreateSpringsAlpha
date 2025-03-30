@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "smp",
+    "cpm",
+    "gcs"
+  ],
+  "key": {
+    "p": {
+      "item": "create:fluid_pipe"
+    },
+    "g": {
+      "item": "create:framed_glass"
+    },
+    "m": {
+      "item": "create:precision_mechanism"
+    },
+    "s": {
+      "item": "createsprings:spring_alloy_sheet"
+    },
+    "c": {
+      "item": "create:copper_casing"
+    }
+  },
+  "result": {
+    "item": "createsprings:spring_launcher"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "net.portality.create_springs.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BlockMovementChecksMixin",
+    "ContraptionMixin",
+    "SpeedControllerTileEntityMixin"
+  ],
+  "minVersion": "0.8.5"
+}

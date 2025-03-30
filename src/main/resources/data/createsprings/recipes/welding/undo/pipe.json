@@ -1,0 +1,13 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:fluid_pipe"
+  },
+  "second_block": {
+    "item": "create:fluid_pipe"
+  },
+  "result": {
+    "item": "minecraft:copper_ingot"
+  },
+  "speed": "FAST"
+}

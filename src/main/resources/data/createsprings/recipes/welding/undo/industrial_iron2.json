@@ -1,0 +1,13 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:weathered_iron_block"
+  },
+  "second_block": {
+    "item": "create:weathered_iron_block"
+  },
+  "result": {
+    "item": "minecraft:iron_ingot"
+  },
+  "speed": "FAST"
+}

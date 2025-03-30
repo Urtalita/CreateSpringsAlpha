@@ -1,0 +1,45 @@
+{
+  "item.createsprings.spring_alloy": "Пружинный сплав",
+  "item.createsprings.spring_alloy_nugget": "Кусочек пружинного сплава",
+  "item.createsprings.spring_alloy_sheet": "Лист пружинного сплава",
+  "item.createsprings.punchcard": "Перфокарта",
+  "item.createsprings.spring_drill": "Пружинный бур",
+  "item.createsprings.spring_launcher": "Пружинный арбалет",
+  "item.createsprings.spring_saw": "Пружинная пила",
+  "item.createsprings.spring_base": "Пружинная основа",
+
+  "block.createsprings.obsidian_plate": "Обсидиановая пластина",
+  "block.createsprings.spring_alloy_block": "Блок пружинного сплава",
+  "block.createsprings.unfinished_spring": "Незаконченная пружина",
+  "block.createsprings.spring": "Пружина",
+  "block.createsprings.obsidian_slab": "Обсидиановая плита",
+  "block.createsprings.friction_welder": "Сварщик трением",
+  "block.createsprings.reinforced_track": "Укреплённый железнодорожный путь",
+  "block.createsprings.andesite_mold": "Корпус для отливки",
+
+  "creativetab.create_springs_main_tab": "Create springs",
+
+  "item.createsprings.spring_alloy_bucket": "Ведро жидкого пружинного сплава",
+
+  "advancement.createsprings.create_spring.title": "Create spring!",
+  "advancement.createsprings.create_spring.description": "Создайте свою первую пружину!",
+
+  "advancement.createsprings.create_springs.title": "В объяснениях не нуждаюсь",
+  "advancement.createsprings.create_springs.description": "Создайте 8 пружин",
+
+  "createsprings.recipe.welding": "Сварка",
+  "createsprings.recipe.speed": "Скорость обработки %s",
+  "createsprings.speed.fast": "быстрая",
+  "createsprings.speed.normal": "обычная",
+  "createsprings.speed.slow": "медленная",
+
+  "tooltip.create.hold_for_details1": "Удерживайте [",
+  "tooltip.create.hold_for_details2": "] для сводки",
+  "tooltip.springstuf.needsprings1": "может принимать до ",
+  "tooltip.springstuf.needsprings2": " пружин",
+  "tooltip.springstuf.modifiers": "Содержит:",
+
+  "tooltip.springstuf.createsprings:punchcard": "позволяет программировать пружинные инструменты",
+  "tooltip.springstuf.createsprings:spring_alloy_block": "взрывной патрон",
+  "tooltip.springstuf.minecraft:spyglass": "прицел"
+}

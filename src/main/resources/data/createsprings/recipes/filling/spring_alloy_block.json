@@ -1,0 +1,17 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:barrel"
+    },
+    {
+      "amount": 1000,
+      "fluid": "createsprings:spring_alloy_fluid"
+    }
+  ],
+  "results": [
+    {
+      "item": "createsprings:spring_alloy_block"
+    }
+  ]
+}

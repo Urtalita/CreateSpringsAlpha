@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ttt",
+    "ttt",
+    "ttt"
+  ],
+  "key": {
+    "t": {
+      "item": "create:builders_tea"
+    }
+  },
+  "result": {
+    "item": "minecraft:copper_block"
+  }
+}

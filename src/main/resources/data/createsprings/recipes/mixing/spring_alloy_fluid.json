@@ -1,0 +1,15 @@
+{
+  "type": "create:mixing",
+  "heatRequirement": "heated",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy"
+    }
+  ],
+  "results": [
+    {
+      "amount": 100,
+      "fluid": "createsprings:spring_alloy_fluid"
+    }
+  ]
+}

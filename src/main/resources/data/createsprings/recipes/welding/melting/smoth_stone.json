@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "tag": "forge:cobblestone"
+  },
+  "second_block": {
+    "tag": "forge:cobblestone"
+  },
+  "result": {
+    "item": "minecraft:smooth_stone",
+    "count": 2
+  },
+  "speed": "FAST"
+}

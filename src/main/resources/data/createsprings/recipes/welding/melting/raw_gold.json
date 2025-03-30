@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:raw_gold_block"
+  },
+  "second_block": {
+    "item": "minecraft:raw_gold_block"
+  },
+  "result": {
+    "item": "minecraft:gold_block",
+    "count": 2
+  },
+  "speed": "SLOW"
+}

@@ -1,0 +1,60 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"8": "createsprings:item/spring_drill",
+		"particle": "createsprings:block/spring_plate"
+	},
+	"elements": [
+		{
+			"from": [6, 11.52929, 8.6364],
+			"to": [10, 12.52929, 9.6364],
+			"rotation": {"angle": 0, "axis": "x", "origin": [9.5, 12.02929, 9.1364]},
+			"faces": {
+				"north": {"uv": [11.5, 4, 13.5, 4.5], "texture": "#8"},
+				"east": {"uv": [12, 1.5, 12.5, 2], "texture": "#8"},
+				"south": {"uv": [11.5, 4, 13.5, 4.5], "texture": "#8"},
+				"west": {"uv": [12, 1.5, 12.5, 2], "texture": "#8"},
+				"up": {"uv": [13.5, 4.5, 11.5, 4], "texture": "#8"},
+				"down": {"uv": [13.5, 4, 11.5, 4.5], "texture": "#8"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [44, 0, 0],
+			"translation": [0, 2.75, -3]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [46, 0, 0],
+			"translation": [0.25, 2.5, -2.75]
+		},
+		"firstperson_righthand": {
+			"translation": [-8.5, 0, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [-9, 0, 0]
+		},
+		"gui": {
+			"rotation": [45, -34, 0],
+			"translation": [-0.75, -1, 0],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"head": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 11.5, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 180, 0],
+			"translation": [0, -2.75, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "SpringDrill",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:glass"
+  },
+  "second_block": {
+    "item": "minecraft:glass"
+  },
+  "result": {
+    "item": "create:framed_glass",
+    "count": 2
+  },
+  "speed": "FAST"
+}

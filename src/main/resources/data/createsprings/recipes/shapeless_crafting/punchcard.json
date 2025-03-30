@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "createsprings:spring_alloy_nugget"
+    }
+  ],
+  "result": {
+    "item": "createsprings:punchcard",
+    "count": 2
+  }
+}

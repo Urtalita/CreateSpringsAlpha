@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ioi",
+    "sis",
+    "ioi"
+  ],
+  "key": {
+    "o": {
+      "item": "createsprings:obsidian_plate"
+    },
+    "i": {
+      "item": "minecraft:iron_bars"
+    },
+    "s": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "item": "createsprings:unfinished_spring"
+  }
+}
