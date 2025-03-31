@@ -47,10 +47,13 @@ public class ModBlocks {
             () -> new ObsidianPlateBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()), "fireResistant");
 
     public static final RegistryObject<Block> OBSIDIAN_SLAB = registerBlock("obsidian_slab",
-            () -> new ObsidianSlabBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()), "fireResistant");
+            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)), "fireResistant");
 
     public static final RegistryObject<Block> ANDESITE_MOLD = registerBlock("andesite_mold",
-            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()), "");
+            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
+
+    public static final RegistryObject<Block> FILLED_ANDESITE_MOLD = registerBlock("filled_andesite_mold",
+            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)), "");
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",

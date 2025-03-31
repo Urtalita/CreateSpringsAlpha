@@ -40,6 +40,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(spring);
                         pOutput.accept(ModBlocks.FRICTION_WELDER.get());
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());
+                        pOutput.accept(ModBlocks.FILLED_ANDESITE_MOLD.get());
 
                         pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());
 

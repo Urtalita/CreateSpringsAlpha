@@ -16,6 +16,7 @@
   "block.createsprings.friction_welder": "Сварщик трением",
   "block.createsprings.reinforced_track": "Укреплённый железнодорожный путь",
   "block.createsprings.andesite_mold": "Корпус для отливки",
+  "block.createsprings.filled_andesite_mold": "Заполненный корпус для отливки",
 
   "creativetab.create_springs_main_tab": "Create springs",
 

@@ -1,5 +1,7 @@
 {
   "values": [
+    "createsprings:andesite_mold",
+    "createsprings:filled_andesite_mold",
     "createsprings:spring_alloy_block",
     "createsprings:unfinished_spring",
     "createsprings:spring",

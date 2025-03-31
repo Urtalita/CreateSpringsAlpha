@@ -21,7 +21,7 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
 
         tooltip.add(Component.literal("speed: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf(speed / 50))).withStyle(ChatFormatting.GRAY));
+                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(ChatFormatting.GRAY)));
     }
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
