@@ -55,6 +55,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> FILLED_ANDESITE_MOLD = registerBlock("filled_andesite_mold",
             () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)), "");
 
+    public static final RegistryObject<Block> LARGE_SPRING_COIL = registerBlock("large_spring_coil",
+            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), "fireResistant");
+
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
             () -> new LiquidBlock(ModFluids.SOURCE, Block.Properties.copy(Blocks.WATER))

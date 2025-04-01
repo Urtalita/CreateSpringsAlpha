@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "createsprings:block/large_spring_coil"
+    },
+    "facing=south": {
+      "model": "createsprings:block/large_spring_coil",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "createsprings:block/large_spring_coil",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "createsprings:block/large_spring_coil",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "createsprings:block/large_spring_coil",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "createsprings:block/large_spring_coil",
+      "x": 90
+    }
+  }
+}
