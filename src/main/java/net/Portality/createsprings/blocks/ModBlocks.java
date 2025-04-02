@@ -15,6 +15,7 @@ import net.Portality.createsprings.blocks.advanced.AndesiteMoldBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianSlabBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
+import net.Portality.createsprings.blocks.advanced.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.client.renderer.RenderType;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -56,7 +58,10 @@ public class ModBlocks {
             () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)), "");
 
     public static final RegistryObject<Block> LARGE_SPRING_COIL = registerBlock("large_spring_coil",
-            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), "fireResistant");
+            () -> new SpringCoilBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()
+                    ,new Vec3(0, 0, 0),
+                    new Vec3(1, 1, 0.0625))
+            , "fireResistant");
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
