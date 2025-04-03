@@ -3,9 +3,13 @@ package net.Portality.createsprings.blocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
+import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.content.trains.track.*;
+import com.simibubi.create.foundation.data.BlockStateGen;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
+import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
@@ -57,16 +61,25 @@ public class ModBlocks {
     public static final RegistryObject<Block> FILLED_ANDESITE_MOLD = registerBlock("filled_andesite_mold",
             () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)), "");
 
-    public static final RegistryObject<Block> LARGE_SPRING_COIL = registerBlock("large_spring_coil",
+    /*public static final RegistryObject<Block> LARGE_SPRING_COIL = registerBlock("large_spring_coil",
             () -> new SpringCoilBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()
-                    ,new Vec3(0, 0, 0),
-                    new Vec3(1, 1, 0.0625))
+                    ,new Vec3(4, 4, 0),
+                    new Vec3(12, 12, 16))
             , "fireResistant");
+
+     */
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
             () -> new LiquidBlock(ModFluids.SOURCE, Block.Properties.copy(Blocks.WATER))
     );
+
+    public static final BlockEntry<ShaftBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
+            .block("large_spring_coil", ShaftBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .simpleItem()
+            .register();
 
     public static final BlockEntry<WelderBlock> FRICTION_WELDER = CSPRINGS_REGISTRATE
             .block("friction_welder", WelderBlock::new)
