@@ -3630,15 +3630,15 @@
     },
     "done": true
   },
-  "create:recipes/combat/crafting/appliances/netherite_diving_boots": {
-    "criteria": {
-      "has_item": "2025-04-01 14:23:05 +0300"
-    },
-    "done": true
-  },
   "create:recipes/misc/crafting/logistics/brass_table_cloth_clear": {
     "criteria": {
       "has_brass_table_cloth": "2025-04-01 14:09:16 +0300"
+    },
+    "done": true
+  },
+  "create:recipes/combat/crafting/appliances/netherite_diving_boots": {
+    "criteria": {
+      "has_item": "2025-04-01 14:23:05 +0300"
     },
     "done": true
   },

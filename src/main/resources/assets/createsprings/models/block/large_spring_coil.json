@@ -1,0 +1,10 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"1": "createsprings:block/spring_coills",
+		"particle": "createsprings:block/spring_coills"
+	},
+	"elements": [
+	]
+}
