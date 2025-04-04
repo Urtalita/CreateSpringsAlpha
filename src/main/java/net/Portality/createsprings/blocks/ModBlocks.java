@@ -19,7 +19,7 @@ import net.Portality.createsprings.blocks.advanced.AndesiteMoldBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianSlabBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
-import net.Portality.createsprings.blocks.advanced.SpringCoilBlock;
+import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.client.renderer.RenderType;
@@ -74,11 +74,12 @@ public class ModBlocks {
             () -> new LiquidBlock(ModFluids.SOURCE, Block.Properties.copy(Blocks.WATER))
     );
 
-    public static final BlockEntry<ShaftBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
-            .block("large_spring_coil", ShaftBlock::new)
+    public static final BlockEntry<SpringCoilBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
+            .block("large_spring_coil", SpringCoilBlock::new)
             .initialProperties(SharedProperties::copperMetal)
-            .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+            .properties(p -> p.noOcclusion())
             .simpleItem()
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
     public static final BlockEntry<WelderBlock> FRICTION_WELDER = CSPRINGS_REGISTRATE

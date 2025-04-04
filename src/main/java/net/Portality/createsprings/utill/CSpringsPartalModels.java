@@ -16,17 +16,12 @@ public class CSpringsPartalModels {
         SPRING_PLATE = block("spring/springplate"),
         SPRING_RING = block("spring/springring"),
 
-    LAUNCHER_SPRING_CHARGED = item("launcher/spring_charged"),
-    LAUNCHER_SPRING_UNCHARGED = item("launcher/spring_uncharged"),
-    LAUNCHER_AMMO = item("launcher/spring_ammo"),
-    LAUNCHER_SPYGLASS = item("launcher/spyglass"),
-    STRESOMETR = item("drill/stressometr"),
-
     SPRING_SAW = item("saw/saw"),
         SAW_HEAD = item("saw/saw_head"),
         SAW_SHAFT = item("saw/saw_shaft"),
 
-    WelderHead = block("friction_welder/top");
+    WelderHead = block("friction_welder/top"),
+    LARGE_SPRING_COIL = block("large_spring_coil_partal");
 
     private static PartialModel block(String path) {
         return PartialModel.of(CreateSprings.asResource("block/" + path));

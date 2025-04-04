@@ -13,6 +13,8 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringVisual;
+import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
+import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderRenderer;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
@@ -29,9 +31,15 @@ public class ModBlockEntities {
             .register();
 
     public static final BlockEntityEntry<WelderBlockEntity> FRICTION_WELDER = CSPRINGS_REGISTRATE
-            .blockEntity("mechanical_bearing", WelderBlockEntity::new)
+            .blockEntity("friction_welder", WelderBlockEntity::new)
             .visual(() -> WelderVisual::new)
             .validBlocks(ModBlocks.FRICTION_WELDER)
+            .register();
+
+    public static final BlockEntityEntry<SpringCoilBlockEntity> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
+            .blockEntity("large_spring_coil", SpringCoilBlockEntity::new)
+            .visual(() -> SpringCoilVisual::new, false)
+            .validBlocks(ModBlocks.LARGE_SPRING_COIL)
             .register();
 
 
