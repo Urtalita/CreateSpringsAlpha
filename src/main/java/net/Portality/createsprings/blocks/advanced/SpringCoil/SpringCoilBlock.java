@@ -5,6 +5,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.AbstractSimpleShaftBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.foundation.block.IBE;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.Portality.createsprings.utill.HitboxHelper;
@@ -56,6 +57,10 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, worldIn, pos, oldState, isMoving);
+        if(oldState.getBlock() == ModBlocks.LARGE_SPRING_COIL.get()){
+            return;
+        }
+
         withBlockEntityDo(worldIn, pos, be-> {
             be.onPlace(pos);
         });
