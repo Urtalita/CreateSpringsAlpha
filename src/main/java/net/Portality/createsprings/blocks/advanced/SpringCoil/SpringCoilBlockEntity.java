@@ -7,6 +7,7 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -14,37 +15,83 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
 
-import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
-
 public class SpringCoilBlockEntity extends KineticBlockEntity {
-    public boolean controler = true;
+    private boolean controler = false;
+    private boolean assembled = false;
     public BlockPos[][][] spring = new BlockPos[3][3][16];
+
     public SpringCoilBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
+    }
+
+    public boolean isControler() {
+        return controler;
+    }
+
+    public boolean getAssembled(){
+        return this.assembled;
+    }
+
+    public void setAssembled(boolean bool){
+        assembled = bool;
+    }
+
+    @Override
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        assembled = compound.getBoolean("assembled");
+        controler = compound.getBoolean("controller");
+        super.read(compound, clientPacket);
+    }
+
+    @Override
+    protected void write(CompoundTag compound, boolean clientPacket) {
+        super.write(compound, clientPacket);
+        compound.putBoolean("assembled", assembled);
+        compound.putBoolean("controller", controler);
     }
 
     public void onPlace(BlockPos pos){
         BlockPos centerPos = isSpringLayerCompleted(pos.getX(), pos.getY(), pos.getZ());
         if(centerPos != null){
+
             Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
             if(OcoilBE.isPresent()){
                 SpringCoilBlockEntity coilBE = OcoilBE.get();
-                coilBE.rotateCoilsAsCenter(centerPos);
+                coilBE.assemble(centerPos, true);
                 coilBE.notifyUpdate();
             }
         }
     }
 
-    public void rotateCoilsAsCenter(BlockPos pos){
-        level.setBlock(pos.north(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.WEST), 3);
-        level.setBlock(pos.south(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.WEST), 3);
-        level.setBlock(pos.west(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState(), 3);
-        level.setBlock(pos.east(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState(), 3);
+    public void onRemove(BlockPos pos){
+        BlockPos centerPos = isSpringLayerCompleted(pos.getX(), pos.getY(), pos.getZ());
+        if(centerPos != null){
 
-        level.setBlock(pos.north().east(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
-        level.setBlock(pos.south().west(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
-        level.setBlock(pos.west().north(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
-        level.setBlock(pos.east().south(), ModBlocks.LARGE_SPRING_COIL.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
+            Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
+            if(OcoilBE.isPresent()){
+                SpringCoilBlockEntity coilBE = OcoilBE.get();
+                coilBE.assemble(centerPos, false);
+                coilBE.notifyUpdate();
+            }
+        }
+    }
+
+    public void assemble(BlockPos pos, boolean mode){
+        controler = mode;
+
+        for (int i = -1; i < 2; i++){
+            for (int j = -1; j < 2; j++){
+                setAssemble(new BlockPos(pos.getX() + i, pos.getY(), pos.getZ() + j), mode);
+            }
+        }
+    }
+
+    private void setAssemble(BlockPos pos, boolean mode){
+        BlockEntity coilBE = level.getBlockEntity(pos);
+        if ((coilBE instanceof SpringCoilBlockEntity)){
+            ((SpringCoilBlockEntity) coilBE).setAssembled(mode);
+            ((SpringCoilBlockEntity) coilBE).notifyUpdate();
+        }
     }
 
     private Optional<SpringCoilBlockEntity> getCoil(BlockPos pos){

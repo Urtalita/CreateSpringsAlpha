@@ -67,6 +67,16 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     }
 
     @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+
+        withBlockEntityDo(pLevel, pPos, be->{
+            be.onRemove(pPos);
+        });
+
+        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    }
+
+    @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
         Direction facing = state.getValue(FACING);
         return face == facing || face == facing.getOpposite();
