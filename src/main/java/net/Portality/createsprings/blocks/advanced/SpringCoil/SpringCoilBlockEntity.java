@@ -132,8 +132,11 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     }
 
     private boolean checkBlock(BlockPos pos){
-        if(level.getBlockEntity(pos) instanceof SpringCoilBlockEntity){
-            return true;
+        BlockEntity coilBE = level.getBlockEntity(pos);
+        if(coilBE instanceof SpringCoilBlockEntity){
+            if(!((SpringCoilBlockEntity) coilBE).assembled){
+                return true;
+            }
         }
         return false;
     }

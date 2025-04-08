@@ -21,7 +21,8 @@ public class CSpringsPartalModels {
         SAW_SHAFT = item("saw/saw_shaft"),
 
     WelderHead = block("friction_welder/top"),
-    LARGE_SPRING_COIL = block("large_spring_coil_partal");
+    LARGE_SPRING_COIL = block("large_spring_coil_partal"),
+            LARGE_SPRING_COIL_CORNER = block("large_spring_coil_partal_corner");
 
     private static PartialModel block(String path) {
         return PartialModel.of(CreateSprings.asResource("block/" + path));

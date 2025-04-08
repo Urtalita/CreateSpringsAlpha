@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEntity> {
     private final List<OrientedInstance> rings = new ArrayList<>();
+    private final List<OrientedInstance> rings_corners = new ArrayList<>();
     private final Vec3i movementDirection;
     private static final int SPRING_LEN = 4;
 
@@ -29,13 +30,19 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
 
         for (int i = 0; i < SPRING_LEN; i++) {
             rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL));
+            rings_corners.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER));
         }
 
         for(int i = 0; i< rings.size(); i++){
             applyBaseRotation(rings.get(i), i);
+            applyBaseRotationCorner(rings_corners.get(i), i);
         }
 
         movementDirection = Direction.UP.getOpposite().getNormal();
+    }
+
+    private void applyBaseRotationCorner(OrientedInstance instance, int index){
+        instance.rotateYDegrees(90 * index);
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {
@@ -57,9 +64,9 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
             return;
         }
 
-
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(rings.get(i), i);
+            updateCornerPosition(rings_corners.get(i), i);
         }
     }
 
@@ -81,6 +88,24 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
         ).setChanged();
     }
 
+    private void updateCornerPosition(OrientedInstance corner, int ringIndex) {
+        int x = 0;
+        int z = 0;
+
+        switch (ringIndex){
+            case 1: x = 1;z = 1; break;
+            case 2: x = 1;z = -1; break;
+            case 0: x = -1;z = 1; break;
+            case 3: x = -1;z = -1; break;
+        }
+
+        corner.position(
+                (pos.getX() + x),
+                (pos.getY()),
+                (pos.getZ() + z)
+        ).setChanged();
+    }
+
     private void MoveWithoutVectors(float Moving, OrientedInstance instance){
         float offset = 1 - Moving - 0.5f;
         BlockPos pos = getVisualPosition();
@@ -95,11 +120,13 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
     protected void _delete() {
         super._delete();
         rings.forEach(OrientedInstance::delete);
+        rings_corners.forEach(OrientedInstance::delete);
     }
 
     @Override
     public void updateLight(float partialTick) {
         super.updateLight(partialTick);
         rings.forEach(this::relight);
+        rings_corners.forEach(this::relight);
     }
 }
