@@ -19,10 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEntity> {
+public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEntity> implements SimpleDynamicVisual {
     private final List<OrientedInstance> rings = new ArrayList<>();
     private final List<OrientedInstance> rings_corners = new ArrayList<>();
-    private final Vec3i movementDirection;
     private static final int SPRING_LEN = 4;
 
     public SpringCoilVisual(VisualizationContext context, SpringCoilBlockEntity blockEntity, float partialTick) {
@@ -37,11 +36,16 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
             applyBaseRotation(rings.get(i), i);
             applyBaseRotationCorner(rings_corners.get(i), i);
         }
-
-        movementDirection = Direction.UP.getOpposite().getNormal();
     }
 
     private void applyBaseRotationCorner(OrientedInstance instance, int index){
+        if(index == 1){
+            instance.rotateYDegrees(-90);
+            return;
+        } else if(index == 3){
+            instance.rotateYDegrees(90);
+            return;
+        }
         instance.rotateYDegrees(90 * index);
     }
 
@@ -55,12 +59,17 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
     }
 
     @Override
-    public void update(float pt) {
+    public void beginFrame(Context context) {
         rotatingModel.setVisible(!blockEntity.getAssembled());
         rotatingModel.setChanged();
-        super.update(pt);
+        boolean controller = blockEntity.isController();
 
-        if(!blockEntity.isControler()){
+        for (int i = 0; i < rings.size(); i++) {
+            rings.get(i).setVisible(controller);
+            rings_corners.get(i).setVisible(controller);
+        }
+
+        if(!controller){
             return;
         }
 
@@ -83,7 +92,7 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
 
         ring.position(
                 (pos.getX() + x),
-                (pos.getY()),
+                (pos.getY() + ringIndex/4f - 0.5f),
                 (pos.getZ() + z)
         ).setChanged();
     }
@@ -93,26 +102,16 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
         int z = 0;
 
         switch (ringIndex){
-            case 1: x = 1;z = 1; break;
-            case 2: x = 1;z = -1; break;
-            case 0: x = -1;z = 1; break;
-            case 3: x = -1;z = -1; break;
+            case 0: x = 1;z = 1; break;
+            case 1: x = -1;z = 1; break;
+            case 2: x = -1;z = -1; break;
+            case 3: x = 1;z = -1; break;
         }
 
         corner.position(
                 (pos.getX() + x),
-                (pos.getY()),
+                (pos.getY() + ringIndex/4f - 0.5f),
                 (pos.getZ() + z)
-        ).setChanged();
-    }
-
-    private void MoveWithoutVectors(float Moving, OrientedInstance instance){
-        float offset = 1 - Moving - 0.5f;
-        BlockPos pos = getVisualPosition();
-        instance.position(
-                (pos.getX() + movementDirection.getX() * offset),
-                (pos.getY() + movementDirection.getY() * offset),
-                (pos.getZ() + movementDirection.getZ() * offset)
         ).setChanged();
     }
 

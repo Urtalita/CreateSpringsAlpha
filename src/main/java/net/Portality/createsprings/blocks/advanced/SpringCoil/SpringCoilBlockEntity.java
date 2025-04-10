@@ -1,22 +1,23 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
+import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.simpleRelays.AbstractShaftBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.AbstractSimpleShaftBlock;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import java.util.*;
+
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class SpringCoilBlockEntity extends KineticBlockEntity {
-    private boolean controler = false;
+
+    private boolean controller = false;
     private boolean assembled = false;
     public BlockPos[][][] spring = new BlockPos[3][3][16];
 
@@ -24,8 +25,10 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         super(typeIn, pos, state);
     }
 
-    public boolean isControler() {
-        return controler;
+    public void setController(boolean controller) {this.controller = controller;}
+
+    public boolean isController() {
+        return controller;
     }
 
     public boolean getAssembled(){
@@ -39,7 +42,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     @Override
     protected void read(CompoundTag compound, boolean clientPacket) {
         assembled = compound.getBoolean("assembled");
-        controler = compound.getBoolean("controller");
+        controller = compound.getBoolean("controller");
         super.read(compound, clientPacket);
     }
 
@@ -47,37 +50,33 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     protected void write(CompoundTag compound, boolean clientPacket) {
         super.write(compound, clientPacket);
         compound.putBoolean("assembled", assembled);
-        compound.putBoolean("controller", controler);
+        compound.putBoolean("controller", controller);
     }
 
-    public void onPlace(BlockPos pos){
-        BlockPos centerPos = isSpringLayerCompleted(pos.getX(), pos.getY(), pos.getZ());
-        if(centerPos != null){
-
-            Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
-            if(OcoilBE.isPresent()){
-                SpringCoilBlockEntity coilBE = OcoilBE.get();
-                coilBE.assemble(centerPos, true);
-                coilBE.notifyUpdate();
-            }
+    @Override
+    public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
+        if(assembled){
+            neighbours.clear();
+            return neighbours;
         }
+        return super.addPropagationLocations(block, state, neighbours);
     }
 
-    public void onRemove(BlockPos pos){
-        BlockPos centerPos = isSpringLayerCompleted(pos.getX(), pos.getY(), pos.getZ());
+    public void onPlaceOnBreak(BlockPos pos, boolean mode){
+        BlockPos centerPos = isSpringLayerCompleted(pos.getX(), pos.getY(), pos.getZ(), mode);
         if(centerPos != null){
 
             Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
             if(OcoilBE.isPresent()){
                 SpringCoilBlockEntity coilBE = OcoilBE.get();
-                coilBE.assemble(centerPos, false);
+                coilBE.assemble(centerPos, mode);
                 coilBE.notifyUpdate();
             }
         }
     }
 
     public void assemble(BlockPos pos, boolean mode){
-        controler = mode;
+        controller = mode;
 
         for (int i = -1; i < 2; i++){
             for (int j = -1; j < 2; j++){
@@ -105,7 +104,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         return Optional.empty();
     }
 
-    private BlockPos isSpringLayerCompleted(int x, int layer, int z) {
+    private BlockPos isSpringLayerCompleted(int x, int layer, int z, boolean mode) {
 
         for (int startX = x - 2; startX <= x; startX++) {
             for (int startZ = z - 2; startZ <= z; startZ++) {
@@ -116,7 +115,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
                     for (int dz = 0; dz < 3; dz++) {
                         int currentX = startX + dx;
                         int currentZ = startZ + dz;
-                        if (!checkBlock(new BlockPos(currentX, layer, currentZ))) {
+                        if (!checkBlock(new BlockPos(currentX, layer, currentZ), mode)) {
                             isComplete = false;
                             break outerLoop;
                         }
@@ -131,11 +130,17 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         return null;
     }
 
-    private boolean checkBlock(BlockPos pos){
+    private boolean checkBlock(BlockPos pos, boolean mode){
         BlockEntity coilBE = level.getBlockEntity(pos);
         if(coilBE instanceof SpringCoilBlockEntity){
-            if(!((SpringCoilBlockEntity) coilBE).assembled){
-                return true;
+            if(mode){
+                if(!((SpringCoilBlockEntity) coilBE).assembled){
+                    return true;
+                }
+            } else {
+                if(((SpringCoilBlockEntity) coilBE).assembled){
+                    return true;
+                }
             }
         }
         return false;

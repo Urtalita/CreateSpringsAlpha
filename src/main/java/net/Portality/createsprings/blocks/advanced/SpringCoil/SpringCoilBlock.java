@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -50,27 +51,45 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
+    public boolean hasDynamicShape() {
+        return true;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (level.getBlockEntity(pos) instanceof SpringCoilBlockEntity be) {
+            if(be.getAssembled()){
+                if(be.isController()){
+                    return Block.box(
+                            0, 0, 0,
+                            1, 1, 1
+                    );
+                }
+                return Block.box(
+                        0, 0, 0,
+                        0, 0, 0
+                );
+            }
+        }
+
         return HitboxHelper.calculateDierectionalVoxelShape(state.getValue(FACING), new Vec3(4, 4, 0), new Vec3(12, 12, 16));
     }
 
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, worldIn, pos, oldState, isMoving);
-        if(oldState.getBlock() == ModBlocks.LARGE_SPRING_COIL.get()){
-            return;
-        }
 
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlace(pos);
+            be.onPlaceOnBreak(pos, true);
         });
+
+
     }
 
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-
         withBlockEntityDo(pLevel, pPos, be->{
-            be.onRemove(pPos);
+            be.onPlaceOnBreak(pPos, false);
         });
 
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
