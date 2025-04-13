@@ -14,6 +14,7 @@ public class CSpringsPartalModels {
     SPRING = block("spring/spring"),
         SPRING_PIECE = block("spring/springpiece"),
         SPRING_PLATE = block("spring/springplate"),
+        LARGE_SPRING_PLATE = block("spring/large_spring_plate"),
         SPRING_RING = block("spring/springring"),
 
     SPRING_SAW = item("saw/saw"),

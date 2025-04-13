@@ -21,6 +21,8 @@ import net.Portality.createsprings.blocks.advanced.ObsidianSlabBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
+import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
+import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringExstentionBlock;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.BlockItem;
@@ -59,20 +61,24 @@ public class ModBlocks {
             () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
 
     public static final RegistryObject<Block> FILLED_ANDESITE_MOLD = registerBlock("filled_andesite_mold",
-            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE)), "");
-
-    /*public static final RegistryObject<Block> LARGE_SPRING_COIL = registerBlock("large_spring_coil",
-            () -> new SpringCoilBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()
-                    ,new Vec3(4, 4, 0),
-                    new Vec3(12, 12, 16))
-            , "fireResistant");
-
-     */
+            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
             () -> new LiquidBlock(ModFluids.SOURCE, Block.Properties.copy(Blocks.WATER))
     );
+
+    public static final RegistryObject<Block> LARGE_SPRING_EXTENTION = registerBlockWithoutItem("large_spring_extention",
+            () -> new LargeSpringExstentionBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()));
+
+
+    public static final BlockEntry<LargeSpringBlock> LARGE_SPRING = CSPRINGS_REGISTRATE
+            .block("large_spring", LargeSpringBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion())
+            .simpleItem() // Убрать
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .register();
 
     public static final BlockEntry<SpringCoilBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
             .block("large_spring_coil", SpringCoilBlock::new)
@@ -99,6 +105,11 @@ public class ModBlocks {
             .transform(customItemModel())
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
+
+    private static <T extends Block> RegistryObject<T> registerBlockWithoutItem(String name, Supplier<T> block) {
+        RegistryObject<T> toReturn = BLOCKS.register(name, block);
+        return toReturn;
+    }
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, String ItemProperty) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

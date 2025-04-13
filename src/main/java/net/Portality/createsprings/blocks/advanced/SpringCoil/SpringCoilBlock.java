@@ -51,27 +51,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     }
 
     @Override
-    public boolean hasDynamicShape() {
-        return true;
-    }
-
-    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (level.getBlockEntity(pos) instanceof SpringCoilBlockEntity be) {
-            if(be.getAssembled()){
-                if(be.isController()){
-                    return Block.box(
-                            0, 0, 0,
-                            1, 1, 1
-                    );
-                }
-                return Block.box(
-                        0, 0, 0,
-                        0, 0, 0
-                );
-            }
-        }
-
         return HitboxHelper.calculateDierectionalVoxelShape(state.getValue(FACING), new Vec3(4, 4, 0), new Vec3(12, 12, 16));
     }
 
@@ -82,8 +62,6 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
         withBlockEntityDo(worldIn, pos, be-> {
             be.onPlaceOnBreak(pos, true);
         });
-
-
     }
 
     @Override
