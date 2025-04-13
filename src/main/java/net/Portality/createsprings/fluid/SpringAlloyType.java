@@ -31,17 +31,12 @@ public class SpringAlloyType extends FluidType {
         consumer.accept(new IClientFluidTypeExtensions() {
             @Override
             public ResourceLocation getStillTexture() {
-                return CreateSprings.asResource("block/fluid/spring_alloy_still");
+                return CreateSprings.asResource("block/spring_alloy_still");
             }
 
             @Override
             public ResourceLocation getFlowingTexture() {
-                return CreateSprings.asResource("block/fluid/spring_alloy_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return 0xFFFF6A00; // HEX цвет (например, зеленый)
+                return CreateSprings.asResource("block/spring_alloy_flow");
             }
         });
     }

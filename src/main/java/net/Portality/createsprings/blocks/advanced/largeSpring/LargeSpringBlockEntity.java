@@ -38,9 +38,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
     @Override
     public float calculateStressApplied() {
         if (stored < capacity && !isGenerating) {
-            return 2.0f;
+            return 128.0f;
         } else if (isGenerating) {
-            return -128f;
+            return -1024f;
         }
         return 0f;
     }
@@ -77,7 +77,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
         float CurSpeed = Math.abs(getSpeed());
         if (isGenerating && stored > 0) {
-            stored = Math.max(stored - 256, 0);
+            stored = Math.max(stored - 1024, 0);
             updateGeneratedRotation();
 
             float threshold = (capacity / maxCompressionSteps) * (len - curLen);
@@ -88,7 +88,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         }
         // Режим накопления, если не активировано
         else if (!isGenerating) {
-            stored = Mth.clamp(stored + CurSpeed, 0, capacity);
+            stored = Mth.clamp(stored + CurSpeed*4, 0, capacity);
 
             float threshold = (capacity / maxCompressionSteps) * (len - curLen + 1);
             if (stored >= threshold) {

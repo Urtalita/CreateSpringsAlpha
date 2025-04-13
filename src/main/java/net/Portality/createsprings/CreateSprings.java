@@ -2,6 +2,7 @@ package net.Portality.createsprings;
 
 import com.mojang.datafixers.types.templates.List;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.fluid.FluidRenderer;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
@@ -22,12 +23,15 @@ import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -141,6 +145,18 @@ public class CreateSprings {
 
             EntityRenderers.register(ModEntities.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
+
+            IClientFluidTypeExtensions customFluidRender = new IClientFluidTypeExtensions() {
+                @Override
+                public ResourceLocation getStillTexture() {
+                    return new ResourceLocation("modid", "block/custom_fluid_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture() {
+                    return new ResourceLocation("modid", "block/custom_fluid_flow");
+                }
+            };
         }
         @SubscribeEvent
         public static void onTooltipRegistration(RegisterClientTooltipComponentFactoriesEvent event) {
