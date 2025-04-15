@@ -11,6 +11,7 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.utill.RenderHelper;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,6 +22,8 @@ import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.Portality.createsprings.utill.RenderHelper.*;
+
 public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements SimpleDynamicVisual  {
 
     private static int SPRING_LEN = 12;
@@ -28,8 +31,6 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     private final List<OrientedInstance> rings = new ArrayList<>();
     private final List<Float> ringPos = new ArrayList<>();
     private final Vec3i movementDirection;
-    protected final double xRot;
-    protected final double yRot;
     final Direction facing;
     final Axis rotationAxis;
     final Quaternionf blockOrientation;
@@ -38,10 +39,8 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
         super(context, blockEntity, pt);
 
         facing = blockEntity.getBlockState().getValue(DirectionalKineticBlock.FACING);
-        yRot = AngleHelper.horizontalAngle(facing);
-        xRot = facing == Direction.UP ? 0 : facing == Direction.DOWN ? 180 : 90;
 
-        rotationAxis = getRotationAxis();
+        rotationAxis = getRotationAxis(facing);
 
         blockOrientation = getBlockStateOrientation(facing);
 
@@ -53,21 +52,20 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
             ringPos.add((2f+i)/16f);
         }
 
-        applyBaseTransformations(plate);
+        applyBaseTransformations(plate, facing);
         for(int i = 0; i< rings.size(); i++){
             applyBaseRotation(rings.get(i), i);
+            applyBaseTransformations(rings.get(i), facing);
         }
-        rings.forEach(this::applyBaseTransformations);
+    }
+
+    private void applyBaseTransformations(OrientedInstance instance, Direction facing){
+        RenderHelper.applyBaseTransformations(instance, facing);
+        instance.rotateXDegrees(-90);
     }
 
     private OrientedInstance createInstance(PartialModel model) {
         return instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model)).createInstance();
-    }
-
-    private void applyBaseTransformations(OrientedInstance instance) {
-        instance.rotateYDegrees((float) yRot)
-                .rotateXDegrees((float) xRot)
-                .rotateXDegrees(-90);
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {
@@ -75,19 +73,10 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
         instance.rotation(rot).setChanged();
     }
 
-    private Axis getRotationAxis(){
-        if(facing == Direction.UP || facing == Direction.DOWN){
-            return Axis.YN;
-        } else if (facing == Direction.EAST || facing == Direction.WEST){
-            return Axis.XP;
-        }
-        return Axis.ZN;
-    }
-
     public void beginFrame(Context context) {
         float progress = blockEntity.getProgress();
 
-        MoveToPos(1/16f, 8/16f, plate, progress);
+        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, pos);
 
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(progress, rings.get(i), i);
@@ -95,34 +84,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     private void updateRingPosition(float progress, OrientedInstance ring, int ringIndex) {
-        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress);
-    }
-
-    private void MoveToPos(float StartPos, float EndPos, OrientedInstance orientedInstance, float Progress){
-        MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress ,orientedInstance);
-    }
-
-    private void MoveWithoutVectors(float Moving, OrientedInstance instance){
-        float offset = 1 - Moving - 0.5f;
-        BlockPos pos = getVisualPosition();
-        instance.position(
-                (pos.getX() + movementDirection.getX() * offset),
-                (pos.getY() + movementDirection.getY() * offset),
-                (pos.getZ() + movementDirection.getZ() * offset)
-        ).setChanged();
-    }
-
-    static Quaternionf getBlockStateOrientation(Direction facing) {
-        Quaternionf orientation;
-
-        if (facing.getAxis().isHorizontal()) {
-            orientation = Axis.YP.rotationDegrees(AngleHelper.horizontalAngle(facing.getOpposite()));
-        } else {
-            orientation = new Quaternionf();
-        }
-
-        orientation.mul(Axis.XP.rotationDegrees(-90 - AngleHelper.verticalAngle(facing)));
-        return orientation;
+        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, pos);
     }
 
     @Override

@@ -1,9 +1,7 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
-import com.simibubi.create.content.kinetics.base.ShaftVisual;
-import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+import com.mojang.math.Axis;
+import com.simibubi.create.content.kinetics.base.*;
 import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
@@ -13,17 +11,27 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.createmod.catnip.math.AngleHelper;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static net.Portality.createsprings.utill.RenderHelper.*;
 
 public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> implements SimpleDynamicVisual {
     private final List<OrientedInstance> rings = new ArrayList<>();
     private final List<OrientedInstance> rings_corners = new ArrayList<>();
     private final OrientedInstance up_plate;
     private final OrientedInstance down_plate;
+    final Direction facing;
+    private final Vec3i movementDirection;
+    final Axis rotationAxis;
+    final Quaternionf blockOrientation;
     private final int SPRING_LEN;
 
     public LargeSpringVisual(VisualizationContext context, LargeSpringBlockEntity blockEntity, float partialTick) {
@@ -31,8 +39,15 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
         SPRING_LEN = blockEntity.getLen() * 4;
 
+        facing = blockEntity.getBlockState().getValue(DirectionalKineticBlock.FACING);
+
+        rotationAxis = getRotationAxis(facing);
+        blockOrientation = getBlockStateOrientation(facing);
+
+        movementDirection = facing.getOpposite().getNormal();
+
         for (int i = 0; i < SPRING_LEN; i++) {
-            rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL));
+            rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED));
             rings_corners.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER));
         }
         up_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE).rotateXDegrees(90);
@@ -40,24 +55,48 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
         for(int i = 0; i< rings.size(); i++){
             applyBaseRotation(rings.get(i), i);
+            applyBaseTransformations(rings.get(i), facing);
             applyBaseRotationCorner(rings_corners.get(i), i);
+            applyBaseTransformations(rings_corners.get(i), facing);
         }
+
+        applyBaseTransformations(up_plate, facing);
+        applyBaseTransformations(down_plate, facing);
     }
 
     private void applyBaseRotationCorner(OrientedInstance instance, int index){
-        if(index % 4 == 1){
-            instance.rotateYDegrees(-90);
+        Direction.Axis axis = facing.getAxis();
+        if(axis == Direction.Axis.Z){
+            instance.rotateDegrees(90 * index, axis);
             return;
-        } else if(index % 4 == 3){
-            instance.rotateYDegrees(90);
+        } else if (axis == Direction.Axis.X){
+            instance.rotateDegrees(90 * index, axis);
+            instance.rotateDegrees(-90, axis);
             return;
         }
-        instance.rotateYDegrees(90 * index);
+        if(index % 4 == 1){
+            instance.rotateDegrees(-90, axis);
+            return;
+        } else if(index % 4 == 3){
+            instance.rotateDegrees(90, axis);
+            return;
+        }
+        instance.rotateDegrees(90 * index, axis);
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {
-        instance.rotateXDegrees(90)
-                .rotateZDegrees(90 * index);
+        Direction.Axis axis = facing.getAxis();
+        instance.rotateDegrees(90 * index, axis);
+    }
+
+    private void applyBaseTransformations(OrientedInstance instance, Direction facing){
+        if(facing == Direction.UP || facing == Direction.DOWN){
+            return;
+        } else if(facing == Direction.EAST || facing == Direction.WEST){
+            instance.rotateZDegrees(-90);
+            return;
+        }
+        instance.rotateXDegrees(-90);
     }
 
     private OrientedInstance createInstance(PartialModel model) {
@@ -97,11 +136,7 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
             case 3: z = -1; break;
         }
 
-        ring.position(
-                (pos.getX() + x),
-                (pos.getY() + calculateLen(progres, ringIndex)),
-                (pos.getZ() + z)
-        ).setChanged();
+        setPos(x, z, ring, progres, ringIndex);
     }
 
     private void updateCornerPosition(OrientedInstance corner, int ringIndex, float progres) {
@@ -116,10 +151,33 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
             case 3: x = 1;z = -1; break;
         }
 
-        corner.position(
+        setPos(x, z, corner, progres, ringIndex);
+    }
+
+    private void setPos(int x, int z, OrientedInstance instance, float progres, int index){
+        float dierectionFactor = 1;
+        if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
+            dierectionFactor = -1;
+        }
+        if(facing == Direction.UP || facing == Direction.DOWN){
+            instance.position(
+                    (pos.getX() + x),
+                    (pos.getY() + calculateLen(progres, index) * dierectionFactor),
+                    (pos.getZ() + z)
+            ).setChanged();
+            return;
+        } else if(facing == Direction.EAST || facing == Direction.WEST){
+            instance.position(
+                    (pos.getX() + calculateLen(progres, index) * dierectionFactor),
+                    (pos.getY() + x),
+                    (pos.getZ() + z)
+            ).setChanged();
+            return;
+        }
+        instance.position(
                 (pos.getX() + x),
-                (pos.getY() + calculateLen(progres, ringIndex)),
-                (pos.getZ() + z)
+                (pos.getY() + z),
+                (pos.getZ() + calculateLen(progres, index) * dierectionFactor)
         ).setChanged();
     }
 

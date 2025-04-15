@@ -23,7 +23,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
     public static final float capacity = CreateSprings.SPRING_CAPACITY;
     private float progres;
     public float stored = 0;
-    private int len = 32;
+    private int len = 1;
     private int curLen = len;
     private boolean isGenerating;
 
@@ -40,7 +40,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         if (stored < capacity && !isGenerating) {
             return 128.0f;
         } else if (isGenerating) {
-            return -1024f;
+            return -1024;
         }
         return 0f;
     }
@@ -77,7 +77,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
         float CurSpeed = Math.abs(getSpeed());
         if (isGenerating && stored > 0) {
-            stored = Math.max(stored - 1024, 0);
+            stored = Math.max(stored - 256, 0);
             updateGeneratedRotation();
 
             float threshold = (capacity / maxCompressionSteps) * (len - curLen);
@@ -191,7 +191,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
     @Override
     public float getGeneratedSpeed() {
-        return isGenerating && stored > 0 ? 16.0f : 0.0f;
+        return isGenerating && stored > 0 ? 1.0f : 0.0f;
     }
 
     public void setGenerating(boolean generating) {

@@ -54,7 +54,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
 
     @Override
     public Direction.Axis getRotationAxis(BlockState state) {
-        return Direction.Axis.Y;
+        return state.getValue(FACING).getAxis();
     }
 
     @Override
