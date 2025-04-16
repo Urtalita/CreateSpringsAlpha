@@ -39,7 +39,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlace(pos);
+            be.onPlace(pos, state.getValue(FACING));
         });
         super.onPlace(state, worldIn, pos, oldState, isMoving);
     }
@@ -47,7 +47,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         withBlockEntityDo(pLevel, pPos, be-> {
-            be.onBreak(pPos);
+            be.onBreak(pPos, pState.getValue(FACING));
         });
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }

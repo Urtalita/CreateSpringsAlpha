@@ -684,5 +684,17 @@
     },
     "done": true
   },
+  "create:recipes/misc/crafting/kinetics/gearbox_from_conversion": {
+    "criteria": {
+      "has_item": "2025-04-16 17:48:34 +0300"
+    },
+    "done": true
+  },
+  "minecraft:recipes/redstone/redstone": {
+    "criteria": {
+      "has_redstone_block": "2025-04-16 17:50:24 +0300"
+    },
+    "done": true
+  },
   "DataVersion": 3465
 }
