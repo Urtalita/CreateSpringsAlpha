@@ -1,5 +1,6 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
@@ -39,7 +40,12 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlace(pos, state.getValue(FACING));
+            //be.onPlace(pos, state.getValue(FACING));
+            try {
+                be.assemble();
+            } catch (AssemblyException e) {
+                throw new RuntimeException(e);
+            }
         });
         super.onPlace(state, worldIn, pos, oldState, isMoving);
     }
@@ -47,7 +53,8 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         withBlockEntityDo(pLevel, pPos, be-> {
-            be.onBreak(pPos, pState.getValue(FACING));
+            //be.onBreak(pPos, pState.getValue(FACING));
+            be.disassemble();
         });
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }

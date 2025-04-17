@@ -1,11 +1,17 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.content.contraptions.AssemblyException;
+import com.simibubi.create.content.contraptions.Contraption;
+import com.simibubi.create.content.contraptions.ContraptionCollider;
+import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
+import com.simibubi.create.content.contraptions.piston.PistonContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -21,15 +27,18 @@ import java.awt.*;
 import java.time.Year;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import static net.Portality.createsprings.utill.LargeSpringContraptionHelper.activateContraption;
+import static net.Portality.createsprings.utill.LargeSpringContraptionHelper.create3x3EarthContraption;
 
 public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
     public static final float capacity = CreateSprings.SPRING_CAPACITY;
     private float progres;
     public float stored = 0;
-    private int len = 32;
+    private int len = 1;
     private int curLen = len;
     private boolean isGenerating;
+    protected PistonContraption movedContraption;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -73,6 +82,14 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         }
     }
 
+    public void assemble() throws AssemblyException {
+        Contraption contraption = create3x3EarthContraption(getBlockState().getValue(FACING), level);
+    }
+
+    public void disassemble(){
+
+    }
+
     private BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
         int dierectionFactor = 1;
         if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
@@ -113,7 +130,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
             float threshold = (capacity / maxCompressionSteps) * (len - curLen);
             if (stored <= threshold) {
                 curLen++;
-                restoreLayer(curLen, facing);
+                //restoreLayer(curLen, facing);
             }
         }
         // Режим накопления, если не активировано
@@ -122,14 +139,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
             float threshold = (capacity / maxCompressionSteps) * (len - curLen + 1);
             if (stored >= threshold) {
-                removeLayer(curLen, facing);
+                //removeLayer(curLen, facing);
                 curLen--;
             }
         }
 
-        // Если высота изменилась (пружина расширяется)
-
-        updateExtensionBlocks(facing);
+        //updateExtensionBlocks(facing);
         progres = stored / capacity;
     }
 
