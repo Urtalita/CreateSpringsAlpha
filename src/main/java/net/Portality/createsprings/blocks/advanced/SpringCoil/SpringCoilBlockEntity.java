@@ -6,6 +6,7 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +21,8 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     private boolean controller = false;
     private boolean assembled = false;
     public BlockPos[][][] spring = new BlockPos[3][3][16];
+    public boolean plate = false;
+    public Direction plateFacing = Direction.UP;
 
     public SpringCoilBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -43,6 +46,8 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     protected void read(CompoundTag compound, boolean clientPacket) {
         assembled = compound.getBoolean("assembled");
         controller = compound.getBoolean("controller");
+        plate = compound.getBoolean("plate");
+        plateFacing = Direction.byName(compound.getString("plateface"));
         super.read(compound, clientPacket);
     }
 
@@ -51,6 +56,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         super.write(compound, clientPacket);
         compound.putBoolean("assembled", assembled);
         compound.putBoolean("controller", controller);
+        compound.putString("plateface", plateFacing.getName());
     }
 
     @Override

@@ -34,16 +34,16 @@ public class ModItems {
             () -> new PunchcardItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> SPRING_BASE = ITEMS.register("spring_base",
-            () -> new SpringBase(new Item.Properties().stacksTo(1)));
+            () -> new SpringBase(new Item.Properties().stacksTo(1))); // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_DRILL = ITEMS.register("spring_drill",
-            () -> new SpringDrill(new Item.Properties().stacksTo(1)));
+            () -> new SpringDrill(new Item.Properties().stacksTo(1))); // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_LAUNCHER = ITEMS.register("spring_launcher",
-            () -> new SpringLauncher(new Item.Properties().stacksTo(1)));
+            () -> new SpringLauncher(new Item.Properties().stacksTo(1))); // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_SAW = ITEMS.register("spring_saw",
-            () -> new SpringSaw(new Item.Properties().stacksTo(1)));
+            () -> new SpringSaw(new Item.Properties().stacksTo(1))); // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_PROJECTILE_ITEM = ITEMS.register("spring_projectile",
             () -> new Item(new Item.Properties()));

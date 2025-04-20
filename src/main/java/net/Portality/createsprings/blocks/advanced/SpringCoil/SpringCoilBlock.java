@@ -11,6 +11,9 @@ import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEn
 import net.Portality.createsprings.utill.HitboxHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -62,6 +66,25 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
         withBlockEntityDo(worldIn, pos, be-> {
             be.onPlaceOnBreak(pos, true);
         });
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        if (player.getItemInHand(hand).getItem() != ModBlocks.OBSIDIAN_PLATE.get().asItem()){
+            return super.use(state, level, pos, player, hand, result);
+        }
+        withBlockEntityDo(level, pos, be-> {
+            if(be.plate){
+                return;
+            }
+            be.plate = true;
+            be.plateFacing = result.getDirection();
+            if(player.isCreative()){
+                return;
+            }
+            player.getItemInHand(hand).shrink(1);
+        });
+        return super.use(state, level, pos, player, hand, result);
     }
 
     @Override

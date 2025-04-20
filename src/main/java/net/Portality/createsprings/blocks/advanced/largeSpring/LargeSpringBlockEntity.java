@@ -1,50 +1,73 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.simibubi.create.content.contraptions.AssemblyException;
-import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.ContraptionCollider;
-import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.content.contraptions.*;
+import com.simibubi.create.content.contraptions.bearing.BearingBlock;
+import com.simibubi.create.content.contraptions.bearing.BearingContraption;
+import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
 import com.simibubi.create.content.contraptions.piston.PistonContraption;
+import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
+import com.simibubi.create.content.contraptions.pulley.PulleyBlockEntity;
+import com.simibubi.create.content.contraptions.pulley.PulleyContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.contraption.SpringContraption;
+import net.Portality.createsprings.utill.CspringsMath;
+import net.Portality.createsprings.utill.RenderHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-
-import java.awt.*;
-import java.time.Year;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
-import static net.Portality.createsprings.utill.LargeSpringContraptionHelper.activateContraption;
-import static net.Portality.createsprings.utill.LargeSpringContraptionHelper.create3x3EarthContraption;
 
-public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
+public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption {
 
     public static final float capacity = CreateSprings.SPRING_CAPACITY;
     private float progres;
     public float stored = 0;
-    private int len = 1;
+    private int len = 32;
     private int curLen = len;
     private boolean isGenerating;
-    protected PistonContraption movedContraption;
+    protected ControlledContraptionEntity movedContraption;
+    private final Vec3i movementDirection;
+    private boolean running = false;
+
+    private float prevProgress;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        this.movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();;
     }
 
-    public float getProgres() {return progres;}
+    public float getProgres(float partalTicks) {
+        float progressFrames = Mth.lerp(partalTicks + .5f, prevProgress, progres);
+
+        if (movedContraption != null){
+            movedContraption.moveTo(
+                    CspringsMath.MoveWithoutVectors(
+                            platePos(progressFrames),
+                            worldPosition,
+                            movementDirection));
+        }
+
+        return  progressFrames;
+    }
+
+    private float platePos(float progress){
+        return calculateCurPos(progres) + 4/16f*(1-progress) - 6/16f;
+    }
 
     public int getLen() {return len;}
 
@@ -58,16 +81,21 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         return 0f;
     }
 
-    public void onPlace(BlockPos pos, Direction facing){
-        for(int y = 0; y <= curLen; y++){
+    public void onPlace(BlockPos pos, Direction facing) throws AssemblyException {
+        for(int y = 0; y < curLen - 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
-                        level.setBlock(calcPos(i, y, j, pos, facing), ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState(), Block.UPDATE_ALL);
+                        level.setBlock(calcPos(i, y, j, pos, facing),
+                                ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState(),
+                                Block.UPDATE_ALL);
                     }
                 }
             }
         }
+
+        level.setBlock(worldPosition.relative(facing), Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
+        assemble();
     }
 
     public void onBreak(BlockPos pos, Direction facing){
@@ -83,7 +111,37 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     public void assemble() throws AssemblyException {
-        Contraption contraption = create3x3EarthContraption(getBlockState().getValue(FACING), level);
+        if (!(level.getBlockState(worldPosition)
+                .getBlock() instanceof LargeSpringBlock))
+            return;
+
+        BearingContraption contraption = new BearingContraption(false ,getBlockState().getValue(FACING));
+        boolean canAssembleStructure = contraption.assemble(level, worldPosition);
+
+        if (!canAssembleStructure) {
+            return;
+        }
+
+        if (contraption.getBlocks().isEmpty()) {
+            return;
+        }
+        contraption.removeBlocksFromWorld(level, BlockPos.ZERO);
+        movedContraption = ControlledContraptionEntity.create(level, this, contraption);
+
+        running = true;
+
+        movedContraption.setPos(
+                CspringsMath.MoveWithoutVectors(
+                        calculateCurPos(progres),
+                        worldPosition,
+                        movementDirection));
+
+        level.addFreshEntity(movedContraption);
+
+        if (contraption.containsBlockBreakers())
+            award(AllAdvancements.CONTRAPTION_ACTORS);
+
+        sendData();
     }
 
     public void disassemble(){
@@ -118,6 +176,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
+
+        prevProgress = progres;
+
         int targetMinLength = (int) (len * 0.5f);
         int maxCompressionSteps = len - targetMinLength;
         Direction facing = getBlockState().getValue(FACING);
@@ -130,7 +191,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
             float threshold = (capacity / maxCompressionSteps) * (len - curLen);
             if (stored <= threshold) {
                 curLen++;
-                //restoreLayer(curLen, facing);
+                restoreLayer((int) Math.floor(platePos(progres)), facing);
             }
         }
         // Режим накопления, если не активировано
@@ -139,12 +200,11 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
 
             float threshold = (capacity / maxCompressionSteps) * (len - curLen + 1);
             if (stored >= threshold) {
-                //removeLayer(curLen, facing);
+                removeLayer((int) Math.floor(platePos(progres)), facing);
                 curLen--;
             }
         }
 
-        //updateExtensionBlocks(facing);
         progres = stored / capacity;
     }
 
@@ -209,12 +269,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         }
     }
 
-    private float calculateCurPos(){
+    private float calculateCurPos(float progres){
         return len - progres * (len * 0.5f);
     }
 
     private void updateExtensionBlocks(Direction facing) {
-        int compressionLevel = Math.round(16 - (calculateCurPos() - ((int) calculateCurPos())) * 16);
+        int compressionLevel = Math.round(16 - (calculateCurPos(progres) - ((int) calculateCurPos(progres))) * 16);
         BlockPos pos = getBlockPos();
 
         for (int i = -1; i < 2; i++) {
@@ -252,6 +312,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         compound.putFloat("stored", stored);
         compound.putInt("len", len);
         compound.putInt("curLen", curLen);
+        compound.putBoolean("running", running);
         super.write(compound, clientPacket);
     }
 
@@ -263,5 +324,44 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity {
         progres = compound.getFloat("progres");
         stored = compound.getFloat("stored");
         curLen = compound.getInt("curLen");
+        running = compound.getBoolean("running");
+    }
+
+    @Override
+    public boolean isAttachedTo(AbstractContraptionEntity contraption) {
+        return movedContraption == contraption;
+    }
+
+    @Override
+    public void attach(ControlledContraptionEntity contraption) {
+        BlockState blockState = getBlockState();
+        if (!(contraption.getContraption() instanceof BearingContraption))
+            return;
+        if (!blockState.hasProperty(LargeSpringBlock.FACING))
+            return;
+
+        this.movedContraption = contraption;
+        setChanged();
+        BlockPos anchor = worldPosition.relative(blockState.getValue(LargeSpringBlock.FACING));
+        movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
+        if (!level.isClientSide) {
+            sendData();
+        }
+    }
+
+    @Override
+    public void onStall() {
+        if (!level.isClientSide)
+            sendData();
+    }
+
+    @Override
+    public boolean isValid() {
+        return !isRemoved();
+    }
+
+    @Override
+    public BlockPos getBlockPosition() {
+        return worldPosition;
     }
 }

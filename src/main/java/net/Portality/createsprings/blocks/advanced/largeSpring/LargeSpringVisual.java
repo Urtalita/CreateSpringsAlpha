@@ -112,14 +112,14 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
     @Override
     public void beginFrame(Context context) {
-        float progres = 1 - blockEntity.getProgres();
+        float progres = 1 - blockEntity.getProgres(context.partialTick());
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(rings.get(i), i, progres);
             updateCornerPosition(rings_corners.get(i), i, progres);
         }
 
         setPos(0, 0, down_plate, -7/16f );
-        setPos(0, 0, up_plate, calculateLen(progres, SPRING_LEN) - 3/16f*(1-progres));
+        setPos(0, 0, up_plate, calculateLen(progres, SPRING_LEN) - 4/16f*(1-progres));
     }
 
     private void updateRingPosition(OrientedInstance ring, int ringIndex, float progres) {
@@ -179,7 +179,7 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         ).setChanged();
     }
 
-    private float calculateLen(float progres, int ringIndex){
+    public static float calculateLen(float progres, int ringIndex){
         return ringIndex/4f*progres  + (ringIndex / 4) / 2f * (1-progres) - 3/16f;
     }
 
