@@ -78,13 +78,17 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
                 return;
             }
             be.plate = true;
-            be.plateFacing = result.getDirection();
+            if(player.isShiftKeyDown()){
+                be.plateFacing = result.getDirection();
+            } else {
+                be.plateFacing = result.getDirection().getOpposite();
+            }
             if(player.isCreative()){
                 return;
             }
             player.getItemInHand(hand).shrink(1);
         });
-        return super.use(state, level, pos, player, hand, result);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

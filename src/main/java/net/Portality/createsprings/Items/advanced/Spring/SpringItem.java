@@ -22,6 +22,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
@@ -49,7 +50,6 @@ public class SpringItem extends BlockItem {
     public SpringItem(Block p_40565_, Properties p_40566_) {
         super(p_40565_, p_40566_);
     }
-
 
     @Override
     public int getMaxStackSize(ItemStack stack) {

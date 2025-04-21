@@ -27,17 +27,13 @@ import static net.Portality.createsprings.utill.RenderHelper.MoveWithoutVectors;
 public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEntity> implements SimpleDynamicVisual {
 
     private final OrientedInstance plate;
-    private final Vec3i movementDirection;
-    final Direction facing;
+    private Vec3i movementDirection;
+    private Direction facing;
+    private boolean initialise = true;
 
     public SpringCoilVisual(VisualizationContext context, SpringCoilBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick, Models.partial(CSpringsPartalModels.LARGE_SPRING_COIL));
-        facing = blockEntity.plateFacing;
-
         plate = createInstance(CSpringsPartalModels.SPRING_PLATE);
-        applyBaseTransformations(plate, facing);
-
-        movementDirection = facing.getOpposite().getNormal();
     }
 
     private void applyBaseTransformations(OrientedInstance instance, Direction facing){
@@ -52,6 +48,12 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
     @Override
     public void beginFrame(Context context) {
         if(blockEntity.plate){
+            if(initialise){
+                initialise = false;
+                facing = blockEntity.plateFacing;
+                movementDirection = facing.getOpposite().getNormal();
+                applyBaseTransformations(plate, facing);
+            }
             MoveWithoutVectors(0, plate, movementDirection, pos);
         }
     }

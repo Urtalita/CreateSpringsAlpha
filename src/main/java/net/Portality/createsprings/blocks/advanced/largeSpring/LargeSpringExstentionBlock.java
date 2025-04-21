@@ -1,17 +1,27 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.openjdk.nashorn.internal.ir.Statement;
+import org.antlr.v4.automata.TailEpsilonRemover;
+
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import static net.Portality.createsprings.utill.CspringsMath.calcPos;
 
 public class LargeSpringExstentionBlock extends DirectionalBlock {
     public static final IntegerProperty COMPRESSION = IntegerProperty.create("compression", 0, 16);
@@ -20,13 +30,44 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
         super(p_52591_.dynamicShape());
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.UP)
-                .setValue(COMPRESSION, 0));
+                .setValue(COMPRESSION, 0)
+        );
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
         builder.add(FACING, COMPRESSION);
         super.createBlockStateDefinition(builder);
+    }
+
+    @Override
+    public void onPlace(BlockState state, Level p_60567_, BlockPos p_60568_, BlockState p_60569_, boolean p_60570_) {
+        super.onPlace(state, p_60567_, p_60568_, p_60569_, p_60570_);
+    }
+
+    @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+        if(pNewState != Blocks.COBBLESTONE.defaultBlockState()){
+            goDeeper(pPos, pState.getValue(FACING).getOpposite(), pLevel);
+        }
+        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    }
+
+    private void goDeeper(BlockPos pos, Direction facing, Level level){
+        for(int y = 0; y < 1024; y++){
+            for (int i = -1; i < 2; i++){
+                for (int j = -1; j < 2; j++){
+                    if(!(i == 0 && j == 0)){
+                        BlockEntity be = level.getBlockEntity(calcPos(i, y, j, pos, facing));
+                        if(be instanceof LargeSpringBlockEntity){
+                            level.setBlock(calcPos(i, y, j, pos, facing),
+                                    Blocks.AIR.defaultBlockState(),
+                                    Block.UPDATE_ALL);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override public RenderShape getRenderShape(BlockState state) {
