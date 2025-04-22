@@ -42,6 +42,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.FILLED_ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.LARGE_SPRING_COIL.get());
+                        pOutput.accept(ModItems.SUS_PACKAGE.get());
 
                         pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());
 

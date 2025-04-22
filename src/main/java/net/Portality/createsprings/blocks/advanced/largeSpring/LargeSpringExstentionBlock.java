@@ -63,6 +63,7 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
                             level.setBlock(calcPos(i, y, j, pos, facing),
                                     Blocks.AIR.defaultBlockState(),
                                     Block.UPDATE_ALL);
+                            return;
                         }
                     }
                 }

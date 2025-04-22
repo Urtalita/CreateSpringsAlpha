@@ -51,7 +51,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
-        capacity = CreateSprings.SPRING_CAPACITY * 9 * len;
+        capacity = CreateSprings.SPRING_CAPACITY;
     }
 
     public float getProgres(float partalTicks) {
@@ -112,6 +112,36 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                             continue;
                         }
                         level.setBlock(pos1, ModBlocks.LARGE_SPRING_COIL.getDefaultState(), Block.UPDATE_ALL);
+                    }
+                }
+            }
+        }
+        for (int i = -1; i < 2; i++){
+            for (int j = -1; j < 2; j++){
+                if(!(i == 0 && j == 0)){
+                    BlockPos pos1 = calcPos(i, 0, j, pos, facing);
+                    if(level.getBlockState(pos1).getBlock() == Blocks.AIR){
+                        continue;
+                    }
+                    BlockEntity coil = level.getBlockEntity(pos1);
+                    if(coil instanceof SpringCoilBlockEntity){
+                        ((SpringCoilBlockEntity) coil).plate = true;
+                        ((SpringCoilBlockEntity) coil).plateFacing = Direction.DOWN;
+                    }
+                }
+            }
+        }
+        for (int i = -1; i < 2; i++){
+            for (int j = -1; j < 2; j++){
+                if(!(i == 0 && j == 0)){
+                    BlockPos pos1 = calcPos(i, len-2, j, pos, facing);
+                    if(level.getBlockState(pos1).getBlock() == Blocks.AIR){
+                        continue;
+                    }
+                    BlockEntity coil = level.getBlockEntity(pos1);
+                    if(coil instanceof SpringCoilBlockEntity){
+                        ((SpringCoilBlockEntity) coil).plate = true;
+                        ((SpringCoilBlockEntity) coil).plateFacing = Direction.UP;
                     }
                 }
             }

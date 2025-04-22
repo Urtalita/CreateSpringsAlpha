@@ -1,5 +1,6 @@
 package net.Portality.createsprings;
 
+import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
@@ -69,6 +70,7 @@ public class CreateSprings {
 
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(ModEntities::registerEntityAttributes);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);
