@@ -21,6 +21,8 @@ public class CSpringsPartalModels {
         SAW_HEAD = item("saw/saw_head"),
         SAW_SHAFT = item("saw/saw_shaft"),
 
+    SUS_BOX = block("sus_box"),
+
     WelderHead = block("friction_welder/top"),
             LARGE_SPRING_COIL_ROTATED = block("large_spring_coil_partal_rotated"),
     LARGE_SPRING_COIL = block("large_spring_coil_partal"),

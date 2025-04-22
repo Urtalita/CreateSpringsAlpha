@@ -4,6 +4,7 @@ import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
+import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.SusPackageEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -20,10 +21,6 @@ public class SusPackageItem extends PackageItem {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer()
-                .isShiftKeyDown()) {
-            return open(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
-        }
 
         Vec3 point = context.getClickLocation();
         float h = style.height() / 16f;
@@ -41,7 +38,7 @@ public class SusPackageItem extends PackageItem {
         AABB scanBB = new AABB(point, point).inflate(r, 0, r)
                 .expandTowards(0, h, 0);
         Level world = context.getLevel();
-        if (!world.getEntities(AllEntityTypes.PACKAGE.get(), scanBB, e -> true)
+        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
                 .isEmpty())
             return super.useOn(context);
 

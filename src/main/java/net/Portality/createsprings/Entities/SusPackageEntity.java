@@ -10,6 +10,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PlayMessages;
 
 public class SusPackageEntity extends PackageEntity {
 
@@ -18,7 +19,7 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public SusPackageEntity(Level worldIn, double x, double y, double z) {
-        this(AllEntityTypes.PACKAGE.get(), worldIn);
+        this(ModEntities.SUS_PACKAGE.get(), worldIn);
         this.setPos(x, y, z);
         this.refreshDimensions();
     }
@@ -35,5 +36,19 @@ public class SusPackageEntity extends PackageEntity {
         projectile.shootFromRotation(this, 0, 270, 0.0F,  3.0F, 1.0F);
         level().addFreshEntity(projectile);
         return super.hurt(source, amount);
+    }
+
+    public static EntityType.Builder<?> build(EntityType.Builder<?> builder) {
+        @SuppressWarnings("unchecked")
+        EntityType.Builder<SusPackageEntity> boxBuilder = (EntityType.Builder<SusPackageEntity>) builder;
+        return boxBuilder.setCustomClientFactory(SusPackageEntity::spawn)
+                .sized(1, 1);
+    }
+    public static SusPackageEntity spawn(PlayMessages.SpawnEntity spawnEntity, Level world) {
+        SusPackageEntity packageEntity =
+                new SusPackageEntity(world, spawnEntity.getPosX(), spawnEntity.getPosY(), spawnEntity.getPosZ());
+        packageEntity.setDeltaMovement(spawnEntity.getVelX(), spawnEntity.getVelY(), spawnEntity.getVelZ());
+        packageEntity.clientPosition = packageEntity.position();
+        return packageEntity;
     }
 }

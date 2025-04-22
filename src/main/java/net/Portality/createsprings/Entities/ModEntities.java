@@ -11,6 +11,7 @@ import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Projectile.SpringAlloyBlockProjectile;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
 import net.Portality.createsprings.Entities.renderer.SusPackageRenderer;
+import net.Portality.createsprings.Entities.renderer.SusPackageVisual;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -37,8 +38,10 @@ public class ModEntities {
 
     public static final EntityEntry<SusPackageEntity> SUS_PACKAGE = register("sus_package", SusPackageEntity::new, () -> SusPackageRenderer::new,
                     MobCategory.MISC, 10, 3, true, false, SusPackageEntity::build)
-            .visual(() -> PackageVisual::new, true)
+            .visual(() -> SusPackageVisual::new, true)
             .register();
+
+
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
