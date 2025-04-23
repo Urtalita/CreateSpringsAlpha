@@ -12,6 +12,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.concurrent.Callable;
+
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateSprings.MODID);
@@ -26,6 +28,10 @@ public class ModCreativeModeTabs {
                         CompoundTag SpBlTag = new CompoundTag();
                         SpBlTag.putFloat("Stored", CreateSprings.SPRING_CAPACITY);
                         SpTag.put("BlockEntityTag", SpBlTag);
+
+                        ItemStack box = ModItems.SUS_PACKAGE.get().getDefaultInstance();
+                        CompoundTag boxtag = box.getOrCreateTag();
+                        boxtag.putFloat("Stored", CreateSprings.SPRING_CAPACITY);
 
                         pOutput.accept(ModItems.SPRING_ALLOY.get());
                         pOutput.accept(ModItems.SPRING_ALLOY_SHEET.get());
@@ -42,7 +48,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.FILLED_ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.LARGE_SPRING_COIL.get());
-                        pOutput.accept(ModItems.SUS_PACKAGE.get());
+                        pOutput.accept(box);
 
                         pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());
 

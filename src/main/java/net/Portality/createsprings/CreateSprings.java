@@ -19,6 +19,7 @@ import net.Portality.createsprings.menus.ModCreativeModeTabs;
 import com.mojang.logging.LogUtils;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
 import net.Portality.createsprings.recipe.ModRecipes;
+import net.Portality.createsprings.recipe.NbtAwareShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -39,6 +40,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
 
@@ -119,6 +122,13 @@ public class CreateSprings {
         @SubscribeEvent
         public static void onTooltipRegistration(RegisterClientTooltipComponentFactoriesEvent event) {
             event.register(SpringPoweredCore.SpringSlotTooltipComponent.class, SpringPoweredCore.SpringSlotRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerSerializers(RegisterEvent event) {
+            event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, helper -> {
+                helper.register(new ResourceLocation(CreateSprings.MODID, "nbt_aware_shapeless"), NbtAwareShapelessRecipe.Serializer.INSTANCE);
+            });
         }
     }
 }

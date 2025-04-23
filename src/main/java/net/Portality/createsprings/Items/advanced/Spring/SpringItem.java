@@ -192,7 +192,7 @@ public class SpringItem extends BlockItem {
         entity.hurtMarked = true;
     }
 
-    public float GetStoredSu(ItemStack stack){
+    public static float GetStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
         float stored = 0;
 

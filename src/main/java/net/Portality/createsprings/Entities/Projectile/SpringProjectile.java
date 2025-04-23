@@ -244,7 +244,7 @@ public class SpringProjectile extends AbstractArrow {
         }
     }
 
-    private boolean redirectProjectile(Projectile projectile, double radius, @Nullable Entity excludedEntity) {
+    public boolean redirectProjectile(Projectile projectile, double radius, @Nullable Entity excludedEntity) {
         Vec3 projectilePos = projectile.position();
         LivingEntity owner = (LivingEntity) projectile.getOwner();
 
@@ -287,7 +287,7 @@ public class SpringProjectile extends AbstractArrow {
         return true;
     }
 
-    private Vec3 calculateInterceptionPoint(Projectile projectile, Entity target, double projectileSpeed) {
+    private static Vec3 calculateInterceptionPoint(Projectile projectile, Entity target, double projectileSpeed) {
         Vec3 targetPos = target.position();
         Vec3 targetVel = target.getDeltaMovement();
         Vec3 projectilePos = projectile.position();
