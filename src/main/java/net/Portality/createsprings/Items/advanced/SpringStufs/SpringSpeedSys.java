@@ -53,7 +53,7 @@ public class SpringSpeedSys {
 
         tag.putDouble("Speed", speed);
         tag.putFloat("Stored", Stored);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return InteractionResultHolder.pass(stack);
     }
 
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {

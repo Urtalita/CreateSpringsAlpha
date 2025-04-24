@@ -1,8 +1,9 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.infrastructure.data.CreateDatagen;
 import net.Portality.createsprings.Entities.ModEntities;
+import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
 import net.Portality.createsprings.Items.ModItems;
@@ -13,6 +14,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
+import net.Portality.createsprings.datagen.CSpringsDatagen;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.Portality.createsprings.menus.MenuInit;
 import net.Portality.createsprings.menus.ModCreativeModeTabs;
@@ -24,15 +26,17 @@ import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -45,6 +49,8 @@ import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
 
+import java.util.concurrent.CompletableFuture;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreateSprings.MODID)
 public class CreateSprings {
@@ -55,8 +61,10 @@ public class CreateSprings {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static Item[] SPRING_TOOLS;
 
+
     public CreateSprings(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+        modEventBus.addListener(this::test);
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         ModBlocks.register(modEventBus);
@@ -84,6 +92,19 @@ public class CreateSprings {
         });
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
+
+    }
+
+    private void test(GatherDataEvent event){
+        DataGenerator generator = event.getGenerator();
+        PackOutput output = generator.getPackOutput();
+        ExistingFileHelper existing = event.getExistingFileHelper();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
+
+        CSpringsEntriesProvider generatedEntriesProvider = new CSpringsEntriesProvider(output, lookupProvider);
+        lookupProvider = generatedEntriesProvider.getRegistryProvider();
+        generator.addProvider(event.includeServer(), generatedEntriesProvider);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

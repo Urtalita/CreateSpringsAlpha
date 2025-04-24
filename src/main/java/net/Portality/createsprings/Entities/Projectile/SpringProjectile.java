@@ -1,15 +1,16 @@
 package net.Portality.createsprings.Entities.Projectile;
 
+import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
-import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Entities.damage.CSpringsDamageSources;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -71,10 +72,9 @@ public class SpringProjectile extends AbstractArrow {
             this.correctPosition();
         }
 
-        if(true){
+        if(this.level().isClientSide){
             if(this.getDeltaMovement().length() > 0.1){
-
-                if (this.level().isClientSide) {
+                if (!this.onGround()) {
                     this.level().addParticle(
                             ParticleTypes.FIREWORK,
                             this.getX(),
@@ -89,10 +89,6 @@ public class SpringProjectile extends AbstractArrow {
                     this.setOnGround(true);
                 }
             }
-        }
-
-        if (bounceCount < MAX_BOUNCES) {
-
         }
     }
 
@@ -200,11 +196,10 @@ public class SpringProjectile extends AbstractArrow {
     protected void onHitEntity(EntityHitResult result) {
         if (this.isRemoved() || level().isClientSide) return;
         Entity target = result.getEntity();
-        DamageSource damageSource = this.damageSources().arrow(this, this.getOwner());
         if (bounceCount < MAX_BOUNCES) {
 
             if (target instanceof LivingEntity livingTarget) {
-                livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                livingTarget.hurt(CSpringsDamageSources.test(level()), (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
             }
 
             Vec3 normal = target.position().subtract(this.position()).normalize();
@@ -288,7 +283,7 @@ public class SpringProjectile extends AbstractArrow {
     }
 
     private static Vec3 calculateInterceptionPoint(Projectile projectile, Entity target, double projectileSpeed) {
-        Vec3 targetPos = target.position();
+        Vec3 targetPos = target.position().add(0, 0.5, 0);
         Vec3 targetVel = target.getDeltaMovement();
         Vec3 projectilePos = projectile.position();
 

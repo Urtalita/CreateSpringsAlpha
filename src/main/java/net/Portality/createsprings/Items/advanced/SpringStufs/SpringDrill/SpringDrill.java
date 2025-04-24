@@ -78,7 +78,7 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return !ItemStack.isSameItem(oldStack, newStack);
+        return false;
     }
 
     @Override

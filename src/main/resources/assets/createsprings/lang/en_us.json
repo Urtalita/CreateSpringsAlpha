@@ -43,5 +43,7 @@
 
   "tooltip.springstuf.createsprings:punchcard": "allows you to program spring tools",
   "tooltip.springstuf.createsprings:spring_alloy_block": "an explosive ammo",
-  "tooltip.springstuf.minecraft:spyglass": "spring launcher sight"
+  "tooltip.springstuf.minecraft:spyglass": "spring launcher sight",
+
+  "damage_type.createsprings.test": "Test Damage"
 }
