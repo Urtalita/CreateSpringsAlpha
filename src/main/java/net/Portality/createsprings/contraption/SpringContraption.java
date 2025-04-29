@@ -7,14 +7,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static net.Portality.createsprings.utill.CspringsMath.blockPosSum;
-import static net.Portality.createsprings.utill.CspringsMath.calcPos;
+import static net.Portality.createsprings.utill.Helpers.CspringsMath.blockPosSum;
 
 public class SpringContraption extends TranslatingContraption {
     protected Direction facing;

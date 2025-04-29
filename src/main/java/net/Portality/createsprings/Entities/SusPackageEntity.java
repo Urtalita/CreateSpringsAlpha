@@ -6,6 +6,7 @@ import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -42,6 +43,14 @@ public class SusPackageEntity extends PackageEntity {
         SpringProjectile projectile = new SpringProjectile(level, shooter);
         projectile.setBaseDamage(3.5); // Установка урона
         return projectile;
+    }
+
+    public static PackageEntity fromItemStack(Level world, Vec3 position, ItemStack itemstack) {
+        PackageEntity packageEntity = ModEntities.SUS_PACKAGE
+                .create(world);
+        packageEntity.setPos(position);
+        packageEntity.setBox(itemstack);
+        return packageEntity;
     }
 
     @Override
@@ -106,6 +115,7 @@ public class SusPackageEntity extends PackageEntity {
         SpringProjectile projectile = (SpringProjectile) createProjectile(level, entity);
         projectile.shootFromRotation(entity, -90, 0, 0.0F,  3 * progress, 1.0F);
         projectile.redirectProjectile(projectile , 10, null);
+        projectile.setBox(true);
         level.addFreshEntity(projectile);
     }
 
@@ -119,5 +129,17 @@ public class SusPackageEntity extends PackageEntity {
             spawnSpring();
             inWater = true;
         }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        power = compound.getFloat("Stored");
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putFloat("Stored", power);
     }
 }

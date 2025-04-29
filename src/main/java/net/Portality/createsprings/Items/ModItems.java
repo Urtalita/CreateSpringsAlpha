@@ -16,6 +16,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringB
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSaw;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.world.item.BucketItem;
@@ -54,6 +55,9 @@ public class ModItems {
 
     public static final RegistryObject<Item> SPRING_SAW = ITEMS.register("spring_saw",
             () -> new SpringSaw(new Item.Properties().stacksTo(1))); // add to spring tools list
+
+    public static final RegistryObject<Item> SPRING_SHOVE = ITEMS.register("spring_shove",
+            () -> new SpringShove(new Item.Properties().stacksTo(1))); // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_PROJECTILE_ITEM = ITEMS.register("spring_projectile",
             () -> new Item(new Item.Properties()));

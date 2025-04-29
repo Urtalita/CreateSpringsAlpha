@@ -7,6 +7,7 @@
   "item.createsprings.spring_launcher": "Пружинный арбалет",
   "item.createsprings.spring_saw": "Пружинная пила",
   "item.createsprings.spring_base": "Пружинная основа",
+  "item.createsprings.spring_shove": "Пружинная лопата",
 
   "block.createsprings.obsidian_plate": "Обсидиановая пластина",
   "block.createsprings.spring_alloy_block": "Блок пружинного сплава",
@@ -43,5 +44,11 @@
 
   "tooltip.springstuf.createsprings:punchcard": "позволяет программировать пружинные инструменты",
   "tooltip.springstuf.createsprings:spring_alloy_block": "взрывной патрон",
-  "tooltip.springstuf.minecraft:spyglass": "прицел"
+  "tooltip.springstuf.minecraft:spyglass": "прицел",
+
+  "death.attack.createsprings.test": "%1$s столкнулся с пружиной",
+  "death.attack.createsprings.test.player": "%1$s столкнулся с пружиной",
+
+  "death.attack.createsprings.spring_box": "%1$s не пережил распаковку",
+  "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку"
 }

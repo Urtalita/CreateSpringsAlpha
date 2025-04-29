@@ -1,46 +1,42 @@
 package net.Portality.createsprings.Items.advanced.Spring;
 
+import com.simibubi.create.content.logistics.box.PackageEntity;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrillRenderer;
-import net.Portality.createsprings.menus.Spring.SpringMenu;
+import net.Portality.createsprings.Entities.ModEntities;
+import net.Portality.createsprings.Entities.SusPackageEntity;
+import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
+
+import static net.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BlockItem {
 
@@ -64,15 +60,20 @@ public class SpringItem extends BlockItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        /*
-        if (!stack.getOrCreateTag().hasUUID("TargetUUID") && !level.isClientSide) {
+        /* if (!stack.getOrCreateTag().hasUUID("TargetUUID") && !level.isClientSide) {
             player.openMenu(new SimpleMenuProvider(
                     (containerId, inv, p) -> new SpringMenu(containerId, inv, stack),
                     Component.literal("")
             ));
+        } */
+
+
+        InteractionHand hand2 = getOppositeHand(player.getUsedItemHand());
+        if(player.getItemInHand(hand2).getItem() instanceof PackageItem){
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(stack);
         }
 
-         */
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
@@ -82,9 +83,8 @@ public class SpringItem extends BlockItem {
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
         if (player.level().isClientSide()) return InteractionResult.PASS;
 
-
-
         player.startUsingItem(hand);
+
         return InteractionResult.CONSUME;
     }
 
@@ -102,7 +102,27 @@ public class SpringItem extends BlockItem {
             return;
 
         int time_pass = getUseDuration(stack) - timeCharged;
+        if(time_pass > TimeNeed){
+            if(LaunchItemInHand(player, level)){return;}
 
+            LaunchPlayerOrEntity(player, level, stack, entity);
+        }
+    }
+
+    private boolean LaunchItemInHand(Player player, Level level){
+        InteractionHand hand = getOppositeHand(player.getUsedItemHand());
+        if(player.getItemInHand(hand).getItem() instanceof PackageItem){
+            if(player.getItemInHand(hand).getItem() instanceof SusPackageItem){
+                launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), true);
+                return true;
+            }
+            launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false);
+            return true;
+        }
+        return false;
+    }
+
+    private void LaunchPlayerOrEntity(Player player, Level level, ItemStack stack, LivingEntity entity){
         // Параметры рейкаста
         double distance = 5;
         Vec3 start = player.getEyePosition(1.0F);
@@ -119,30 +139,14 @@ public class SpringItem extends BlockItem {
             Entity target = entityHit.getEntity();
 
             if (target instanceof LivingEntity livingTarget) {
-                if (time_pass > TimeNeed){
-                    float storedSu = GetStoredSu(stack);
-                    launchEntity(livingTarget, storedSu, (Player) entity);
-
-                    CompoundTag tag = stack.getOrCreateTag();
-                    CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
-                    if (!player.isCreative()){
-                        blockEntityTag.putFloat("Stored", 0);
-                    }
-                    tag.put("BlockEntityTag", blockEntityTag);
-                }
+                float storedSu = getStoredSu(stack);
+                launchEntity(livingTarget, storedSu, (Player) entity);
+                SetZeroSu(stack, player);
             }
         } else {
-            if (time_pass > TimeNeed){
-                float storedSu = GetStoredSu(stack);
-                launchPlayer(storedSu, (Player) entity);
-
-                CompoundTag tag = stack.getOrCreateTag();
-                CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
-                if (!player.isCreative()){
-                    blockEntityTag.putFloat("Stored", 0);
-                }
-                tag.put("BlockEntityTag", blockEntityTag);
-            }
+            float storedSu = getStoredSu(stack);
+            launchPlayer(storedSu, (Player) entity);
+            SetZeroSu(stack, player);
         }
     }
 
@@ -192,7 +196,63 @@ public class SpringItem extends BlockItem {
         entity.hurtMarked = true;
     }
 
-    public static float GetStoredSu(ItemStack stack){
+    public void launchPackage(ItemStack stack, Level world, Player player, ItemStack springStack, boolean isSusPackage) {
+        float strength = CreateSprings.SPRING_CAPACITY / getStoredSu(springStack);
+
+        SetZeroSu(springStack, player);
+
+        float f = getPackageVelocity(strength);
+        if (f < 0.1D)
+            return;
+        if (world.isClientSide)
+            return;
+
+        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
+                SoundSource.NEUTRAL, 0.5F, 0.5F);
+
+        ItemStack copy = stack.copy();
+        if (!player.getAbilities().instabuild)
+            stack.shrink(1);
+
+        Vec3 vec = new Vec3(player.getX(), player.getY() + player.getBoundingBox()
+                .getYsize() / 2f, player.getZ());
+        Vec3 motion = player.getLookAngle()
+                .scale(f * 2);
+        vec = vec.add(motion);
+
+        PackageEntity packageEntity;
+        if(isSusPackage){
+            SusPackageEntity SpackageEntity = new SusPackageEntity(world, vec.x, vec.y, vec.z);
+            SpackageEntity.power = getStoredSu(springStack);
+            packageEntity = SpackageEntity;
+        } else {
+            packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
+        }
+        packageEntity.setBox(copy);
+        packageEntity.setDeltaMovement(motion);
+        packageEntity.tossedBy = new WeakReference<>(player);
+        world.addFreshEntity(packageEntity);
+    }
+
+    public static float getPackageVelocity(float strength) {
+        return strength * 4;
+    }
+
+    private void SetZeroSu(ItemStack stack, Player player){
+        if (!player.isCreative()){
+            SetSu(stack, 0);
+        }
+    }
+
+    private void SetSu(ItemStack stack, float su){
+        CompoundTag tag = stack.getOrCreateTag();
+
+        CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+        blockEntityTag.putFloat("Stored", su);
+        tag.put("BlockEntityTag", blockEntityTag);
+    }
+
+    public static float getStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
         float stored = 0;
 
@@ -220,7 +280,7 @@ public class SpringItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        float stored = GetStoredSu(stack);
+        float stored = getStoredSu(stack);
         float capacity = CreateSprings.SPRING_CAPACITY;
         tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(String.valueOf(stored))).withStyle(ChatFormatting.DARK_GRAY)

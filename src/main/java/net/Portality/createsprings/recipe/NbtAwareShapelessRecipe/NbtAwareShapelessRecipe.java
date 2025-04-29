@@ -1,7 +1,6 @@
 package net.Portality.createsprings.recipe.NbtAwareShapelessRecipe;
 
 import com.google.gson.JsonObject;
-import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.core.NonNullList;
@@ -29,7 +28,7 @@ public class NbtAwareShapelessRecipe extends ShapelessRecipe {
             if (stack.hasTag()) {
                 if(stack.getItem() == ModBlocks.SPRING.asItem()){
                     CompoundTag tag = result.getOrCreateTag();
-                    tag.putFloat("Stored", SpringItem.GetStoredSu(stack));
+                    tag.putFloat("Stored", SpringItem.getStoredSu(stack));
                     break;
                 }
             }

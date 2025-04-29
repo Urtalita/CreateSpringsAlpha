@@ -13,10 +13,6 @@ public class CSpringsScrollValueHandler {
 
     public static float getScroll(ItemStack stack, float partialTicks, float speed) {
         CompoundTag tag = stack.getOrCreateTag();
-        if (!tag.contains("LastScroll")) {
-            tag.putFloat("LastScroll", 0.0f);
-            tag.putFloat("Scroll", 0.0f);
-        }
         return Mth.lerp(partialTicks, tag.getFloat("LastScroll"), tag.getFloat("Scroll"));
     }
 

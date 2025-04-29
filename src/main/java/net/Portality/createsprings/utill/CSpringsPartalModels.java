@@ -21,6 +21,8 @@ public class CSpringsPartalModels {
         SAW_HEAD = item("saw/saw_head"),
         SAW_SHAFT = item("saw/saw_shaft"),
 
+    SPRING_SHOVE = item("spring_shove_head"),
+
     SUS_BOX = block("sus_box"),
 
     WelderHead = block("friction_welder/top"),

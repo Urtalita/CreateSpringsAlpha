@@ -7,7 +7,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
-import net.Portality.createsprings.utill.ParticleHelper;
+import net.Portality.createsprings.utill.Helpers.ParticleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

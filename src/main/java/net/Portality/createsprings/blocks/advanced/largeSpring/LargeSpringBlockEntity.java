@@ -1,24 +1,13 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.*;
-import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
-import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
-import com.simibubi.create.content.contraptions.piston.PistonContraption;
-import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
-import com.simibubi.create.content.contraptions.pulley.PulleyBlockEntity;
-import com.simibubi.create.content.contraptions.pulley.PulleyContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
-import net.Portality.createsprings.contraption.SpringContraption;
-import net.Portality.createsprings.utill.CspringsMath;
-import net.Portality.createsprings.utill.RenderHelper;
+import net.Portality.createsprings.utill.Helpers.CspringsMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -30,7 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 

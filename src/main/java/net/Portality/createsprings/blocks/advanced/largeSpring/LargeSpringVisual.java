@@ -2,27 +2,22 @@ package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.base.*;
-import dev.engine_room.flywheel.api.instance.Instance;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
-import net.Portality.createsprings.utill.RenderHelper;
-import net.createmod.catnip.math.AngleHelper;
+import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-import static net.Portality.createsprings.utill.RenderHelper.*;
+import static net.Portality.createsprings.utill.Helpers.RenderHelper.*;
 
 public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> implements SimpleDynamicVisual {
     private final List<OrientedInstance> rings = new ArrayList<>();

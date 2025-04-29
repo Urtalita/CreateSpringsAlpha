@@ -1,10 +1,7 @@
-package net.Portality.createsprings.utill;
+package net.Portality.createsprings.utill.Helpers;
 
 import com.mojang.math.Axis;
-import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
-import dev.engine_room.flywheel.lib.model.Models;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -56,6 +56,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPRING_DRILL.get());
                         pOutput.accept(ModItems.SPRING_BASE.get());
                         pOutput.accept(ModItems.SPRING_SAW.get());
+                        pOutput.accept(ModItems.SPRING_SHOVE.get());
 
                     })
                     .build());

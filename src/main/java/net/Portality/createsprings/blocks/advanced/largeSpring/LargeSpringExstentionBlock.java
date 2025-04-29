@@ -1,8 +1,5 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,14 +11,11 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.antlr.v4.automata.TailEpsilonRemover;
 
-import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
-import static net.Portality.createsprings.utill.CspringsMath.calcPos;
+import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPos;
 
 public class LargeSpringExstentionBlock extends DirectionalBlock {
     public static final IntegerProperty COMPRESSION = IntegerProperty.create("compression", 0, 16);

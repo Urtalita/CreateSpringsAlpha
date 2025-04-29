@@ -2,27 +2,16 @@ package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
-import net.Portality.createsprings.utill.HitboxHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
 
 public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<LargeSpringBlockEntity> {
 

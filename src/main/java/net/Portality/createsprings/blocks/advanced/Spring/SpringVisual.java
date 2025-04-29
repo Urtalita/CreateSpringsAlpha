@@ -11,9 +11,7 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
-import net.Portality.createsprings.utill.RenderHelper;
-import net.createmod.catnip.math.AngleHelper;
-import net.minecraft.core.BlockPos;
+import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import org.joml.Quaternionf;
@@ -22,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.Portality.createsprings.utill.RenderHelper.*;
+import static net.Portality.createsprings.utill.Helpers.RenderHelper.*;
 
 public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements SimpleDynamicVisual  {
 

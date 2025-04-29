@@ -1,37 +1,24 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.AbstractSimpleShaftBlock;
-import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
-import net.Portality.createsprings.utill.HitboxHelper;
+import net.Portality.createsprings.utill.Helpers.HitboxHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.registries.RegistryObject;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<SpringCoilBlockEntity> {
 

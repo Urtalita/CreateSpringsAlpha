@@ -21,7 +21,14 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
 
         tooltip.add(Component.literal("speed: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(ChatFormatting.GRAY)));
+                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(getSpeedColor(speed))));
+    }
+
+    private ChatFormatting getSpeedColor(Double speed){
+        if(speed == 0){return ChatFormatting.GRAY;}
+        if(speed < 1000){return ChatFormatting.GREEN;}
+        if(speed < 4000){return ChatFormatting.AQUA;}
+        return ChatFormatting.LIGHT_PURPLE;
     }
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
@@ -48,10 +55,10 @@ public class SpringSpeedSys {
             Stored -= 2000;
         }
 
-        // Добавляем ограничение максимальной скорости
         if(speed > 5000) speed = 5000;
 
         tag.putDouble("Speed", speed);
+        tag.putDouble("LastSpeed", speed);
         tag.putFloat("Stored", Stored);
         return InteractionResultHolder.pass(stack);
     }
@@ -64,6 +71,7 @@ public class SpringSpeedSys {
 
         if(speed > 0) {
             if(level.getGameTime() % 40 == 0) {
+                tag.putDouble("LastSpeed", speed);
                 speed = Math.max(speed - 40, 0);
                 tag.putDouble("Speed", speed);
             }

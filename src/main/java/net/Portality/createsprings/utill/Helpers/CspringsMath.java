@@ -1,4 +1,4 @@
-package net.Portality.createsprings.utill;
+package net.Portality.createsprings.utill.Helpers;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

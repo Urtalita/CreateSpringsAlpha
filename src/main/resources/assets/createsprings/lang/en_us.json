@@ -7,6 +7,7 @@
   "item.createsprings.spring_launcher": "Spring Launcher",
   "item.createsprings.spring_saw": "Spring Saw",
   "item.createsprings.spring_base": "Spring Base",
+  "item.createsprings.spring_shove": "Spring Shove",
 
   "block.createsprings.obsidian_plate": "Obsidian Plate",
   "block.createsprings.spring_alloy_block": "Spring alloy block",
@@ -45,5 +46,9 @@
   "tooltip.springstuf.createsprings:spring_alloy_block": "an explosive ammo",
   "tooltip.springstuf.minecraft:spyglass": "spring launcher sight",
 
-  "damage_type.createsprings.test": "Test Damage"
+  "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
+  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
+
+  "death.attack.createsprings.spring_box": "%1$s should have read the label",
+  "death.attack.createsprings.spring_box.player": "%1$s should have read the label"
 }

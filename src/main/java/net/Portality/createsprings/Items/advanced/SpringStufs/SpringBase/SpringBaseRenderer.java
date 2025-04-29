@@ -10,8 +10,10 @@ import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.CSpringsScrollValueHandler;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -32,7 +34,7 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         CompoundTag tag = stack.getOrCreateTag();
 
-        double Speed = tag.getDouble("Speed") / 100;
+        double Speed = Mth.lerp(Minecraft.getInstance().level.getGameTime() % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
         int Springs = tag.getInt("Springs_rn");
 
         float zOffset = -1/16f;

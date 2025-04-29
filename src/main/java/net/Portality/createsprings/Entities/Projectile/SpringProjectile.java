@@ -1,13 +1,11 @@
 package net.Portality.createsprings.Entities.Projectile;
 
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsDamageSources;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.*;
@@ -17,16 +15,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.util.Comparator;
 
@@ -36,6 +29,7 @@ public class SpringProjectile extends AbstractArrow {
     private static final int MAX_BOUNCES = 10; // Максимальное число отскоков
     private static final float ARC_HEIGHT = 0.05f; // Высота дуги
     private static final double GRAVITY = -0.08;
+    private static boolean box = false;
 
     public SpringProjectile(Level pLevl) {
         super(ModEntities.SPRING_PROJECTILE.get(),pLevl);
@@ -48,6 +42,10 @@ public class SpringProjectile extends AbstractArrow {
     public SpringProjectile(EntityType<SpringProjectile> springProjectileEntityType, Level level) {
         super(springProjectileEntityType, level);
         this.setBaseDamage(10);
+    }
+
+    public void setBox(boolean b){
+        this.box = b;
     }
 
     @Override
@@ -199,7 +197,13 @@ public class SpringProjectile extends AbstractArrow {
         if (bounceCount < MAX_BOUNCES) {
 
             if (target instanceof LivingEntity livingTarget) {
-                livingTarget.hurt(CSpringsDamageSources.test(level()), (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                if(box){
+                    DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
+                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                } else {
+                    DamageSource damageSource = CSpringsDamageSources.spring(this.level());
+                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                }
             }
 
             Vec3 normal = target.position().subtract(this.position()).normalize();

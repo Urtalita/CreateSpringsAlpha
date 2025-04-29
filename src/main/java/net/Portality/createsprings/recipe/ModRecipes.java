@@ -2,7 +2,6 @@ package net.Portality.createsprings.recipe;
 
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.compat.WelderCategory;
-import net.Portality.createsprings.recipe.NbtAwareShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipeSerialiser;
 import net.minecraft.resources.ResourceLocation;
