@@ -52,6 +52,8 @@ public class ModCreativeModeTabs {
 
                         pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());
 
+                        pOutput.accept(ModItems.HAT.get());
+
                         pOutput.accept(ModItems.SPRING_LAUNCHER.get());
                         pOutput.accept(ModItems.SPRING_DRILL.get());
                         pOutput.accept(ModItems.SPRING_BASE.get());

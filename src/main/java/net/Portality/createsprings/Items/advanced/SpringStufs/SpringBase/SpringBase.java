@@ -1,6 +1,7 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
@@ -119,6 +120,11 @@ public class SpringBase extends Item implements CustomArmPoseItem {
         }
         if (core.addStackedLogick(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
             core.switchToolInHand(player, slot, ModItems.SPRING_SAW.get(), stack1);
+            player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
+            return true;
+        }
+        if (core.addStackedLogick(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
+            core.switchToolInHand(player, slot, ModItems.SPRING_SHOVE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }

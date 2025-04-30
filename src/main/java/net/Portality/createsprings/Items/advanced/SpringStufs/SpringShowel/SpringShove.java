@@ -81,7 +81,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         if(!stack.getOrCreateTag().contains("contains")){
             CompoundTag tag = stack.getOrCreateTag();
-            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(AllBlocks.MECHANICAL_DRILL.asItem());
+            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(AllItems.WHISK.asItem());
 
             CompoundTag contains = tag.getCompound("contains");
 

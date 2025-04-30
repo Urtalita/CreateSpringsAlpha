@@ -34,7 +34,9 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         CompoundTag tag = stack.getOrCreateTag();
 
-        double Speed = Mth.lerp(Minecraft.getInstance().level.getGameTime() % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
+        double Speed = Mth.lerp((Minecraft.getInstance().level.getGameTime() - 1)
+                % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
+
         int Springs = tag.getInt("Springs_rn");
 
         float zOffset = -1/16f;

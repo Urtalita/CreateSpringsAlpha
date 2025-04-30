@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -58,7 +59,6 @@ public class SpringSpeedSys {
         if(speed > 5000) speed = 5000;
 
         tag.putDouble("Speed", speed);
-        tag.putDouble("LastSpeed", speed);
         tag.putFloat("Stored", Stored);
         return InteractionResultHolder.pass(stack);
     }

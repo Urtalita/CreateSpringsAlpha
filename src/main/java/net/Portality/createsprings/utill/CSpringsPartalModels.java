@@ -25,14 +25,19 @@ public class CSpringsPartalModels {
 
     SUS_BOX = block("sus_box"),
 
+    HAT = armor("hat"),
+
     WelderHead = block("friction_welder/top"),
             LARGE_SPRING_COIL_ROTATED = block("large_spring_coil_partal_rotated"),
     LARGE_SPRING_COIL = block("large_spring_coil_partal"),
             LARGE_SPRING_COIL_CORNER = block("large_spring_coil_partal_corner");
 
+
     private static PartialModel block(String path) {
         return PartialModel.of(CreateSprings.asResource("block/" + path));
     }
+
+    private static PartialModel armor(String path){return PartialModel.of(CreateSprings.asResource("armor/" + path));}
 
     private static PartialModel item(String path) {
         return PartialModel.of(CreateSprings.asResource("item/" + path));

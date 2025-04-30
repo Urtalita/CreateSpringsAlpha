@@ -43,8 +43,8 @@ public class SpringPoweredCore {
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
-        float capacity = springsMaxCount * CreateSprings.SPRING_CAPACITY;
         CompoundTag tag = stack.getOrCreateTag();
+        float capacity = tag.getInt("Springs_rn") * CreateSprings.SPRING_CAPACITY;
         tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
                 .append(Component.literal(String.valueOf(tag.getFloat("Stored")))).withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
