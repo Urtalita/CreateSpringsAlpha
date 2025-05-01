@@ -11,6 +11,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.Mou
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.OverlayHandler;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.ViewModificationHandler;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
+import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
@@ -144,6 +145,7 @@ public class CreateSprings {
         @SubscribeEvent
         public static void onTooltipRegistration(RegisterClientTooltipComponentFactoriesEvent event) {
             event.register(SpringPoweredCore.SpringSlotTooltipComponent.class, SpringPoweredCore.SpringSlotRenderer::new);
+            event.register(HatItem.HatSlotTooltipComponent.class, HatItem.HatSlotRenderer::new);
         }
 
         @SubscribeEvent

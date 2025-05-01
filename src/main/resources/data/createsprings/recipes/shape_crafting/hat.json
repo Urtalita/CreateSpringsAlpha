@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "tst",
+    "oho",
+    "   "
+  ],
+  "key": {
+    "h": {
+      "item": "create:cardboard_helmet"
+    },
+    "o": {
+      "item": "create:powdered_obsidian"
+    },
+    "t": {
+      "item": "minecraft:string"
+    },
+    "s": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "item": "createsprings:hat"
+  }
+}

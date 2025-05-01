@@ -5,7 +5,6 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.Portality.createsprings.CreateSprings;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;

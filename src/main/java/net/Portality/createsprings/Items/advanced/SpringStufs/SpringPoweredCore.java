@@ -84,7 +84,7 @@ public class SpringPoweredCore {
         }
     }
 
-    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+    public static Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         return Optional.of(new SpringPoweredCore.SpringSlotTooltipComponent(
                 tag.getInt("Springs_rn"),
@@ -172,7 +172,7 @@ public class SpringPoweredCore {
         return stored;
     }
 
-    public boolean addItem(Item item, ItemStack stack1, ItemStack stack2){
+    public static boolean addItem(Item item, ItemStack stack1, ItemStack stack2){
         CompoundTag tag = stack1.getOrCreateTag();
         if (stack2.getItem() == item){
 
@@ -192,7 +192,7 @@ public class SpringPoweredCore {
         return false;
     }
 
-    public boolean removeItem(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
+    public static boolean removeItem(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
         CompoundTag tag = stack1.getOrCreateTag();
         if (stack2.isEmpty()) {
             CompoundTag contains = tag.getCompound("contains");

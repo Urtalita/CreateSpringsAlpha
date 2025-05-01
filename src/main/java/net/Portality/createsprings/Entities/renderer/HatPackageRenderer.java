@@ -6,6 +6,7 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
@@ -21,15 +22,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class SusPackageRenderer extends EntityRenderer<SusPackageEntity> {
+public class HatPackageRenderer extends EntityRenderer<HatPackageEntity> {
 
-    public SusPackageRenderer(EntityRendererProvider.Context pContext) {
+    public HatPackageRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
         shadowRadius = 0.5f;
     }
 
     @Override
-    public void render(SusPackageEntity entity, float yaw, float pt, PoseStack ms, MultiBufferSource buffer, int light) {
+    public void render(HatPackageEntity entity, float yaw, float pt, PoseStack ms, MultiBufferSource buffer, int light) {
         if (!VisualizationManager.supportsVisualization(entity.level())) {
             ItemStack box = entity.box;
             if (box.isEmpty() || !PackageItem.isPackage(box)) box = AllBlocks.CARDBOARD_BLOCK.asStack();
@@ -51,9 +52,8 @@ public class SusPackageRenderer extends EntityRenderer<SusPackageEntity> {
         sbb.renderInto(ms, buffer.getBuffer(RenderType.solid()));
     }
 
-
     @Override
-    public ResourceLocation getTextureLocation(SusPackageEntity p_114482_) {
+    public ResourceLocation getTextureLocation(HatPackageEntity p_114482_) {
         return null;
     }
 }

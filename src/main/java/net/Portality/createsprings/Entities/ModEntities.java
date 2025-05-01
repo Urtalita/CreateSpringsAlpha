@@ -1,17 +1,20 @@
 package net.Portality.createsprings.Entities;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.box.PackageVisual;
 import com.simibubi.create.foundation.data.CreateEntityBuilder;
 import com.tterrag.registrate.util.entry.EntityEntry;
 import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
+import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Entities.Projectile.SpringAlloyBlockProjectile;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
+import net.Portality.createsprings.Entities.Visual.HatPackageVisual;
+import net.Portality.createsprings.Entities.renderer.HatPackageRenderer;
 import net.Portality.createsprings.Entities.renderer.SusPackageRenderer;
-import net.Portality.createsprings.Entities.renderer.SusPackageVisual;
+import net.Portality.createsprings.Entities.Visual.SusPackageVisual;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -39,6 +42,11 @@ public class ModEntities {
     public static final EntityEntry<SusPackageEntity> SUS_PACKAGE = register("sus_package", SusPackageEntity::new, () -> SusPackageRenderer::new,
                     MobCategory.MISC, 10, 3, true, false, SusPackageEntity::build)
             .visual(() -> SusPackageVisual::new, true)
+            .register();
+
+    public static final EntityEntry<HatPackageEntity> HAT_PACKAGE = register("hat", HatPackageEntity::new, () -> HatPackageRenderer::new,
+            MobCategory.MISC, 10, 3, true, false, HatPackageEntity::build)
+            .visual(() -> HatPackageVisual::new, true)
             .register();
 
 

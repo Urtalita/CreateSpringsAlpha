@@ -2,6 +2,8 @@ package net.Portality.createsprings.Items;
 
 import com.mojang.datafixers.types.templates.List;
 import com.simibubi.create.content.equipment.TreeFertilizerItem;
+import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import com.simibubi.create.content.equipment.goggles.GogglesModel;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.data.BuilderTransformers;
@@ -19,6 +21,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSa
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
+import net.Portality.createsprings.Items.advanced.hat.HatModel;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -66,7 +69,11 @@ public class ModItems {
     public static final RegistryObject<Item> SUS_PACKAGE = ITEMS.register("sus_package",
             () -> new SusPackageItem(new Item.Properties(), PackageStyles.STYLES.get(0)));
 
-    public static final RegistryObject<Item> HAT = ITEMS.register("hat", HatItem::new);
+    public static final ItemEntry<HatItem> HAT = CreateSprings.CSPRINGS_REGISTRATE
+            .item("hat", HatItem::new)
+            .properties(p -> p.stacksTo(1))
+            .onRegister(CreateRegistrate.itemModel(() -> HatModel::new))
+            .register();
 
     public static final RegistryObject<Item> SPRING_ALLOY_BUCKET = ITEMS.register(
             "spring_alloy_bucket",

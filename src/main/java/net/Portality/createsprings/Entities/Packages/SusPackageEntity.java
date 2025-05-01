@@ -1,9 +1,9 @@
-package net.Portality.createsprings.Entities;
+package net.Portality.createsprings.Entities.Packages;
 
-import com.simibubi.create.AllEntityTypes;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

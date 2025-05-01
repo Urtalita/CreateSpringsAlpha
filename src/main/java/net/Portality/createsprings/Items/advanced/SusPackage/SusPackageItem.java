@@ -1,13 +1,10 @@
 package net.Portality.createsprings.Items.advanced.SusPackage;
 
-import com.simibubi.create.AllEntityTypes;
-import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
-import net.Portality.createsprings.Entities.SusPackageEntity;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
+import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

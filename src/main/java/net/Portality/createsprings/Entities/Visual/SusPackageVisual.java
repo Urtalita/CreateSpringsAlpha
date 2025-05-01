@@ -1,11 +1,5 @@
-package net.Portality.createsprings.Entities.renderer;
+package net.Portality.createsprings.Entities.Visual;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.box.PackageVisual;
-import com.simibubi.create.content.logistics.packager.PackagerRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
@@ -13,12 +7,10 @@ import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.AbstractEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.Entities.SusPackageEntity;
+import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class SusPackageVisual extends AbstractEntityVisual<SusPackageEntity> implements SimpleDynamicVisual {
     public final TransformedInstance instance;
