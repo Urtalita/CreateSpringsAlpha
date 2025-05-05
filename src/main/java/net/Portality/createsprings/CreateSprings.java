@@ -1,5 +1,6 @@
 package net.Portality.createsprings;
 
+import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.infrastructure.data.CreateDatagen;
 import net.Portality.createsprings.Entities.ModEntities;
@@ -23,6 +24,7 @@ import com.mojang.logging.LogUtils;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtAwareShapelessRecipe.NbtAwareShapelessRecipe;
+import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -75,6 +77,7 @@ public class CreateSprings {
         ModRecipes.register(modEventBus);
         CSpringsPartalModels.register();
         ModEntities.register(modEventBus);
+        CSpringsPackets.registerPackets();
 
         ModFluids.FLUID_TYPES.register(modEventBus);
         ModFluids.FLUIDS.register(modEventBus);

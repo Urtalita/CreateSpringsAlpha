@@ -1,6 +1,7 @@
-package net.Portality.createsprings.Items.advanced.hat;
+package net.Portality.createsprings.server.hat;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
+import net.Portality.createsprings.Items.advanced.hat.PlayerHatRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 

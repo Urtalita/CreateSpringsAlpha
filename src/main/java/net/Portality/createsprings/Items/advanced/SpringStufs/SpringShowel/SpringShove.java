@@ -49,6 +49,16 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem {
     }
 
     @Override
+    public @Nullable CompoundTag getShareTag(ItemStack stack) {
+        CompoundTag serverNbt = super.getShareTag(stack);
+        if (serverNbt == null) serverNbt = new CompoundTag();
+
+        serverNbt.remove("Scroll");
+        serverNbt.remove("LastScroll");
+        return serverNbt;
+    }
+
+    @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         if(!isCorrectToolForDrops(stack, state))
             return 1.0F;

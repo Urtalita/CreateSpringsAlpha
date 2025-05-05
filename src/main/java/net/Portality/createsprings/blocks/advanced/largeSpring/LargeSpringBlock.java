@@ -12,8 +12,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<LargeSpringBlockEntity> {
+
+    public static final IntegerProperty LEN = IntegerProperty.create("len", 1, 32);
 
     public LargeSpringBlock(Properties properties) {
         super(properties);
@@ -30,7 +36,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         withBlockEntityDo(worldIn, pos, be-> {
             try {
-                be.onPlace(pos, state.getValue(FACING));
+                be.onPlace(pos, state.getValue(FACING), state.getValue(LEN));
             } catch (AssemblyException e) {
                 throw new RuntimeException(e);
             }
@@ -70,5 +76,11 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     @Override
     public BlockEntityType<? extends LargeSpringBlockEntity> getBlockEntityType() {
         return ModBlockEntities.LARGE_SPRING.get();
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(LEN);
+        super.createBlockStateDefinition(builder);
     }
 }

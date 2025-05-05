@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.Portality.createsprings.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixintest.refmap.json",
+  "mixins": [
+    "MixinSpoutBe"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

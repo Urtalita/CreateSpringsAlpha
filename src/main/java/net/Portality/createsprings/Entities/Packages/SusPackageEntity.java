@@ -1,10 +1,12 @@
 package net.Portality.createsprings.Entities.Packages;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -141,5 +143,21 @@ public class SusPackageEntity extends PackageEntity {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putFloat("Stored", power);
+    }
+
+    @Override
+    public void tick() {
+        if (firstTick) {
+            verifyInitialEntity();
+        }
+
+        if (level() instanceof PonderLevel) {
+            setDeltaMovement(getDeltaMovement().add(0, -0.06, 0));
+            if (position().y < 0.125)
+                discard();
+        }
+
+        insertionDelay = Math.min(insertionDelay + 1, 30);
+
     }
 }

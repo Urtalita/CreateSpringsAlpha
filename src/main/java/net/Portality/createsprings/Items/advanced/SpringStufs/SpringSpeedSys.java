@@ -64,7 +64,7 @@ public class SpringSpeedSys {
     }
 
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
-        if(level.isClientSide() || slotIndex != selectedIndex) return;
+        if(level.isClientSide()) return;
 
         CompoundTag tag = stack.getOrCreateTag();
         double speed = tag.getDouble("Speed");

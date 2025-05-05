@@ -1,6 +1,7 @@
 package net.Portality.createsprings.utill;
 
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.animation.PhysicalFloat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -20,12 +21,8 @@ public class CSpringsScrollValueHandler {
     public static void tick(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         float lastScroll = tag.getFloat("Scroll");
-        float speed = tag.getFloat("Speed");
 
-        if (speed != 0) {
-            float tickDelta = Minecraft.getInstance().getDeltaFrameTime();
-            tag.putFloat("LastScroll", lastScroll);
-            tag.putFloat("Scroll", lastScroll + speed * tickDelta);
-        }
+        tag.putFloat("LastScroll", lastScroll);
+        tag.putFloat("Scroll", lastScroll + Mth.lerp((Minecraft.getInstance().level.getGameTime() - 1) % 40 / 40f ,tag.getFloat("LastSpeed"), tag.getFloat("Speed")));
     }
 }

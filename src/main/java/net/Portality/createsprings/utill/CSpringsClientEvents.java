@@ -1,19 +1,14 @@
 package net.Portality.createsprings.utill;
 
-import com.simibubi.create.foundation.events.ClientEvents;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSaw;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.server.hat.ServerHatHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,14 +23,24 @@ public class CSpringsClientEvents {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            for (ItemStack stack : mc.player.getAllSlots()) {
-                Item item = stack.getItem();
-                if (item instanceof SpringDrill || item instanceof SpringSaw || item instanceof SpringShove) {
-                    CSpringsScrollValueHandler.tick(stack);
-                }
-            }
+            ItemStack stack = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
+            animationTick(stack);
+            stack = mc.player.getItemInHand(InteractionHand.OFF_HAND);
+            animationTick(stack);
         }
     }
 
+    private static void animationTick(ItemStack stack){
+        Item item = stack.getItem();
+        if (item instanceof SpringDrill || item instanceof SpringSaw || item instanceof SpringShove) {
+            CSpringsScrollValueHandler.tick(stack);
+        }
+    }
 
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START)
+            return;
+        ServerHatHandler.tick();
+    }
 }

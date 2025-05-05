@@ -65,8 +65,9 @@ public class HatItem extends Item {
     static {
         addIsWearingPredicate(player -> ModItems.HAT.isIn(player.getItemBySlot(EquipmentSlot.HEAD)));
     }
+
     public HatItem(Properties properties) {
-        super(properties.durability(500));
+        super(properties);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
     }
 

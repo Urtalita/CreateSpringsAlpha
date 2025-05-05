@@ -1,36 +1,25 @@
 package net.Portality.createsprings.blocks;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.Create;
-import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
-import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
-import com.simibubi.create.content.trains.track.*;
-import com.simibubi.create.foundation.data.BlockStateGen;
-import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
-import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
 import net.Portality.createsprings.Items.advanced.frictionWelder.WelderItem;
-import net.Portality.createsprings.blocks.advanced.AndesiteMoldBlock;
+import net.Portality.createsprings.blocks.advanced.AndesiteMold.AndesiteMoldBlock;
+import net.Portality.createsprings.blocks.advanced.AndesiteMold.UnfilledAndesiteMoldBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
-import net.Portality.createsprings.blocks.advanced.ObsidianSlabBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringExstentionBlock;
 import net.Portality.createsprings.fluid.ModFluids;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -39,7 +28,6 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.function.Supplier;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
-import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
 public class ModBlocks {
@@ -58,10 +46,7 @@ public class ModBlocks {
             () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)), "fireResistant");
 
     public static final RegistryObject<Block> ANDESITE_MOLD = registerBlock("andesite_mold",
-            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
-
-    public static final RegistryObject<Block> FILLED_ANDESITE_MOLD = registerBlock("filled_andesite_mold",
-            () -> new AndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
+            () -> new UnfilledAndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
@@ -70,6 +55,14 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> LARGE_SPRING_EXTENTION = registerBlockWithoutItem("large_spring_extention",
             () -> new LargeSpringExstentionBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()));
+
+    public static final BlockEntry<AndesiteMoldBlock> FILLED_ANDESITE_MOLD = CSPRINGS_REGISTRATE
+            .block("filled_andesite_mold", AndesiteMoldBlock::new)
+            .initialProperties(SharedProperties::wooden)
+            .properties(p -> p.noOcclusion())
+            .simpleItem()
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .register();
 
 
     public static final BlockEntry<LargeSpringBlock> LARGE_SPRING = CSPRINGS_REGISTRATE

@@ -72,7 +72,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         return 0f;
     }
 
-    public void onPlace(BlockPos pos, Direction facing) throws AssemblyException {
+    public void onPlace(BlockPos pos, Direction facing, int len) throws AssemblyException {
+        this.len = len;
+        curLen = len;
         for(int y = 0; y < curLen - 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){

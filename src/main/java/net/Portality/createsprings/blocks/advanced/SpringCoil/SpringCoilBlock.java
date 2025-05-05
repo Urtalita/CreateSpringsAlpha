@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -49,9 +50,11 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, worldIn, pos, oldState, isMoving);
-
+        if(oldState == Blocks.COBBLESTONE.defaultBlockState()){
+            return;
+        }
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlaceOnBreak(pos, true);
+            be.onPlace(pos, true);
         });
     }
 
@@ -72,15 +75,6 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             player.getItemInHand(hand).shrink(1);
         });
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        withBlockEntityDo(pLevel, pPos, be->{
-            be.onPlaceOnBreak(pPos, false);
-        });
-
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }
 
     @Override
