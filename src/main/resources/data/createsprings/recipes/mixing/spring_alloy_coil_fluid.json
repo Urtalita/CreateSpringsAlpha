@@ -1,0 +1,15 @@
+{
+  "type": "create:mixing",
+  "heatRequirement": "heated",
+  "ingredients": [
+    {
+      "item": "createsprings:large_spring_coil"
+    }
+  ],
+  "results": [
+    {
+      "amount": 450,
+      "fluid": "createsprings:spring_alloy_fluid"
+    }
+  ]
+}

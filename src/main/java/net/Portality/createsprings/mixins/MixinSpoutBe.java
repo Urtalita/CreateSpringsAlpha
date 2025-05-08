@@ -1,5 +1,6 @@
 package net.Portality.createsprings.mixins;
 
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.api.behaviour.spouting.BlockSpoutingBehaviour;
 import com.simibubi.create.content.fluids.spout.SpoutBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
@@ -76,6 +77,7 @@ public abstract class MixinSpoutBe {
                             .setFluid(FluidHelper.copyStackWithAmount(currentFluidInTank,
                                     currentFluidInTank.getAmount() - 500));
                     filled = true;
+                    AllSoundEvents.SPOUTING.playOnServer(level, pos);
 
                     ((SpoutBlockEntity) be).notifyUpdate();
                 }

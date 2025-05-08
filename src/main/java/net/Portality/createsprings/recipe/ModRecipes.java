@@ -1,14 +1,13 @@
 package net.Portality.createsprings.recipe;
 
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.compat.WelderCategory;
+import net.Portality.createsprings.recipe.Casting.CastingRecipe;
+import net.Portality.createsprings.recipe.Casting.CastingRecipeSerialiser;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipeSerialiser;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -32,6 +31,9 @@ public class ModRecipes {
     public static final RegistryObject<RecipeSerializer<WelderRecipe>> WELDING =
             SERIALIZERS.register("welding", () -> new WelderRecipeSerialiser());
 
+    public static final Supplier<RecipeType<CastingRecipe>> CASTING_TYPE = register("casting");
+    public static final RegistryObject<RecipeSerializer<CastingRecipe>> CASTING =
+            SERIALIZERS.register("casting", () -> new CastingRecipeSerialiser());
 
     public static void register(IEventBus event) {
 

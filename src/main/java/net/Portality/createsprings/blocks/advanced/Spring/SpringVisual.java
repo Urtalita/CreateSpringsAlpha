@@ -44,9 +44,9 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
 
         movementDirection = facing.getOpposite().getNormal();
 
-        plate = createInstance(CSpringsPartalModels.SPRING_PLATE);
+        plate = createInstance(CSpringsPartalModels.SPRING_PLATE, instancerProvider());
         for (int i = 0; i < SPRING_LEN; i++) {
-            rings.add(createInstance(CSpringsPartalModels.SPRING_PIECE));
+            rings.add(createInstance(CSpringsPartalModels.SPRING_PIECE, instancerProvider()));
             ringPos.add((2f+i)/16f);
         }
 
@@ -60,10 +60,6 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     private void applyBaseTransformations(OrientedInstance instance, Direction facing){
         RenderHelper.applyBaseTransformations(instance, facing);
         instance.rotateXDegrees(-90);
-    }
-
-    private OrientedInstance createInstance(PartialModel model) {
-        return instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model)).createInstance();
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {

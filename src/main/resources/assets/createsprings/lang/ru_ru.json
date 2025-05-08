@@ -31,6 +31,8 @@
   "advancement.createsprings.create_springs.title": "В объяснениях не нуждаюсь",
   "advancement.createsprings.create_springs.description": "Создайте 8 пружин",
 
+  "createsprings.recipe.casting": "Отливка",
+
   "createsprings.recipe.welding": "Сварка",
   "createsprings.recipe.speed": "Скорость обработки %s",
   "createsprings.speed.fast": "быстрая",
@@ -51,5 +53,7 @@
   "death.attack.createsprings.test.player": "%1$s столкнулся с пружиной",
 
   "death.attack.createsprings.spring_box": "%1$s не пережил распаковку",
-  "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку"
+  "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку",
+  "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
+  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise"
 }

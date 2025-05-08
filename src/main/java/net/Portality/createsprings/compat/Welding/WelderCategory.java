@@ -1,25 +1,19 @@
-package net.Portality.createsprings.compat;
+package net.Portality.createsprings.compat.Welding;
 
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeType;
-import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Text;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

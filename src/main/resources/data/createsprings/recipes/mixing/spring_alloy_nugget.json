@@ -1,0 +1,14 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy_nugget"
+    }
+  ],
+  "results": [
+    {
+      "amount": 2,
+      "fluid": "createsprings:spring_alloy_fluid"
+    }
+  ]
+}

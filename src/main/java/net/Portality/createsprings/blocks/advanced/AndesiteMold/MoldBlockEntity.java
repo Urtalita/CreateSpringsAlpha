@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
@@ -35,10 +36,17 @@ public class MoldBlockEntity extends SmartBlockEntity implements Container{
 
     public boolean filled = true;
     private int delay = 20;
+    private int lastdelay = 20;
 
     public MoldBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         items.set(0, new ItemStack(ModBlocks.LARGE_SPRING_COIL.get().asItem()));
+    }
+
+    public float getDelay(float pt){
+        int del = (20 - delay) / 20;
+        int lastdel = (20 - lastdelay) / 20;
+        return Mth.lerp(pt, del, lastdel);
     }
 
     @Override
@@ -51,6 +59,7 @@ public class MoldBlockEntity extends SmartBlockEntity implements Container{
         super.tick();
         if(!filled){
             delay--;
+            lastdelay = delay;
             if(delay == -1){
                 level.setBlock(worldPosition,
                         ModBlocks.ANDESITE_MOLD.get().defaultBlockState().setValue(FACING, getBlockState().getValue(FACING)), 3);

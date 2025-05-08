@@ -43,11 +43,11 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         movementDirection = facing.getOpposite().getNormal();
 
         for (int i = 0; i < SPRING_LEN; i++) {
-            rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED));
-            rings_corners.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER));
+            rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED, instancerProvider()));
+            rings_corners.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER, instancerProvider()));
         }
-        up_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE);
-        down_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE);
+        up_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE, instancerProvider());
+        down_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE, instancerProvider());
 
         for(int i = 0; i< rings.size(); i++){
             applyBaseRotation(rings.get(i), i);
@@ -64,7 +64,6 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         RenderHelper.applyBaseTransformations(instance, facing);
         instance.rotateXDegrees(-90);
     }
-
 
     private void applyBaseRotationCorner(OrientedInstance instance, int index){
         Direction.Axis axis = facing.getAxis();
@@ -99,10 +98,6 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
             return;
         }
         instance.rotateXDegrees(-90);
-    }
-
-    private OrientedInstance createInstance(PartialModel model) {
-        return instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model)).createInstance();
     }
 
     @Override

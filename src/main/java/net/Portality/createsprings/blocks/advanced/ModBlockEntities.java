@@ -4,6 +4,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.bearing.BearingRenderer;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
@@ -12,6 +13,8 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldBlockEntity;
+import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldRenderer;
+import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldVisual;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringVisual;
@@ -30,6 +33,7 @@ public class ModBlockEntities {
 
     public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
             .blockEntity("mold", MoldBlockEntity::new)
+            .visual(() -> MoldVisual::new)
             .validBlocks(ModBlocks.FILLED_ANDESITE_MOLD)
             .register();
 

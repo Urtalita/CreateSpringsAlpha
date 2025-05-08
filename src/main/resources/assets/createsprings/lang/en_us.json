@@ -31,6 +31,8 @@
   "advancement.createsprings.create_springs.title": "Create springs!",
   "advancement.createsprings.create_springs.description": "Create 8 springs",
 
+  "createsprings.recipe.casting": "Casting",
+
   "createsprings.recipe.welding": "Welding",
   "createsprings.recipe.speed": "Recipe speed: %s",
   "createsprings.speed.fast": "Fast",

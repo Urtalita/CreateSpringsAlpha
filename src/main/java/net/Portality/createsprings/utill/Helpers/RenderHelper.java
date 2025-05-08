@@ -1,7 +1,11 @@
 package net.Portality.createsprings.utill.Helpers;
 
 import com.mojang.math.Axis;
+import dev.engine_room.flywheel.api.instance.InstancerProvider;
+import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
+import dev.engine_room.flywheel.lib.model.Models;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,5 +54,16 @@ public class RenderHelper {
 
         orientation.mul(Axis.XP.rotationDegrees(-90 - AngleHelper.verticalAngle(facing)));
         return orientation;
+    }
+
+    public static OrientedInstance createInstance(PartialModel model, InstancerProvider provider) {
+        return provider.instancer(InstanceTypes.ORIENTED, Models.partial(model)).createInstance();
+    }
+
+    public static OrientedInstance setupInstance(PartialModel model, InstancerProvider provider, BlockPos pos, Direction facing){
+        OrientedInstance instance = createInstance(model, provider);
+        applyBaseTransformations(instance, facing);
+        instance.rotateXDegrees(-90);
+        return instance;
     }
 }

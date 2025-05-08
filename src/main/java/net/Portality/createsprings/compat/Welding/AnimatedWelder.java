@@ -1,9 +1,7 @@
-package net.Portality.createsprings.compat;
+package net.Portality.createsprings.compat.Welding;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.utill.CSpringsPartalModels;

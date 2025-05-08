@@ -1,7 +1,5 @@
 package net.Portality.createsprings.compat;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.compat.jei.DoubleItemIcon;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -10,8 +8,9 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.recipe.ModRecipes;
+import net.Portality.createsprings.compat.Welding.WelderCategory;
+import net.Portality.createsprings.compat.casting.CastingCategory;
+import net.Portality.createsprings.recipe.Casting.CastingRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.minecraft.resources.ResourceLocation;
 
@@ -35,17 +34,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
-import static net.Portality.createsprings.blocks.ModBlocks.FRICTION_WELDER;
+import static net.Portality.createsprings.blocks.ModBlocks.*;
+import static net.Portality.createsprings.recipe.ModRecipes.CASTING_TYPE;
 import static net.Portality.createsprings.recipe.ModRecipes.WELDER_TYPE;
 
 @JeiPlugin
 public class JEICreateSpringsPlugin implements IModPlugin {
     private static final ResourceLocation ID = CreateSprings.asResource("jei_plugin");
+
     public static final mezz.jei.api.recipe.RecipeType<WelderRecipe> WELDER_JEI_TYPE =
             new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("welding"), WelderRecipe.class);
+
+    public static final mezz.jei.api.recipe.RecipeType<CastingRecipe> CASTING_JEI_TYPE =
+            new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("casting"), CastingRecipe.class);
 
     @Override
     @Nonnull
@@ -66,14 +68,22 @@ public class JEICreateSpringsPlugin implements IModPlugin {
                 .emptyBackground(177, 77)
                 .build("welding", WelderCategory::new));
 
+        ALL.add(builder(CastingRecipe.class)
+                .addTypedRecipes(CASTING_TYPE::get)
+                .itemIcon(ANDESITE_MOLD.get())
+                .emptyBackground(177, 70)
+                .build("casting", CastingCategory::new));
+
         ALL.forEach(registration::addRecipeCategories);
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         ItemStack welderItem = new ItemStack(FRICTION_WELDER.get().asItem());
-        // Используем WELDER_JEI_TYPE вместо WELDER_TYPE.get()
+        ItemStack castingItem = new ItemStack(FILLED_ANDESITE_MOLD.get().asItem());
+
         registration.addRecipeCatalyst(welderItem, WELDER_JEI_TYPE);
+        registration.addRecipeCatalyst(castingItem, CASTING_JEI_TYPE);
     }
 
     @Override
