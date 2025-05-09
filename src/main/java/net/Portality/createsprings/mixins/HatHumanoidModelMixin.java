@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HumanoidModel.class)
 public class HatHumanoidModelMixin<T extends LivingEntity> {
+    /*
     @Shadow
     @Final
     public ModelPart body;
@@ -34,4 +35,5 @@ public class HatHumanoidModelMixin<T extends LivingEntity> {
 
         PlayerHatRenderer.beforeSetupAnim(player, (HumanoidModel<?>) (Object) this);
     }
+     */
 }

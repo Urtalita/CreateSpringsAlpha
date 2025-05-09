@@ -9,23 +9,32 @@ import dev.engine_room.flywheel.lib.visual.AbstractEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class HatPackageVisual extends AbstractEntityVisual<HatPackageEntity> implements SimpleDynamicVisual {
     public final TransformedInstance instance;
+    public final TransformedInstance instance2;
+    public boolean haveBlock = false;
 
     public HatPackageVisual(VisualizationContext ctx, HatPackageEntity entity, float partialTick) {
         super(ctx, entity, partialTick);
 
         PartialModel model = CSpringsPartalModels.HAT;
+        PartialModel model2 = CSpringsPartalModels.HAT2;
 
         instance = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(model))
                 .createInstance();
 
-        instance.rotateZDegrees(180).setChanged();
+        instance2 = instancerProvider().instancer(InstanceTypes.TRANSFORMED, Models.partial(model2))
+                .createInstance();
 
+        instance.rotateZDegrees(180).setChanged();
         animate(partialTick);
     }
 
@@ -54,11 +63,19 @@ public class HatPackageVisual extends AbstractEntityVisual<HatPackageEntity> imp
                 .rotateYCenteredDegrees(-yaw - 90)
                 .light(computePackedLight(partialTick))
                 .setChanged();
+
+        instance2.setIdentityTransform()
+                .translate(x - 0.5 + xNudge, y + yNudge, z - 0.5 + zNudge)
+                .rotateYCenteredDegrees(-yaw - 90)
+                .light(computePackedLight(partialTick))
+                .color(entity.red, entity.green, entity.blue)
+                .setChanged();
     }
 
     @Override
     protected void _delete() {
         instance.delete();
+        instance2.delete();
     }
 }
 

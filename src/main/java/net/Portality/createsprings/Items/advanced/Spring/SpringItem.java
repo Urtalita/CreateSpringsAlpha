@@ -4,8 +4,11 @@ import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
+import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
+import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +37,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static net.Portality.createsprings.Items.advanced.hat.HatItem.readStackFromNBT;
+import static net.Portality.createsprings.Items.advanced.hat.HatItem.setPackageColor;
 import static net.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BlockItem {
@@ -68,6 +73,10 @@ public class SpringItem extends BlockItem {
 
         InteractionHand hand2 = getOppositeHand(player.getUsedItemHand());
         if(player.getItemInHand(hand2).getItem() instanceof PackageItem){
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(stack);
+        }
+        if(player.getItemInHand(hand2).getItem() instanceof HatItem){
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
         }
@@ -111,11 +120,16 @@ public class SpringItem extends BlockItem {
         InteractionHand hand = getOppositeHand(player.getUsedItemHand());
         if(player.getItemInHand(hand).getItem() instanceof PackageItem){
             if(player.getItemInHand(hand).getItem() instanceof SusPackageItem){
-                launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), true);
+                launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), true, false);
                 return true;
             }
-            launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false);
+            launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false, false);
             return true;
+        } else {
+            if(player.getItemInHand(hand).getItem() instanceof HatItem){
+                launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false, true);
+                return true;
+            }
         }
         return false;
     }
@@ -194,7 +208,7 @@ public class SpringItem extends BlockItem {
         entity.hurtMarked = true;
     }
 
-    public void launchPackage(ItemStack stack, Level world, Player player, ItemStack springStack, boolean isSusPackage) {
+    public void launchPackage(ItemStack stack, Level world, Player player, ItemStack springStack, boolean isSusPackage, boolean isHat) {
         float strength = CreateSprings.SPRING_CAPACITY / getStoredSu(springStack);
 
         SetZeroSu(springStack, player);
@@ -223,10 +237,17 @@ public class SpringItem extends BlockItem {
             SusPackageEntity SpackageEntity = new SusPackageEntity(world, vec.x, vec.y, vec.z);
             SpackageEntity.power = getStoredSu(springStack);
             packageEntity = SpackageEntity;
-        } else {
+            packageEntity.setBox(copy);
+        } else if(isHat){
+            HatPackageEntity HpackageEntity = new HatPackageEntity(world, vec.x, vec.y, vec.z);
+            setPackageColor(stack, HpackageEntity);
+            HpackageEntity.setContains(readStackFromNBT(stack));
+            packageEntity = HpackageEntity;
+            packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
+        }else {
             packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
+            packageEntity.setBox(copy);
         }
-        packageEntity.setBox(copy);
         packageEntity.setDeltaMovement(motion);
         packageEntity.tossedBy = new WeakReference<>(player);
         world.addFreshEntity(packageEntity);

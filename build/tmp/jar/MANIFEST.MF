@@ -3,7 +3,8 @@ Specification-Title: createsprings
 Specification-Vendor: Portality
 Specification-Version: 1
 Implementation-Title: untitled
-Implementation-Version: 0.3-6
+Implementation-Version: 0.3-81
 Implementation-Vendor: Portality
-Implementation-Timestamp: 2025-05-01T18:33:30+0300
+Implementation-Timestamp: 2025-05-09T17:20:36+0300
+MixinConfigs: createsprings.mixins.json
 

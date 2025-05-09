@@ -44,6 +44,8 @@
   "tooltip.springstuf.needsprings1": "может принимать до ",
   "tooltip.springstuf.needsprings2": " пружин",
   "tooltip.springstuf.modifiers": "Содержит:",
+  "create.spring.saved": "сохранено:",
+  "create.spring.su": "ен",
 
   "tooltip.springstuf.createsprings:punchcard": "позволяет программировать пружинные инструменты",
   "tooltip.springstuf.createsprings:spring_alloy_block": "взрывной патрон",

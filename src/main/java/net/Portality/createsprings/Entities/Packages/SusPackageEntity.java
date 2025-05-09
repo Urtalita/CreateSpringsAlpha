@@ -144,20 +144,4 @@ public class SusPackageEntity extends PackageEntity {
         super.addAdditionalSaveData(compound);
         compound.putFloat("Stored", power);
     }
-
-    @Override
-    public void tick() {
-        if (firstTick) {
-            verifyInitialEntity();
-        }
-
-        if (level() instanceof PonderLevel) {
-            setDeltaMovement(getDeltaMovement().add(0, -0.06, 0));
-            if (position().y < 0.125)
-                discard();
-        }
-
-        insertionDelay = Math.min(insertionDelay + 1, 30);
-
-    }
 }

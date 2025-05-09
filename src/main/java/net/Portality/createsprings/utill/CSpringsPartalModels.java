@@ -26,6 +26,7 @@ public class CSpringsPartalModels {
     SUS_BOX = block("sus_box"),
 
     HAT = armor("hat"),
+    HAT2 = armor("hat2"),
 
     MOLD = block("andesite_mold"),
 

@@ -1,11 +1,14 @@
 package net.Portality.createsprings.Items.advanced.hat;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.logistics.box.PackageEntity;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
+import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Items.CspringsArmorMaterials;
 import net.Portality.createsprings.Items.ModItems;
@@ -24,17 +27,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -43,8 +41,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,21 +54,11 @@ import java.util.function.Predicate;
 import static com.simibubi.create.content.equipment.goggles.GogglesItem.addIsWearingPredicate;
 import static com.simibubi.create.content.logistics.box.PackageItem.getPackageVelocity;
 
-public class HatItem extends Item {
-    public PackageStyles.PackageStyle style = PackageStyles.STYLES.get(0);
-
-    private static final List<Predicate<Player>> IS_WEARING_PREDICATES = new ArrayList<>();
-    static {
-        addIsWearingPredicate(player -> ModItems.HAT.isIn(player.getItemBySlot(EquipmentSlot.HEAD)));
-    }
+public class HatItem extends GogglesItem {
 
     public HatItem(Properties properties) {
         super(properties);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
-    }
-
-    public static void addIsWearingPredicate(Predicate<Player> predicate) {
-        IS_WEARING_PREDICATES.add(predicate);
     }
 
     @Override
@@ -88,7 +74,7 @@ public class HatItem extends Item {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        return Optional.of(new HatSlotTooltipComponent(readStackFromNBT(stack)));
+        return Optional.of(new HatSlotTooltipComponent(readStackFromNBT(stack), stack.getOrCreateTag().getBoolean("goggles")));
     }
 
     @Override
@@ -101,46 +87,18 @@ public class HatItem extends Item {
             itemstack.shrink(1);
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
         } else {
-            return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+            playerIn.startUsingItem(handIn);
+            return InteractionResultHolder.success(itemstack);
         }
-    }
-
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Vec3 point = context.getClickLocation();
-        float h = style.height() / 16f;
-        float r = style.width() / 2f / 16f;
-
-        if (context.getClickedFace() == Direction.DOWN)
-            point = point.subtract(0, h + .25f, 0);
-        else if (context.getClickedFace()
-                .getAxis()
-                .isHorizontal())
-            point = point.add(Vec3.atLowerCornerOf(context.getClickedFace()
-                            .getNormal())
-                    .scale(r));
-
-        AABB scanBB = new AABB(point, point).inflate(r, 0, r)
-                .expandTowards(0, h, 0);
-        Level world = context.getLevel();
-        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
-                .isEmpty())
-            return super.useOn(context);
-
-        SusPackageEntity packageEntity = new SusPackageEntity(world, point.x, point.y, point.z);
-        ItemStack itemInHand = context.getItemInHand();
-        packageEntity.power = itemInHand.getOrCreateTag().getFloat("Stored");
-        packageEntity.setBox(itemInHand.copy());
-        world.addFreshEntity(packageEntity);
-        itemInHand.shrink(1);
-        return InteractionResult.SUCCESS;
     }
 
     public static class HatSlotTooltipComponent implements TooltipComponent {
         public final ItemStack stack;
+        public final boolean goggles;
 
-        public HatSlotTooltipComponent(ItemStack stack) {
+        public HatSlotTooltipComponent(ItemStack stack, boolean goggles) {
             this.stack = stack;
+            this.goggles = goggles;
         }
     }
 
@@ -164,7 +122,14 @@ public class HatItem extends Item {
 
         @Override
         public void renderImage(net.minecraft.client.gui.Font Font, int x, int y, GuiGraphics GuiGraphics) {
-            GuiGraphics.renderFakeItem(component.stack, x, y + 1);
+            int moving = 0;
+            if (component.stack != ItemStack.EMPTY){
+                GuiGraphics.renderFakeItem(component.stack, x, y + 1);
+                moving = getHeight() + 2;
+            }
+            if(component.goggles){
+                GuiGraphics.renderFakeItem(AllItems.GOGGLES.asStack(), x + moving, y + 1);
+            }
         }
     }
 
@@ -197,6 +162,13 @@ public class HatItem extends Item {
 
     private boolean addItem(ItemStack addto, ItemStack add, ClickAction action){
         if(action == ClickAction.PRIMARY){
+            if (add.getItem() == AllItems.GOGGLES.asItem()){
+                if (!addto.getOrCreateTag().getBoolean("goggles")){
+                    add.setCount(0);
+                    addto.getOrCreateTag().putBoolean("goggles", true);
+                    return true;
+                }
+            }
             if(addto.getOrCreateTag().getCompound("StoredStack").isEmpty()){
                 if(add.getItem() == Items.AIR){return false;}
                 writeStackToNBT(addto, add);
@@ -214,6 +186,11 @@ public class HatItem extends Item {
                 player.addItem(readStackFromNBT(addto));
 
                 addto.getOrCreateTag().put("StoredStack", ItemStack.EMPTY.getOrCreateTag());
+                return true;
+            }
+            if (addto.getOrCreateTag().getBoolean("goggles")){
+                player.addItem(AllItems.GOGGLES.asStack());
+                addto.getOrCreateTag().putBoolean("goggles", false);
                 return true;
             }
         }
@@ -245,5 +222,95 @@ public class HatItem extends Item {
     @Override
     public Entity createEntity(Level world, Entity location, ItemStack itemstack) {
         return PackageEntity.fromDroppedItem(world, location, itemstack);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack p_77626_1_) {
+        return 72000;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack pStack) {
+        return UseAnim.BOW;
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Vec3 point = context.getClickLocation();
+        float h = 7 / 16f;
+        float r = 11 / 16f / 2f;
+
+        if (context.getClickedFace() == Direction.DOWN)
+            point = point.subtract(0, h + .25f, 0);
+        else if (context.getClickedFace()
+                .getAxis()
+                .isHorizontal())
+            point = point.add(Vec3.atLowerCornerOf(context.getClickedFace()
+                            .getNormal())
+                    .scale(r));
+
+        AABB scanBB = new AABB(point, point).inflate(r, 0, r)
+                .expandTowards(0, h, 0);
+        Level world = context.getLevel();
+        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
+                .isEmpty())
+            return super.useOn(context);
+
+        HatPackageEntity packageEntity = new HatPackageEntity(world, point.x, point.y, point.z);
+        ItemStack itemInHand = context.getItemInHand();
+        packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
+        setPackageColor(itemInHand, packageEntity);
+        packageEntity.setContains(readStackFromNBT(context.getItemInHand()));
+        world.addFreshEntity(packageEntity);
+        itemInHand.shrink(1);
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int ticks) {
+        if (!(entity instanceof Player player))
+            return;
+        int i = this.getUseDuration(stack) - ticks;
+        if (i < 0)
+            return;
+
+        float f = getPackageVelocity(i);
+        if (f < 0.1D)
+            return;
+        if (world.isClientSide)
+            return;
+
+        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
+                SoundSource.NEUTRAL, 0.5F, 0.5F);
+
+        ItemStack copy = stack.copy();
+        if (!player.getAbilities().instabuild)
+            stack.shrink(1);
+
+        Vec3 vec = new Vec3(entity.getX(), entity.getY() + entity.getBoundingBox()
+                .getYsize() / 2f, entity.getZ());
+        Vec3 motion = entity.getLookAngle()
+                .scale(f * 2);
+        vec = vec.add(motion);
+
+        HatPackageEntity packageEntity = new HatPackageEntity(world, vec.x, vec.y, vec.z);
+        packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
+        setPackageColor(stack, packageEntity);
+        packageEntity.setContains(readStackFromNBT(stack));
+        packageEntity.setDeltaMovement(motion);
+        packageEntity.tossedBy = new WeakReference<>(player);
+        world.addFreshEntity(packageEntity);
+    }
+
+    public static void setPackageColor(ItemStack stack, HatPackageEntity packageEntity){
+        CompoundTag tag = stack.getOrCreateTag();
+
+        packageEntity.red = tag.getInt("red");
+        packageEntity.green = tag.getInt("green");
+        packageEntity.blue = tag.getInt("blue");
+
+        packageEntity.red1 = tag.getInt("red1");
+        packageEntity.green1 = tag.getInt("green1");
+        packageEntity.blue1 = tag.getInt("blue1");
     }
 }

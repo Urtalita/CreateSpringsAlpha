@@ -1,12 +1,11 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllPackets;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.infrastructure.data.CreateDatagen;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
+import net.Portality.createsprings.Items.ModItemColors;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.OverlayHandler;
@@ -16,17 +15,16 @@ import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
-import net.Portality.createsprings.datagen.CSpringsDatagen;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.Portality.createsprings.menus.MenuInit;
 import net.Portality.createsprings.menus.ModCreativeModeTabs;
 import com.mojang.logging.LogUtils;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
 import net.Portality.createsprings.recipe.ModRecipes;
-import net.Portality.createsprings.recipe.NbtAwareShapelessRecipe.NbtAwareShapelessRecipe;
+import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
+import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessRecipe;
 import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.HolderLookup;
@@ -39,7 +37,6 @@ import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEv
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -51,6 +48,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -138,9 +136,7 @@ public class CreateSprings {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            LOGGER.info("hi");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-
+            ModItemColors.register();
             EntityRenderers.register(ModEntities.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
         }
@@ -155,7 +151,22 @@ public class CreateSprings {
         public static void registerSerializers(RegisterEvent event) {
             event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, helper -> {
                 helper.register(new ResourceLocation(CreateSprings.MODID, "nbt_aware_shapeless"), NbtAwareShapelessRecipe.Serializer.INSTANCE);
+                helper.register(new ResourceLocation(CreateSprings.MODID, "nbt_hat_shapeless"), NbtHatShapelessRecipe.Serializer.INSTANCE);
             });
+        }
+
+        // В клиентском инициализаторе (например, в клиент-сайд классе)
+        @SubscribeEvent
+        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+            event.register(
+                    (stack, tintIndex) -> {
+                        if (tintIndex == 0) {
+                            return 0xFF0000; // Красный цвет
+                        }
+                        return 0xFFFFFF; // Белый (без изменений)
+                    },
+                    ModItems.HAT.get() // Ваш предмет
+            );
         }
     }
 }

@@ -1,26 +1,36 @@
 package net.Portality.createsprings.Items.advanced.hat;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 
+import static net.Portality.createsprings.CreateSprings.asResource;
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.readStackFromNBT;
 
 public class HatRenderer extends CustomRenderedItemModelRenderer {
     protected final PartialModel hat = CSpringsPartalModels.HAT;
+    protected final PartialModel hat2 = CSpringsPartalModels.HAT2;
+    protected final PartialModel googles = AllPartialModels.GOGGLES;
     public static final float duration = 90;
 
     @Override
@@ -52,7 +62,13 @@ public class HatRenderer extends CustomRenderedItemModelRenderer {
                 if(time * -1 > (duration - 2)){tag.putBoolean("animation", false);}
             }
             ms.translate(0, -1/16f, 0);
+
             renderer.render(hat.get(), light);
+            renderer.render(hat2.get(), Sheets.cutoutBlockSheet(), light);
+            ms.translate(0, -2.5/16f, 0);
+            if(tag.getBoolean("goggles")){
+                renderer.render(googles.get(), light);
+            }
         }
     }
 

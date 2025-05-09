@@ -76,5 +76,7 @@ public class ModEntities {
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
         event.put(SUS_PACKAGE.get(), PackageEntity.createPackageAttributes()
                 .build());
+        event.put(HAT_PACKAGE.get(), PackageEntity.createPackageAttributes()
+                .build());
     }
 }

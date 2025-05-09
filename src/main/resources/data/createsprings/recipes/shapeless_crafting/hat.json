@@ -1,0 +1,17 @@
+{
+  "type": "createsprings:nbt_hat_shapeless",
+  "ingredients": [
+    {
+      "item": "createsprings:hat"
+    },
+    {
+      "tag": "forge:dyes"
+    },
+    {
+      "tag": "forge:dyes"
+    }
+  ],
+  "result": {
+    "item": "createsprings:hat"
+  }
+}

@@ -6,6 +6,7 @@ import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.CreateSprings;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -43,8 +44,15 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        CreateLang.number(stored).forGoggles(tooltip);
-        return true;
+        boolean ret = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+        CreateLang.text(" ").add(
+                CreateLang.number(stored).style(ChatFormatting.AQUA).space()
+                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                        .add(CreateLang.number(CreateSprings.SPRING_CAPACITY).style(ChatFormatting.AQUA).space()
+                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
+                .forGoggles(tooltip);
+        return ret;
     }
 
     @Override

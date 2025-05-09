@@ -75,6 +75,9 @@ public class ModItems {
             .onRegister(CreateRegistrate.itemModel(() -> HatModel::new))
             .register();
 
+    public static final RegistryObject<Item> HITBOX_HAT = ITEMS.register("hitbox_hat",
+            () -> new PackageItem(new Item.Properties(), new PackageStyles.PackageStyle("cardboard", 10, 7, 18f, false)));
+
     public static final RegistryObject<Item> SPRING_ALLOY_BUCKET = ITEMS.register(
             "spring_alloy_bucket",
             () -> new BucketItem(

@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixintest.refmap.json",
   "mixins": [
-    "MixinSpoutBe"
+    "MixinSpoutBe",
+    "PackageItemMixin"
   ],
   "client": [
     "HatHumanoidModelMixin"
