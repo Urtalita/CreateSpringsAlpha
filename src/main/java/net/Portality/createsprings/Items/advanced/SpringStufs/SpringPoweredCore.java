@@ -4,6 +4,7 @@ import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -50,19 +51,13 @@ public class SpringPoweredCore {
                 .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.GRAY));
 
-        if (!Screen.hasShiftDown()) {
-            tooltip.add(Component.translatable("tooltip.create.hold_for_details1").withStyle(ChatFormatting.DARK_GRAY)
-                    .append(Component.literal("Shift").withStyle(ChatFormatting.GRAY))
-                    .append(Component.translatable("tooltip.create.hold_for_details2")));
-        } else {
-            tooltip.add(Component.translatable("tooltip.create.hold_for_details1").withStyle(ChatFormatting.DARK_GRAY)
-                    .append(Component.literal("Shift").withStyle(ChatFormatting.WHITE))
-                    .append(Component.translatable("tooltip.create.hold_for_details2")));
+        if (!RenderHelper.checkForDetails(tooltip)) {
 
             tooltip.add(Component.translatable("tooltip.springstuf.needsprings1").withStyle(ChatFormatting.GOLD)
                     .append(Component.literal(String.valueOf(springsMaxCount)).withStyle(ChatFormatting.YELLOW))
                     .append(Component.translatable("tooltip.springstuf.needsprings2").withStyle(ChatFormatting.GOLD)));
 
+            tooltip.add(Component.empty());
             appendHoverTextItemsCategory(tooltip, stack);
         }
     }

@@ -9,6 +9,7 @@ import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
+import net.Portality.createsprings.Items.advanced.hat.render.HatRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +31,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,6 +135,12 @@ public class SpringItem extends BlockItem {
             }
         }
         return false;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(SimpleCustomRenderer.create(this, new SpringItemRenderer()));
     }
 
     private void LaunchPlayerOrEntity(Player player, Level level, ItemStack stack, LivingEntity entity){
@@ -240,10 +249,9 @@ public class SpringItem extends BlockItem {
             packageEntity.setBox(copy);
         } else if(isHat){
             HatPackageEntity HpackageEntity = new HatPackageEntity(world, vec.x, vec.y, vec.z);
-            setPackageColor(stack, HpackageEntity);
             HpackageEntity.setContains(readStackFromNBT(stack));
             packageEntity = HpackageEntity;
-            packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
+            packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), stack));
         }else {
             packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
             packageEntity.setBox(copy);
@@ -307,8 +315,5 @@ public class SpringItem extends BlockItem {
                .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.DARK_GRAY));
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(SimpleCustomRenderer.create(this, new SpringItemRenderer()));
-    }
+
 }

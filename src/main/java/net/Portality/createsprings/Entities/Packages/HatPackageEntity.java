@@ -32,17 +32,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PlayMessages;
 
+import static net.Portality.createsprings.Items.advanced.hat.HatItem.setPackageColor;
+
 public class HatPackageEntity extends PackageEntity {
 
     public ItemStack contains;
-
-    public int red = 255;
-    public int green = 255;
-    public int blue = 255;
-
-    public int red1 = 255;
-    public int green1 = 255;
-    public int blue1 = 255;
 
     public HatPackageEntity(EntityType<?> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);
@@ -55,10 +49,11 @@ public class HatPackageEntity extends PackageEntity {
     }
 
     public static PackageEntity fromItemStack(Level world, Vec3 position, ItemStack itemstack) {
-        PackageEntity packageEntity = ModEntities.HAT_PACKAGE
+        HatPackageEntity packageEntity = ModEntities.HAT_PACKAGE
                 .create(world);
         packageEntity.setPos(position);
-        packageEntity.setBox(itemstack);
+        packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), itemstack));
+        packageEntity.setContains(HatItem.readStackFromNBT(itemstack));
         return packageEntity;
     }
 
@@ -82,7 +77,8 @@ public class HatPackageEntity extends PackageEntity {
 
         Vec3 position = originalEntity.position();
         packageEntity.setPos(position);
-        packageEntity.setBox(itemstack);
+        packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), itemstack));
+        packageEntity.setContains(HatItem.readStackFromNBT(itemstack));
         packageEntity.setDeltaMovement(originalEntity.getDeltaMovement()
                 .scale(1.5f));
 
@@ -100,7 +96,8 @@ public class HatPackageEntity extends PackageEntity {
             return super.interact(pPlayer, pHand);
         if (pPlayer.level().isClientSide)
             return InteractionResult.SUCCESS;
-        pPlayer.setItemInHand(pHand, HatItem.writeStackToNBT(new ItemStack(ModItems.HAT.get()), contains));
+        ItemStack hatstack = HatItem.writeStackToNBT(new ItemStack(ModItems.HAT.get()), contains);
+        pPlayer.setItemInHand(pHand, HatItem.setPackageColor(hatstack, box));
         level().playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
                 .75f + level().random.nextFloat());
         remove(RemovalReason.DISCARDED);
@@ -115,14 +112,6 @@ public class HatPackageEntity extends PackageEntity {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.put("Contains", contains.serializeNBT());
-
-        compound.putInt("red", red);
-        compound.putInt("green", green);
-        compound.putInt("blue", blue);
-
-        compound.putInt("red1", red1);
-        compound.putInt("green1", green1);
-        compound.putInt("blue1", blue1);
     }
 
     @Override
@@ -130,14 +119,6 @@ public class HatPackageEntity extends PackageEntity {
         super.readAdditionalSaveData(compound);
         contains = ItemStack.of(compound.getCompound("Contains"));
         refreshDimensions();
-
-        red = compound.getInt("red");
-        green = compound.getInt("green");
-        blue = compound.getInt("blue");
-
-        red1 = compound.getInt("red1");
-        green1 = compound.getInt("green1");
-        blue1 = compound.getInt("blue1");
     }
 
     @Override
@@ -155,6 +136,7 @@ public class HatPackageEntity extends PackageEntity {
 
         if (itemstack.isEmpty())
             return;
+
         ItemEntity entityIn = new ItemEntity(level(), getX(), getY(), getZ(), itemstack);
         level().addFreshEntity(entityIn);
     }

@@ -7,10 +7,17 @@ import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.math.AngleHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.joml.Quaternionf;
+
+import javax.swing.plaf.PanelUI;
+import java.util.List;
 
 public class RenderHelper {
 
@@ -65,5 +72,31 @@ public class RenderHelper {
         applyBaseTransformations(instance, facing);
         instance.rotateXDegrees(-90);
         return instance;
+    }
+
+    public static MutableComponent tooltipGold(String key){
+        return Component.translatable(key).withStyle(ChatFormatting.GOLD);
+    }
+
+    public static MutableComponent tooltipYellow(String key){
+        return Component.translatable(key).withStyle(ChatFormatting.YELLOW);
+    }
+
+    public static MutableComponent tooltipDarkGray(String key){
+        return Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY);
+    }
+
+    public static boolean checkForDetails(List<Component> tooltip){
+        if(!Screen.hasShiftDown()){
+            tooltip.add(Component.translatable("tooltip.create.hold_for_details1").withStyle(ChatFormatting.DARK_GRAY)
+                    .append(Component.literal("Shift").withStyle(ChatFormatting.GRAY))
+                    .append(Component.translatable("tooltip.create.hold_for_details2")));
+        } else {
+            tooltip.add(Component.translatable("tooltip.create.hold_for_details1").withStyle(ChatFormatting.DARK_GRAY)
+                    .append(Component.literal("Shift").withStyle(ChatFormatting.WHITE))
+                    .append(Component.translatable("tooltip.create.hold_for_details2")));
+            tooltip.add(Component.empty());
+        }
+        return !Screen.hasShiftDown();
     }
 }

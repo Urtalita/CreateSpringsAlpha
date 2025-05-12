@@ -33,6 +33,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -48,7 +49,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -155,18 +155,9 @@ public class CreateSprings {
             });
         }
 
-        // В клиентском инициализаторе (например, в клиент-сайд классе)
         @SubscribeEvent
-        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-            event.register(
-                    (stack, tintIndex) -> {
-                        if (tintIndex == 0) {
-                            return 0xFF0000; // Красный цвет
-                        }
-                        return 0xFFFFFF; // Белый (без изменений)
-                    },
-                    ModItems.HAT.get() // Ваш предмет
-            );
+        public static void onModelRegistry(ModelEvent.RegisterAdditional event) {
+            event.register(CSpringsPartalModels.HAT.modelLocation());
         }
     }
 }

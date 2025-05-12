@@ -1,6 +1,5 @@
-package net.Portality.createsprings.Items.advanced.hat;
+package net.Portality.createsprings.Items.advanced.hat.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
@@ -8,37 +7,34 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
-
-import static net.Portality.createsprings.CreateSprings.asResource;
+import net.minecraft.world.item.ItemStack;
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.readStackFromNBT;
 
 public class HatRenderer extends CustomRenderedItemModelRenderer {
-    protected final PartialModel hat = CSpringsPartalModels.HAT;
-    protected final PartialModel hat2 = CSpringsPartalModels.HAT2;
+    protected static final PartialModel hat = CSpringsPartalModels.HAT;
+    protected static final PartialModel hat2 = CSpringsPartalModels.HAT2;
+
     protected final PartialModel googles = AllPartialModels.GOGGLES;
     public static final float duration = 90;
 
     @Override
-    protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType,
-                          PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    public void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType,
+                       PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+
         if(stack.getEquipmentSlot() == EquipmentSlot.HEAD){
             CompoundTag tag = stack.getOrCreateTag();
             Item item = readStackFromNBT(stack).getItem();
+            ItemStack innerStack = readStackFromNBT(stack);
 
             if(item != Items.AIR){
                 if(item instanceof BlockItem){
@@ -65,6 +61,7 @@ public class HatRenderer extends CustomRenderedItemModelRenderer {
 
             renderer.render(hat.get(), light);
             renderer.render(hat2.get(), Sheets.cutoutBlockSheet(), light);
+
             ms.translate(0, -2.5/16f, 0);
             if(tag.getBoolean("goggles")){
                 renderer.render(googles.get(), light);

@@ -1,27 +1,25 @@
 package net.Portality.createsprings.Items.advanced.hat;
 
 import com.simibubi.create.AllItems;
-import com.simibubi.create.content.equipment.goggles.GogglesItem;
-import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
-import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Items.CspringsArmorMaterials;
 import net.Portality.createsprings.Items.ModItems;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
-import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrillRenderer;
+import net.Portality.createsprings.Items.advanced.hat.render.HatRenderer;
+import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -41,24 +39,29 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
-import static com.simibubi.create.content.equipment.goggles.GogglesItem.addIsWearingPredicate;
 import static com.simibubi.create.content.logistics.box.PackageItem.getPackageVelocity;
 
-public class HatItem extends GogglesItem {
+public class HatItem extends Item implements IClientItemExtensions{
 
     public HatItem(Properties properties) {
         super(properties);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        if (!RenderHelper.checkForDetails(tooltip)) {
+
+        }
+
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 
     @Override
@@ -221,7 +224,7 @@ public class HatItem extends GogglesItem {
 
     @Override
     public Entity createEntity(Level world, Entity location, ItemStack itemstack) {
-        return PackageEntity.fromDroppedItem(world, location, itemstack);
+        return HatPackageEntity.fromDroppedItem(world, location, itemstack);
     }
 
     @Override
@@ -257,9 +260,8 @@ public class HatItem extends GogglesItem {
             return super.useOn(context);
 
         HatPackageEntity packageEntity = new HatPackageEntity(world, point.x, point.y, point.z);
+        packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), context.getItemInHand()));
         ItemStack itemInHand = context.getItemInHand();
-        packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
-        setPackageColor(itemInHand, packageEntity);
         packageEntity.setContains(readStackFromNBT(context.getItemInHand()));
         world.addFreshEntity(packageEntity);
         itemInHand.shrink(1);
@@ -294,23 +296,29 @@ public class HatItem extends GogglesItem {
         vec = vec.add(motion);
 
         HatPackageEntity packageEntity = new HatPackageEntity(world, vec.x, vec.y, vec.z);
-        packageEntity.setBox(new ItemStack(ModItems.HITBOX_HAT.get()));
-        setPackageColor(stack, packageEntity);
+        packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), stack));
         packageEntity.setContains(readStackFromNBT(stack));
         packageEntity.setDeltaMovement(motion);
         packageEntity.tossedBy = new WeakReference<>(player);
         world.addFreshEntity(packageEntity);
     }
 
-    public static void setPackageColor(ItemStack stack, HatPackageEntity packageEntity){
-        CompoundTag tag = stack.getOrCreateTag();
+    public static ItemStack setPackageColor(ItemStack hat, ItemStack colorStack){
+        CompoundTag tag = hat.getOrCreateTag();
+        CompoundTag colorTag = colorStack.getOrCreateTag();
 
-        packageEntity.red = tag.getInt("red");
-        packageEntity.green = tag.getInt("green");
-        packageEntity.blue = tag.getInt("blue");
+        if(!colorTag.contains("red")){
+            return hat;
+        }
+        tag.putInt("red", colorTag.getInt("red"));
+        tag.putInt("blue", colorTag.getInt("blue"));
+        tag.putInt("green", colorTag.getInt("green"));
 
-        packageEntity.red1 = tag.getInt("red1");
-        packageEntity.green1 = tag.getInt("green1");
-        packageEntity.blue1 = tag.getInt("blue1");
+        tag.putInt("red1", colorTag.getInt("red1"));
+        tag.putInt("blue1", colorTag.getInt("blue1"));
+        tag.putInt("green1", colorTag.getInt("green1"));
+
+        hat.setTag(tag);
+        return hat;
     }
 }
