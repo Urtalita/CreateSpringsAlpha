@@ -68,7 +68,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     public void beginFrame(Context context) {
-        float progress = blockEntity.getProgress();
+        float progress = blockEntity.getProgress(context.partialTick());
 
         MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, pos);
 

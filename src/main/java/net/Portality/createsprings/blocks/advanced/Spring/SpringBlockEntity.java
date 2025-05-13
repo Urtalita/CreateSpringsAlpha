@@ -6,9 +6,11 @@ import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.CreateSprings;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
@@ -21,9 +23,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -31,12 +37,18 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+
 public class SpringBlockEntity extends GeneratingKineticBlockEntity implements IHaveGoggleInformation {
 
     public float capacity = CreateSprings.SPRING_CAPACITY;
     public float stored = 0;
     private float progress;
+    private float prevProgress;
     private boolean isGenerating;
+    private boolean splashMode = true;
+    private boolean splashAnimation = false;
+    private int phase = 0;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -73,6 +85,21 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     @Override
     public void tick() {
         super.tick(); // Важно для базовой логики
+        if(isGenerating && splashMode && stored != 0){
+            prevProgress = progress;
+            progress = springAnimation(phase) * (CreateSprings.SPRING_CAPACITY / stored);
+
+            if(phase == 1){
+                launchEntitiesInFront();
+            }
+
+            phase++;
+            if(phase == 20){
+                phase = 0;
+                stored = 0;
+            }
+            return;
+        }
 
         // Режим генерации при активации редстоуном
         if (isGenerating && stored > 0) {
@@ -86,15 +113,30 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         }
 
         progress = stored / capacity;
-        notifyUpdate();
+        prevProgress = progress;
     }
 
-    // Сохранение данных
+    public static float springAnimation(int phase) {
+        if (phase == 0) {
+            return 1.0f;
+        }
+        // Уменьшаем амплитуду со временем (затухание)
+        float decay = (float) Math.exp(-0.15 * phase);
+        // Частота колебаний (подобрана для эффекта "пружины")
+        float frequency = (float) (Math.PI * 0.4);
+        // Фаза колебаний сдвинута, чтобы начать с падения
+        float oscillation = (float) Math.cos((frequency * phase + Math.PI)/2);
+        // Комбинируем затухание и колебания
+        return decay * oscillation * 2f;
+    }
+
+    // Сохранение данныхt
     @Override
     protected void write(CompoundTag tag, boolean clientPacket) {
         super.write(tag, clientPacket);
         tag.putBoolean("Generating", isGenerating);
         tag.putFloat("Stored", stored);
+        tag.putInt("phase", phase);
     }
 
     // Загрузка данных
@@ -103,10 +145,12 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         super.read(tag, clientPacket);
         isGenerating = tag.getBoolean("Generating");
         stored = tag.getFloat("Stored");
+        phase = tag.getInt("phase");
     }
 
-    public float getProgress() {
-        return this.progress;
+    public float getProgress(float pt)
+    {
+        return Mth.lerp(pt, prevProgress, progress);
     }
 
     @Override
@@ -120,8 +164,31 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     }
 
     public void setGenerating(boolean generating) {
+        phase = 0;
         isGenerating = generating;
         updateGeneratedRotation(); // Обновляем физику
         sendData(); // Синхронизация
+    }
+
+    public void launchEntitiesInFront() {
+        if (level == null || level.isClientSide) return;
+
+        Direction facing = getBlockState().getValue(FACING).getOpposite();
+        BlockPos targetPos = worldPosition.relative(facing);
+
+        // Ищем все ентити в соседнем блоке
+        AABB searchArea = new AABB(targetPos);
+        List<Entity> entities = level.getEntitiesOfClass(Entity.class, searchArea);
+
+        for (Entity entity : entities) {
+            Vec3 direction = new Vec3(
+                    facing.getStepX(),
+                    facing.getStepY(),
+                    facing.getStepZ()
+            ).scale(1.0);
+
+            entity.setDeltaMovement(direction.scale(2));
+            entity.hurtMarked = true;
+        }
     }
 }

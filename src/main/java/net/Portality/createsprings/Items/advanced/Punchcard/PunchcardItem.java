@@ -1,6 +1,8 @@
 package net.Portality.createsprings.Items.advanced.Punchcard;
 
+import com.simibubi.create.AllItems;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -34,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
+
+import static net.minecraft.commands.arguments.item.ItemArgument.item;
 
 
 public class PunchcardItem extends Item {
@@ -157,25 +161,22 @@ public class PunchcardItem extends Item {
 
         state = resetCheatProperties(state);
 
-        /*
-
         if (tag.contains("HaveAdvancedCreateFilter")){
             if (tag.getBoolean("HaveAdvancedCreateFilter")){
-                if (isExistInInventory(player, item(AllItems.ATTRIBUTE_FILTER.get()))){
-                    deleateFromInventory(player, AllItems.ATTRIBUTE_FILTER.get());
+                if (isExistInInventory(player, item((CommandBuildContext) AllItems.ATTRIBUTE_FILTER.get()).toString())){
+                    deleateFromInventory(player, String.valueOf(AllItems.ATTRIBUTE_FILTER.get()));
                 } else {
                     return false;
                 }
             } else {
-                if (isExistInInventory(player, AllItems.FILTER.get())){
-                    deleateFromInventory(player, AllItems.FILTER.get());
+                if (isExistInInventory(player, String.valueOf(AllItems.FILTER.get()))){
+                    deleateFromInventory(player, String.valueOf(AllItems.FILTER.get()));
                 } else {
                     return false;
                 }
             }
         }
 
-         */
 
         if (isExistInInventory(player, state)) {
             boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED)
