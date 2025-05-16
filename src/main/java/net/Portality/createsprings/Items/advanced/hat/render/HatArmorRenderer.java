@@ -1,6 +1,7 @@
 package net.Portality.createsprings.Items.advanced.hat.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.engine_room.flywheel.lib.model.Models;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -17,6 +18,6 @@ import org.jetbrains.annotations.NotNull;
 public class HatArmorRenderer implements IClientItemExtensions {
     @Override
     public @NotNull Model getGenericArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-        return IClientItemExtensions.super.getGenericArmorModel(livingEntity, itemStack, equipmentSlot, original);
+        return (Model) Models.partial(CSpringsPartalModels.HAT);
     }
 }

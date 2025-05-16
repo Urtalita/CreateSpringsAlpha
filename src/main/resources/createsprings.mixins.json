@@ -5,6 +5,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixintest.refmap.json",
   "mixins": [
+    "burner.BlazeBurnerBlockEntityAccessor",
+    "burner.BlazeBurnerBlockEntityMixin",
+    "burner.BlazeBurnerBlockMixin",
+    "burner.BlazeBurnerVisualMixin",
     "MixinSpoutBe",
     "PackageItemMixin"
   ],

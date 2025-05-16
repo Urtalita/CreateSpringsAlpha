@@ -7,6 +7,7 @@ import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Items.CspringsArmorMaterials;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrillRenderer;
+import net.Portality.createsprings.Items.advanced.hat.render.HatArmorRenderer;
 import net.Portality.createsprings.Items.advanced.hat.render.HatRenderer;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
@@ -258,10 +259,15 @@ public class HatItem extends Item implements IClientItemExtensions{
         if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
                 .isEmpty())
             return super.useOn(context);
+        ItemStack itemInHand = context.getItemInHand();
+
+        if(itemInHand.getOrCreateTag().getBoolean("prevent_place")){
+            itemInHand.getOrCreateTag().putBoolean("prevent_place", false);
+            return InteractionResult.SUCCESS;
+        }
 
         HatPackageEntity packageEntity = new HatPackageEntity(world, point.x, point.y, point.z);
         packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), context.getItemInHand()));
-        ItemStack itemInHand = context.getItemInHand();
         packageEntity.setContains(readStackFromNBT(context.getItemInHand()));
         world.addFreshEntity(packageEntity);
         itemInHand.shrink(1);

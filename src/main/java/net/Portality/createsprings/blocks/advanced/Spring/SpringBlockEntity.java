@@ -46,8 +46,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     private float progress;
     private float prevProgress;
     private boolean isGenerating;
-    private boolean splashMode = true;
-    private boolean splashAnimation = false;
+    public boolean splashMode;
     private int phase = 0;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -77,7 +76,9 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         if (stored < capacity && !isGenerating) {
             return 2.0f;
         } else if (isGenerating) {
-            return -128f;
+            if(stored > 128){
+                return -128f;
+            }
         }
         return 0f;
     }
@@ -87,16 +88,19 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         super.tick(); // Важно для базовой логики
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
-            progress = springAnimation(phase) * (CreateSprings.SPRING_CAPACITY / stored);
+            progress = springAnimation(phase) * (stored / CreateSprings.SPRING_CAPACITY);
 
             if(phase == 1){
                 launchEntitiesInFront();
             }
 
             phase++;
-            if(phase == 20){
+            if(phase == 40){
                 phase = 0;
                 stored = 0;
+                isGenerating = false;
+                updateGeneratedRotation();
+                notifyUpdate();
             }
             return;
         }
@@ -120,13 +124,12 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         if (phase == 0) {
             return 1.0f;
         }
-        // Уменьшаем амплитуду со временем (затухание)
         float decay = (float) Math.exp(-0.15 * phase);
-        // Частота колебаний (подобрана для эффекта "пружины")
+
         float frequency = (float) (Math.PI * 0.4);
-        // Фаза колебаний сдвинута, чтобы начать с падения
+
         float oscillation = (float) Math.cos((frequency * phase + Math.PI)/2);
-        // Комбинируем затухание и колебания
+
         return decay * oscillation * 2f;
     }
 
@@ -137,6 +140,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         tag.putBoolean("Generating", isGenerating);
         tag.putFloat("Stored", stored);
         tag.putInt("phase", phase);
+        tag.putBoolean("splashMode", splashMode);
     }
 
     // Загрузка данных
@@ -146,16 +150,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         isGenerating = tag.getBoolean("Generating");
         stored = tag.getFloat("Stored");
         phase = tag.getInt("phase");
+        splashMode = tag.getBoolean("splashMode");
     }
 
-    public float getProgress(float pt)
-    {
-        return Mth.lerp(pt, prevProgress, progress);
-    }
+    public float getProgress(float pt) {return Mth.lerp(pt, prevProgress, progress);}
 
     @Override
     public float getGeneratedSpeed() {
-        return isGenerating && stored > 0 ? 16.0f : 0.0f;
+        return isGenerating && !splashMode && stored > 0 ? 16.0f : 0.0f;
     }
 
     @Override
@@ -164,8 +166,10 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     }
 
     public void setGenerating(boolean generating) {
+        if(phase > 0){return;}
         phase = 0;
         isGenerating = generating;
+
         updateGeneratedRotation(); // Обновляем физику
         sendData(); // Синхронизация
     }
@@ -187,7 +191,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
                     facing.getStepZ()
             ).scale(1.0);
 
-            entity.setDeltaMovement(direction.scale(2));
+            entity.setDeltaMovement(direction.scale(3).scale(stored / CreateSprings.SPRING_CAPACITY));
             entity.hurtMarked = true;
         }
     }

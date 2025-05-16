@@ -1,6 +1,7 @@
 package net.Portality.createsprings;
 
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
@@ -20,11 +21,13 @@ import net.Portality.createsprings.menus.MenuInit;
 import net.Portality.createsprings.menus.ModCreativeModeTabs;
 import com.mojang.logging.LogUtils;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
+import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessRecipe;
 import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.HolderLookup;
@@ -76,6 +79,7 @@ public class CreateSprings {
         CSpringsPartalModels.register();
         ModEntities.register(modEventBus);
         CSpringsPackets.registerPackets();
+        PonderIndex.addPlugin(new CSpringsPonderPlugin());
 
         ModFluids.FLUID_TYPES.register(modEventBus);
         ModFluids.FLUIDS.register(modEventBus);

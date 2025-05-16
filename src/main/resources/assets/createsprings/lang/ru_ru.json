@@ -57,5 +57,10 @@
   "death.attack.createsprings.spring_box": "%1$s не пережил распаковку",
   "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку",
   "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
-  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise"
+  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
+
+  "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
+  "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",
+  "createsprings.ponder.spring.text_3": "При активации пружина будет отдавать накопленную кинетическую энергию"
+
 }

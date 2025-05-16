@@ -24,7 +24,7 @@ import static net.Portality.createsprings.utill.Helpers.RenderHelper.*;
 
 public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements SimpleDynamicVisual  {
 
-    private static int SPRING_LEN = 12;
+    public static int SPRING_LEN = 12;
     private final OrientedInstance plate;
     private final List<OrientedInstance> rings = new ArrayList<>();
     private final List<Float> ringPos = new ArrayList<>();

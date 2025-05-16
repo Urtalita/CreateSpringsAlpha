@@ -31,6 +31,32 @@
                 }
               ],
               "function": "minecraft:set_contents"
+            },
+
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_nbt",
+              "ops": [
+                {
+                  "op": "replace",
+                  "source": "splashMode",
+                  "target": "BlockEntityTag.splashMode"
+                }
+              ],
+              "source": "block_entity"
+            },
+            {
+              "type": "createsprings:spring",
+              "entries": [
+                {
+                  "type": "minecraft:dynamic",
+                  "name": "minecraft:contents"
+                }
+              ],
+              "function": "minecraft:set_contents"
             }
           ],
           "name": "createsprings:spring"

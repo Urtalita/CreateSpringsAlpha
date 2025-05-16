@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
 import javax.swing.plaf.PanelUI;
@@ -98,5 +99,17 @@ public class RenderHelper {
             tooltip.add(Component.empty());
         }
         return !Screen.hasShiftDown();
+    }
+
+    public static Vec3 MoveToPos(float StartPos, float EndPos, float Progress, Vec3i movementDirection, BlockPos pos){
+        return MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress, movementDirection, pos);
+    }
+
+    public static Vec3 MoveWithoutVectors(float Moving, Vec3i movementDirection, BlockPos pos){
+        float offset = 1 - Moving - 0.5f;
+        return new Vec3(
+                (pos.getX() + movementDirection.getX() * offset),
+                (pos.getY() + movementDirection.getY() * offset),
+                (pos.getZ() + movementDirection.getZ() * offset));
     }
 }
