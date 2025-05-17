@@ -2,7 +2,6 @@ package net.Portality.createsprings.ponders;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
-import com.simibubi.create.infrastructure.ponder.scenes.KineticsScenes;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -15,5 +14,8 @@ public class CSpringsPonders {
 
         HELPER.forComponents(ModBlocks.SPRING)
                 .addStoryBoard("spring", CSpringsScenes::spring, AllCreatePonderTags.KINETIC_RELAYS);
+
+        HELPER.forComponents(ModBlocks.SPRING)
+                .addStoryBoard("springsplash", CSpringsScenes::springSplash, AllCreatePonderTags.KINETIC_RELAYS);
     }
 }

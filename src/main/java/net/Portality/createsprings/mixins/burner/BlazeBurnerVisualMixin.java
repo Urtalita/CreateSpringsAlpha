@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlazeBurnerVisual.class)
 public class BlazeBurnerVisualMixin{
 
-    @Shadow private BlazeBurnerBlock.HeatLevel heatLevel;
     private TransformedInstance cspringsHat;
     private TransformedInstance cspringsHat1;
     private TransformedInstance cspringsHat2;

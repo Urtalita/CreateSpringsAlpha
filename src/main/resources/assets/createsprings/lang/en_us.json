@@ -55,5 +55,17 @@
   "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
 
   "death.attack.createsprings.spring_box": "%1$s should have read the label",
-  "death.attack.createsprings.spring_box.player": "%1$s should have read the label"
+  "death.attack.createsprings.spring_box.player": "%1$s should have read the label",
+
+  "createsprings.ponder.spring.text_1": "Springs is able to store rotational force",
+  "createsprings.ponder.spring.text_2": "direction of rotation does not matter",
+  "createsprings.ponder.spring.text_3": "when activated spring will release stored kinetic energy",
+
+  "createsprings.ponder.springsplash.text_1": "Click the spring with tripwire hook to switch its mode",
+  "createsprings.ponder.springsplash.text_2": "click with empty hand to switch its mode back",
+  "createsprings.ponder.springsplash.text_3": "springs will instantly release stored energy when activated",
+  "createsprings.ponder.springsplash.text_4": "springs can push entities",
+  "createsprings.ponder.springsplash.text_5": "and break blocks",
+  "createsprings.ponder.springsplash.text_6": "some blocks needs more charge to break",
+  "createsprings.ponder.springsplash.text_7": "springs do not break kinetic mechanisms and pressure plates"
 }

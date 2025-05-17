@@ -51,16 +51,20 @@
   "tooltip.springstuf.createsprings:spring_alloy_block": "взрывной патрон",
   "tooltip.springstuf.minecraft:spyglass": "прицел",
 
-  "death.attack.createsprings.test": "%1$s столкнулся с пружиной",
-  "death.attack.createsprings.test.player": "%1$s столкнулся с пружиной",
-
   "death.attack.createsprings.spring_box": "%1$s не пережил распаковку",
   "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку",
-  "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
-  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
+  "death.attack.createsprings.spring": "%1$s столкнулся с пружиной",
+  "death.attack.createsprings.spring.player": "%1$s столкнулся с пружиной",
 
   "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
   "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",
-  "createsprings.ponder.spring.text_3": "При активации пружина будет отдавать накопленную кинетическую энергию"
+  "createsprings.ponder.spring.text_3": "При активации пружина будет отдавать накопленную кинетическую энергию",
 
+  "createsprings.ponder.springsplash.text_1": "кликните крюком по пружине, чтобы перевести её в режим всплеска",
+  "createsprings.ponder.springsplash.text_2": "вы можете убрать крюк, кликнув пустой рукой",
+  "createsprings.ponder.springsplash.text_3": "в режиме всплеска пружины моментально отдают накопленую энергию",
+  "createsprings.ponder.springsplash.text_4": "в этом режиме пружины могут толкать сущностей",
+  "createsprings.ponder.springsplash.text_5": "также пружины могут ломать блоки",
+  "createsprings.ponder.springsplash.text_6": "некоторые блоки требую больше заряда",
+  "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты"
 }

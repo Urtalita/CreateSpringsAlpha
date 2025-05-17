@@ -2,11 +2,15 @@ package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.google.common.collect.Lists;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -15,18 +19,22 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -92,6 +100,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
 
             if(phase == 1){
                 launchEntitiesInFront();
+                breakBlocksInFront();
             }
 
             phase++;
@@ -194,5 +203,38 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
             entity.setDeltaMovement(direction.scale(3).scale(stored / CreateSprings.SPRING_CAPACITY));
             entity.hurtMarked = true;
         }
+    }
+
+    private void breakBlocksInFront(){
+        BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING).getOpposite());
+        BlockState breakState = level.getBlockState(pos);
+        float blockHardness = breakState.getDestroySpeed(level, pos);
+
+        if(!BlockBreakingKineticBlockEntity.isBreakable(breakState, blockHardness)){return;}
+        if(breakState.getBlock() instanceof PressurePlateBlock){return;}
+        if(breakState.getBlock() instanceof KineticBlock){return;}
+        if(!(stored >= blockHardness / 50 * 160000)){return;}
+
+        level.playSound(null, worldPosition, breakState.getSoundType()
+                .getHitSound(), SoundSource.BLOCKS, .25f, 1);
+        onBlockBroken(breakState, pos);
+    }
+
+    public void onBlockBroken(BlockState stateToBreak, BlockPos breakingPos) {
+        Vec3 vec = VecHelper.offsetRandomly(VecHelper.getCenterOf(breakingPos), level.random, .125f);
+        BlockHelper.destroyBlock(level, breakingPos, 1f, (stack) -> {
+            if (stack.isEmpty())
+                return;
+            if (!level.getGameRules()
+                    .getBoolean(GameRules.RULE_DOBLOCKDROPS))
+                return;
+            if (level.restoringBlockSnapshots)
+                return;
+
+            ItemEntity itementity = new ItemEntity(level, vec.x, vec.y, vec.z, stack);
+            itementity.setDefaultPickUpDelay();
+            itementity.setDeltaMovement(Vec3.ZERO);
+            level.addFreshEntity(itementity);
+        });
     }
 }
