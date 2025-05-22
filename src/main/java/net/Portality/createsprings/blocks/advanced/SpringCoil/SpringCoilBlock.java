@@ -16,6 +16,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -54,7 +55,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             return;
         }
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlace(pos, true);
+            be.onPlace(pos);
         });
     }
 

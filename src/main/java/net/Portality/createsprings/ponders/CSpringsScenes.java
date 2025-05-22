@@ -1,7 +1,15 @@
 package net.Portality.createsprings.ponders;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.base.IRotate;
+import com.simibubi.create.content.kinetics.base.KineticBlock;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.RotationIndicatorParticleData;
+import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
+import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.ParrotElement;
@@ -9,10 +17,14 @@ import net.createmod.ponder.api.element.ParrotPose;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
+import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.Vec3;
 
 import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACE;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
@@ -222,6 +234,87 @@ public class CSpringsScenes {
         scene.effects().indicateRedstone(buttonPos);
         scene.world().modifyBlockEntityNBT(util.select().position(0, 1, 2), SpringBlockEntity.class, nbt -> nbt.putBoolean("Generating", true),false);
         scene.idle(1);
+
+        scene.idle(40);
+    }
+
+    public static void comparator(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("comparator", "Using comparators");
+        scene.configureBasePlate(0, 0, 3);
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+        scene.world().showSection(util.select().layer(1), Direction.UP);
+        scene.showBasePlate();
+
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("")
+                .pointAt(util.vector().of(1.5, 1.5, 1.5));
+    }
+
+    public static void welding(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("welding", "Using welders");
+        scene.configureBasePlate(0, 0, 6);
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+        scene.showBasePlate();
+
+        scene.idle(5);
+        for (int i = 6; i != -1; i--){
+            if(i == 3 || i==2){scene.idle(5); continue;}
+            scene.world().showSection(util.select().position(i, 1, 3), Direction.UP);
+            scene.idle(5);
+        }
+        scene.idle(15);
+
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("")
+                .pointAt(util.vector().of(3, 1.5, 3.5));
+        scene.idle(50);
+
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("")
+                .pointAt(util.vector().of(3, 1.5, 3.5));
+        scene.idle(45);
+        scene.effects().rotationDirectionIndicator(new BlockPos(6, 1, 3));
+        scene.idle(10);
+        scene.effects().rotationDirectionIndicator(new BlockPos(-1, 1, 3));
+
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("")
+                .pointAt(util.vector().of(3, 1.5, 3.5));
+        scene.idle(40);
+
+        scene.idle(5);
+        scene.world().showSection(util.select().position(5, 1, 2), Direction.UP);
+        scene.idle(5);
+
+        for (int i = 5; i != -1; i--){
+            scene.world().showSection(util.select().position(i, 1, 1), Direction.UP);
+            scene.idle(5);
+        }
+
+        scene.world().showSection(util.select().position(0, 1, 2), Direction.UP);
+        scene.idle(5);
+
+        scene.world().showSection(util.select().position(3, 1, 3), Direction.UP);
+        scene.idle(5);
+        scene.world().showSection(util.select().position(2, 1, 3), Direction.UP);
+        scene.idle(5);
+
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("")
+                .pointAt(util.vector().of(2.5, 1.5, 1.5));
+        scene.idle(50);
+
+        scene.world().toggleRedstonePower(util.select().fromTo(new BlockPos(0, 1, 1), new BlockPos(5, 1, 3)));
+        scene.effects().indicateRedstone(new BlockPos(2, 1, 1));
+
+        scene.world().rotateBearing(new BlockPos(1, 1, 3), 360 * 40, 40);
 
         scene.idle(40);
     }

@@ -55,6 +55,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
             applyBaseRotation(rings.get(i), i);
             applyBaseTransformations(rings.get(i), facing);
         }
+        animate(pt);
     }
 
     private void applyBaseTransformations(OrientedInstance instance, Direction facing){
@@ -68,7 +69,11 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     public void beginFrame(Context context) {
-        float progress = blockEntity.getProgress(context.partialTick());
+        animate(context.partialTick());
+    }
+
+    private void animate(float partialTick){
+        float progress = blockEntity.getProgress(partialTick);
 
         MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, pos);
 

@@ -4,6 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
@@ -14,6 +15,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,8 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
@@ -33,8 +37,9 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     protected boolean assembleNextTick_;
     public boolean isMainBlock = true;
     private int distanceToWelder = 0;
-    public boolean WeldingMode = true;
+    public boolean WeldingMode = false;
     public float HeadMove = 0;
+    private float prevHeadMove = 0;
     private final Vec3i movementDirection;
     private boolean velding = false;
     private int tickcount = 0;
@@ -68,11 +73,12 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
             }
 
             if (HeadMove > 0 && !velding){
+                prevHeadMove = HeadMove;
                 HeadMove -= 10;
                 if(HeadMove < 0){
                     HeadMove = 0;
                 } else if (movedContraption != null){
-                    movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove()));
+                    movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove(0)));
                 }
             }
 
@@ -86,11 +92,12 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         float combinedSpeed = (Math.abs(this.speed) / 256f) * recipeSpeed.getSpeedValue();
 
         if(HeadMove < 500){
+            prevHeadMove = HeadMove;
             HeadMove += combinedSpeed;;
             renderParticles();
 
             if (movedContraption != null){
-                movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove()));
+                movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove(0)));
             }
 
             if(HeadMove > 450){
@@ -151,40 +158,47 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         return false;
     }
 
-    public float getHeadMove(){
-        return (HeadMove / 1000f * (recipeSpeed.getSpeedValue() / 2f) + 0.5f);
+    public float getHeadMove(float pt){
+        return (Mth.lerp(pt, prevHeadMove, HeadMove) / 1000f * (recipeSpeed.getSpeedValue() / 2f) + 0.5f);
     }
-
-
 
     @Override
     public float propagateRotationTo(KineticBlockEntity target, BlockState stateFrom, BlockState stateTo, BlockPos diff,
                                      boolean connectedViaAxes, boolean connectedViaCogs) {
-        if(isMainBlock && !WeldingMode){
-            return 1;
-        } else {
+        if(WeldingMode){
             return 0;
         }
+        if(!isMainBlock){return 0;}
+        return 1;
+    }
+
+    @Override
+    public boolean isCustomConnection(KineticBlockEntity other, BlockState state, BlockState otherState) {
+        if(other instanceof WelderBlockEntity){
+            return !WeldingMode;
+        }
+        return super.isCustomConnection(other, state, otherState);
     }
 
     @Override
     public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
-        if (isMainBlock && !WeldingMode){
-            BlockPos OtherBlock = FindWelderPos();
-            if(OtherBlock != null){
-                neighbours.add(OtherBlock);
-            }
+        if(!WeldingMode){
+            if(!running){return super.addPropagationLocations(block, state, neighbours);}
+            List<BlockPos> poses = new ArrayList<>();
+            int weldDist = findWelderDistance();
+            poses.add(worldPosition.relative(state.getValue(FACING), -1));
+            poses.add(worldPosition.relative(state.getValue(FACING), 1));
+
+            if(!isMainBlock){return poses;}
+            if(weldDist != -1){poses.add(worldPosition.relative(state.getValue(FACING), weldDist));}
+            return poses;
         }
         return super.addPropagationLocations(block, state, neighbours);
     }
 
     @Override
-    public boolean isCustomConnection(KineticBlockEntity other, BlockState state, BlockState otherState) {
-        if (isMainBlock && !WeldingMode){
-            return true;
-        } else {
-            return false;
-        }
+    public void lazyTick() {
+        super.lazyTick();
     }
 
     @Override
@@ -201,49 +215,25 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
     }
 
-
-    @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        super.read(compound, clientPacket);
-
-        recipeSpeed = WelderRecipeSpeed.valueOf(compound.getString("RecipeSpeed"));
-        WeldingMode = compound.getBoolean("WeldingMode");
-        isMainBlock = compound.getBoolean("isMain");
-        velding = compound.getBoolean("welding");
-        HeadMove = compound.getFloat("HeadMove");
-        if (compound.contains("CraftResult")) {
-            CraftResult = ItemStack.of(compound.getCompound("CraftResult"));
-        }
-    }
-
-    @Override
-    public void write(CompoundTag compound, boolean clientPacket) {
-        compound.putBoolean("WeldingMode", WeldingMode);
-        compound.putBoolean("isMain", isMainBlock);
-        compound.putBoolean("welding", velding);
-        compound.putString("RecipeSpeed", recipeSpeed.name());
-        compound.putFloat("HeadMove", HeadMove);
-
-        super.write(compound, clientPacket);
-
-        if (CraftResult != null) {
-            compound.put("CraftResult", CraftResult.save(new CompoundTag()));
-        }
-    }
-
     @Override
     public void assemble() {
 
         if (isMainBlock && !WeldingMode){
+            if(!checkContraption()){return;}
+
             Optional<WelderBlockEntity> OweldBe = FindWelder();
 
             if(OweldBe.isPresent()){
                 WelderBlockEntity SecondBe = OweldBe.get();
                 SecondBe.isMainBlock = false;
                 SecondBe.running = true;
+                SecondBe.assembleNextTick_ = true;
+                SecondBe.updateSpeed = true;
 
                 setChanged();
+                notifyUpdate();
                 SecondBe.setChanged();
+                SecondBe.notifyUpdate();
             }
 
             assembleNextTick_ = true;
@@ -283,42 +273,48 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
     }
 
+    private boolean checkContraption(){
+        Direction facing = getBlockState().getValue(FACING);
+
+        for (int i = 1; i < SearchLimit; i++){
+            BlockState state = level.getBlockState(worldPosition.relative(facing, i));
+            if (state.isAir()) return false;
+            if (state.getBlock() == ModBlocks.FRICTION_WELDER.get()) return true;
+        }
+        return false;
+    }
+
     @Override
     public void disassemble() {
         super.disassemble();
         if (!WeldingMode){
+            if(!isMainBlock){return;}
             Optional<WelderBlockEntity> OweldBe = FindWelder();
 
             if(OweldBe.isPresent()) {
                 WelderBlockEntity SecondBe = OweldBe.get();
-                SecondBe.running = false;
                 SecondBe.isMainBlock = true;
-                setChanged();
-                SecondBe.setChanged();
-                CraftResult = null;
-                SecondBe.CraftResult = null;
+                SecondBe.running = false;
+                SecondBe.speed = 0;
+                SecondBe.angle = 0;
+                angle = 0;
+                SecondBe.notifyUpdate();
+                notifyUpdate();
             }
         } else {
             velding = false;
+            CraftResult = null;
         }
     }
 
-    private BlockPos FindWelderPos() {
+    private int findWelderDistance(){
         Direction facing = getBlockState().getValue(FACING);
 
         for (int i = 1; i < SearchLimit; i++){
             BlockEntity welderBE = level.getBlockEntity(worldPosition.relative(facing, i));
-            BlockState Block = level.getBlockState(worldPosition.relative(facing, i));
-            if(Block.isAir()){
-                return null;
-            }
-            if ((welderBE instanceof WelderBlockEntity))
-                if(welderBE.getBlockState().getValue(FACING) == facing.getOpposite()){
-                    distanceToWelder = i;
-                    return worldPosition.relative(facing, i);
-                }
+            if ((welderBE instanceof WelderBlockEntity)) return i;
         }
-        return null;
+        return -1;
     }
 
     private Optional<WelderBlockEntity> FindWelderWelding(){
@@ -390,6 +386,35 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                     result
             );
             level.addFreshEntity(itemEntity);
+        }
+    }
+
+    @Override
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        super.read(compound, clientPacket);
+
+        recipeSpeed = WelderRecipeSpeed.valueOf(compound.getString("RecipeSpeed"));
+        WeldingMode = compound.getBoolean("WeldingMode");
+        isMainBlock = compound.getBoolean("isMain");
+        velding = compound.getBoolean("welding");
+        HeadMove = compound.getFloat("HeadMove");
+        if (compound.contains("CraftResult")) {
+            CraftResult = ItemStack.of(compound.getCompound("CraftResult"));
+        }
+    }
+
+    @Override
+    public void write(CompoundTag compound, boolean clientPacket) {
+        compound.putBoolean("WeldingMode", WeldingMode);
+        compound.putBoolean("isMain", isMainBlock);
+        compound.putBoolean("welding", velding);
+        compound.putString("RecipeSpeed", recipeSpeed.name());
+        compound.putFloat("HeadMove", HeadMove);
+
+        super.write(compound, clientPacket);
+
+        if (CraftResult != null) {
+            compound.put("CraftResult", CraftResult.save(new CompoundTag()));
         }
     }
 }

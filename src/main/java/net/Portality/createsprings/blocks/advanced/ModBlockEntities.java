@@ -26,6 +26,7 @@ import net.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringRenderer;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringVisual;
+import net.Portality.createsprings.blocks.advanced.test.TestBlockEntity;
 
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
@@ -62,6 +63,13 @@ public class ModBlockEntities {
             .blockEntity("large_spring_coil", SpringCoilBlockEntity::new)
             .visual(() -> SpringCoilVisual::new, false)
             .validBlocks(ModBlocks.LARGE_SPRING_COIL)
+            .register();
+
+    public static final BlockEntityEntry<TestBlockEntity> TEST = CSPRINGS_REGISTRATE
+            .blockEntity("test", TestBlockEntity::new)
+            .visual(() -> ShaftVisual::new)
+            .renderer(() -> ShaftRenderer::new)
+            .validBlocks(ModBlocks.TEST)
             .register();
 
 

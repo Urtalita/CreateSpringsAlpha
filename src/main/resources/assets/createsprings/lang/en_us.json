@@ -67,5 +67,7 @@
   "createsprings.ponder.springsplash.text_4": "springs can push entities",
   "createsprings.ponder.springsplash.text_5": "and break blocks",
   "createsprings.ponder.springsplash.text_6": "some blocks needs more charge to break",
-  "createsprings.ponder.springsplash.text_7": "springs do not break kinetic mechanisms and pressure plates"
+  "createsprings.ponder.springsplash.text_7": "springs do not break kinetic mechanisms and pressure plates",
+
+  "createsprings.ponder.comparator.text_1": "idk how to use it"
 }

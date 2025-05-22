@@ -60,7 +60,7 @@ public class WelderVisual<B extends WelderBlockEntity & IBearingBlockEntity> ext
         rot.mul(blockOrientation);
 
         topInstance.rotation(rot).setChanged();
-        MoveWithoutVectors(blockEntity.getHeadMove(), topInstance);
+        MoveWithoutVectors(blockEntity.getHeadMove(ctx.partialTick()), topInstance);
     }
 
     private void MoveWithoutVectors(float Moving, OrientedInstance instance){

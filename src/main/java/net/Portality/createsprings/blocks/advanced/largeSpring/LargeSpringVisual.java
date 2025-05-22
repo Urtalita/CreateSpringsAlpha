@@ -17,6 +17,7 @@ import org.joml.Quaternionf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 import static net.Portality.createsprings.utill.Helpers.RenderHelper.*;
 
 public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> implements SimpleDynamicVisual {
@@ -25,22 +26,22 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
     private final OrientedInstance up_plate;
     private final OrientedInstance down_plate;
     final Direction facing;
-    private final Vec3i movementDirection;
     final Axis rotationAxis;
     final Quaternionf blockOrientation;
     private final int SPRING_LEN;
+    private int prevLen;
 
     public LargeSpringVisual(VisualizationContext context, LargeSpringBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
         SPRING_LEN = blockEntity.getLen() * 4;
+        prevLen = blockEntity.getLen() * 4;
 
         facing = blockEntity.getBlockState().getValue(DirectionalKineticBlock.FACING);
 
         rotationAxis = getRotationAxis(facing);
         blockOrientation = getBlockStateOrientation(facing);
 
-        movementDirection = facing.getOpposite().getNormal();
 
         for (int i = 0; i < SPRING_LEN; i++) {
             rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED, instancerProvider()));
@@ -58,6 +59,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
         applyPlateBaseTransformations(up_plate, facing);
         applyPlateBaseTransformations(down_plate, facing);
+
+        setPos(0, 0, down_plate, -7/16f );
     }
 
     private void applyPlateBaseTransformations(OrientedInstance instance, Direction facing){
@@ -102,17 +105,29 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
     @Override
     public void beginFrame(Context context) {
+        int len = blockEntity.getLen() * 4;
         float progres = 1 - blockEntity.getProgres(context.partialTick());
-        for (int i = 0; i < rings.size(); i++) {
-            updateRingPosition(rings.get(i), i, progres);
-            updateCornerPosition(rings_corners.get(i), i, progres);
+
+        if(len != prevLen){
+            rings.forEach(this::setInvisible);
+            rings_corners.forEach(this::setInvisible);
+            prevLen = len;
         }
 
-        setPos(0, 0, down_plate, -7/16f );
-        setPos(0, 0, up_plate, calculateLen(progres, SPRING_LEN) - 4/16f*(1-progres));
+        for (int i = 0; i < len; i++) {
+            updateRingPosition(rings.get(i), i, progres, len);
+            updateCornerPosition(rings_corners.get(i), i, progres, len);
+            rings.get(i).setVisible(true);
+            rings_corners.get(i).setVisible(true);
+        }
+        setPos(0, 0, up_plate, calculateLen(progres, len) - 4/16f*(1-progres));
     }
 
-    private void updateRingPosition(OrientedInstance ring, int ringIndex, float progres) {
+    private void setInvisible(OrientedInstance instance){
+        instance.setVisible(false);
+    }
+
+    private void updateRingPosition(OrientedInstance ring, int ringIndex, float progres, int len) {
         int x = 0;
         int z = 0;
 
@@ -127,7 +142,7 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         setPos(x, z, ring, calculateLen(progres, ringIndex));
     }
 
-    private void updateCornerPosition(OrientedInstance corner, int ringIndex, float progres) {
+    private void updateCornerPosition(OrientedInstance corner, int ringIndex, float progres, int len) {
         int x = 0;
         int z = 0;
 

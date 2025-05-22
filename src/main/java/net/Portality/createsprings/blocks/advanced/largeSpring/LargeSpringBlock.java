@@ -1,14 +1,20 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,6 +22,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<LargeSpringBlockEntity> {
 
@@ -50,6 +57,37 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
             be.onBreak(pPos, pState.getValue(FACING));
         });
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        InteractionResult use = super.use(state, level, pos, player, hand, result);
+        ItemStack itemInHand = player.getItemInHand(hand);
+
+        if(itemInHand.getItem() == Blocks.TRIPWIRE_HOOK.asItem()){
+            return onBlockEntityUse(level, pos, be ->{
+                if(be.splashMode){
+                    return InteractionResult.FAIL;
+                }
+                if(player.isCreative()){itemInHand.shrink(1);}
+                be.splashMode = true;
+                AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
+                return InteractionResult.SUCCESS;
+            });
+        }
+
+        if(itemInHand.getItem() == ItemStack.EMPTY.getItem()){
+            return onBlockEntityUse(level, pos, be ->{
+                if(be.splashMode){
+                    if(!player.isCreative()){player.addItem(new ItemStack(Blocks.TRIPWIRE_HOOK));}
+                    be.splashMode = false;
+                    AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
+                    return InteractionResult.SUCCESS;
+                }
+                return InteractionResult.FAIL;
+            });
+        }
+        return use;
     }
 
     @Override

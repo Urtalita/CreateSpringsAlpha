@@ -96,7 +96,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         super.tick(); // Важно для базовой логики
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
-            progress = springAnimation(phase) * (stored / CreateSprings.SPRING_CAPACITY);
+            progress = springAnimation(phase) * (stored / capacity);
 
             if(phase == 1){
                 launchEntitiesInFront();

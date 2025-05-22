@@ -15,6 +15,7 @@ import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringExstentionBlock;
+import net.Portality.createsprings.blocks.advanced.test.TestBlock;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -96,6 +97,14 @@ public class ModBlocks {
             .properties(p -> p.noOcclusion())
             .item(SpringItem::new)
             .transform(customItemModel())
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .register();
+
+    public static final BlockEntry<TestBlock> TEST = CSPRINGS_REGISTRATE
+            .block("test", TestBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion())
+            .simpleItem()
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 

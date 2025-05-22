@@ -66,5 +66,13 @@
   "createsprings.ponder.springsplash.text_4": "в этом режиме пружины могут толкать сущностей",
   "createsprings.ponder.springsplash.text_5": "также пружины могут ломать блоки",
   "createsprings.ponder.springsplash.text_6": "некоторые блоки требую больше заряда",
-  "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты"
+  "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты",
+
+  "createsprings.ponder.comparator.text_1": "хз как это юзать",
+
+  "createsprings.ponder.welding.text_1": "Сварка трением - это ещё один способ обработки",
+  "createsprings.ponder.welding.text_2": "для сварки на механизмы должна подаваться одинаковая скорость...",
+  "createsprings.ponder.welding.text_3": "...противоположанная по направлению",
+  "createsprings.ponder.welding.text_4": "чтобы начать процес запустите оба сварщика",
+  "createsprings.ponder.welding.text_5": "результат крафта будет выброшен посередине"
 }
