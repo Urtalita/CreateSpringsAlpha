@@ -25,6 +25,8 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
         super(context, blockEntity, partialTick, Models.partial(CSpringsPartalModels.LARGE_SPRING_COIL));
         plate = createInstance(CSpringsPartalModels.SPRING_PLATE);
         plate.setVisible(false);
+
+        animate();
     }
 
     private void applyBaseTransformations(OrientedInstance instance, Direction facing){
@@ -38,6 +40,10 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
 
     @Override
     public void beginFrame(Context context) {
+        animate();
+    }
+
+    private void animate(){
         if(blockEntity.plate){
             if(initialise){
                 plate.setVisible(true);
@@ -46,7 +52,7 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
                 movementDirection = facing.getOpposite().getNormal();
                 applyBaseTransformations(plate, facing);
             }
-            MoveWithoutVectors(0, plate, movementDirection, pos);
+            MoveWithoutVectors(0, plate, movementDirection, getVisualPosition());
         }
     }
 

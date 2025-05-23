@@ -1,5 +1,6 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
@@ -24,6 +25,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -45,7 +47,7 @@ public class SpringPoweredCore {
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
         CompoundTag tag = stack.getOrCreateTag();
-        float capacity = tag.getInt("Springs_rn") * CreateSprings.SPRING_CAPACITY;
+        float capacity = tag.getInt("Springs_rn") * Config.spring_capacity;
         tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
                 .append(Component.literal(String.valueOf(tag.getFloat("Stored")))).withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
@@ -157,6 +159,23 @@ public class SpringPoweredCore {
         return ForgeRegistries.ITEMS.getValue(resLoc);
     }
 
+    public static Item getItemFromContains(ItemStack stack, Item searchItem){
+        CompoundTag tag = stack.getOrCreateTag();
+        if(!tag.contains("contains")){return null;}
+        CompoundTag contains = tag.getCompound("contains");
+
+        if(!contains.contains(ForgeRegistries.ITEMS.getKey(searchItem).toString())){return null;}
+        String itemid = ForgeRegistries.ITEMS.getKey(searchItem).toString();
+
+        if (!contains.getBoolean(itemid)){return null;}
+
+        contains.putBoolean(itemid, false);
+        tag.put("contains", contains);
+        contains.remove(itemid);
+
+        return searchItem;
+    }
+
     public float getStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
         float stored = 0;
@@ -264,9 +283,9 @@ public class SpringPoweredCore {
                     if (Springs_rn > 0){
                         float springSu = 0;
 
-                        if (Stored >= (int) CreateSprings.SPRING_CAPACITY){
-                            springSu = (int) CreateSprings.SPRING_CAPACITY;
-                            Stored -= (int) CreateSprings.SPRING_CAPACITY;
+                        if (Stored >= (int) Config.spring_capacity){
+                            springSu = (int) Config.spring_capacity;
+                            Stored -= (int) Config.spring_capacity;
                         } else {
                             springSu = Stored;
                             Stored = 0;
@@ -289,6 +308,10 @@ public class SpringPoweredCore {
             }
 
             if(addStackedLogick(ModItems.PUNCHCARD.get(), stack1, stack2, action, player)){
+                return true;
+            }
+
+            if(addStackedLogick(Blocks.TRIPWIRE_HOOK.asItem(), stack1, stack2, action, player)){
                 return true;
             }
 
@@ -326,9 +349,9 @@ public class SpringPoweredCore {
         tag2.putInt("Springs_rn", tag2.getInt("Springs_rn") + 1);
         tag1.putInt("Springs_rn", tag1.getInt("Springs_rn") - 1);
 
-        if(tag1.getFloat("Stored") >= CreateSprings.SPRING_CAPACITY){
-            tag1.putFloat("Stored", tag1.getInt("Stored") - CreateSprings.SPRING_CAPACITY);
-            tag2.putFloat("Stored", tag2.getInt("Stored") + CreateSprings.SPRING_CAPACITY);
+        if(tag1.getFloat("Stored") >= Config.spring_capacity){
+            tag1.putFloat("Stored", tag1.getInt("Stored") - Config.spring_capacity);
+            tag2.putFloat("Stored", tag2.getInt("Stored") + Config.spring_capacity);
             return true;
         }
         tag2.putFloat("Stored", tag1.getFloat("Stored"));

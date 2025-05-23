@@ -1,15 +1,9 @@
 package net.Portality.createsprings;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.List;
-import java.util.Set;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Forge's config APIs
@@ -17,31 +11,31 @@ import java.util.Set;
 public class Config {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER.comment("Whether to log the dirt block on common setup").define("logDirtBlock", true);
+    private static final ForgeConfigSpec.BooleanValue SPRINGS_CAN_SPLASH =
+            BUILDER.comment("Springs may or may not discharge instantly when in splash mode").define("splash_mode", true);
 
-    private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER.comment("A magic number").defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue SPRING_CAPACITY =
+            BUILDER.comment("capacity of the spring").defineInRange("spring_capacity", 160000, 2, Integer.MAX_VALUE);
 
-    public static final ForgeConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER.comment("What you want the introduction message to be for the magic number").define("magicNumberIntroduction", "The magic number is... ");
+    private static final ForgeConfigSpec.IntValue SPRING_SPLASH_DURATION =
+            BUILDER.comment("spring splash duration in ticks").defineInRange("spring_splash_duration", 40, 10, 10000);
 
-    // a list of strings that are treated as resource locations for items
-    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER.comment("A list of items to log on common setup.").defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
+    private static final ForgeConfigSpec.DoubleValue KNOCKBACK_COEF =
+            BUILDER.comment("knockback coefficient of springs").defineInRange("knockback_coef", 4f, 0, 10);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static boolean logDirtBlock;
-    public static int magicNumber;
-    public static String magicNumberIntroduction;
-    public static Set<Item> items;
-
-    private static boolean validateItemName(final Object obj) {
-        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
-    }
+    public static boolean springs_can_splash;
+    public static int spring_capacity;
+    public static int spring_splash_duration;
+    public static double knockback_coef;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        logDirtBlock = LOG_DIRT_BLOCK.get();
-        magicNumber = MAGIC_NUMBER.get();
-        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
+        springs_can_splash = SPRINGS_CAN_SPLASH.get();
+        spring_capacity = SPRING_CAPACITY.get();
+        spring_splash_duration = SPRING_SPLASH_DURATION.get();
+        knockback_coef = KNOCKBACK_COEF.get();
 
         // convert the list of strings into a set of items
     }

@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -21,6 +22,8 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
     protected final PartialModel Stress_Arrow = PartialModel.of(CreateSprings.asResource("item/drill/speedometer_arrow"));
     protected final PartialModel Right_Spring = PartialModel.of(CreateSprings.asResource("item/drill/right_spring"));
     protected final PartialModel Left_Spring = PartialModel.of(CreateSprings.asResource("item/drill/left_spring"));
+
+    private static final RandomSource RANDOM = RandomSource.create();
 
     @Override
     protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType,
@@ -34,8 +37,9 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         CompoundTag tag = stack.getOrCreateTag();
 
-        double Speed = Mth.lerp((Minecraft.getInstance().level.getGameTime() - 2)
-                % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
+        double Speed = getSpeed(tag);
+
+        if (tag.getFloat("Speed") > 5000){Speed += RANDOM.nextInt(-1, 1);}
 
         int Springs = tag.getInt("Springs_rn");
 
@@ -57,5 +61,10 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
         } else if (Springs == 1){
             renderer.render(Right_Spring.get(), light);
         }
+    }
+
+    private double getSpeed(CompoundTag tag){
+        return Mth.lerp((Minecraft.getInstance().level.getGameTime() - 2)
+                % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
     }
 }

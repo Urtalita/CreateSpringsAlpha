@@ -3,6 +3,7 @@ package net.Portality.createsprings.Entities.Packages;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
@@ -113,7 +114,7 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public static void spawnSpring(LivingEntity entity, Level level, float power){
-        float progress = power / CreateSprings.SPRING_CAPACITY;
+        float progress = power / Config.spring_capacity;
         SpringProjectile projectile = (SpringProjectile) createProjectile(level, entity);
         projectile.shootFromRotation(entity, -90, 0, 0.0F,  3 * progress, 1.0F);
         projectile.redirectProjectile(projectile , 10, null);

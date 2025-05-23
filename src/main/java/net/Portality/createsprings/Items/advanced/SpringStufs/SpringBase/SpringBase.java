@@ -34,9 +34,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static net.Portality.createsprings.Config.items;
-import static net.Portality.createsprings.CreateSprings.SPRING_TOOLS;
-
 public class SpringBase extends Item implements CustomArmPoseItem {
 
     private final SpringPoweredCore core;

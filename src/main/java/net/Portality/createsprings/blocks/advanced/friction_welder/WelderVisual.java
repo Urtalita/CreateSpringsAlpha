@@ -50,17 +50,23 @@ public class WelderVisual<B extends WelderBlockEntity & IBearingBlockEntity> ext
         topInstance.position(getVisualPosition())
                 .rotation(blockOrientation)
                 .setChanged();
+
+        animate(partialTick);
     }
 
     @Override
     public void beginFrame(DynamicVisual.Context ctx) {
-        float interpolatedAngle = blockEntity.getInterpolatedAngle(ctx.partialTick() - 1);
+        animate(ctx.partialTick());
+    }
+
+    private void animate(float pt){
+        float interpolatedAngle = blockEntity.getInterpolatedAngle(pt - 1);
         Quaternionf rot = rotationAxis.rotationDegrees(interpolatedAngle);
 
         rot.mul(blockOrientation);
 
         topInstance.rotation(rot).setChanged();
-        MoveWithoutVectors(blockEntity.getHeadMove(ctx.partialTick()), topInstance);
+        MoveWithoutVectors(blockEntity.getHeadMove(pt), topInstance);
     }
 
     private void MoveWithoutVectors(float Moving, OrientedInstance instance){

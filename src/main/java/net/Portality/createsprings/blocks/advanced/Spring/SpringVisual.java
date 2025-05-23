@@ -75,7 +75,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     private void animate(float partialTick){
         float progress = blockEntity.getProgress(partialTick);
 
-        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, pos);
+        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, getVisualPosition());
 
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(progress, rings.get(i), i);
@@ -83,7 +83,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     private void updateRingPosition(float progress, OrientedInstance ring, int ringIndex) {
-        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, pos);
+        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, getVisualPosition());
     }
 
     @Override

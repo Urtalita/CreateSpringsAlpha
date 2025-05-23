@@ -1,4 +1,4 @@
-package net.Portality.createsprings.mixins.burner;
+package net.Portality.createsprings.utill.burner;
 
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import net.Portality.createsprings.utill.mixins.CshatAccessor;

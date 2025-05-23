@@ -1,6 +1,5 @@
-package net.Portality.createsprings.mixins.burner;
+package net.Portality.createsprings.utill.burner;
 
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerVisual;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;
@@ -14,9 +13,7 @@ import net.Portality.createsprings.utill.mixins.CshatAccessor;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

@@ -1,10 +1,10 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
@@ -16,18 +16,24 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 
 public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption {
 
-    public static float capacity = CreateSprings.SPRING_CAPACITY;
+    public static float capacity = Config.spring_capacity;
     private float progress;
     public float stored = 0;
     private int len = 8;
@@ -43,7 +49,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
-        capacity = CreateSprings.SPRING_CAPACITY;
+        capacity = Config.spring_capacity;
     }
 
     public float getProgres(float partalTicks) {
@@ -96,18 +102,16 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         assemble();
+        notifyUpdate();
     }
 
     public void onBreak(BlockPos pos, Direction facing){
 
-        for(int y = 0; y <= len; y++){
+        for(int y = 0; y <= len-1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
                         BlockPos pos1 = calcPos(i, y, j, pos, facing);
-                        if(level.getBlockState(pos1).getBlock() == Blocks.AIR){
-                            continue;
-                        }
                         level.setBlock(pos1, ModBlocks.LARGE_SPRING_COIL.getDefaultState().setValue(FACING, facing), Block.UPDATE_ALL);
                     }
                 }
@@ -181,7 +185,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     }
 
-    private BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
+    public static BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
         int dierectionFactor = 1;
         if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
             dierectionFactor = -1;
@@ -214,15 +218,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             prevProgress = progress;
             progress = springAnimation(phase) * (stored / capacity);
 
-            /*
-            if(phase == 1){
-                launchEntitiesInFront();
-                breakBlocksInFront();
+            if(phase < 5){
+                pushEntitiesInArea(worldPosition.north().east(),
+                        worldPosition.relative(getBlockState().getValue(FACING), len).west().south());
             }
-             */
 
             phase++;
-            if(phase == 40){
+            if(phase == Config.spring_splash_duration){
                 phase = 0;
                 stored = 0;
                 isGenerating = false;
@@ -233,32 +235,75 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         prevProgress = progress;
+        progress = stored / capacity;
 
+        manageExtensions(isGenerating);
+    }
+
+    private void manageExtensions(boolean mode){
         Direction facing = getBlockState().getValue(FACING);
         float platePos = platePos(progress) + 0.5f;
 
         float CurSpeed = Math.abs(getSpeed());
-        if (isGenerating && stored > 0) {
+        if (mode && stored > 0) {
             stored = Math.max(stored - 256, 0);
             updateGeneratedRotation();
 
             if (platePos > (curLen+1)) {
                 curLen++;
-                restoreLayer((int) Math.floor(platePos(progress)), facing);
+                restoreLayer(Mth.floor(platePos(progress)), facing);
             }
         }
         // Режим накопления, если не активировано
-        else if (!isGenerating) {
+        else if (!mode) {
             stored = Mth.clamp(stored + CurSpeed*4, 0, capacity);
 
             if (platePos < (curLen+1)) {
-                removeLayer((int) Math.floor(platePos(progress)), facing);
+                removeLayer(Mth.floor(platePos(progress)), facing);
                 curLen--;
             }
         }
-
-        progress = stored / capacity;
     }
+
+    public void pushEntitiesInArea(BlockPos pos1, BlockPos pos2) {
+        if (level == null || level.isClientSide) return;
+
+        // Определяем границы области
+        BlockPos min = new BlockPos(
+                Math.min(pos1.getX(), pos2.getX()),
+                Math.min(pos1.getY(), pos2.getY()),
+                Math.min(pos1.getZ(), pos2.getZ())
+        );
+        BlockPos max = new BlockPos(
+                Math.max(pos1.getX(), pos2.getX()),
+                Math.max(pos1.getY(), pos2.getY()),
+                Math.max(pos1.getZ(), pos2.getZ())
+        );
+
+        // Создаём AABB, включая все блоки в области
+        AABB area = new AABB(
+                min.getX(), min.getY(), min.getZ(),
+                max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0
+        );
+
+        // Получаем все сущности в области
+
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, area)) {
+            // Толкаем сущности от центра области
+            Vec3 center = new Vec3(
+                    (area.minX + area.maxX) * 0.5,
+                    (area.minY + area.maxY) * 0.5,
+                    (area.minZ + area.maxZ) * 0.5
+            );
+
+            Vec3 direction = Vec3.atLowerCornerOf(getBlockState().getValue(FACING).getNormal());
+            double strength = Config.knockback_coef * stored / capacity * len; // Сила толчка
+
+            entity.setDeltaMovement(direction.scale(strength));
+            entity.hurtMarked = true; // Обязательно для синхронизации движения на клиенте
+        }
+    }
+
 
     private boolean canBreakBlock(BlockState state) {
         if(state.is(Blocks.AIR)){ return true;}

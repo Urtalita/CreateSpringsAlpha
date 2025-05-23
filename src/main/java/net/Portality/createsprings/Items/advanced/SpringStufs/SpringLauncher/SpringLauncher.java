@@ -2,6 +2,7 @@ package net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher;
 
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Projectile.SpringAlloyBlockProjectile;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
@@ -123,7 +124,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
         int Springs_rn = tag.getInt("Springs_rn");
         float Stored = tag.getFloat("Stored");
         tag.putBoolean("using", false);
-        float power = 1.0F * (Stored / CreateSprings.SPRING_CAPACITY);
+        float power = 1.0F * (Stored / Config.spring_capacity);
         int time = getUseDuration(stack) - timeLeft;
         CompoundTag contains = tag.getCompound("contains");
 

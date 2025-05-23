@@ -3,17 +3,24 @@ package net.Portality.createsprings.Items.advanced.SpringStufs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.world.item.*;
+
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromContains;
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromName;
 
 public class SpringSpeedSys {
 
@@ -22,14 +29,17 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
 
         tooltip.add(Component.literal("speed: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(getSpeedColor(speed))));
+                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(getSpeedColor(speed, level))));
     }
 
-    private ChatFormatting getSpeedColor(Double speed){
+    private ChatFormatting getSpeedColor(Double speed, Level level){
         if(speed == 0){return ChatFormatting.GRAY;}
         if(speed < 1000){return ChatFormatting.GREEN;}
         if(speed < 4000){return ChatFormatting.AQUA;}
-        return ChatFormatting.LIGHT_PURPLE;
+        if (speed < 5000){return ChatFormatting.LIGHT_PURPLE;}
+        if (speed < 10000){return ChatFormatting.RED;}
+
+        return (level.getGameTime() % 40 < 21) ? ChatFormatting.DARK_RED : ChatFormatting.RED;
     }
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
@@ -51,12 +61,23 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
         Stored = tag.getFloat("Stored");
 
-        if (Stored > 5000){
-            speed += 250;
-            Stored -= 2000;
-        }
+        Item hook = getItemFromContains(stack, Blocks.TRIPWIRE_HOOK.asItem());
+        if(hook != null){
+            speed += Stored / 8 / 2;
+            Stored = 0;
 
-        if(speed > 5000) speed = 5000;
+            if(speed > 25000){
+                speed = 25000;
+            }
+            player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
+        } else {
+            if (Stored > 5000){
+                speed += 250;
+                Stored -= 2000;
+            }
+
+            if(speed > 5000) speed = 5000;
+        }
 
         tag.putDouble("Speed", speed);
         tag.putFloat("Stored", Stored);

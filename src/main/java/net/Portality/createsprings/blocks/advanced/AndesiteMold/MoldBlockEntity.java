@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
 
-import static net.Portality.createsprings.Config.items;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class MoldBlockEntity extends SmartBlockEntity implements Container{

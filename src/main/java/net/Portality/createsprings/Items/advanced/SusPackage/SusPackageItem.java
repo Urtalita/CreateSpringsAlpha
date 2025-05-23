@@ -2,6 +2,7 @@ package net.Portality.createsprings.Items.advanced.SusPackage;
 
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
@@ -114,7 +115,7 @@ public class SusPackageItem extends PackageItem {
 
     @Override
     public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        float capacity = CreateSprings.SPRING_CAPACITY;
+        float capacity = Config.spring_capacity;
         CompoundTag tag = pStack.getOrCreateTag();
         pTooltipComponents.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
                 .append(Component.literal(String.valueOf(tag.getFloat("Stored")))).withStyle(ChatFormatting.GRAY)

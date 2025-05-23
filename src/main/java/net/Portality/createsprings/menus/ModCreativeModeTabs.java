@@ -1,5 +1,6 @@
 package net.Portality.createsprings.menus;
 
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -26,12 +27,12 @@ public class ModCreativeModeTabs {
                         ItemStack spring = ModBlocks.SPRING.asStack();
                         CompoundTag SpTag = spring.getOrCreateTag();
                         CompoundTag SpBlTag = new CompoundTag();
-                        SpBlTag.putFloat("Stored", CreateSprings.SPRING_CAPACITY);
+                        SpBlTag.putFloat("Stored", Config.spring_capacity);
                         SpTag.put("BlockEntityTag", SpBlTag);
 
                         ItemStack box = ModItems.SUS_PACKAGE.get().getDefaultInstance();
                         CompoundTag boxtag = box.getOrCreateTag();
-                        boxtag.putFloat("Stored", CreateSprings.SPRING_CAPACITY);
+                        boxtag.putFloat("Stored", Config.spring_capacity);
 
                         pOutput.accept(ModItems.SPRING_ALLOY.get());
                         pOutput.accept(ModItems.SPRING_ALLOY_SHEET.get());
@@ -60,6 +61,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPRING_SAW.get());
                         pOutput.accept(ModItems.SPRING_SHOVE.get());
                         pOutput.accept(ModBlocks.TEST);
+                        pOutput.accept(ModBlocks.LARGE_SPRING);
 
                     })
                     .build());

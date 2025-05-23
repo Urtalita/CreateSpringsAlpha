@@ -10,6 +10,7 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import org.joml.Quaternionf;
@@ -61,6 +62,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         applyPlateBaseTransformations(down_plate, facing);
 
         setPos(0, 0, down_plate, -7/16f );
+
+        animate(partialTick);
     }
 
     private void applyPlateBaseTransformations(OrientedInstance instance, Direction facing){
@@ -105,8 +108,12 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
     @Override
     public void beginFrame(Context context) {
+        animate(context.partialTick());
+    }
+
+    private void animate(float partialTick){
         int len = blockEntity.getLen() * 4;
-        float progres = 1 - blockEntity.getProgres(context.partialTick());
+        float progres = 1 - blockEntity.getProgres(partialTick);
 
         if(len != prevLen){
             rings.forEach(this::setInvisible);
@@ -159,6 +166,7 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
 
     private void setPos(int x, int z, OrientedInstance instance, float len){
         float dierectionFactor = 1;
+        BlockPos pos = getVisualPosition();
         if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
             dierectionFactor = -1;
         }

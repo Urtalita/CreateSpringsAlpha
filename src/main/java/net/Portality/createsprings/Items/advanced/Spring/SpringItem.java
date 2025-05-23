@@ -3,6 +3,7 @@ package net.Portality.createsprings.Items.advanced.Spring;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
@@ -218,7 +219,7 @@ public class SpringItem extends BlockItem {
     }
 
     public void launchPackage(ItemStack stack, Level world, Player player, ItemStack springStack, boolean isSusPackage, boolean isHat) {
-        float strength = CreateSprings.SPRING_CAPACITY / getStoredSu(springStack);
+        float strength = Config.spring_capacity / getStoredSu(springStack);
 
         SetZeroSu(springStack, player);
 
@@ -308,7 +309,7 @@ public class SpringItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         float stored = getStoredSu(stack);
-        float capacity = CreateSprings.SPRING_CAPACITY;
+        float capacity = Config.spring_capacity;
         tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(String.valueOf(stored))).withStyle(ChatFormatting.DARK_GRAY)
                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))

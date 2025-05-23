@@ -2,16 +2,21 @@ package net.Portality.createsprings.contraption;
 
 import com.simibubi.create.AllBlockEntityTypes;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllContraptionTypes;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
+import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
 import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
 import com.simibubi.create.foundation.utility.BlockHelper;
+import com.simibubi.create.infrastructure.config.AllConfigs;
+import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.utill.Helpers.CspringsMath;
 import net.createmod.catnip.data.UniqueLinkedList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,65 +38,55 @@ import java.util.Queue;
 import java.util.Set;
 
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.blockPosSum;
+import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPos;
 
-public class SpringContraption extends TranslatingContraption {
-    protected Direction facing;
+public class SpringContraption extends BearingContraption {
 
-    public SpringContraption(Direction facing) {this.facing = facing;}
+    public SpringContraption(Direction facing) {super(false ,facing);}
 
     public SpringContraption(){}
-
-    protected boolean isAnchoringBlockAt(BlockPos pos) {
-        if (pos.getX() != anchor.getX() || pos.getZ() != anchor.getZ())
-            return false;
-        int y = pos.getY();
-        if (y <= anchor.getY() || y > anchor.getY()  + 1)
-            return false;
-        return true;
-    }
-
-    @Override
-    public boolean assemble(Level world, BlockPos pos) throws AssemblyException {
-        BlockPos offset = pos.relative(facing);
-
-        addBlock(world, offset , capture(world, pos));
-
-        startMoving(world);
-        return true;
-    }
-
-    protected Pair<StructureTemplate.StructureBlockInfo, BlockEntity> capture(Level world, BlockPos pos) {
-        BlockState blockstate = Blocks.COBBLESTONE.defaultBlockState();
-        CompoundTag compoundnbt = getBlockEntityNBT(world, pos);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof PoweredShaftBlockEntity)
-            blockEntity = AllBlockEntityTypes.BRACKETED_KINETIC.create(pos, blockstate);
-        if (blockEntity instanceof FactoryPanelBlockEntity fpbe)
-            fpbe.writeSafe(compoundnbt);
-
-        return Pair.of(new StructureTemplate.StructureBlockInfo(pos, blockstate, compoundnbt), blockEntity);
-    }
-
-    public boolean searchMovedStructure(Level world, BlockPos pos, @Nullable Direction forcedDirection){
-        return true;
-    }
-
-    @Override
-    public CompoundTag writeNBT(boolean spawnPacket) {
-        CompoundTag tag = super.writeNBT(spawnPacket);
-        tag.putInt("Facing", facing.get3DDataValue());
-        return tag;
-    }
-
-    @Override
-    public void readNBT(Level world, CompoundTag tag, boolean spawnData) {
-        super.readNBT(world, tag, spawnData);
-        facing = Direction.from3DDataValue(tag.getInt("Facing"));
-    }
 
     @Override
     public ContraptionType getType() {
         return CspringsContraptionTypes.SPRING.get();
     }
 
+    @Override
+    public boolean assemble(Level world, BlockPos pos) throws AssemblyException {
+        BlockPos offset = pos.relative(facing);
+        if (!searchMovedStructure(world, offset, null))
+            return false;
+        startMoving(world);
+
+        return true;
+    }
+
+    public boolean searchMovedStructure(Level world, BlockPos pos, @Nullable Direction forcedDirection)
+            throws AssemblyException {
+        Queue<BlockPos> frontier = new UniqueLinkedList<>();
+        anchor = pos;
+
+        if (bounds == null)
+            bounds = new AABB(BlockPos.ZERO);
+
+        if (!BlockMovementChecks.isBrittle(world.getBlockState(pos)))
+            frontier.add(pos);
+        if (!addToInitialFrontier(world, pos, forcedDirection, frontier))
+            return false;
+
+        BlockPos pos1 = frontier.poll();
+        for (int i = -1; i < 2; i++){
+            for (int j = -1; j < 2; j++){
+                BlockPos posBlock = calcPos(i, 0, j, pos1, facing);
+                addBlock(world, posBlock, capture(world, posBlock));
+            }
+        }
+
+        return true;
+    }
+
+    protected Pair<StructureTemplate.StructureBlockInfo, BlockEntity> capture(Level world, BlockPos pos) {
+        BlockState blockstate = ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState();
+        return Pair.of(new StructureTemplate.StructureBlockInfo(pos, blockstate, null), null);
+    }
 }

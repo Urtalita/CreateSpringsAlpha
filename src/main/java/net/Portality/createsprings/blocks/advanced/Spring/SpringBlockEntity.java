@@ -8,6 +8,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
@@ -49,7 +50,7 @@ import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.
 
 public class SpringBlockEntity extends GeneratingKineticBlockEntity implements IHaveGoggleInformation {
 
-    public float capacity = CreateSprings.SPRING_CAPACITY;
+    public float capacity = Config.spring_capacity;
     public float stored = 0;
     private float progress;
     private float prevProgress;
@@ -68,7 +69,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         CreateLang.text(" ").add(
                 CreateLang.number(stored).style(ChatFormatting.AQUA).space()
                 ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                        .add(CreateLang.number(CreateSprings.SPRING_CAPACITY).style(ChatFormatting.AQUA).space()
+                        .add(CreateLang.number(Config.spring_capacity).style(ChatFormatting.AQUA).space()
                                 .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
                 .forGoggles(tooltip);
         return ret;
@@ -104,7 +105,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
             }
 
             phase++;
-            if(phase == 40){
+            if(phase == Config.spring_splash_duration){
                 phase = 0;
                 stored = 0;
                 isGenerating = false;
@@ -200,7 +201,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
                     facing.getStepZ()
             ).scale(1.0);
 
-            entity.setDeltaMovement(direction.scale(3).scale(stored / CreateSprings.SPRING_CAPACITY));
+            entity.setDeltaMovement(direction.scale(Config.knockback_coef).scale(stored / Config.spring_capacity));
             entity.hurtMarked = true;
         }
     }
