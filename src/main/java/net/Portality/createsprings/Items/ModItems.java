@@ -48,20 +48,30 @@ public class ModItems {
     public static final RegistryObject<Item> PUNCHCARD = ITEMS.register("punchcard",
             () -> new PunchcardItem(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> SPRING_BASE = ITEMS.register("spring_base",
-            () -> new SpringBase(new Item.Properties().stacksTo(1))); // add to spring tools list
+    public static final ItemEntry<SpringBase> SPRING_BASE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_base", SpringBase::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
 
-    public static final RegistryObject<Item> SPRING_DRILL = ITEMS.register("spring_drill",
-            () -> new SpringDrill(new Item.Properties().stacksTo(1))); // add to spring tools list
+    public static final ItemEntry<SpringDrill> SPRING_DRILL = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_drill", SpringDrill::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
 
-    public static final RegistryObject<Item> SPRING_LAUNCHER = ITEMS.register("spring_launcher",
-            () -> new SpringLauncher(new Item.Properties().stacksTo(1))); // add to spring tools list
+    public static final ItemEntry<SpringLauncher> SPRING_LAUNCHER = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_launcher", SpringLauncher::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
 
-    public static final RegistryObject<Item> SPRING_SAW = ITEMS.register("spring_saw",
-            () -> new SpringSaw(new Item.Properties().stacksTo(1))); // add to spring tools list
+    public static final ItemEntry<SpringSaw> SPRING_SAW = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_saw", SpringSaw::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
 
-    public static final RegistryObject<Item> SPRING_SHOVE = ITEMS.register("spring_shove",
-            () -> new SpringShove(new Item.Properties().stacksTo(1))); // add to spring tools list
+    public static final ItemEntry<SpringShove> SPRING_SHOVE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_shove", SpringShove::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
 
     public static final RegistryObject<Item> SPRING_PROJECTILE_ITEM = ITEMS.register("spring_projectile",
             () -> new Item(new Item.Properties()));

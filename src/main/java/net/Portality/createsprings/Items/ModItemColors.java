@@ -1,5 +1,6 @@
 package net.Portality.createsprings.Items;
 
+import net.Portality.createsprings.CreateSprings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.nbt.CompoundTag;
@@ -10,27 +11,47 @@ public class ModItemColors {
         ItemColors colors = Minecraft.getInstance().getItemColors();
 
         colors.register(
-                ModItemColors::getColorForTintIndex, // Красный для индекса 0
-                ModItems.HAT // Убедитесь, что это правильный предмет
+                ModItemColors::getColorForHat,
+                ModItems.HAT
+        );
+
+        colors.register(
+                ModItemColors::getHeatForSpringTool,
+                ModItems.SPRING_DRILL
+        );
+
+        colors.register(
+                ModItemColors::getHeatForSpringTool,
+                ModItems.SPRING_SAW
+        );
+
+        colors.register(
+                ModItemColors::getHeatForSpringTool,
+                ModItems.SPRING_SHOVE
         );
     }
 
-    private static int getColorForTintIndex(ItemStack stack, int tintIndex) {
+    private static int getHeatForSpringTool(ItemStack stack, int tintIndex){
+        int red = (int) (stack.getOrCreateTag().getDouble("Speed") / 25000 * 255);
+        return getRGB( 255, 255 - red, 255 - red);
+    }
+
+    private static int getColorForHat(ItemStack stack, int tintIndex) {
         if(tintIndex == 1){
             CompoundTag tag = stack.getOrCreateTag();
             if(!tag.contains("red")){
-                return getHatARGB(255, 255, 255);
+                return getRGB(255, 255, 255);
             }
-            return getHatARGB(tag.getInt("red"), tag.getInt("green"), tag.getInt("blue"));
+            return getRGB(tag.getInt("red"), tag.getInt("green"), tag.getInt("blue"));
         }
         CompoundTag tag = stack.getOrCreateTag();
         if(!tag.contains("red1")){
-            return getHatARGB(255, 255, 255);
+            return getRGB(255, 255, 255);
         }
-        return getHatARGB(tag.getInt("red1"), tag.getInt("green1"), tag.getInt("blue1"));
+        return getRGB(tag.getInt("red1"), tag.getInt("green1"), tag.getInt("blue1"));
     }
 
-    public static int getHatARGB(int red, int green, int blue){
+    public static int getRGB(int red, int green, int blue){
         return getARGB(255, red, green, blue);
     }
 

@@ -56,10 +56,11 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.HAT.get());
 
                         pOutput.accept(ModItems.SPRING_LAUNCHER.get());
-                        pOutput.accept(ModItems.SPRING_DRILL.get());
                         pOutput.accept(ModItems.SPRING_BASE.get());
+                        pOutput.accept(ModItems.SPRING_DRILL.get());
                         pOutput.accept(ModItems.SPRING_SAW.get());
                         pOutput.accept(ModItems.SPRING_SHOVE.get());
+
                         pOutput.accept(ModBlocks.TEST);
                         pOutput.accept(ModBlocks.LARGE_SPRING);
 

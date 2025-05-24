@@ -44,13 +44,8 @@ public class SpringSpeedSys {
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         float baseSpeed = 1F;
-        double speedMultiplier = 1 + getSpeed(stack)/300f;
+        double speedMultiplier = 1 + stack.getOrCreateTag().getDouble("Speed")/300f;
         return baseSpeed * (float)speedMultiplier;
-    }
-
-    public double getSpeed(ItemStack stack){
-        CompoundTag tag = stack.getTag();
-        return tag != null ? tag.getDouble("Speed") : 0;
     }
 
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -71,12 +66,11 @@ public class SpringSpeedSys {
             }
             player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
         } else {
-            if (Stored > 5000){
+            if (Stored > 5000 && speed < 5500){
                 speed += 250;
                 Stored -= 2000;
+                if(speed > 5000) speed = 5000;
             }
-
-            if(speed > 5000) speed = 5000;
         }
 
         tag.putDouble("Speed", speed);
@@ -85,8 +79,6 @@ public class SpringSpeedSys {
     }
 
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
-        if(level.isClientSide()) return;
-
         CompoundTag tag = stack.getOrCreateTag();
         double speed = tag.getDouble("Speed");
 

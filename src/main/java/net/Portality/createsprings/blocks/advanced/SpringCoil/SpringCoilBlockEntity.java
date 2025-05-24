@@ -2,6 +2,7 @@ package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

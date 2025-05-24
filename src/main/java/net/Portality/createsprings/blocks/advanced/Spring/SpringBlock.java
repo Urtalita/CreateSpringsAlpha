@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -40,6 +41,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static net.minecraft.world.level.block.WeepingVinesPlantBlock.SHAPE;
@@ -48,6 +50,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     public SpringBlock(Properties properties) {
         super(properties);
     }
+    private static Field radiusField;
 
     @Override
     public boolean canDropFromExplosion(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
@@ -58,21 +61,64 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
         Vec3 ExpPos = explosion.getPosition();
         Vec3 BlPos = pos.getCenter();
-        SpringBlockEntity blockEntity = (SpringBlockEntity) level.getBlockEntity(pos);
-        double distance = BlPos.distanceTo(ExpPos);
-        float addstored = (float) (16 / (distance) * 10000);
 
-        if (blockEntity.stored+1 < blockEntity.capacity){
-            blockEntity.stored += addstored;
-            if(blockEntity.stored > blockEntity.capacity){
-                blockEntity.stored = blockEntity.capacity;
+        Vec3 distVector = BlPos.subtract(ExpPos);
+        float distance = (float) distVector.length();
+        float power = getExplosionPower(explosion);
+        Direction facing = state.getValue(FACING);
+        Direction expDier = getClosestDirection(ExpPos, BlPos);
+        if(facing != expDier){return;}
+
+        withBlockEntityDo(level, pos, be ->{
+            be.stored += power / distance * 20000;
+        });
+    }
+
+    public static Direction getClosestDirection(Vec3 from, Vec3 to) {
+        Vec3 delta = to.subtract(from);
+        if (delta.lengthSqr() == 0.0) {
+            return Direction.UP; // Возвращаем направление по умолчанию, если точки совпадают
+        }
+        Vec3 directionVec = delta.normalize();
+
+        Direction closestDir = Direction.UP;
+        double maxDot = -Double.MAX_VALUE;
+
+        for (Direction dir : Direction.values()) {
+            // Получаем вектор направления в виде Vec3
+            Vec3 dirVec = new Vec3(
+                    dir.getNormal().getX(),
+                    dir.getNormal().getY(),
+                    dir.getNormal().getZ()
+            );
+            // Вычисляем скалярное произведение
+            double dot = directionVec.dot(dirVec);
+            if (dot > maxDot) {
+                maxDot = dot;
+                closestDir = dir;
             }
         }
+
+        return closestDir;
     }
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return super.getDrops(state, builder);
+    }
+
+    public static float getExplosionPower(Explosion explosion) {
+        try {
+            if (radiusField == null) {
+                // Получаем доступ к приватному полю "radius"
+                radiusField = Explosion.class.getDeclaredField("radius");
+                radiusField.setAccessible(true);
+            }
+            return radiusField.getFloat(explosion);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 3.0F; // Возвращаем значение по умолчанию
+        }
     }
 
     /*

@@ -35,8 +35,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
     public LargeSpringVisual(VisualizationContext context, LargeSpringBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
-        SPRING_LEN = blockEntity.getLen() * 4;
-        prevLen = blockEntity.getLen() * 4;
+        SPRING_LEN = 32 * 4;
+        prevLen = 32 * 4;
 
         facing = blockEntity.getBlockState().getValue(DirectionalKineticBlock.FACING);
 
@@ -115,6 +115,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
         int len = blockEntity.getLen() * 4;
         float progres = 1 - blockEntity.getProgres(partialTick);
 
+        setPos(0, 0, up_plate, calculateLen(progres, len) - 4/16f*(1-progres));
+
         if(len != prevLen){
             rings.forEach(this::setInvisible);
             rings_corners.forEach(this::setInvisible);
@@ -127,7 +129,6 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
             rings.get(i).setVisible(true);
             rings_corners.get(i).setVisible(true);
         }
-        setPos(0, 0, up_plate, calculateLen(progres, len) - 4/16f*(1-progres));
     }
 
     private void setInvisible(OrientedInstance instance){

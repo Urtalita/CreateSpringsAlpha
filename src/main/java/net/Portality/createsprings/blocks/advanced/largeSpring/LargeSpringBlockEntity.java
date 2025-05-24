@@ -5,7 +5,6 @@ import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.contraption.SpringContraption;
@@ -17,7 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,8 +23,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
@@ -53,17 +49,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     }
 
     public float getProgres(float partalTicks) {
-        float progressFrames = Mth.lerp(partalTicks, prevProgress, progress);
-
-        if (movedContraption != null){
-            movedContraption.moveTo(
-                    CspringsMath.MoveWithoutVectors(
-                            platePos(progressFrames),
-                            worldPosition,
-                            movementDirection));
-        }
-
-        return progressFrames;
+        return Mth.lerp(partalTicks, prevProgress, progress);
     }
 
     private float platePos(float progress){
@@ -135,7 +121,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         for (int i = -1; i < 2; i++){
             for (int j = -1; j < 2; j++){
                 if(!(i == 0 && j == 0)){
-                    BlockPos pos1 = calcPos(i, len-2, j, pos, facing);
+                    BlockPos pos1 = calcPos(i, len-1, j, pos, facing);
                     if(level.getBlockState(pos1).getBlock() == Blocks.AIR){
                         continue;
                     }
@@ -214,13 +200,18 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public void tick() {
         super.tick();
 
+        if(movedContraption != null){
+            Vec3 move = getContraptionPos(progress);
+            movedContraption.moveTo(move);
+        }
+
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
             progress = springAnimation(phase) * (stored / capacity);
 
             if(phase < 5){
                 pushEntitiesInArea(worldPosition.north().east(),
-                        worldPosition.relative(getBlockState().getValue(FACING), len).west().south());
+                        worldPosition.relative(getFacing(), len).west().south());
             }
 
             phase++;
@@ -228,6 +219,11 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 phase = 0;
                 stored = 0;
                 isGenerating = false;
+
+                for (int i = (len-1); i > curLen; i--){
+                    restoreLayer(i, getFacing());
+                }
+
                 updateGeneratedRotation();
                 notifyUpdate();
             }
@@ -237,15 +233,11 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         prevProgress = progress;
         progress = stored / capacity;
 
-        manageExtensions(isGenerating);
-    }
-
-    private void manageExtensions(boolean mode){
-        Direction facing = getBlockState().getValue(FACING);
+        Direction facing = getFacing();
         float platePos = platePos(progress) + 0.5f;
 
         float CurSpeed = Math.abs(getSpeed());
-        if (mode && stored > 0) {
+        if (isGenerating && stored > 0) {
             stored = Math.max(stored - 256, 0);
             updateGeneratedRotation();
 
@@ -255,7 +247,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             }
         }
         // Режим накопления, если не активировано
-        else if (!mode) {
+        else if (!isGenerating) {
             stored = Mth.clamp(stored + CurSpeed*4, 0, capacity);
 
             if (platePos < (curLen+1)) {
@@ -263,6 +255,29 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 curLen--;
             }
         }
+    }
+
+    public void onExploded(float distance, float power, BlockPos sourcePos){
+        int oldLen = Mth.floor(platePos(progress));
+        stored += power / distance * 20000 / 9;
+        prevProgress = progress;
+        progress = stored / capacity;
+        int newLen = Mth.floor(platePos(progress));
+
+        if(newLen == oldLen){return;}
+
+        Direction facing = getFacing();
+
+        for(int i = oldLen; i <= newLen; i++){
+            removeLayer(i, facing);
+        }
+    }
+
+    private Vec3 getContraptionPos(float progress){
+        return CspringsMath.MoveWithoutVectors(
+                platePos(progress),
+                worldPosition,
+                movementDirection);
     }
 
     public void pushEntitiesInArea(BlockPos pos1, BlockPos pos2) {
@@ -296,14 +311,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                     (area.minZ + area.maxZ) * 0.5
             );
 
-            Vec3 direction = Vec3.atLowerCornerOf(getBlockState().getValue(FACING).getNormal());
+            Vec3 direction = Vec3.atLowerCornerOf(getFacing().getNormal());
             double strength = Config.knockback_coef * stored / capacity * len; // Сила толчка
 
             entity.setDeltaMovement(direction.scale(strength));
             entity.hurtMarked = true; // Обязательно для синхронизации движения на клиенте
         }
     }
-
 
     private boolean canBreakBlock(BlockState state) {
         if(state.is(Blocks.AIR)){ return true;}
@@ -389,6 +403,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         updateGeneratedRotation(); // Обновляем физику
         sendData(); // Синхронизация
     }
+
+    public Direction getFacing(){return getBlockState().getValue(FACING);}
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
