@@ -1,55 +1,25 @@
 package net.Portality.createsprings.contraption;
 
-import com.simibubi.create.AllBlockEntityTypes;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllContraptionTypes;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.content.contraptions.*;
-import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
-import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
-import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlockEntity;
-import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
-import com.simibubi.create.content.contraptions.chassis.StickerBlock;
-import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
-import com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock;
-import com.simibubi.create.content.contraptions.pulley.PulleyBlock;
-import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
-import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
-import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
-import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlockEntity;
-import com.simibubi.create.content.redstone.contact.RedstoneContactBlock;
-import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
-import com.simibubi.create.foundation.utility.BlockHelper;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.utill.Helpers.CspringsMath;
-import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.UniqueLinkedList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.Queue;
-import java.util.Set;
 
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isExtensionPole;
-import static com.simibubi.create.content.contraptions.piston.MechanicalPistonBlock.isPistonHead;
-import static net.Portality.createsprings.utill.Helpers.CspringsMath.blockPosSum;
-import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPos;
+import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity.calcPos;
+import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 
 public class SpringContraption extends BearingContraption {
 

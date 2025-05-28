@@ -8,6 +8,8 @@
     "createsprings:obsidian_plate",
     "createsprings:obsidian_slab",
     "createsprings:friction_welder",
-    "createsprings:large_spring_coil"
+    "createsprings:large_spring_coil",
+    "createsprings:large_spring",
+    "createsprings:large_spring_extention"
   ]
 }

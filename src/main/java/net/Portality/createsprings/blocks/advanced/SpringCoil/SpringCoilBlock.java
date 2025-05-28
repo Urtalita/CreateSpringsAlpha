@@ -55,7 +55,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             return;
         }
         withBlockEntityDo(worldIn, pos, be-> {
-            be.onPlace(pos);
+            be.onPlace(pos, state);
         });
     }
 

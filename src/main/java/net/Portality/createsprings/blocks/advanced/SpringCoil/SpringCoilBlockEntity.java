@@ -1,6 +1,7 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -33,21 +34,16 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
         super.write(compound, clientPacket);
-        compound.putString("plateface", plateFacing.getName());
+        if(plateFacing != null){
+            compound.putString("plateface", plateFacing.getName());
+        }
         compound.putBoolean("plate", plate);
     }
 
-    public void onPlace(BlockPos pos){
-        BlockPos centerPos = isSpringLayerCompleted(pos, Direction.Axis.Y, true);
-        Direction direction = Direction.UP;
-        if(centerPos == null){
-            centerPos = isSpringLayerCompleted(pos, Direction.Axis.X, true);
-            direction = Direction.EAST;
-        }
-        if(centerPos == null){
-            centerPos = isSpringLayerCompleted(pos, Direction.Axis.Z, true);
-            direction = Direction.SOUTH;
-        }
+    public void onPlace(BlockPos pos, BlockState state){
+        Direction direction = state.getValue(FACING).getOpposite();
+        BlockPos centerPos = isSpringLayerCompleted(pos, direction.getAxis(), true);
+
         if(centerPos != null){
 
             Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
@@ -60,25 +56,51 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     }
 
     private void assemble(BlockPos pos, Direction direction){
-        int len = 1;
-        int axisCoefficient = 1;
+        int len = 0;
+        int axisCoefficient;
 
-        if(isSpringLayerCompleted(pos.relative(direction), direction.getAxis(), false) != null){
-
-        } else if (isSpringLayerCompleted(pos.relative(direction.getOpposite()), direction.getAxis(), false) != null){
-            direction = direction.getOpposite();
-            axisCoefficient = axisCoefficient * -1;
-
-        } else {setSpring(pos, direction, len); return;}
+        if((direction == Direction.UP) || (direction == Direction.EAST) || (direction == Direction.SOUTH)){
+            axisCoefficient = 1;
+        } else {
+            axisCoefficient = -1;
+        }
 
         len++;
         goDeeper(direction, axisCoefficient, pos, len);
     }
 
-    private void goDeeper(Direction direction, int axisCoefficient, BlockPos pos, int len){
-        BlockPos pos1 = isSpringLayerCompleted(pos.getX(), pos.getY() + len*axisCoefficient, pos.getZ(), direction.getAxis(), false);
+    private void goDeeper(Direction direction, int axisCoefficient, BlockPos pos, int len) {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        Direction.Axis axis = direction.getAxis();
 
-        if(pos1 == null){setSpring(pos, direction, len);return;}
+        // Корректируем координаты в зависимости от оси
+        switch (axis) {
+            case X:
+                x += len * axisCoefficient;
+                break;
+            case Y:
+                y += len * axisCoefficient;
+                break;
+            case Z:
+                z += len * axisCoefficient;
+                break;
+        }
+
+        // Проверяем слой с новыми координатами
+        BlockPos pos1 = isSpringLayerCompleted(x, y, z, axis, false);
+
+        if (pos1 == null) {
+            setSpring(pos, direction, len);
+            return;
+        }
+
+        if(len == Config.spring_len){
+            setSpring(pos, direction, len);
+            return;
+        }
+
         len++;
         goDeeper(direction, axisCoefficient, pos, len);
     }

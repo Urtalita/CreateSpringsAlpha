@@ -44,8 +44,11 @@
   "tooltip.springstuf.needsprings1": "can accept up to ",
   "tooltip.springstuf.needsprings2": " springs",
   "tooltip.springstuf.modifiers": "Contains:",
-  "create.spring.saved": "stored:",
-  "create.spring.su": "ен",
+  "create.spring.saved": "Stored:",
+  "create.spring.len": "Length:",
+  "create.spring.su": "su",
+
+  "create.spring.stopped": "it looks like the spring can't move further because of non breakable blocks",
 
   "tooltip.springstuf.createsprings:punchcard": "allows you to program spring tools",
   "tooltip.springstuf.createsprings:spring_alloy_block": "an explosive ammo",

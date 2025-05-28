@@ -5,6 +5,7 @@ import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -25,10 +27,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import oshi.driver.unix.aix.Ls;
 
 public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<LargeSpringBlockEntity> {
 
-    public static final IntegerProperty LEN = IntegerProperty.create("len", 1, 32);
+    public static final IntegerProperty LEN = IntegerProperty.create("len", 1,  384);
 
     public LargeSpringBlock(Properties properties) {
         super(properties);
@@ -51,6 +54,15 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
             }
         });
         super.onPlace(state, worldIn, pos, oldState, isMoving);
+    }
+
+    @Override
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter getter, BlockPos pos) {
+        LargeSpringBlockEntity largeSpringBlockEntity = getBlockEntity(getter, pos);
+        if(!largeSpringBlockEntity.canDisassemble(state.getValue(FACING))){
+            return 0;
+        }
+        return super.getDestroyProgress(state, player, getter, pos);
     }
 
     @Override

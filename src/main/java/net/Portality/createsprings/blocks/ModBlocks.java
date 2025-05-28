@@ -54,8 +54,13 @@ public class ModBlocks {
             () -> new LiquidBlock(ModFluids.SOURCE, Block.Properties.copy(Blocks.WATER))
     );
 
-    public static final RegistryObject<Block> LARGE_SPRING_EXTENTION = registerBlockWithoutItem("large_spring_extention",
-            () -> new LargeSpringExstentionBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()));
+    public static final BlockEntry<LargeSpringExstentionBlock> LARGE_SPRING_EXTENTION = CSPRINGS_REGISTRATE
+            .block("large_spring_extention", LargeSpringExstentionBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion())
+            .tag(AllTags.AllBlockTags.COPYCAT_DENY.tag)
+            .tag(AllTags.AllBlockTags.NON_HARVESTABLE.tag)
+            .register();
 
     public static final BlockEntry<AndesiteMoldBlock> FILLED_ANDESITE_MOLD = CSPRINGS_REGISTRATE
             .block("filled_andesite_mold", AndesiteMoldBlock::new)

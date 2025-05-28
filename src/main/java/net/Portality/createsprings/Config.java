@@ -17,8 +17,17 @@ public class Config {
     private static final ForgeConfigSpec.IntValue SPRING_CAPACITY =
             BUILDER.comment("capacity of the spring").defineInRange("spring_capacity", 160000, 2, Integer.MAX_VALUE);
 
+    private static final ForgeConfigSpec.IntValue LARGE_SPRING_CAPACITY =
+            BUILDER.comment("multiply capacity coefficent of the large spring").defineInRange("large_spring_capacity_coefficent", 2, 0, Integer.MAX_VALUE);
+
     private static final ForgeConfigSpec.IntValue SPRING_SPLASH_DURATION =
             BUILDER.comment("spring splash duration in ticks").defineInRange("spring_splash_duration", 40, 10, 10000);
+
+    private static final ForgeConfigSpec.IntValue SPRING_LEN =
+            BUILDER.comment("max large spring len").defineInRange("spring_max_len", 32, 1, 384);
+
+    private static final  ForgeConfigSpec.BooleanValue DEBUG_CAPACITY =
+            BUILDER.comment("debug large spring capacity").define("debug capacity", false);
 
     private static final ForgeConfigSpec.DoubleValue KNOCKBACK_COEF =
             BUILDER.comment("knockback coefficient of springs").defineInRange("knockback_coef", 4f, 0, 10);
@@ -26,9 +35,12 @@ public class Config {
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean springs_can_splash;
+    public static boolean debug_capacity;
     public static int spring_capacity;
+    public static int large_spring_capacity_coef;
     public static int spring_splash_duration;
     public static double knockback_coef;
+    public static int spring_len;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -36,6 +48,9 @@ public class Config {
         spring_capacity = SPRING_CAPACITY.get();
         spring_splash_duration = SPRING_SPLASH_DURATION.get();
         knockback_coef = KNOCKBACK_COEF.get();
+        spring_len = SPRING_LEN.get();
+        debug_capacity = DEBUG_CAPACITY.get();
+        large_spring_capacity_coef = LARGE_SPRING_CAPACITY.get();
 
         // convert the list of strings into a set of items
     }

@@ -1,6 +1,9 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.foundation.block.IBE;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -11,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -20,9 +24,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getClosestDirection;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getExplosionPower;
-import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPos;
+import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 
-public class LargeSpringExstentionBlock extends DirectionalBlock {
+public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity> {
     public static final IntegerProperty COMPRESSION = IntegerProperty.create("compression", 0, 16);
 
     public LargeSpringExstentionBlock(Properties p_52591_) {
@@ -41,10 +45,6 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
         Vec3 distVector = BlPos.subtract(ExpPos);
         float distance = (float) distVector.length();
         float power = getExplosionPower(explosion);
-        Direction facing = state.getValue(FACING);
-        Direction expDier = getClosestDirection(ExpPos, BlPos);
-        if(facing != expDier){return;}
-
 
         LargeSpringBlockEntity be = getBe(pos, state.getValue(FACING).getOpposite(), level);
         be.onExploded(distance, power, pos);
@@ -70,13 +70,21 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
     }
 
     private void goDeeper(BlockPos pos, Direction facing, Level level){
-        for(int y = 0; y < 128; y++){
+        for(int y = 0; y < Config.spring_len + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
-                        BlockEntity be = level.getBlockEntity(calcPos(i, y, j, pos, facing));
-                        if(be instanceof LargeSpringBlockEntity){
-                            level.setBlock(calcPos(i, y, j, pos, facing),
+                        BlockEntity be = level.getBlockEntity(calcPosM(i, y, j, pos, facing));
+                        if(be instanceof LargeSpringBlockEntity largeSpringBlockEntity){
+                            if(!largeSpringBlockEntity.canDisassemble(largeSpringBlockEntity.getFacing())){
+                                level.setBlock(pos,
+                                        ModBlocks.LARGE_SPRING_EXTENTION.getDefaultState().setValue(FACING, largeSpringBlockEntity.getFacing()),
+                                        3);
+
+                                return;
+                            }
+
+                            level.setBlock(calcPosM(i, y, j, pos, facing),
                                     Blocks.AIR.defaultBlockState(),
                                     Block.UPDATE_ALL);
                             return;
@@ -88,11 +96,11 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
     }
 
     private LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, Level level){
-        for(int y = 0; y < 128; y++){
+        for(int y = 0; y < Config.spring_len + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
-                        BlockEntity be = level.getBlockEntity(calcPos(i, y, j, pos, facing));
+                        BlockEntity be = level.getBlockEntity(calcPosM(i, y, j, pos, facing));
                         if(be instanceof LargeSpringBlockEntity blockEntity){
                             return blockEntity;
                         }
@@ -120,5 +128,15 @@ public class LargeSpringExstentionBlock extends DirectionalBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return getCollisionShape(state, world, pos, context);
+    }
+
+    @Override
+    public Class<ExtentionBlockEntity> getBlockEntityClass() {
+        return ExtentionBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends ExtentionBlockEntity> getBlockEntityType() {
+        return ModBlockEntities.EXTENTION_BLOCK_ENTITY.get();
     }
 }

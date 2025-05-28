@@ -35,6 +35,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -163,7 +165,9 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         splashMode = tag.getBoolean("splashMode");
     }
 
-    public float getProgress(float pt) {return Mth.lerp(pt, prevProgress, progress);}
+    public float getProgress(float pt) {
+        return Mth.lerp(pt, prevProgress, progress);
+    }
 
     @Override
     public float getGeneratedSpeed() {
@@ -209,19 +213,40 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     private void breakBlocksInFront(){
         BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING).getOpposite());
         BlockState breakState = level.getBlockState(pos);
-        float blockHardness = breakState.getDestroySpeed(level, pos);
-
-        if(!BlockBreakingKineticBlockEntity.isBreakable(breakState, blockHardness)){return;}
         if(breakState.getBlock() instanceof PressurePlateBlock){return;}
         if(breakState.getBlock() instanceof KineticBlock){return;}
-        if(!(stored >= blockHardness / 50 * 160000)){return;}
-
-        level.playSound(null, worldPosition, breakState.getSoundType()
-                .getHitSound(), SoundSource.BLOCKS, .25f, 1);
-        onBlockBroken(breakState, pos);
+        breakBySpring(pos, level, stored);
     }
 
-    public void onBlockBroken(BlockState stateToBreak, BlockPos breakingPos) {
+    public static boolean breakBySpring(BlockPos pos, Level level, Float stored){
+        BlockState breakState = level.getBlockState(pos);
+        float blockHardness = breakState.getDestroySpeed(level, pos);
+
+        if(breakState.getBlock() instanceof AirBlock){return true;}
+        if(breakState.liquid()){return true;}
+
+        if(!(stored >= blockHardness / 50 * 160000)){return false;}
+        if(!BlockBreakingKineticBlockEntity.isBreakable(breakState, blockHardness)){return false;}
+
+        level.playSound(null, pos, breakState.getSoundType()
+                .getHitSound(), SoundSource.BLOCKS, .25f, 1);
+        onBlockBroken(breakState, pos, level);
+        return true;
+    }
+
+    public static boolean canBreakBySpring(BlockPos pos, Level level, Float stored){
+        BlockState breakState = level.getBlockState(pos);
+        float blockHardness = breakState.getDestroySpeed(level, pos);
+
+        if(breakState.getBlock() instanceof AirBlock){return true;}
+        if(breakState.liquid()){return true;}
+
+        if(!(stored >= blockHardness / 50 * 160000)){return false;}
+        if(!BlockBreakingKineticBlockEntity.isBreakable(breakState, blockHardness)){return false;}
+        return true;
+    }
+
+    public static void onBlockBroken(BlockState stateToBreak, BlockPos breakingPos, Level level) {
         Vec3 vec = VecHelper.offsetRandomly(VecHelper.getCenterOf(breakingPos), level.random, .125f);
         BlockHelper.destroyBlock(level, breakingPos, 1f, (stack) -> {
             if (stack.isEmpty())

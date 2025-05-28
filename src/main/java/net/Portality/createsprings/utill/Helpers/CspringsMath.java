@@ -21,7 +21,7 @@ public class CspringsMath {
         );
     }
 
-    public static BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
+    public static BlockPos calcPosM(int x, int y, int z, BlockPos pos, Direction facing){
         int dierectionFactor = 1;
         if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
             dierectionFactor = -1;

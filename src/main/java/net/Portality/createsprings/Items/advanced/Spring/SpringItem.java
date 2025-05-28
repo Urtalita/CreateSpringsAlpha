@@ -11,6 +11,7 @@ import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.Items.advanced.hat.render.HatRenderer;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -43,6 +45,7 @@ import java.util.function.Consumer;
 
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.readStackFromNBT;
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.setPackageColor;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BlockItem {
@@ -62,6 +65,18 @@ public class SpringItem extends BlockItem {
     @Override
     public boolean isFireResistant() {
         return true;
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+
+        if(stack.getOrCreateTag().getBoolean("splash")){
+            long phase = (level.getGameTime() - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            if(Config.spring_splash_duration == phase){
+                stack.getOrCreateTag().putBoolean("splash", false);
+            }
+        }
     }
 
     @Override
@@ -270,6 +285,10 @@ public class SpringItem extends BlockItem {
         if (!player.isCreative()){
             SetSu(stack, 0);
         }
+
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putBoolean("splash", true);
+        tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
     }
 
     private void SetSu(ItemStack stack, float su){
@@ -282,8 +301,7 @@ public class SpringItem extends BlockItem {
 
     public static float getStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
-        float stored = 0;
-
+        float stored;
         CompoundTag BlockEntityTag = tag.getCompound("BlockEntityTag");
         stored = BlockEntityTag.getFloat("Stored");
 
@@ -316,5 +334,8 @@ public class SpringItem extends BlockItem {
                .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.DARK_GRAY));
     }
 
-
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged;
+    }
 }

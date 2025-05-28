@@ -8,6 +8,7 @@ import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.BlockPos;
@@ -35,8 +36,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
     public LargeSpringVisual(VisualizationContext context, LargeSpringBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
 
-        SPRING_LEN = 32 * 4;
-        prevLen = 32 * 4;
+        SPRING_LEN = Config.spring_len * 4;
+        prevLen = Config.spring_len * 4;
 
         facing = blockEntity.getBlockState().getValue(DirectionalKineticBlock.FACING);
 

@@ -1,10 +1,12 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.contraption.SpringContraption;
@@ -13,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
@@ -25,31 +26,54 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
-import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.*;
+import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 
 public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption {
 
-    public static float capacity = Config.spring_capacity;
     private float progress;
     public float stored = 0;
-    private int len = 8;
+    private int len;
+
     private int curLen = len;
     private boolean isGenerating;
     protected ControlledContraptionEntity movedContraption;
     private final Vec3i movementDirection;
     public boolean splashMode = false;
     private int phase = 0;
+    public float capacity;
+
+    private BlockPos stoppedPos = null;
 
     private float prevProgress;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
-        capacity = Config.spring_capacity;
+        if(Config.debug_capacity){
+            capacity = Config.spring_capacity / 2;
+        } else {
+            capacity = Config.spring_capacity * 9 * Config.large_spring_capacity_coef;
+        }
+    }
+
+    public BlockPos getStoppedPos() {
+        return stoppedPos;
+    }
+
+    public int getCurLen() {
+        return curLen;
     }
 
     public float getProgres(float partalTicks) {
+        if(prevProgress == 0){
+            prevProgress = progress;
+        }
         return Mth.lerp(partalTicks, prevProgress, progress);
+    }
+
+    public float getPlatePos(){
+        return platePos(progress);
     }
 
     private float platePos(float progress){
@@ -74,6 +98,10 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         this.len = len;
         curLen = len;
 
+        if(!Config.debug_capacity){
+            capacity = capacity * len;
+        }
+
         for(int y = 0; y < curLen; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
@@ -86,9 +114,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 }
             }
         }
+        level.setBlock(worldPosition.relative(getFacing()), AllBlocks.SHAFT.getDefaultState().setValue(FACING, getFacing()), 3);
 
         assemble();
+
+        updateGeneratedRotation();
         notifyUpdate();
+        sendData();
     }
 
     public void onBreak(BlockPos pos, Direction facing){
@@ -140,7 +172,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 .getBlock() instanceof LargeSpringBlock))
             return;
 
-        SpringContraption contraption = new SpringContraption(getBlockState().getValue(FACING));
+        SpringContraption contraption = new SpringContraption(getFacing());
         boolean canAssembleStructure = contraption.assemble(level, worldPosition);
 
         if (!canAssembleStructure) {
@@ -165,10 +197,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             award(AllAdvancements.CONTRAPTION_ACTORS);
 
         sendData();
-    }
-
-    public void disassemble(){
-
     }
 
     public static BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
@@ -200,14 +228,23 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public void tick() {
         super.tick();
 
-        if(movedContraption != null){
-            Vec3 move = getContraptionPos(progress);
-            movedContraption.moveTo(move);
+        if(stoppedPos != null && isGenerating){
+            if(breakBySpring(stoppedPos, level, (float) Config.spring_capacity)){
+                stoppedPos = null;
+                breakBlocksInLayer(Mth.floor(platePos(progress) + 1), getFacing());
+            }
+            return;
         }
 
-        if(isGenerating && splashMode && stored != 0){
+        if(isGenerating && splashMode && stored > 1){
             prevProgress = progress;
             progress = springAnimation(phase) * (stored / capacity);
+
+            if(phase == 0){
+                if(movedContraption != null){
+                    movedContraption.moveTo(Vec3.atLowerCornerOf(worldPosition));
+                }
+            }
 
             if(phase < 5){
                 pushEntitiesInArea(worldPosition.north().east(),
@@ -217,17 +254,30 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             phase++;
             if(phase == Config.spring_splash_duration){
                 phase = 0;
-                stored = 0;
-                isGenerating = false;
+                stored = 1;
+
+                for (int i = (len-1); i > curLen; i--){
+                    breakBlocksInLayer(i, getFacing());
+                }
 
                 for (int i = (len-1); i > curLen; i--){
                     restoreLayer(i, getFacing());
                 }
 
+                curLen = len;
+
+                boolean hasSignal = level.hasNeighborSignal(worldPosition);
+                setGenerating(hasSignal);
+
                 updateGeneratedRotation();
                 notifyUpdate();
             }
             return;
+        }
+
+        if(movedContraption != null){
+            Vec3 move = getContraptionPos(progress);
+            movedContraption.moveTo(move);
         }
 
         prevProgress = progress;
@@ -243,6 +293,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
             if (platePos > (curLen+1)) {
                 curLen++;
+                breakBlocksInLayer(Mth.floor(platePos(progress) + 1), facing);
                 restoreLayer(Mth.floor(platePos(progress)), facing);
             }
         }
@@ -259,7 +310,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     public void onExploded(float distance, float power, BlockPos sourcePos){
         int oldLen = Mth.floor(platePos(progress));
-        stored += power / distance * 20000 / 9;
+        stored += power / distance * 40000 / 9;
+        if(stored > capacity){stored = capacity;}
         prevProgress = progress;
         progress = stored / capacity;
         int newLen = Mth.floor(platePos(progress));
@@ -268,8 +320,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         Direction facing = getFacing();
 
-        for(int i = oldLen; i <= newLen; i++){
+        for(int i = newLen; i <= oldLen; i++){
             removeLayer(i, facing);
+            curLen--;
         }
     }
 
@@ -319,73 +372,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
     }
 
-    private boolean canBreakBlock(BlockState state) {
-        if(state.is(Blocks.AIR)){ return true;}
-
-        if (state.is(ModBlocks.LARGE_SPRING_EXTENTION.get()) || state.getDestroySpeed(level, BlockPos.ZERO) < 0) {
-            return false;
-        }
-
-        // Эмпирическая проверка: блоки с сопротивлением <= 50 (примерное значение для алмазной кирки)
-        float hardness = state.getDestroySpeed(level, BlockPos.ZERO);
-        boolean isMineable = state.is(BlockTags.MINEABLE_WITH_PICKAXE);
-
-        return isMineable && hardness <= 50.0f && hardness >= 0;
-    }
-
-    private boolean destroyBlocksInLayer(BlockPos springPos, int y) {
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos checkPos = springPos.offset(x, y, z);
-                BlockState state = level.getBlockState(checkPos);
-
-                if (canBreakBlock(state)) {
-                    level.destroyBlock(checkPos, true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void removeLayer(int yLevel, Direction facing) {
-        BlockPos pos = getBlockPos();
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
-                if (!(i == 0 && j == 0)) {
-                    BlockPos pos1 = calcPos(i, yLevel, j, pos, facing);
-                    level.setBlock(
-                            pos1,
-                            Blocks.COBBLESTONE.defaultBlockState(),
-                            Block.UPDATE_ALL
-                    );
-                    level.setBlock(
-                            pos1,
-                            Blocks.AIR.defaultBlockState(),
-                            Block.UPDATE_ALL
-                    );
-                }
-            }
-        }
-    }
-
-    private void restoreLayer(int yLevel, Direction facing) {
-        BlockPos pos = getBlockPos();
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
-                if (!(i == 0 && j == 0)) {
-                    level.setBlock(
-                            calcPos(i, yLevel, j, pos, facing),
-                            ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState(),
-                            Block.UPDATE_ALL
-                    );
-                }
-            }
-        }
-    }
-
     private float calculateCurPos(float progres){
         return len - progres * (len * 0.5f);
     }
@@ -408,6 +394,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
+        if(stoppedPos != null){
+            compound.putInt("stoppedX", stoppedPos.getX());
+            compound.putInt("stoppedY", stoppedPos.getY());
+            compound.putInt("stoppedZ", stoppedPos.getZ());
+        }
+
         compound.putBoolean("Generating", isGenerating);
         compound.putFloat("progres", progress);
         compound.putFloat("stored", stored);
@@ -415,6 +407,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         compound.putInt("curLen", curLen);
         compound.putInt("phase", phase);
         compound.putBoolean("splashMode", splashMode);
+        compound.putFloat("capacity", capacity);
         super.write(compound, clientPacket);
     }
 
@@ -428,6 +421,15 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         curLen = compound.getInt("curLen");
         phase = compound.getInt("phase");
         splashMode =  compound.getBoolean("splashMode");
+        capacity = compound.getFloat("capacity");
+
+        if(compound.contains("stoppedX")){
+            stoppedPos = new BlockPos(
+                    compound.getInt("stoppedX"),
+                    compound.getInt("stoppedY"),
+                    compound.getInt("stoppedZ")
+            );
+        }
     }
 
     @Override
@@ -466,5 +468,73 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     @Override
     public BlockPos getBlockPosition() {
         return worldPosition;
+    }
+
+    private void removeLayer(int yLevel, Direction facing) {
+        BlockPos pos = getBlockPos();
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (!(i == 0 && j == 0)) {
+                    BlockPos pos1 = calcPos(i, yLevel, j, pos, facing);
+                    level.setBlock(
+                            pos1,
+                            Blocks.COBBLESTONE.defaultBlockState(),
+                            Block.UPDATE_ALL
+                    );
+                    level.setBlock(
+                            pos1,
+                            Blocks.AIR.defaultBlockState(),
+                            Block.UPDATE_ALL
+                    );
+                }
+            }
+        }
+    }
+
+    private void restoreLayer(int yLevel, Direction facing) {
+        BlockPos pos = getBlockPos();
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (!(i == 0 && j == 0)) {
+                    BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
+                    level.setBlock(
+                            breakBlock,
+                            ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState().setValue(FACING, facing),
+                            Block.UPDATE_ALL
+                    );
+                }
+            }
+        }
+    }
+
+    private void breakBlocksInLayer(int yLevel, Direction facing){
+        BlockPos pos = getBlockPos();
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (!(i == 0 && j == 0)) {
+                    BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
+                    if(!breakBySpring(breakBlock, level, (float) Config.spring_capacity)){
+                        stoppedPos = breakBlock;
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean canDisassemble(Direction facing){
+        BlockPos pos = getBlockPos();
+        for (int yLevel = (len-1); yLevel > curLen; yLevel--){
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (!(i == 0 && j == 0)) {
+                        BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
+                        if(!canBreakBySpring(breakBlock, level, (float) Config.spring_capacity)){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
