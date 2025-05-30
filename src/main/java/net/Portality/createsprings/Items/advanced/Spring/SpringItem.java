@@ -72,7 +72,7 @@ public class SpringItem extends BlockItem {
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
 
         if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (level.getGameTime() - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
             if(Config.spring_splash_duration == phase){
                 stack.getOrCreateTag().putBoolean("splash", false);
             }

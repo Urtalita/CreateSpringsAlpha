@@ -63,8 +63,8 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
         }
     }
 
-    private double getSpeed(CompoundTag tag){
-        return Mth.lerp((Minecraft.getInstance().level.getGameTime() - 2)
+    public static double getSpeed(CompoundTag tag){
+        return Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1)
                 % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
     }
 }

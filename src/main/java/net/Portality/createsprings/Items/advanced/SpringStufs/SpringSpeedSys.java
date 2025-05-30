@@ -1,5 +1,7 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
+import net.Portality.createsprings.Config;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import net.minecraft.world.item.*;
 
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer.getSpeed;
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromContains;
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromName;
 
@@ -26,10 +29,10 @@ public class SpringSpeedSys {
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag tag = stack.getOrCreateTag();
-        double speed = tag.getDouble("Speed");
+        double speed = getSpeed(tag);
 
         tooltip.add(Component.literal("speed: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf( (int) (speed / 50 * 2.56))).withStyle(getSpeedColor(speed, level))));
+                .append(Component.literal(String.valueOf( (int) (speed * 2 * 2.56))).withStyle(getSpeedColor(speed, level))));
     }
 
     private ChatFormatting getSpeedColor(Double speed, Level level){
@@ -43,9 +46,8 @@ public class SpringSpeedSys {
     }
 
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        float baseSpeed = 1F;
         double speedMultiplier = 1 + stack.getOrCreateTag().getDouble("Speed")/300f;
-        return baseSpeed * (float)speedMultiplier;
+        return (float) (speedMultiplier * Config.speed_coef);
     }
 
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -83,7 +85,7 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
 
         if(speed > 0) {
-            if(level.getGameTime() % 40 == 0) {
+            if(AnimationTickHolder.getTicks(level) % 40 == 0) {
                 tag.putDouble("LastSpeed", speed);
                 speed = Math.max(speed - 40, 0);
                 tag.putDouble("Speed", speed);

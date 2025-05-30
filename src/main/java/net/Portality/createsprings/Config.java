@@ -26,11 +26,14 @@ public class Config {
     private static final ForgeConfigSpec.IntValue SPRING_LEN =
             BUILDER.comment("max large spring len").defineInRange("spring_max_len", 32, 1, 384);
 
-    private static final  ForgeConfigSpec.BooleanValue DEBUG_CAPACITY =
+    private static final ForgeConfigSpec.BooleanValue DEBUG_CAPACITY =
             BUILDER.comment("debug large spring capacity").define("debug capacity", false);
 
     private static final ForgeConfigSpec.DoubleValue KNOCKBACK_COEF =
             BUILDER.comment("knockback coefficient of springs").defineInRange("knockback_coef", 4f, 0, 10);
+
+    private static final ForgeConfigSpec.DoubleValue SPRING_TOOLS_SPEED_COEF =
+            BUILDER.comment("speed coefficient of spring tools").defineInRange("speed_coef", 1f, 0, 1024);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
@@ -40,6 +43,7 @@ public class Config {
     public static int large_spring_capacity_coef;
     public static int spring_splash_duration;
     public static double knockback_coef;
+    public static double speed_coef;
     public static int spring_len;
 
     @SubscribeEvent
@@ -51,6 +55,7 @@ public class Config {
         spring_len = SPRING_LEN.get();
         debug_capacity = DEBUG_CAPACITY.get();
         large_spring_capacity_coef = LARGE_SPRING_CAPACITY.get();
+        speed_coef = SPRING_TOOLS_SPEED_COEF.get();
 
         // convert the list of strings into a set of items
     }

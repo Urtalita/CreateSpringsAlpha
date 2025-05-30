@@ -133,9 +133,9 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
     }
 
     public static float springAnimation(int phase) {
-        if (phase == 0) {
-            return 1.0f;
-        }
+        if (phase == 0) {return 1.0f;}
+        if (phase == Config.spring_splash_duration){return 0f;}
+
         float decay = (float) Math.exp(-0.15 * phase);
 
         float frequency = (float) (Math.PI * 0.4);
