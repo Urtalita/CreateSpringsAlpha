@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.CSpringsScrollValueHandler;
@@ -18,10 +19,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SPRING_LEN;
+
 public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
     protected final PartialModel Stress_Arrow = PartialModel.of(CreateSprings.asResource("item/drill/speedometer_arrow"));
-    protected final PartialModel Right_Spring = PartialModel.of(CreateSprings.asResource("item/drill/right_spring"));
-    protected final PartialModel Left_Spring = PartialModel.of(CreateSprings.asResource("item/drill/left_spring"));
+    protected final PartialModel SPRING_PLATE = CSpringsPartalModels.SPRING_TOOL_SPRING_PLATE;
+    protected final PartialModel SPRING_PIECE = CSpringsPartalModels.SPRING_TOOL_SPRING_PIECE;
 
     private static final RandomSource RANDOM = RandomSource.create();
 
@@ -43,24 +47,50 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         int Springs = tag.getInt("Springs_rn");
 
-        float zOffset = -1/16f;
-
-        ms.translate(0, 0, -zOffset);
         ms.rotateAround(Axis.ZP.rotationDegrees(-(float) (Speed*1.8f)), 1.5f/16,4/16f,0);
-        ms.translate(0, 0, zOffset);
 
         renderer.render(Stress_Arrow.get(), light);
 
-        ms.translate(0, 0, -zOffset);
         ms.rotateAround(Axis.ZP.rotationDegrees((float) (Speed*1.8f)), 1.5f/16,4/16f,0);
-        ms.translate(0, 0, zOffset);
 
+        ms.translate(0, 0, -2/16f);
         if (Springs == 2){
-            renderer.render(Right_Spring.get(), light);
-            renderer.render(Left_Spring.get(), light);
+            ms.translate(6/16f, 0, 0);
+            renderSpring(renderer, light, ms, tag.getFloat("Stored0"), tag);
+            ms.translate(-12/16f, 0, 0);
+            renderSpring(renderer, light, ms, tag.getFloat("Stored1"), tag);
+            ms.translate(6/16f, 0, 0);
         } else if (Springs == 1){
-            renderer.render(Right_Spring.get(), light);
+            ms.translate(6/16f, 0, 0);
+            renderSpring(renderer, light, ms, tag.getFloat("Stored0") + tag.getFloat("Stored1"), tag);
+            ms.translate(-6/16f, 0, 0);
         }
+        ms.translate(0, 0, 2/16f);
+    }
+
+    private void renderSpring( PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag){
+        float progress = 1 - (stored / Config.spring_capacity / 2f);
+
+        if(tag.getBoolean("splash")){
+            int phase = (AnimationTickHolder.getTicks() - tag.getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            progress = springAnimation(phase);
+            float prevProgress = springAnimation(phase-1);
+            progress = 1 - Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress);
+        }
+
+        renderer.render(SPRING_PLATE.get(), light);
+
+        for(int i = 0; i < SPRING_LEN * 2; i++){
+            renderer.render(SPRING_PIECE.get(), light);
+            ms.translate(0, 0, 1/16f * progress * 0.5f);
+            ms.rotateAround(Axis.ZP.rotationDegrees(90f), 0,0,0);
+        }
+
+        ms.translate(0, 0, 1/16f);
+        renderer.render(SPRING_PLATE.get(), light);
+        ms.translate(0, 0, -1/16f);
+
+        ms.translate(0, 0, -(SPRING_LEN * 2)/16f * progress * 0.5f);
     }
 
     public static double getSpeed(CompoundTag tag){

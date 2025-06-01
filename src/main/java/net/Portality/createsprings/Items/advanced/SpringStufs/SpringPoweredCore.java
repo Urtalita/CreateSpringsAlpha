@@ -32,6 +32,7 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,10 +49,14 @@ public class SpringPoweredCore {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
         CompoundTag tag = stack.getOrCreateTag();
         float capacity = tag.getInt("Springs_rn") * Config.spring_capacity;
-        tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf(tag.getFloat("Stored")))).withStyle(ChatFormatting.GRAY)
+
+        tooltip.add((Component.translatable("create.spring.saved").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal(" ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal(String.valueOf(getStoredSum(stack)))).withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
-                .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.GRAY));
+                .append(Component.literal(capacity + " ")).withStyle(ChatFormatting.GRAY)
+                .append(Component.translatable("create.spring.su").withStyle(ChatFormatting.DARK_GRAY)))
+        ;
 
         if (!RenderHelper.checkForDetails(tooltip)) {
 
@@ -86,15 +91,15 @@ public class SpringPoweredCore {
         return Optional.of(new SpringPoweredCore.SpringSlotTooltipComponent(
                 tag.getInt("Springs_rn"),
                 tag.getCompound("contains"),
-                tag.getFloat("Stored")));
+                getAllStored(2, tag)));
     }
 
     public static class SpringSlotTooltipComponent implements TooltipComponent {
         public final int Springs;
         public final CompoundTag contains;
-        public final float stored;
+        public final float[] stored;
 
-        public SpringSlotTooltipComponent(int springs, CompoundTag contains, float stored) {
+        public SpringSlotTooltipComponent(int springs, CompoundTag contains, float[] stored) {
             this.Springs = springs;
             this.contains = contains;
             this.stored = stored;
@@ -129,7 +134,7 @@ public class SpringPoweredCore {
                 ItemStack SpringStack = new ItemStack(ModBlocks.SPRING.asItem());
 
                 CompoundTag BlockEntityTag = new CompoundTag();
-                BlockEntityTag.putFloat("Stored", component.stored / component.Springs);
+                BlockEntityTag.putFloat("Stored", component.stored[i]);
                 CompoundTag tag = SpringStack.getOrCreateTag();
                 tag.put("BlockEntityTag", BlockEntityTag);
 
@@ -178,7 +183,7 @@ public class SpringPoweredCore {
 
     public float getStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
-        float stored = 0;
+        float stored;
 
         CompoundTag BlockEntityTag = tag.getCompound("BlockEntityTag");
         stored = BlockEntityTag.getFloat("Stored");
@@ -257,66 +262,112 @@ public class SpringPoweredCore {
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess slotaccess) {
         CompoundTag tag = stack1.getOrCreateTag();
         int Springs_rn = tag.getInt("Springs_rn");
+        float[] allSu = getAllStored(tag);
 
         if (stack2.getItem() == ModBlocks.SPRING.asItem()){
             if (springsMaxCount != Springs_rn && !tag.getBoolean("block") && exceptions(tag)){
-                float Stored = 0;
-                Stored = tag.getFloat("Stored");
-                float getsu = getStoredSu(stack2);
-                Stored += getsu;
+                allSu[Springs_rn] = getStoredSu(stack2);
 
                 Springs_rn++;
 
                 tag.putInt("Springs_rn", Springs_rn);
-                tag.putFloat("Stored", Stored);
+                putAllStored(allSu, tag);
 
                 stack2.shrink(1);
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            if (stack2.isEmpty()){
-                if(action == ClickAction.SECONDARY){
-                    float Stored = 0;
-                    Stored = tag.getFloat("Stored");
-                    if (Springs_rn > 0){
-                        float springSu = 0;
-
-                        if (Stored >= (int) Config.spring_capacity){
-                            springSu = (int) Config.spring_capacity;
-                            Stored -= (int) Config.spring_capacity;
-                        } else {
-                            springSu = Stored;
-                            Stored = 0;
-                        }
-
-                        ItemStack spring = ModBlocks.SPRING.asStack();
-                        CompoundTag SpTag = spring.getOrCreateTag();
-                        CompoundTag SpBlTag = new CompoundTag();
-                        SpBlTag.putFloat("Stored", springSu);
-                        SpTag.put("BlockEntityTag", SpBlTag);
-
-                        player.getInventory().add(spring);
-                        Springs_rn--;
-                        tag.putInt("Springs_rn", Springs_rn);
-                        tag.putFloat("Stored", Stored);
-
-                        return true;
-                    }
-                }
-            }
-
-            if(addStackedLogick(ModItems.PUNCHCARD.get(), stack1, stack2, action, player)){
-                return true;
-            }
-
-            if(addStackedLogick(Blocks.TRIPWIRE_HOOK.asItem(), stack1, stack2, action, player)){
-                return true;
-            }
-
             return false;
         }
+
+        if (stack2.isEmpty()){
+            if(action == ClickAction.SECONDARY){
+                if (Springs_rn > 0){
+                    float springSu;
+
+                    springSu = allSu[Springs_rn-1];
+                    allSu[Springs_rn-1] = 0;
+
+                    player.getInventory().add(putSuInSpring(springSu));
+
+                    Springs_rn--;
+                    tag.putInt("Springs_rn", Springs_rn);
+                    putAllStored(allSu, tag);
+                    return true;
+                }
+            }
+        }
+
+        if(addStackedLogick(ModItems.PUNCHCARD.get(), stack1, stack2, action, player)){return true;}
+        if(addStackedLogick(Blocks.TRIPWIRE_HOOK.asItem(), stack1, stack2, action, player)){return true;}
+        return false;
+    }
+
+    private float[] getAllStored(CompoundTag tag){
+        return getAllStored(springsMaxCount, tag);
+    }
+
+    public static float[] getAllStored(int springs, CompoundTag tag){
+        float[] allSu = new float[springs];
+        for(int i = 0; i < springs; i++){
+            allSu[i] = tag.getFloat("Stored" + i);
+        }
+        return allSu;
+    }
+
+    public static float getAllStoredSum(float[] allSu){
+        float sum = 0;
+        for(int i = 0; i < allSu.length; i++){
+            sum += allSu[i];
+        }
+        return sum;
+    }
+
+    public static float[] spreadSu(float[] allSu, float add){
+        float addSu = add / allSu.length;
+        for(int i = 0; i < allSu.length; i++){
+            allSu[i] = addSu;
+        }
+        return allSu;
+    }
+
+    public static void putAllStored(float[] allSu, CompoundTag tag){
+        for(int i = 0; i < allSu.length; i++){
+            tag.putFloat("Stored" + i, allSu[i]);
+        }
+    }
+
+    public static void putAllPrevStored(float[] allSu, CompoundTag tag){
+        for(int i = 0; i < allSu.length; i++){
+            tag.putFloat("PrevStored" + i, allSu[i]);
+        }
+    }
+
+    public static float[] cleanStored(float[] allSu){
+        for(int i = 0; i < allSu.length; i++){
+            allSu[i] = 0;
+        }
+        return allSu;
+    }
+
+    public static float getStoredSum(ItemStack stack){
+        CompoundTag tag = stack.getOrCreateTag();
+        float[] allSu = getAllStored(2, tag);
+        float sum = 0;
+
+        for(int i = 0; i < allSu.length; i++){
+            sum += allSu[i];
+        }
+        return sum;
+    }
+
+    public static ItemStack putSuInSpring(float su){
+        ItemStack spring = ModBlocks.SPRING.asStack();
+        CompoundTag SpTag = spring.getOrCreateTag();
+        CompoundTag SpBlTag = new CompoundTag();
+        SpBlTag.putFloat("Stored", su);
+        SpTag.put("BlockEntityTag", SpBlTag);
+
+        return spring;
     }
 
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
@@ -354,8 +405,9 @@ public class SpringPoweredCore {
             tag2.putFloat("Stored", tag2.getInt("Stored") + Config.spring_capacity);
             return true;
         }
-        tag2.putFloat("Stored", tag1.getFloat("Stored"));
-        tag1.putFloat("Stored", 0);
+
+        putAllStored(getAllStored(tag1), tag2);
+        putAllStored(cleanStored(getAllStored(tag1)), tag1);
         return true;
     }
 
@@ -370,7 +422,9 @@ public class SpringPoweredCore {
             CompoundTag containsTag = sourceTag.getCompound("contains");
             paste.getOrCreateTag().put("contains", containsTag);
             paste.getOrCreateTag().putInt("Springs_rn",sourceTag.getInt("Springs_rn"));
-            paste.getOrCreateTag().putFloat("Stored",sourceTag.getFloat("Stored"));
+
+            putAllStored(getAllStored(sourceTag), paste.getOrCreateTag());
+
             paste.getOrCreateTag().putFloat("Speed",sourceTag.getFloat("Speed"));
         }
 

@@ -44,6 +44,8 @@
   "tooltip.springstuf.needsprings1": "может принимать до ",
   "tooltip.springstuf.needsprings2": " пружин",
   "tooltip.springstuf.modifiers": "Содержит:",
+  "tooltip.springstuf.speed": "Скорость: ",
+  "tooltip.springstuf.saved": "Сохранено:",
   "create.spring.saved": "Сохранено:",
   "create.spring.len": "Длина:",
   "create.spring.su": "ен",

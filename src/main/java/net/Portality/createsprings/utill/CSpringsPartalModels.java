@@ -25,6 +25,9 @@ public class CSpringsPartalModels {
 
     SUS_BOX = block("sus_box"),
 
+    SPRING_TOOL_SPRING_PLATE = item("drill/spring_tool_spring_plate"),
+    SPRING_TOOL_SPRING_PIECE = item("drill/spring_tool_spring_piece"),
+
     HAT = armor("hat"),
     HAT2 = armor("hat2"),
     HAT3 = armor("hat3"),

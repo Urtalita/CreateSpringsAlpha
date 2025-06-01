@@ -27,7 +27,6 @@ public class SpringProjectile extends AbstractArrow {
     private int bounceCount = 0;
     private static final double BOUNCE_FACTOR = 0.9; // Коэффициент отскока
     private static final int MAX_BOUNCES = 10; // Максимальное число отскоков
-    private static final float ARC_HEIGHT = 0.05f; // Высота дуги
     private static final double GRAVITY = -0.08;
     private static boolean box = false;
 
@@ -220,6 +219,7 @@ public class SpringProjectile extends AbstractArrow {
                     .subtract(normal.scale(2 * this.getDeltaMovement().dot(normal)))
                     .scale(BOUNCE_FACTOR);
 
+            target.setDeltaMovement(this.getDeltaMovement().scale(1 - BOUNCE_FACTOR));
             this.setDeltaMovement(newMotion);
 
             bounceCount++;

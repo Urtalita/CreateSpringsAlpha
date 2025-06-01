@@ -30,6 +30,10 @@ public class SpringItemRenderer extends CustomRenderedItemModelRenderer {
 
     @Override
     protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+        renderSpring(stack, renderer, ms, light);
+    }
+
+    public void renderSpring(ItemStack stack, PartialItemModelRenderer renderer, PoseStack ms, int light){
         float su = GetStoredSu(stack);
         float progress = su/Config.spring_capacity;
 

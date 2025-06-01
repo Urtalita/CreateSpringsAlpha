@@ -22,8 +22,7 @@ import java.util.List;
 import net.minecraft.world.item.*;
 
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer.getSpeed;
-import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromContains;
-import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getItemFromName;
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.*;
 
 public class SpringSpeedSys {
 
@@ -31,16 +30,16 @@ public class SpringSpeedSys {
         CompoundTag tag = stack.getOrCreateTag();
         double speed = getSpeed(tag);
 
-        tooltip.add(Component.literal("speed: ").withStyle(ChatFormatting.DARK_GRAY)
+        tooltip.add(Component.translatable("tooltip.springstuf.speed").withStyle(ChatFormatting.DARK_GRAY)
                 .append(Component.literal(String.valueOf( (int) (speed * 2 * 2.56))).withStyle(getSpeedColor(speed, level))));
     }
 
     private ChatFormatting getSpeedColor(Double speed, Level level){
         if(speed == 0){return ChatFormatting.GRAY;}
-        if(speed < 1000){return ChatFormatting.GREEN;}
-        if(speed < 4000){return ChatFormatting.AQUA;}
-        if (speed < 5000){return ChatFormatting.LIGHT_PURPLE;}
-        if (speed < 10000){return ChatFormatting.RED;}
+        if(speed < 10){return ChatFormatting.GREEN;}
+        if(speed < 40){return ChatFormatting.AQUA;}
+        if (speed < 50){return ChatFormatting.LIGHT_PURPLE;}
+        if (speed < 100){return ChatFormatting.RED;}
 
         return (level.getGameTime() % 40 < 21) ? ChatFormatting.DARK_RED : ChatFormatting.RED;
     }
@@ -53,30 +52,38 @@ public class SpringSpeedSys {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         CompoundTag tag = stack.getOrCreateTag();
-        float Stored = 0;
-        // Получаем текущую скорость из NBT
+        float stored;
         double speed = tag.getDouble("Speed");
-        Stored = tag.getFloat("Stored");
+
+        if(tag.getInt("Springs_rn") == 0){return InteractionResultHolder.fail(stack);}
+
+        stored = getAllStoredSum(getAllStored(2, tag));
 
         Item hook = getItemFromContains(stack, Blocks.TRIPWIRE_HOOK.asItem());
         if(hook != null){
-            speed += Stored / 8 / 2;
-            Stored = 0;
+            speed += stored / 8 / 2;
+            stored = 0;
 
             if(speed > 25000){
                 speed = 25000;
             }
+
+            tag.putBoolean("splash", true);
+            tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+
             player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
         } else {
-            if (Stored > 5000 && speed < 5500){
+            if (stored > 5000 && speed < 5500){
                 speed += 250;
-                Stored -= 2000;
+                stored -= 2000;
                 if(speed > 5000) speed = 5000;
             }
         }
 
         tag.putDouble("Speed", speed);
-        tag.putFloat("Stored", Stored);
+
+        float[] allsu = getAllStored(2, tag);
+        putAllStored(spreadSu(allsu, stored), tag);
         return InteractionResultHolder.pass(stack);
     }
 
@@ -89,6 +96,13 @@ public class SpringSpeedSys {
                 tag.putDouble("LastSpeed", speed);
                 speed = Math.max(speed - 40, 0);
                 tag.putDouble("Speed", speed);
+            }
+        }
+
+        if(stack.getOrCreateTag().getBoolean("splash")){
+            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            if(Config.spring_splash_duration == phase){
+                stack.getOrCreateTag().putBoolean("splash", false);
             }
         }
     }
