@@ -6,20 +6,16 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -31,7 +27,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -130,7 +125,7 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
             return true;
         }
         if (core.addStackedLogick(AllBlocks.MECHANICAL_DRILL.asItem(), stack1, stack2, action, player)){
-            core.switchToolInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
+            core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
         }

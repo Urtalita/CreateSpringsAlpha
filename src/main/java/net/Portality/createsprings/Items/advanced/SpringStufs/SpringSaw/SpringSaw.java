@@ -4,7 +4,6 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrillRenderer;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
@@ -126,7 +125,7 @@ public class SpringSaw extends AxeItem implements CustomArmPoseItem {
             return true;
         }
         if (core.addStackedLogick(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
-            core.switchToolInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
+            core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
         }

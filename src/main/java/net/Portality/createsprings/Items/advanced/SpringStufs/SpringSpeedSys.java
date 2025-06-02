@@ -1,8 +1,11 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
+import com.simibubi.create.AllBlocks;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.Items.ModItems;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -14,8 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -65,6 +67,7 @@ public class SpringSpeedSys {
             stored = 0;
 
             if(speed > 25000){
+                placeLava(level, player, stack, hand);
                 speed = 25000;
             }
 
@@ -87,6 +90,19 @@ public class SpringSpeedSys {
         return InteractionResultHolder.pass(stack);
     }
 
+    public static void placeLava(Level level, Player player, ItemStack stack, InteractionHand hand){
+        switchTagInHandByHand(player, hand, ModItems.SPRING_BASE.get(), stack, 2);
+        player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.5F, 1.0F);
+
+        Vec3 viewVec = player.getViewVector(1);
+        viewVec = viewVec.scale(2);
+        viewVec = viewVec.add(0, 1, 0);
+        Vec3 playerPos = new Vec3(player.getX(), player.getY(), player.getZ());
+        viewVec = viewVec.add(playerPos);
+
+        level.setBlock(BlockPos.containing(viewVec), Blocks.ANDESITE.defaultBlockState(), 3);
+    }
+
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         CompoundTag tag = stack.getOrCreateTag();
         double speed = tag.getDouble("Speed");
@@ -97,12 +113,12 @@ public class SpringSpeedSys {
                 speed = Math.max(speed - 40, 0);
                 tag.putDouble("Speed", speed);
             }
-        }
 
-        if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
-            if(Config.spring_splash_duration == phase){
-                stack.getOrCreateTag().putBoolean("splash", false);
+            if(stack.getOrCreateTag().getBoolean("splash")){
+                long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+                if(Config.spring_splash_duration == phase){
+                    stack.getOrCreateTag().putBoolean("splash", false);
+                }
             }
         }
     }

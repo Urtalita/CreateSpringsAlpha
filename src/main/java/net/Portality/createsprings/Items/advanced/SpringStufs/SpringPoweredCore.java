@@ -1,22 +1,18 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -28,13 +24,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static net.Portality.createsprings.CreateSprings.SPRING_TOOLS;
@@ -411,8 +404,18 @@ public class SpringPoweredCore {
         return true;
     }
 
-    public void switchToolInHand(Player player, Slot slot, Item item, ItemStack stack){
-        if (stack.isEmpty() || item == null) return;
+    public void switchTagInHand(Player player, Slot slot, Item item, ItemStack stack){
+        ItemStack paste = switchTagInHand(player, item, stack, springsMaxCount);
+        player.getInventory().setItem(slot.getSlotIndex(), paste);
+    }
+
+    public static void switchTagInHandByHand(Player player, InteractionHand hand, Item item, ItemStack stack, int springs){
+        ItemStack paste = switchTagInHand(player, item, stack, springs);
+        player.setItemInHand(hand, paste);
+    }
+
+    public static ItemStack switchTagInHand(Player player, Item item, ItemStack stack, int springs){
+        if (stack.isEmpty() || item == null) return ItemStack.EMPTY;
 
         ItemStack paste = new ItemStack(item);
         CompoundTag sourceTag = stack.getTag();
@@ -423,11 +426,11 @@ public class SpringPoweredCore {
             paste.getOrCreateTag().put("contains", containsTag);
             paste.getOrCreateTag().putInt("Springs_rn",sourceTag.getInt("Springs_rn"));
 
-            putAllStored(getAllStored(sourceTag), paste.getOrCreateTag());
+            putAllStored(getAllStored(springs ,sourceTag), paste.getOrCreateTag());
 
             paste.getOrCreateTag().putFloat("Speed",sourceTag.getFloat("Speed"));
         }
 
-        player.getInventory().setItem(slot.getSlotIndex(), paste);
+        return paste;
     }
 }
