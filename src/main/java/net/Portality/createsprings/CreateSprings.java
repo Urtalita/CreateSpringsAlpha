@@ -122,7 +122,8 @@ public class CreateSprings {
                     ModItems.SPRING_LAUNCHER.get(),
                     ModItems.SPRING_SAW.get(),
                     ModItems.SPRING_DRILL.get(),
-                    ModItems.SPRING_SHOVE.get()
+                    ModItems.SPRING_SHOVE.get(),
+                    ModItems.EXPLOSION_CHAMBER.get()
             };
         });
     }

@@ -67,8 +67,10 @@ public class SpringSpeedSys {
             stored = 0;
 
             if(speed > 25000){
-                placeLava(level, player, stack, hand);
                 speed = 25000;
+                tag.putBoolean("splash", true);
+                tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+                placeLava(level, player, stack, hand);
             }
 
             tag.putBoolean("splash", true);
@@ -114,7 +116,7 @@ public class SpringSpeedSys {
                 tag.putDouble("Speed", speed);
             }
 
-            if(stack.getOrCreateTag().getBoolean("splash")){
+            if(tag.getBoolean("splash")){
                 long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
                 if(Config.spring_splash_duration == phase){
                     stack.getOrCreateTag().putBoolean("splash", false);

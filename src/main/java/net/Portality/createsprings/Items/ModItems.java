@@ -14,6 +14,7 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ChamberItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBase;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
@@ -70,6 +71,11 @@ public class ModItems {
 
     public static final ItemEntry<SpringShove> SPRING_SHOVE = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_shove", SpringShove::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
+
+    public static final ItemEntry<ChamberItem> EXPLOSION_CHAMBER = CreateSprings.CSPRINGS_REGISTRATE
+            .item("explosion_chamber", ChamberItem::new)
             .properties(p -> p.stacksTo(1))
             .register();  // add to spring tools list
 
