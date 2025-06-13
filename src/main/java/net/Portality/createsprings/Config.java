@@ -1,9 +1,13 @@
 package net.Portality.createsprings;
 
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+import java.util.HashMap;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Forge's config APIs
@@ -46,6 +50,8 @@ public class Config {
     public static double speed_coef;
     public static int spring_len;
 
+    public static HashMap<Item, Integer> chamber_fuel = new HashMap<>();
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         springs_can_splash = SPRINGS_CAN_SPLASH.get();
@@ -57,6 +63,6 @@ public class Config {
         large_spring_capacity_coef = LARGE_SPRING_CAPACITY.get();
         speed_coef = SPRING_TOOLS_SPEED_COEF.get();
 
-        // convert the list of strings into a set of items
+        chamber_fuel.put(Items.GUNPOWDER, 12000);
     }
 }

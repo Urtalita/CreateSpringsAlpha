@@ -21,11 +21,11 @@ import net.minecraft.world.item.ItemStack;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SPRING_LEN;
+import static net.Portality.createsprings.utill.CSpringsPartalModels.SPRING_PIECE;
+import static net.Portality.createsprings.utill.CSpringsPartalModels.SPRING_PLATE;
 
 public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
     protected final PartialModel Stress_Arrow = PartialModel.of(CreateSprings.asResource("item/drill/speedometer_arrow"));
-    protected final PartialModel SPRING_PLATE = CSpringsPartalModels.SPRING_TOOL_SPRING_PLATE;
-    protected final PartialModel SPRING_PIECE = CSpringsPartalModels.SPRING_TOOL_SPRING_PIECE;
 
     private static final RandomSource RANDOM = RandomSource.create();
 
@@ -56,19 +56,24 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
         ms.translate(0, 0, -2/16f);
         if (Springs == 2){
             ms.translate(6/16f, 0, 0);
-            renderSpring(renderer, light, ms, tag.getFloat("Stored0"), tag);
+            renderSmallSpring(renderer, light, ms, tag.getFloat("Stored0"), tag, SPRING_LEN*2);
             ms.translate(-12/16f, 0, 0);
-            renderSpring(renderer, light, ms, tag.getFloat("Stored1"), tag);
+            renderSmallSpring(renderer, light, ms, tag.getFloat("Stored1"), tag, SPRING_LEN*2);
             ms.translate(6/16f, 0, 0);
         } else if (Springs == 1){
             ms.translate(6/16f, 0, 0);
-            renderSpring(renderer, light, ms, tag.getFloat("Stored0") + tag.getFloat("Stored1"), tag);
+            renderSmallSpring(renderer, light, ms, tag.getFloat("Stored0") + tag.getFloat("Stored1"), tag, SPRING_LEN*2);
             ms.translate(-6/16f, 0, 0);
         }
         ms.translate(0, 0, 2/16f);
     }
 
-    private void renderSpring( PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag){
+    public static void renderSmallSpring(PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag, int springLen){
+        renderSpring(renderer, light, ms, stored, tag, springLen, CSpringsPartalModels.SPRING_TOOL_SPRING_PLATE, CSpringsPartalModels.SPRING_TOOL_SPRING_PIECE);
+    }
+
+    public static void renderSpring(PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag
+            , int springLen, PartialModel plate, PartialModel piece){
         float progress = 1 - (stored / Config.spring_capacity / 2f);
 
         if(tag.getBoolean("splash")){
@@ -78,19 +83,19 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
             progress = 1 - Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress);
         }
 
-        renderer.render(SPRING_PLATE.get(), light);
+        renderer.render(plate.get(), light);
 
-        for(int i = 0; i < SPRING_LEN * 2; i++){
-            renderer.render(SPRING_PIECE.get(), light);
+        for(int i = 0; i < springLen; i++){
+            renderer.render(piece.get(), light);
             ms.translate(0, 0, 1/16f * progress * 0.5f);
             ms.rotateAround(Axis.ZP.rotationDegrees(90f), 0,0,0);
         }
 
         ms.translate(0, 0, 1/16f);
-        renderer.render(SPRING_PLATE.get(), light);
+        renderer.render(plate.get(), light);
         ms.translate(0, 0, -1/16f);
 
-        ms.translate(0, 0, -(SPRING_LEN * 2)/16f * progress * 0.5f);
+        ms.translate(0, 0, -(springLen)/16f * progress * 0.5f);
     }
 
     public static double getSpeed(CompoundTag tag){

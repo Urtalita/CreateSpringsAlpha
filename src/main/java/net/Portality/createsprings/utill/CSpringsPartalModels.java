@@ -28,6 +28,10 @@ public class CSpringsPartalModels {
     SPRING_TOOL_SPRING_PLATE = item("drill/spring_tool_spring_plate"),
     SPRING_TOOL_SPRING_PIECE = item("drill/spring_tool_spring_piece"),
 
+    CHAMBER_SPRING_PIECE = item("chamber/chamber_spring_piece"),
+    CHAMBER_SPRING_PLATE = item("chamber/chamber_spring_plate"),
+    CHAMBER_GUNPOWDER = item("chamber/chamber_gunpowder"),
+
     HAT = armor("hat"),
     HAT2 = armor("hat2"),
     HAT3 = armor("hat3"),

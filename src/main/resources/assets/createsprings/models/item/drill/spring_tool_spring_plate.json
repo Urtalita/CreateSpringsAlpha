@@ -1,0 +1,86 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"8": "createsprings:item/spring_drill",
+		"particle": "createsprings:block/spring_plate"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 2.375],
+			"to": [12, 12, 3.375],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8.375]},
+			"faces": {
+				"north": {"uv": [0, 0, 4, 4], "texture": "#8"},
+				"east": {"uv": [8.5, 9, 9, 13], "texture": "#8"},
+				"south": {"uv": [0, 0, 4, 4], "texture": "#8"},
+				"west": {"uv": [8.5, 9, 9, 13], "texture": "#8"},
+				"up": {"uv": [13.5, 1.5, 9.5, 1], "texture": "#8"},
+				"down": {"uv": [13.5, 1, 9.5, 1.5], "texture": "#8"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [44, 0, 0],
+			"translation": [0, 2.75, -3]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [46, 0, 0],
+			"translation": [0.25, 2.5, -2.75]
+		},
+		"firstperson_righthand": {
+			"translation": [-8.5, 0, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [-9, 0, 0]
+		},
+		"gui": {
+			"rotation": [45, -34, 0],
+			"translation": [-0.75, -1, 0],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"head": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 11.5, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 180, 0],
+			"translation": [0, -2.75, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "spring1",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [
+				{
+					"name": "springrings",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": []
+				},
+				{
+					"name": "plates",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": [
+						{
+							"name": "down",
+							"origin": [4, 5, 11],
+							"color": 0,
+							"children": []
+						},
+						{
+							"name": "up",
+							"origin": [4, 5, 0],
+							"color": 0,
+							"children": [0]
+						}
+					]
+				}
+			]
+		}
+	]
+}

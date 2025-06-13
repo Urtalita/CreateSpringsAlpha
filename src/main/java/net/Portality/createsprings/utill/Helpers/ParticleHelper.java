@@ -1,8 +1,8 @@
 package net.Portality.createsprings.utill.Helpers;
 
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.*;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -47,6 +47,15 @@ public class ParticleHelper {
                 level.addParticle(particleType, posX, posY, posZ, motionX, motionY, motionZ);
             }
         }
+    }
+
+    public static void SpawnAtPlayer(Player player, SimpleParticleType data, Level level){
+        if (!level.isClientSide()) {return;}
+        level.addParticle(data, player.getX(), player.getY() + player.getEyeHeight(), player.getZ(), 0, 0, 0);
+    }
+
+    public static void explodeAtPlayer(Player player, Level level){
+        SpawnAtPlayer(player, ParticleTypes.EXPLOSION, level);
     }
 
     public static void spawnParticles(Vec3 PartPos, ItemParticleOption data, int amout, Level level){

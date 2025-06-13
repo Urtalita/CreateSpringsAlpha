@@ -135,14 +135,6 @@ public class SpringPoweredCore {
             }
 
             for (String key : contains.getAllKeys()) {
-                if (contains.getInt(key) != 0){
-                    moving += getWidth(Font)+2;
-                    ItemStack itemStack = new ItemStack(getItemFromName(key.split("/")[0]));
-
-                    itemStack.setCount(contains.getInt(key));
-                    GuiGraphics.renderFakeItem(itemStack, x + moving, y + 1);
-                    continue;
-                }
                 if (contains.getBoolean(key)){
                     moving += getWidth(Font)+2;
                     ItemStack itemStack = new ItemStack(getItemFromName(key));
@@ -233,27 +225,6 @@ public class SpringPoweredCore {
             }
         }
         return false;
-    }
-
-    public static boolean addCountItem(Item item, ItemStack stack1, ItemStack stack2){
-        if(!addItem(item, stack1, stack2)){return false;}
-        CompoundTag tag = stack1.getOrCreateTag();
-
-        ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
-        CompoundTag contains = tag.getCompound("contains");
-
-        int count = contains.getInt(itemId + "count");
-        int addCount = stack2.getCount() + 1;
-
-        if(count + addCount > 64){
-            addCount = 64;
-            stack2.setCount(count + addCount - 64);
-        }
-
-        contains.putInt(itemId + "/count", addCount);
-        tag.put("contains", contains);
-
-        return true;
     }
 
     public boolean addStackedLogick(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
