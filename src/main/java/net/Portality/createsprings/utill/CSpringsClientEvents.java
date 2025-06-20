@@ -4,7 +4,6 @@ import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSaw;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
-import net.Portality.createsprings.server.hat.ServerHatHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
@@ -44,12 +43,5 @@ public class CSpringsClientEvents {
         if (item instanceof SpringDrill || item instanceof SpringSaw || item instanceof SpringShove) {
             CSpringsScrollValueHandler.tick(stack);
         }
-    }
-
-    @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START)
-            return;
-        ServerHatHandler.tick();
     }
 }

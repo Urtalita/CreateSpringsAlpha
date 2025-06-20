@@ -64,5 +64,6 @@ public class Config {
         speed_coef = SPRING_TOOLS_SPEED_COEF.get();
 
         chamber_fuel.put(Items.GUNPOWDER, 12000);
+        chamber_fuel.put(Items.FIREWORK_STAR, 15000);
     }
 }

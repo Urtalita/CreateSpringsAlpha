@@ -2,6 +2,8 @@ package net.Portality.createsprings.blocks.advanced.friction_welder;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
+import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
+import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -18,31 +20,30 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class WelderBlockEntity extends MechanicalBearingBlockEntity implements IHaveGoggleInformation {
     public static int SearchLimit = 128;
-    protected boolean running_;
-    protected boolean assembleNextTick_;
     public boolean isMainBlock = true;
-    private int distanceToWelder = 0;
-    public boolean WeldingMode = false;
+    public boolean WeldingMode = true;
     public float HeadMove = 0;
     private float prevHeadMove = 0;
     private final Vec3i movementDirection;
     private boolean velding = false;
-    private int tickcount = 0;
+    private int cooldown = 0;
     private WelderRecipeSpeed recipeSpeed = WelderRecipeSpeed.NORMAL;
 
     private BlockState CraftState1;
@@ -58,13 +59,9 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     @Override
     public void tick() {
         super.tick();
-        tickcount++;
-
-        running_ = this.running;
-        assembleNextTick_ = this.assembleNextTick;
 
         if(WeldingMode){
-            if (tickcount % 5 == 0) {
+            if (level.getGameTime() % 5 == 0) {
                 if(CanStartWelding()){
                     velding = true;
                 } else {
@@ -86,6 +83,8 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                 Welding();
             }
         }
+
+        if(cooldown > 0){cooldown--;}
     }
 
     private void Welding(){
@@ -165,11 +164,38 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     @Override
     public float propagateRotationTo(KineticBlockEntity target, BlockState stateFrom, BlockState stateTo, BlockPos diff,
                                      boolean connectedViaAxes, boolean connectedViaCogs) {
-        if(WeldingMode){
+        if (WeldingMode) {
             return 0;
         }
-        if(!isMainBlock){return 0;}
+
+        if (!running) {
+            return 0;
+        }
+
         return 1;
+    }
+
+    @Override
+    public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
+        List<BlockPos> positions = new ArrayList<>();
+        Direction facing = state.getValue(FACING);
+
+        positions.add(worldPosition.relative(facing.getOpposite()));
+        positions.add(worldPosition.relative(facing));
+
+        // Только для работающего блока
+        if (running && !WeldingMode) {
+            int weldDist = findWelderDistance();
+            if (weldDist > 0) {
+                BlockPos weldPos = worldPosition.relative(facing, weldDist);
+                // Проверка, что блок все еще существует
+                if (level.getBlockEntity(weldPos) instanceof WelderBlockEntity) {
+                    positions.add(weldPos);
+                }
+            }
+        }
+
+        return positions;
     }
 
     @Override
@@ -178,22 +204,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
             return !WeldingMode;
         }
         return super.isCustomConnection(other, state, otherState);
-    }
-
-    @Override
-    public List<BlockPos> addPropagationLocations(IRotate block, BlockState state, List<BlockPos> neighbours) {
-        if(!WeldingMode){
-            if(!running){return super.addPropagationLocations(block, state, neighbours);}
-            List<BlockPos> poses = new ArrayList<>();
-            int weldDist = findWelderDistance();
-            poses.add(worldPosition.relative(state.getValue(FACING), -1));
-            poses.add(worldPosition.relative(state.getValue(FACING), 1));
-
-            if(!isMainBlock){return poses;}
-            if(weldDist != -1){poses.add(worldPosition.relative(state.getValue(FACING), weldDist));}
-            return poses;
-        }
-        return super.addPropagationLocations(block, state, neighbours);
     }
 
     @Override
@@ -217,94 +227,141 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
 
     @Override
     public void assemble() {
+        if(cooldown != 0){return;}
 
-        if (isMainBlock && !WeldingMode){
-            if(!checkContraption()){return;}
+        if(WeldingMode){
+            assembleWelding();
+            return;
+        }
 
-            Optional<WelderBlockEntity> OweldBe = FindWelder();
+        if (!isMainBlock) updateNear();
 
-            if(OweldBe.isPresent()){
-                WelderBlockEntity SecondBe = OweldBe.get();
-                SecondBe.isMainBlock = false;
-                SecondBe.running = true;
-                SecondBe.assembleNextTick_ = true;
-                SecondBe.updateSpeed = true;
+        if(!checkContraption()) return;
 
-                setChanged();
-                notifyUpdate();
-                SecondBe.setChanged();
-                SecondBe.notifyUpdate();
-            }
+        Optional<WelderBlockEntity> OweldBe = FindWelder();
 
-            assembleNextTick_ = true;
-        } else if(WeldingMode){
+        if(OweldBe.isPresent()){
+            WelderBlockEntity SecondBe = OweldBe.get();
+            SecondBe.isMainBlock = false;
+            SecondBe.setChanged();
+        }
 
-            Direction facing = getBlockState().getValue(FACING);
+        super.assemble();
+        updateSpeed = true;
 
-            BlockPos block1Pos = worldPosition.relative(facing, 1);
-            BlockPos block2Pos = worldPosition.relative(facing, 2);
+        updateNear();
+    }
 
-            CraftState1 = level.getBlockState(block1Pos);
-            CraftState2 = level.getBlockState(block2Pos);
+    public void assembleWelding(){
+        Direction facing = getBlockState().getValue(FACING);
 
-            assembleNextTick_ = true;
+        BlockPos block1Pos = worldPosition.relative(facing, 1);
+        BlockPos block2Pos = worldPosition.relative(facing, 2);
 
-            if (CraftState1 == null || CraftState2 == null) return;
-            // Поиск подходящего рецепта
-            Optional<WelderRecipe> recipe = level.getRecipeManager()
-                    .getAllRecipesFor(ModRecipes.WELDER_TYPE.get())
-                    .stream()
-                    .filter(r -> r.matches(CraftState1, CraftState2))
-                    .findFirst();
+        CraftState1 = level.getBlockState(block1Pos);
+        CraftState2 = level.getBlockState(block2Pos);
 
-            if (recipe.isPresent()) {
-                recipeSpeed = recipe.get().speed;
-                CraftResult = recipe.get().result.copy();
+        super.assemble();
 
-                Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
-                if (OweldBe.isPresent()) {
-                    OweldBe.get().recipeSpeed = this.recipeSpeed;
-                    OweldBe.get().CraftResult = CraftResult.copy();
-                }
+        if (CraftState1 == null || CraftState2 == null) return;
+        // Поиск подходящего рецепта
+        Optional<WelderRecipe> recipe = level.getRecipeManager()
+                .getAllRecipesFor(ModRecipes.WELDER_TYPE.get())
+                .stream()
+                .filter(r -> r.matches(CraftState1, CraftState2))
+                .findFirst();
+
+        if (recipe.isPresent()) {
+            recipeSpeed = recipe.get().speed;
+            CraftResult = recipe.get().result.copy();
+
+            Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
+            if (OweldBe.isPresent()) {
+                OweldBe.get().recipeSpeed = this.recipeSpeed;
+                OweldBe.get().CraftResult = CraftResult.copy();
             }
         }
-        if(assembleNextTick_){
-            super.assemble();
+    }
+
+    @Override
+    public void disassemble() {
+        super.disassemble();
+
+        this.running = false;
+        this.speed = 0;
+        this.angle = 0;
+
+        if (WeldingMode) {
+            velding = false;
+            CraftResult = null;
+            return;
+        }
+
+        if (!isMainBlock) {
+            updateSpeed = true;
+            setChanged();
+            notifyUpdate();
+            return;
+        }
+
+        Optional<WelderBlockEntity> OweldBe = FindWelder();
+        if (!OweldBe.isPresent()) {return;}
+
+        WelderBlockEntity second = OweldBe.get();
+        second.disassemble();
+        second.isMainBlock = true;
+        second.updateSpeed = true;
+        second.source = null;
+        second.setChanged();
+        second.notifyUpdate();
+        second.cooldown = 5;
+        cooldown = 5;
+
+        // Критически важно: обновляем сеть для второго блока
+        if (second.hasNetwork()) {
+            second.getOrCreateNetwork().updateNetwork();
+        }
+    }
+
+    private void updateNear(){
+        if (level != null && !level.isClientSide) {
+            for (Direction d : Direction.values()) {
+                BlockPos neighborPos = worldPosition.relative(d);
+                BlockState neighborState = level.getBlockState(neighborPos);
+                if (neighborState.getBlock() instanceof IRotate) {
+                    level.updateNeighborsAt(neighborPos, neighborState.getBlock());
+                }
+            }
         }
     }
 
     private boolean checkContraption(){
         Direction facing = getBlockState().getValue(FACING);
 
+        if(level.getBlockState(worldPosition.relative(facing, 2)).getBlock() == ModBlocks.FRICTION_WELDER.get()){return true;}
+
         for (int i = 1; i < SearchLimit; i++){
             BlockState state = level.getBlockState(worldPosition.relative(facing, i));
+
             if (state.isAir()) return false;
-            if (state.getBlock() == ModBlocks.FRICTION_WELDER.get()) return true;
+
+            if (state.getBlock() == ModBlocks.FRICTION_WELDER.get()) {return true;}
+
+            if(!hasGlue(level, worldPosition.relative(facing, i), state)){return false;}
         }
         return false;
     }
 
-    @Override
-    public void disassemble() {
-        super.disassemble();
-        if (!WeldingMode){
-            if(!isMainBlock){return;}
-            Optional<WelderBlockEntity> OweldBe = FindWelder();
+    public static boolean hasGlue(Level level, BlockPos blockPos, BlockState state) {
+        if(state.getBlock() == Blocks.SLIME_BLOCK){return true;}
+        if(state.getBlock() == Blocks.HONEY_BLOCK){return true;}
 
-            if(OweldBe.isPresent()) {
-                WelderBlockEntity SecondBe = OweldBe.get();
-                SecondBe.isMainBlock = true;
-                SecondBe.running = false;
-                SecondBe.speed = 0;
-                SecondBe.angle = 0;
-                angle = 0;
-                SecondBe.notifyUpdate();
-                notifyUpdate();
+        for (Direction face : Direction.values()) {
+            if (SuperGlueEntity.isGlued(level, blockPos, face, null)) {
+                return true;
             }
-        } else {
-            velding = false;
-            CraftResult = null;
         }
+        return false;
     }
 
     private int findWelderDistance(){
@@ -344,7 +401,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
             }
             if ((welderBE instanceof WelderBlockEntity))
                 if(welderBE.getBlockState().getValue(FACING) == facing.getOpposite()){
-                    distanceToWelder = i;
                     return Optional.of((WelderBlockEntity) welderBE);
                 }
         }
@@ -353,6 +409,10 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
 
     public void SetAssemble(){
         this.assembleNextTick = true;
+    }
+
+    public boolean getRunning(){
+        return running;
     }
 
     public void ActivateResipe() {
@@ -398,6 +458,8 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         isMainBlock = compound.getBoolean("isMain");
         velding = compound.getBoolean("welding");
         HeadMove = compound.getFloat("HeadMove");
+        cooldown = compound.getInt("cooldown");
+
         if (compound.contains("CraftResult")) {
             CraftResult = ItemStack.of(compound.getCompound("CraftResult"));
         }
@@ -410,6 +472,7 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         compound.putBoolean("welding", velding);
         compound.putString("RecipeSpeed", recipeSpeed.name());
         compound.putFloat("HeadMove", HeadMove);
+        compound.putInt("cooldown", cooldown);
 
         super.write(compound, clientPacket);
 

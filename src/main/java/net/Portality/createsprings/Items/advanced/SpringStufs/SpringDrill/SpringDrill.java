@@ -44,7 +44,12 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
                 .durability(-1)
                 .rarity(Rarity.UNCOMMON));
         SpeedSys = new SpringSpeedSys();
-        this.core = new SpringPoweredCore(2);
+        Item[] allowedModifficators = new Item[]{
+                ModItems.PUNCHCARD.get(),
+                Items.TRIPWIRE_HOOK,
+        };
+
+        this.core = new SpringPoweredCore(2, allowedModifficators);
     }
 
     @Override

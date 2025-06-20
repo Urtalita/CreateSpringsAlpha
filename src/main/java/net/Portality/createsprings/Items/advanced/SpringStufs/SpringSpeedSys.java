@@ -3,6 +3,9 @@ package net.Portality.createsprings.Items.advanced.SpringStufs;
 import com.simibubi.create.AllBlocks;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -111,9 +114,7 @@ public class SpringSpeedSys {
 
         if(speed > 0) {
             if(AnimationTickHolder.getTicks(level) % 40 == 0) {
-                tag.putDouble("LastSpeed", speed);
-                speed = Math.max(speed - 40, 0);
-                tag.putDouble("Speed", speed);
+                changeSpeed(tag, -40);
             }
 
             if(tag.getBoolean("splash")){
@@ -123,5 +124,16 @@ public class SpringSpeedSys {
                 }
             }
         }
+
+        if(level.getGameTime() % 10 == 0){
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_BASE));
+        }
+    }
+
+    public static void changeSpeed(CompoundTag tag, float add){
+        double speed = tag.getDouble("Speed");
+        tag.putDouble("LastSpeed", speed);
+        speed = Math.max(speed + add, 0);
+        tag.putDouble("Speed", speed);
     }
 }

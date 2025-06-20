@@ -7,6 +7,9 @@ import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Projectile.SpringAlloyBlockProjectile;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.client.model.HumanoidModel;
@@ -41,6 +44,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.*;
+
 public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPoseItem {
     private final SpringPoweredCore core;
     public static final float ZOOM_FOV_MODIFIER = 0.1f;
@@ -49,7 +54,13 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
 
     public SpringLauncher(Properties p_43009_) {
         super(p_43009_);
-        this.core = new SpringPoweredCore(2);;
+        Item[] allowedModifficators = new Item[]{
+                ModItems.PUNCHCARD.get(),
+                Items.SPYGLASS,
+                ModBlocks.SPRING_ALLOY_BLOCK.get().asItem(),
+        };
+
+        this.core = new SpringPoweredCore(2, allowedModifficators);
     }
 
     @Override
@@ -122,7 +133,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         CompoundTag tag = stack.getOrCreateTag();
         int Springs_rn = tag.getInt("Springs_rn");
-        float Stored = tag.getFloat("Stored");
+        float Stored = getStoredSum(stack);
         tag.putBoolean("using", false);
         float power = 1.0F * (Stored / Config.spring_capacity);
         int time = getUseDuration(stack) - timeLeft;
@@ -136,7 +147,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             if((entity instanceof Player player)){
                 if(!player.isCreative()){
                     tag.putInt("Springs_rn", 1);
-                    tag.putFloat("Stored", 0);
+                    spreadSu(getAllStored(2, tag), 0);
                 }
             }
 
@@ -162,6 +173,10 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
                     SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS,
                     1.0F, 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
         }
+    }
+
+    public static void shootSpring(){
+
     }
 
     @Override
@@ -233,5 +248,13 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             return true;
         }
         return super.overrideStackedOnOther(stack, slot, action, player);
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        if(level.getGameTime() % 10 == 0){
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER));
+        }
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 }

@@ -50,7 +50,7 @@ public class WelderBlock extends BearingBlock implements IBE<WelderBlockEntity> 
             withBlockEntityDo(worldIn, pos, be -> {
                 if(!be.isMainBlock)
                     return;
-                if (be.running_) {
+                if (be.getRunning()) {
                     be.disassemble();
                     return;
                 }

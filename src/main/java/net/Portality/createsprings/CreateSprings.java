@@ -8,6 +8,7 @@ import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileR
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
 import net.Portality.createsprings.Items.ModItemColors;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.OverlayHandler;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.ViewModificationHandler;
@@ -25,7 +26,7 @@ import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessRecipe;
-import net.Portality.createsprings.server.CSpringsPackets;
+import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -53,7 +54,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
-import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -78,8 +78,6 @@ public class CreateSprings {
         ModRecipes.register(modEventBus);
         CSpringsPartalModels.register();
         ModEntities.register(modEventBus);
-        CSpringsPackets.registerPackets();
-        PonderIndex.addPlugin(new CSpringsPonderPlugin());
 
         ModFluids.FLUID_TYPES.register(modEventBus);
         ModFluids.FLUIDS.register(modEventBus);
@@ -100,7 +98,6 @@ public class CreateSprings {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, "create_springs-common.toml");
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
-
     }
 
     private void test(GatherDataEvent event){
@@ -129,7 +126,6 @@ public class CreateSprings {
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
-        MenuScreens.register(MenuInit.PUNCHCARD_MENU.get(), PunchcardScreen::new);
         MenuScreens.register(MenuInit.SPRING_MENU.get(), SpringScreen::new);
         CspringsContraptionTypes.init();
     }
@@ -146,6 +142,8 @@ public class CreateSprings {
             ModItemColors.register();
             EntityRenderers.register(ModEntities.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
+
+            PonderIndex.addPlugin(new CSpringsPonderPlugin());
         }
 
         @SubscribeEvent
@@ -165,6 +163,14 @@ public class CreateSprings {
         @SubscribeEvent
         public static void onModelRegistry(ModelEvent.RegisterAdditional event) {
             event.register(CSpringsPartalModels.HAT.modelLocation());
+        }
+
+        @SubscribeEvent
+        public static void commonSetup(FMLCommonSetupEvent event){
+            event.enqueueWork(() -> {
+               NetworkHandler.register();
+               PunchcardInterpritator.registerActions();
+            });
         }
     }
 }

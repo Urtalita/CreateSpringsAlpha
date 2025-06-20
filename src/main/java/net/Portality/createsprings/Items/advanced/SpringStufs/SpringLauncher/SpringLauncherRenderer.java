@@ -12,6 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getAllStored;
+import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getAllStoredSum;
+
 public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
 
     protected final PartialModel LAUNCHER_SPRING_UNCHARGED = PartialModel.of(CreateSprings.asResource("item/launcher/spring_uncharged"));;
@@ -26,7 +29,7 @@ public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
         CompoundTag contains = tag.getCompound("contains");
 
         int Springs_rn = tag.getInt("Springs_rn");
-        float Stored = tag.getFloat("Stored");
+        float Stored = getAllStoredSum(getAllStored(2, tag));
 
         renderer.render(model.getOriginalModel(), light);
 

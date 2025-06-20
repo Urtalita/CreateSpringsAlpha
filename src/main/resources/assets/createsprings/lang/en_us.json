@@ -8,6 +8,7 @@
   "item.createsprings.spring_saw": "Spring Saw",
   "item.createsprings.spring_base": "Spring Base",
   "item.createsprings.spring_shove": "Spring Shove",
+  "item.createsprings.explosion_chamber": "Explosion chamber",
   "item.createsprings.hat": "Hat",
 
   "block.createsprings.obsidian_plate": "Obsidian Plate",
@@ -50,6 +51,8 @@
   "create.spring.len": "Length:",
   "create.spring.su": "su",
 
+  "createsprings.punchcard.executor.title": "Executors:",
+  "createsprings.punchcard.name": "Name:",
 
   "create.spring.stopped": "it looks like the spring can't move further because of non breakable blocks",
 
@@ -75,5 +78,11 @@
   "createsprings.ponder.springsplash.text_6": "some blocks needs more charge to break",
   "createsprings.ponder.springsplash.text_7": "springs do not break kinetic mechanisms and pressure plates",
 
-  "createsprings.ponder.comparator.text_1": "idk how to use it"
+  "createsprings.ponder.comparator.text_1": "idk how to use it",
+
+  "createsprings.ponder.welding.text_1": "",
+  "createsprings.ponder.welding.text_2": "",
+  "createsprings.ponder.welding.text_3": "",
+  "createsprings.ponder.welding.text_4": "",
+  "createsprings.ponder.welding.text_5": ""
 }

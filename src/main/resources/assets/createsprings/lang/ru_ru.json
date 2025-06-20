@@ -8,6 +8,7 @@
   "item.createsprings.spring_saw": "Пружинная пила",
   "item.createsprings.spring_base": "Пружинная основа",
   "item.createsprings.spring_shove": "Пружинная лопата",
+  "item.createsprings.explosion_chamber": "Взрывная камера",
   "item.createsprings.hat": "Шляпа",
 
   "block.createsprings.obsidian_plate": "Обсидиановая пластина",
@@ -49,6 +50,28 @@
   "create.spring.saved": "Сохранено:",
   "create.spring.len": "Длина:",
   "create.spring.su": "ен",
+
+  "createsprings.punchcard.executor.title": "Исполнители:",
+  "createsprings.punchcard.action.title": "Инструкция:",
+  "createsprings.punchcard.name": "Название:",
+  "createsprings.punchcard.waitForSpeedIncreased": "Ждать пока скорость не увеличется до",
+  "createsprings.punchcard.waitForSpeedDecreased": "Ждать пока скорость не уменьшиться до",
+  "createsprings.punchcard.use": "Использовать предмет",
+  "createsprings.punchcard.end": "Конец",
+  "createsprings.punchcard.detachSpring": "убрать пружину",
+  "createsprings.punchcard.sendMessage": "отправить сообщение игроку",
+  "createsprings.punchcard.wait": "ждать тиков",
+  "createsprings.punchcard.waitForSelected": "ждать пока предмет не будет выбран",
+
+  "createsprings.punchcard.waitForSpeedIncreased.slim": "Ждать",
+  "createsprings.punchcard.waitForSpeedDecreased.slim": "Ждать",
+  "createsprings.punchcard.use.slim": "Использов",
+  "createsprings.punchcard.end.slim": "Конец",
+  "createsprings.punchcard.slim": "Конец",
+  "createsprings.punchcard.detachSpring.slim": "убрать ",
+  "createsprings.punchcard.sendMessage.slim": "сообщение",
+  "createsprings.punchcard.wait.slim": "ждать т",
+  "createsprings.punchcard.waitForSelected.slim": "ждать п",
 
   "create.spring.stopped": "похоже что пружина не может двигаться дальше из за не ломаемых блоков",
 

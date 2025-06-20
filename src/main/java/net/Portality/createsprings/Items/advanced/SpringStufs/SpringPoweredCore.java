@@ -2,6 +2,8 @@ package net.Portality.createsprings.Items.advanced.SpringStufs;
 
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
@@ -15,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +38,11 @@ import static net.Portality.createsprings.CreateSprings.SPRING_TOOLS;
 
 public class SpringPoweredCore {
     private final int springsMaxCount;
+    private final Item[] allowedModifficators;
 
-    public SpringPoweredCore(int springsMaxCount) {
+    public SpringPoweredCore(int springsMaxCount, Item[] allowedModifficators) {
         this.springsMaxCount = springsMaxCount;
+        this.allowedModifficators = allowedModifficators;
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
@@ -274,24 +280,48 @@ public class SpringPoweredCore {
 
         if (stack2.isEmpty()){
             if(action == ClickAction.SECONDARY){
-                if (Springs_rn > 0){
-                    float springSu;
-
-                    springSu = allSu[Springs_rn-1];
-                    allSu[Springs_rn-1] = 0;
-
-                    player.getInventory().add(putSuInSpring(springSu));
-
-                    Springs_rn--;
-                    tag.putInt("Springs_rn", Springs_rn);
-                    putAllStored(allSu, tag);
-                    return true;
-                }
+                if(detachSpring(tag, player)){return true;}
             }
         }
 
-        if(addStackedLogick(ModItems.PUNCHCARD.get(), stack1, stack2, action, player)){return true;}
-        if(addStackedLogick(Blocks.TRIPWIRE_HOOK.asItem(), stack1, stack2, action, player)){return true;}
+        for(int i = 0; i < allowedModifficators.length; i++){
+            if(allowedModifficators[i] instanceof PunchcardItem punchcardItem){
+                if(punchcardInOut(punchcardItem, stack1, stack2, action, player)){return true;}}
+
+            if(addStackedLogick(allowedModifficators[i], stack1, stack2, action, player)){return true;}
+        }
+        return false;
+    }
+
+    private boolean punchcardInOut(PunchcardItem item, ItemStack stack, ItemStack stackedOn, ClickAction action, Player player){
+        CompoundTag tag = stack.getOrCreateTag();
+
+        if(addItem(item, stack, stackedOn)){
+            tag.put("punchcard", stackedOn.getOrCreateTag());
+            return true;
+        }
+
+        if (stackedOn.isEmpty()) {
+            CompoundTag contains = tag.getCompound("contains");
+            String itemid = ForgeRegistries.ITEMS.getKey(item).toString();
+
+            if (action == ClickAction.SECONDARY) {
+                if (contains.getBoolean(itemid)){
+                    ItemStack addstack = new ItemStack(item);
+                    addstack.setTag(tag.getCompound("punchcard"));
+
+                    player.getInventory().add(addstack);
+
+                    contains.putBoolean(itemid, false);
+                    tag.put("contains", contains);
+
+                    contains.remove(itemid);
+                    tag.remove("punchcard");
+                    return true;
+                }
+            }
+            tag.remove("punchcard");
+        }
         return false;
     }
 
@@ -430,15 +460,33 @@ public class SpringPoweredCore {
 
         // Проверяем существование тега "contains"
         if (sourceTag != null && sourceTag.contains("contains", Tag.TAG_COMPOUND)) {
-            CompoundTag containsTag = sourceTag.getCompound("contains");
-            paste.getOrCreateTag().put("contains", containsTag);
-            paste.getOrCreateTag().putInt("Springs_rn",sourceTag.getInt("Springs_rn"));
-
-            putAllStored(getAllStored(springs ,sourceTag), paste.getOrCreateTag());
-
-            paste.getOrCreateTag().putFloat("Speed",sourceTag.getFloat("Speed"));
+            paste.setTag(sourceTag);
         }
 
         return paste;
+    }
+
+    public static boolean checkItemInContains(CompoundTag tag, Item item){
+        return tag.getCompound("contains").getBoolean(ForgeRegistries.ITEMS.getKey(item).toString());
+    }
+
+    public static boolean detachSpring(CompoundTag tag, Player player){
+        int Springs_rn = tag.getInt("Springs_rn");
+        float[] allSu = getAllStored(2, tag);
+
+        if (Springs_rn > 0){
+            float springSu;
+
+            springSu = allSu[Springs_rn-1];
+            allSu[Springs_rn-1] = 0;
+
+            player.getInventory().add(putSuInSpring(springSu));
+
+            Springs_rn--;
+            tag.putInt("Springs_rn", Springs_rn);
+            putAllStored(allSu, tag);
+            return true;
+        }
+        return false;
     }
 }

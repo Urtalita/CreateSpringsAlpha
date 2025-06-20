@@ -39,9 +39,13 @@ public class SpringBase extends Item implements CustomArmPoseItem {
 
     public SpringBase(Properties properties) {
         super(properties.rarity(Rarity.UNCOMMON));
-
         SpeedSys = new SpringSpeedSys();
-        this.core = new SpringPoweredCore(SPRINGS);;
+        Item[] allowedModifficators = new Item[]{
+                ModItems.PUNCHCARD.get(),
+                Items.TRIPWIRE_HOOK,
+        };
+
+        this.core = new SpringPoweredCore(SPRINGS, allowedModifficators);
     }
 
     @Override
