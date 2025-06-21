@@ -61,6 +61,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPRING_SAW.get());
                         pOutput.accept(ModItems.SPRING_SHOVE.get());
                         pOutput.accept(ModItems.EXPLOSION_CHAMBER);
+                        pOutput.accept(ModItems.PORTATIVE_STEAM_ENGINE);
 
                         pOutput.accept(ModBlocks.TEST);
                         pOutput.accept(ModBlocks.LARGE_SPRING);

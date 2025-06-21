@@ -2,9 +2,11 @@ package net.Portality.createsprings.Items.advanced.Punchcard;
 
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ChamberItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,9 +168,23 @@ public class PunchcardInterpritator {
 
     public static Function<ExecutorInfo, Void> shootFromSpringLauncher() {
         return (info) -> {
-            SpringLauncher.
+            if(info.getSlotIndex() != info.getSelectedIndex()){
+                return null;
+            }
+            if(info.getItem() instanceof SpringLauncher launcher){
+                launcher.releaseUsing(info.getStack(), info.getLevel(), info.getPlayer(), 0);
+                info.nextAction();
+            }
+            return null;
+        };
+    }
 
-            info.nextAction();
+    public static Function<ExecutorInfo, Void> explodeChamber() {
+        return (info) -> {
+            if(info.getItem() instanceof ChamberItem chamberItem){
+                chamberItem.use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
+                info.nextAction();
+            }
             return null;
         };
     }

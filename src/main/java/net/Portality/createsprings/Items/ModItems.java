@@ -1,20 +1,14 @@
 package net.Portality.createsprings.Items;
 
-import com.mojang.datafixers.types.templates.List;
-import com.simibubi.create.content.equipment.TreeFertilizerItem;
-import com.simibubi.create.content.equipment.goggles.GogglesItem;
-import com.simibubi.create.content.equipment.goggles.GogglesModel;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
-import com.simibubi.create.foundation.data.BuilderTransformers;
+import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.tterrag.registrate.builders.ItemBuilder;
-import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ChamberItem;
+import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBase;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
@@ -46,8 +40,10 @@ public class ModItems {
     public static final RegistryObject<Item> SPRING_ALLOY_SHEET = ITEMS.register("spring_alloy_sheet",
             () -> new Item(new Item.Properties().fireResistant()));
 
-    public static final RegistryObject<Item> PUNCHCARD = ITEMS.register("punchcard",
-            () -> new PunchcardItem(new Item.Properties().stacksTo(1)));
+    public static final ItemEntry<PunchcardItem> PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
+            .item("punchcard", PunchcardItem::new)
+            .properties(p -> p.stacksTo(1))
+            .register();
 
     public static final ItemEntry<SpringBase> SPRING_BASE = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_base", SpringBase::new)
@@ -76,6 +72,12 @@ public class ModItems {
 
     public static final ItemEntry<ChamberItem> EXPLOSION_CHAMBER = CreateSprings.CSPRINGS_REGISTRATE
             .item("explosion_chamber", ChamberItem::new)
+            .properties(p -> p.stacksTo(1))
+            .register();  // add to spring tools list
+
+    public static final ItemEntry<PortativeSteamEngineItem> PORTATIVE_STEAM_ENGINE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("portative_steam_engine", PortativeSteamEngineItem::new)
+            .model(AssetLookup.customGenericItemModel("_", "item"))
             .properties(p -> p.stacksTo(1))
             .register();  // add to spring tools list
 

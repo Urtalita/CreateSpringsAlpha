@@ -175,10 +175,6 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
         }
     }
 
-    public static void shootSpring(){
-
-    }
-
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         CompoundTag tag = oldStack.getOrCreateTag();
@@ -253,7 +249,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         if(level.getGameTime() % 10 == 0){
-            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER));
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER, this));
         }
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }

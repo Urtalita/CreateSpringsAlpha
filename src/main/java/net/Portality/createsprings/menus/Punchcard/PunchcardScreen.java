@@ -109,7 +109,6 @@ public class PunchcardScreen extends AbstractSimiScreen {
         if(canConfigure){
             initNameEditBox(x, y);
             initInput();
-
             reInitMainSelectors();
         }
 
@@ -144,9 +143,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
     private void initParamsEditBoxes(int i){
         removeWidget(editBoxes[i]);
 
-        if(!actions[i].isRequestParam()){
-            return;
-        }
+        if(!actions[i].isRequestParam()){return;}
 
         editBoxes[i] = new EditBox(font, guiLeft + background.getWidth() - 100, guiTop + background.getHeight() - 195 + 23 * i + 5, 61, 18, CommonComponents.EMPTY);
         editBoxes[i].setMaxLength(48);
@@ -156,17 +153,19 @@ public class PunchcardScreen extends AbstractSimiScreen {
         editBoxes[i].setValue(parameters[finalI]);
         editBoxes[i].setResponder(text -> parameters[finalI] = text);
         editBoxes[i].setFocused(false);
-        editBoxes[i].setFilter(s -> {
-            if(actions[i].isNeedNumericInput()){
+
+        if(actions[i].isNeedNumericInput()){
+            editBoxes[i].setFilter(s -> {
+                if (s.isEmpty() || s.equals("-"))
+                    return true;
                 try {
                     Integer.parseInt(s);
                     return true;
                 } catch (NumberFormatException e) {
                     return false;
                 }
-            }
-            return true;
-        });
+            });
+        }
         addRenderableWidget(editBoxes[i]);
     }
 
@@ -225,6 +224,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
 
     private void mainScrollUpdated(int state, int selector){
         actions[selector] = PunchcardFunction.getForActions(PunchcardExecutor.getFromItem(renderedExecutor.getItem())).get(state);
+        initParamsEditBoxes(selector);
 
         if(state != getEndNum(PunchcardExecutor.getFromItem(renderedExecutor.getItem()))){
             if(maxActions <= selector){
@@ -232,6 +232,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
             }
             if(maxActions != 5){
                 initMainSelectors(maxActions);
+                initParamsEditBoxes(maxActions);
             }
         } else {
             maxActions = selector;
@@ -242,12 +243,9 @@ public class PunchcardScreen extends AbstractSimiScreen {
             if(drawCnt < 5){
                 for(int i = drawCnt; i < 5; i++){
                     removeWidget(selectors[i]);
+                    removeWidget(editBoxes[i]);
                 }
             }
-        }
-
-        for(int i = 0; i < 5; i++){
-            initParamsEditBoxes(i);
         }
     }
 

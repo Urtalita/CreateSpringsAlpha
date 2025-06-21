@@ -6,6 +6,9 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.utill.Helpers.ParticleHelper;
@@ -143,7 +146,12 @@ public class ChamberItem extends Item {
         stored += tag.getInt("fuel");
         tag.putInt("fuel", 0);
 
-        tag.put("contains", new CompoundTag());
+        if(checkItemInContains(tag, ModItems.PUNCHCARD.get())){
+            tag.put("contains", new CompoundTag());
+            addItem(ModItems.PUNCHCARD.get(), stack, new ItemStack(ModItems.PUNCHCARD.get()));
+        } else {
+            tag.put("contains", new CompoundTag());
+        }
 
         if(stored > Config.spring_capacity){stored = Config.spring_capacity;}
 
@@ -160,5 +168,11 @@ public class ChamberItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         return use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.EXPLOSION_CHAMBER, this));
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 }

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.*;
 
 public class ExecutorInfo {
     private ItemStack stack;
@@ -11,16 +12,21 @@ public class ExecutorInfo {
     private Player player;
     private int slotIndex;
     private int selectedIndex;
-    PunchcardExecutor executor;
+    private PunchcardExecutor executor;
+    private Item item;
 
-    public ExecutorInfo(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex, PunchcardExecutor executor){
+
+    public ExecutorInfo(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex, PunchcardExecutor executor, Item item){
         this.stack = stack;
         this.level = level;
         this.player = player;
         this.slotIndex = slotIndex;
         this.selectedIndex = selectedIndex;
         this.executor = executor;
+        this.item = item;
     }
+
+    public Item getItem() {return item;}
 
     public CompoundTag getTag(){
         return stack.getOrCreateTag();

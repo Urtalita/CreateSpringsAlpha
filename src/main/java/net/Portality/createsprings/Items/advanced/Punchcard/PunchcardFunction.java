@@ -33,8 +33,15 @@ public enum PunchcardFunction {
 
     WAIT_TICKS(PunchcardInterpritator.waitTicks(), true, true,"wait", PunchcardExecutor.values()),
 
-    WAIT_FOR_SLOT_SELECTED(PunchcardInterpritator.waitForSlotSelected(), false, false,"waitForSelected", PunchcardExecutor.values())
+    WAIT_FOR_SLOT_SELECTED(PunchcardInterpritator.waitForSlotSelected(), false, false,"waitForSelected", PunchcardExecutor.values()),
 
+    SHOOT_FROM_SPRING_LAUNCHER(PunchcardInterpritator.shootFromSpringLauncher(), false, false, "shootFromSpringLauncher", new PunchcardExecutor[]{
+            PunchcardExecutor.SPRING_LAUNCHER
+    }),
+
+    EXPLODE_CHAMBER(PunchcardInterpritator.explodeChamber(), false, false, "explodeChamber", new PunchcardExecutor[]{
+        PunchcardExecutor.EXPLOSION_CHAMBER
+    })
     ;
 
     private Function<ExecutorInfo, Void> function;
@@ -48,6 +55,7 @@ public enum PunchcardFunction {
         this.requestParam = requestParam;
         this.executors = executors;
         this.nameFunction = nameFunction;
+        this.needNumericInput = needNumericInput;
     }
 
     public boolean isNeedNumericInput() {

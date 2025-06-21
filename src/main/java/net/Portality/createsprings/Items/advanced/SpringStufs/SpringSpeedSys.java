@@ -126,7 +126,7 @@ public class SpringSpeedSys {
         }
 
         if(level.getGameTime() % 10 == 0){
-            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_BASE));
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_BASE, ModItems.SPRING_BASE.get()));
         }
     }
 

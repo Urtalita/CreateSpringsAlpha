@@ -6,7 +6,8 @@
   "refmap": "mixintest.refmap.json",
   "mixins": [
     "MixinSpoutBe",
-    "PackageItemMixin"
+    "PackageItemMixin",
+    "Punchcard.PotatoCanon"
   ],
   "client": [
     "HatHumanoidModelMixin"

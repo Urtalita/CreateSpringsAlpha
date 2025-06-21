@@ -37,6 +37,8 @@ public class CSpringsPartalModels {
     HAT3 = armor("hat3"),
     HAT4 = armor("hat4"),
 
+    PORTATIVE_ENGINE = item("portative_steam_engine"),
+
     MOLD = block("andesite_mold"),
 
     WelderHead = block("friction_welder/top"),
