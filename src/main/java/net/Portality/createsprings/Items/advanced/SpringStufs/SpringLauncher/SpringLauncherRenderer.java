@@ -1,11 +1,14 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBase;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getAllStored;
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.getAllStoredSum;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SPRING_LEN;
 
 public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
 
@@ -41,7 +45,11 @@ public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
             if (Stored == 0){
                 renderer.render(LAUNCHER_SPRING_UNCHARGED.get(), light);
             } else {
-                renderer.render(LAUNCHER_SPRING_CHARGED.get(), light);
+                ms.translate(0, 4/16f, 8/16f);
+                ms.rotateAround(Axis.XN.rotationDegrees(180), 0, 0, 0);
+                SpringBaseRenderer.renderSmallSpring(renderer, light, ms, tag.getFloat("Stored0"), tag, SPRING_LEN);
+                ms.rotateAround(Axis.XN.rotationDegrees(-180), 0, 0, 0);
+                ms.translate(0, -4/16f, -8/16f);
 
                 if(contains.getBoolean(SpringLauncher.BlockAmmo)){
                     renderer.render(LAUNCHER_BLOCK_AMMO.get(), light);

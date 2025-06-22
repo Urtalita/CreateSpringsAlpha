@@ -12,6 +12,7 @@ import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -147,7 +148,9 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             if((entity instanceof Player player)){
                 if(!player.isCreative()){
                     tag.putInt("Springs_rn", 1);
-                    spreadSu(getAllStored(2, tag), 0);
+                    putAllStored(new float[]{0f, 0f}, tag);
+                    tag.putBoolean("splash", true);
+                    tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
                 }
             }
 
@@ -250,6 +253,12 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         if(level.getGameTime() % 10 == 0){
             PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER, this));
+        }
+        if(stack.getOrCreateTag().getBoolean("splash")){
+            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            if(Config.spring_splash_duration == phase){
+                stack.getOrCreateTag().putBoolean("splash", false);
+            }
         }
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }

@@ -72,6 +72,10 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
         renderSpring(renderer, light, ms, stored, tag, springLen, CSpringsPartalModels.SPRING_TOOL_SPRING_PLATE, CSpringsPartalModels.SPRING_TOOL_SPRING_PIECE);
     }
 
+    public static void renderTinySpring(PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag, int springLen){
+        renderSpring(renderer, light, ms, stored, tag, springLen, CSpringsPartalModels.CHAMBER_SPRING_PLATE, CSpringsPartalModels.CHAMBER_SPRING_PIECE);
+    }
+
     public static void renderSpring(PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag
             , int springLen, PartialModel plate, PartialModel piece){
         float progress = 1 - (stored / Config.spring_capacity / 2f);

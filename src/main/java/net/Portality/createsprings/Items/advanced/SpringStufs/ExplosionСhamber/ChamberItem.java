@@ -172,7 +172,9 @@ public class ChamberItem extends Item {
 
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
-        PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.EXPLOSION_CHAMBER, this));
+        if(level.getGameTime() % 10 == 0){
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.EXPLOSION_CHAMBER, this));
+        }
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 }

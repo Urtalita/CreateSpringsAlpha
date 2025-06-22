@@ -37,7 +37,11 @@ public class CSpringsPartalModels {
     HAT3 = armor("hat3"),
     HAT4 = armor("hat4"),
 
-    PORTATIVE_ENGINE = item("portative_steam_engine"),
+    PORTATIVE_ENGINE = item("engine/base"),
+    ENGINE_SHAFT = item("engine/shaft"),
+    ENGINE_MID = item("engine/mid"),
+    ENGINE_PISTON = item("engine/piston"),
+    WHOLE_ENGINE = item("engine/portative_steam_engine"),
 
     MOLD = block("andesite_mold"),
 
