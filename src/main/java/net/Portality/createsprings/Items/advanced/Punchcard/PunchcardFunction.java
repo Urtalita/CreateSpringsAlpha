@@ -41,7 +41,7 @@ public enum PunchcardFunction {
 
     EXPLODE_CHAMBER(PunchcardInterpritator.explodeChamber(), false, false, "explodeChamber", new PunchcardExecutor[]{
         PunchcardExecutor.EXPLOSION_CHAMBER
-    })
+    }),
     ;
 
     private Function<ExecutorInfo, Void> function;

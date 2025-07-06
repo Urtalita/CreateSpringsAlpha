@@ -2,6 +2,7 @@ package net.Portality.createsprings.Items.advanced.Punchcard;
 
 import com.simibubi.create.AllItems;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.*;
 
@@ -12,7 +13,7 @@ public enum PunchcardExecutor {
     POTATO_CANON(AllItems.POTATO_CANNON.get()),
     BACKTANK(AllItems.COPPER_BACKTANK.get()),
     NETHERITE_BACKTANK(AllItems.NETHERITE_BACKTANK.get()),
-    EXTENDRO_GRIP(AllItems.EXTENDO_GRIP.get())
+    EXTENDRO_GRIP(AllItems.EXTENDO_GRIP.get()),
     ;
 
     public Item item;
@@ -24,7 +25,7 @@ public enum PunchcardExecutor {
     }
 
     private String getExecutorName(Item item){
-        return I18n.get(item.getDescriptionId());
+        return item.getName(new ItemStack(item)).getString();
     }
 
     public static PunchcardExecutor getFromItem(Item item){

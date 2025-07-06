@@ -179,10 +179,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             return;
         }
 
-        if (contraption.getBlocks().isEmpty()) {
-            return;
-        }
-
         movedContraption = ControlledContraptionEntity.create(level, this, contraption);
 
         movedContraption.setPos(

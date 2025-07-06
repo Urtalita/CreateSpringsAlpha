@@ -2,12 +2,24 @@ package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.google.common.collect.Lists;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.stress.BlockStressValues;
+import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
+import com.simibubi.create.content.kinetics.KineticNetwork;
+import com.simibubi.create.content.kinetics.RotationPropagator;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.motor.KineticScrollValueBehaviour;
+import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlock;
+import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
+import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -18,6 +30,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -50,31 +63,61 @@ import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class SpringBlockEntity extends GeneratingKineticBlockEntity implements IHaveGoggleInformation {
+public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable {
 
-    public float capacity = Config.spring_capacity;
+    public final float capacity;
     public float stored = 0;
     private float progress;
     private float prevProgress;
     private boolean isGenerating;
     public boolean splashMode;
     private int phase = 0;
+    private float hardness = DEFAULT_HARDNESS;
+
+    public static final float DEFAULT_HARDNESS = 16;
+    public ScrollValueBehaviour targetSpeed;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
+        capacity = Config.spring_capacity;
+    }
+
+    public void setHardness(int hardness){
+        targetSpeed.setValue(hardness);
+        updateHardness(hardness);
+    }
+
+    private void updateHardness(int i) {
+        if (level == null || level.isClientSide) return;
+
+        if (hardness != i) {
+            hardness = i;
+            sendData();
+            setChanged();
+            updateNetwork();
+        }
     }
 
     @Override
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        boolean ret = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
-        CreateLang.text(" ").add(
-                CreateLang.number(stored).style(ChatFormatting.AQUA).space()
-                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                        .add(CreateLang.number(Config.spring_capacity).style(ChatFormatting.AQUA).space()
-                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
-                .forGoggles(tooltip);
-        return ret;
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        super.addBehaviours(behaviours);
+        Integer max = AllConfigs.server().kinetics.maxRotationSpeed.get();
+
+        targetSpeed = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
+                this, new SpringBlockEntity.SpringValueBoxTransform());
+        targetSpeed.between(1, max);
+        targetSpeed.value = (int) DEFAULT_HARDNESS;
+        targetSpeed.withCallback(this::updateHardness);
+
+        behaviours.add(targetSpeed);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (!level.isClientSide) {
+            level.scheduleTick(worldPosition, getBlockState().getBlock(), 1);
+        }
     }
 
     @Override
@@ -84,19 +127,29 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
 
     @Override
     public float calculateStressApplied() {
+        float stressApplied = calcStress();
+        this.lastStressApplied = stressApplied;
+        return stressApplied;
+    }
+
+    private float calcStress() {
         if (stored < capacity && !isGenerating) {
-            return 2.0f;
-        } else if (isGenerating) {
-            if(stored > 128){
-                return -128f;
-            }
+            return 2f * hardness;
+        } else if (isGenerating && stored >= 2f * hardness) {
+            return -2f * hardness;
         }
-        return 0f;
+        return 0;
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        return 0;
     }
 
     @Override
     public void tick() {
-        super.tick(); // Важно для базовой логики
+        super.tick();
+
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
             progress = springAnimation(phase) * (stored / capacity);
@@ -117,19 +170,80 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
             return;
         }
 
-        // Режим генерации при активации редстоуном
-        if (isGenerating && stored > 0) {
-            stored = Math.max(stored - 256, 0);
+        float CurSpeed = Math.abs(getSpeed());
+
+        if (isGenerating && stored >= 0) {
+            stored = Math.max(stored - CurSpeed / DEFAULT_HARDNESS * hardness, 0);
             updateGeneratedRotation();
         }
-        // Режим накопления, если не активировано
+
         else if (!isGenerating) {
-            float CurSpeed = Math.abs(getSpeed());
-            stored = Mth.clamp(stored + CurSpeed, 0, capacity);
+            stored = Mth.clamp(stored + CurSpeed / DEFAULT_HARDNESS * hardness, 0, capacity);
         }
 
-        progress = stored / capacity;
         prevProgress = progress;
+        progress = stored / capacity;
+
+        if(level.isClientSide){return;}
+
+        if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
+        }
+    }
+
+    @Override
+    public void remove() {
+        if (!level.isClientSide && hasNetwork()) {
+            KineticNetwork network = getOrCreateNetwork();
+            network.remove(this);
+            network.updateStress(); // Явное обновление
+        }
+        super.remove();
+    }
+
+    @Override
+    protected void write(CompoundTag tag, boolean clientPacket) {
+        super.write(tag, clientPacket);
+        tag.putBoolean("Generating", isGenerating);
+        tag.putFloat("Stored", stored);
+        tag.putInt("phase", phase);
+        tag.putBoolean("splashMode", splashMode);
+        tag.putFloat("hardness", hardness);
+    }
+
+    @Override
+    protected void read(CompoundTag tag, boolean clientPacket) {
+        super.read(tag, clientPacket);
+        isGenerating = tag.getBoolean("Generating");
+        stored = tag.getFloat("Stored");
+        phase = tag.getInt("phase");
+        splashMode = tag.getBoolean("splashMode");
+        hardness = tag.getFloat("hardness");
+
+        if (!clientPacket) {
+            updateNetwork();
+        }
+    }
+
+    private void updateNetwork() {
+        if (level == null || level.isClientSide || isRemoved()) return;
+
+        if (hasNetwork()) {
+            getOrCreateNetwork().updateStressFor(this, calculateStressApplied());
+        }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+        CreateLang.text(" ").add(
+                        CreateLang.number(stored).style(ChatFormatting.AQUA).space()
+                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                        .add(CreateLang.number(Config.spring_capacity).style(ChatFormatting.AQUA).space()
+                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
+                .forGoggles(tooltip);
+        return true;
     }
 
     public static float springAnimation(int phase) {
@@ -145,26 +259,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         return decay * oscillation * 2f;
     }
 
-    // Сохранение данныхt
-    @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
-        tag.putBoolean("Generating", isGenerating);
-        tag.putFloat("Stored", stored);
-        tag.putInt("phase", phase);
-        tag.putBoolean("splashMode", splashMode);
-    }
-
-    // Загрузка данных
-    @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
-        isGenerating = tag.getBoolean("Generating");
-        stored = tag.getFloat("Stored");
-        phase = tag.getInt("phase");
-        splashMode = tag.getBoolean("splashMode");
-    }
-
     public float getProgress(float pt) {
         return Mth.lerp(pt, prevProgress, progress);
     }
@@ -174,18 +268,17 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         return isGenerating && !splashMode && stored > 0 ? 16.0f : 0.0f;
     }
 
-    @Override
-    public void lazyTick() {
-        super.lazyTick();
-    }
-
     public void setGenerating(boolean generating) {
-        if(phase > 0){return;}
-        phase = 0;
+        if (phase > 0) return;
+
+        boolean wasGenerating = isGenerating;
         isGenerating = generating;
 
-        updateGeneratedRotation(); // Обновляем физику
-        sendData(); // Синхронизация
+        if (wasGenerating != isGenerating) {
+            updateNetwork();
+            updateGeneratedRotation();
+            sendData();
+        }
     }
 
     public void launchEntitiesInFront() {
@@ -194,7 +287,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
         Direction facing = getBlockState().getValue(FACING).getOpposite();
         BlockPos targetPos = worldPosition.relative(facing);
 
-        // Ищем все ентити в соседнем блоке
         AABB searchArea = new AABB(targetPos);
         List<Entity> entities = level.getEntitiesOfClass(Entity.class, searchArea);
 
@@ -262,5 +354,51 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements I
             itementity.setDeltaMovement(Vec3.ZERO);
             level.addFreshEntity(itementity);
         });
+    }
+
+    public int getComparatorOutput() {
+        return Mth.floor(progress * 15);
+    }
+
+    @Override
+    public int getMaxValue() {
+        return (int) capacity / 1000;
+    }
+
+    @Override
+    public int getMinValue() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentValue() {
+        return (int) (progress * capacity / 1000);
+    }
+
+    @Override
+    public MutableComponent format(int value) {
+        return CreateLang.number(value)
+                .add(Component.literal(" "))
+                .add(CreateLang.translate("spring.switch.su"))
+                .component();
+    }
+
+    private class SpringValueBoxTransform extends ValueBoxTransform.Sided {
+
+        @Override
+        protected Vec3 getSouthLocation() {
+            return VecHelper.voxelSpace(8, 8, 15.5f);
+        }
+
+        @Override
+        protected boolean isSideActive(BlockState state, Direction direction) {
+            return state.getValue(FACING).getAxis() != direction.getAxis();
+        }
+
+        @Override
+        public float getScale() {
+            return 0.5f;
+        }
+
     }
 }

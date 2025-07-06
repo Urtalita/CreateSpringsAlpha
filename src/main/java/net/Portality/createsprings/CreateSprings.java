@@ -65,7 +65,6 @@ public class CreateSprings {
     public static final CreateRegistrate CSPRINGS_REGISTRATE = CreateRegistrate.create(CreateSprings.MODID);
     public static Item[] SPRING_TOOLS;
 
-
     public CreateSprings(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
         modEventBus.addListener(this::test);

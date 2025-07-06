@@ -217,7 +217,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
         PunchcardExecutor[] executors = PunchcardExecutor.values();
 
         for(int i = 0; i < executors.length; i++){
-            options.add(Component.literal(executors[i].nameOfExecutor));
+            options.add(Component.translatable(executors[i].nameOfExecutor));
         }
         return options;
     }

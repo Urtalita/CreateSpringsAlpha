@@ -50,6 +50,8 @@
   "create.spring.saved": "Сохранено:",
   "create.spring.len": "Длина:",
   "create.spring.su": "ен",
+  "create.spring.switch.su": "000 ен",
+  "spring.hardness": "выберете жёсткость пружины",
 
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
@@ -62,6 +64,7 @@
   "createsprings.punchcard.sendMessage": "отправить сообщение игроку",
   "createsprings.punchcard.wait": "ждать тиков",
   "createsprings.punchcard.waitForSelected": "ждать пока предмет не будет выбран",
+  "createsprings.punchcard.hardness": "установить жёсткость пружины",
 
   "createsprings.punchcard.waitForSpeedIncreased.slim": "Ждать",
   "createsprings.punchcard.waitForSpeedDecreased.slim": "Ждать",
@@ -72,6 +75,7 @@
   "createsprings.punchcard.sendMessage.slim": "сообщение",
   "createsprings.punchcard.wait.slim": "ждать т",
   "createsprings.punchcard.waitForSelected.slim": "ждать п",
+  "createsprings.punchcard.hardness.slim": "жёсткость",
 
   "create.spring.stopped": "похоже что пружина не может двигаться дальше из за не ломаемых блоков",
 
@@ -96,7 +100,9 @@
   "createsprings.ponder.springsplash.text_6": "некоторые блоки требую больше заряда",
   "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты",
 
-  "createsprings.ponder.comparator.text_1": "хз как это юзать",
+  "createsprings.ponder.hardness.text_1": "Скорость ввода и вывода энергии настраиваема",
+  "createsprings.ponder.hardness.text_2": "укажите жёсткость пружины на механизме",
+  "createsprings.ponder.hardness.text_3": "чем больше жёсткость пружины тем больше пружина потребяет энергии при зарядке и выдаёт при разрядке",
 
   "createsprings.ponder.welding.text_1": "Сварка трением - это ещё один способ обработки",
   "createsprings.ponder.welding.text_2": "для сварки на механизмы должна подаваться одинаковая скорость...",

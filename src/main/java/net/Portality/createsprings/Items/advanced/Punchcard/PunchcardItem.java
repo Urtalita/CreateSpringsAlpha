@@ -2,6 +2,7 @@ package net.Portality.createsprings.Items.advanced.Punchcard;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.transmission.sequencer.SequencedGearshiftScreen;
+import com.simibubi.create.content.schematics.client.SchematicEditScreen;
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.ChatFormatting;
@@ -36,6 +37,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,8 +57,8 @@ public class PunchcardItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide) {
-            ScreenOpener.open(new PunchcardScreen(stack));
+        if (level.isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> displayScreen(stack));
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
@@ -84,5 +88,10 @@ public class PunchcardItem extends Item {
     @Override
     public boolean shouldOverrideMultiplayerNbt() {
         return true;
+    }
+
+    @OnlyIn(value = Dist.CLIENT)
+    protected void displayScreen(ItemStack stack) {
+        ScreenOpener.open(new PunchcardScreen(stack));
     }
 }

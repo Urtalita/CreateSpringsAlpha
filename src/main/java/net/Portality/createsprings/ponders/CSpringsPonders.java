@@ -1,13 +1,11 @@
 package net.Portality.createsprings.ponders;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
 
 public class CSpringsPonders {
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
@@ -17,10 +15,10 @@ public class CSpringsPonders {
                 .addStoryBoard("spring", CSpringsScenes::spring, AllCreatePonderTags.KINETIC_RELAYS);
 
         HELPER.forComponents(ModBlocks.SPRING)
-                .addStoryBoard("springsplash", CSpringsScenes::springSplash, AllCreatePonderTags.KINETIC_RELAYS);
+                .addStoryBoard("hardness", CSpringsScenes::hardness, AllCreatePonderTags.REDSTONE);
 
         HELPER.forComponents(ModBlocks.SPRING)
-                .addStoryBoard("comparator", CSpringsScenes::comparator, AllCreatePonderTags.REDSTONE);
+                .addStoryBoard("springsplash", CSpringsScenes::springSplash, AllCreatePonderTags.KINETIC_RELAYS);
 
         HELPER.forComponents(ModBlocks.FRICTION_WELDER)
                 .addStoryBoard("welding", CSpringsScenes::welding, AllCreatePonderTags.CONTRAPTION_ASSEMBLY);

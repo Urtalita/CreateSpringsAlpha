@@ -1,34 +1,16 @@
 package net.Portality.createsprings.ponders;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.kinetics.base.IRotate;
-import com.simibubi.create.content.kinetics.base.KineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.base.RotationIndicatorParticleData;
-import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import com.sun.jna.platform.win32.Winsvc;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
-import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.ParrotElement;
 import net.createmod.ponder.api.element.ParrotPose;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.api.scene.Selection;
-import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
-
-import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACE;
-import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
-import static net.minecraft.world.level.block.LeverBlock.POWERED;
 
 public class CSpringsScenes {
     public static void spring(SceneBuilder builder, SceneBuildingUtil util) {
@@ -238,18 +220,67 @@ public class CSpringsScenes {
         scene.idle(40);
     }
 
-    public static void comparator(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void hardness(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("comparator", "Using comparators");
+        scene.title("hardness", "Using spring hardness");
         scene.configureBasePlate(0, 0, 3);
         scene.world().showSection(util.select().layer(0), Direction.UP);
-        scene.world().showSection(util.select().layer(1), Direction.UP);
         scene.showBasePlate();
+
+        BlockPos spring = new BlockPos(1, 1, 1);
+        BlockPos lever = spring.north();
+
+        scene.idle(5);
+        scene.world().showSection(util.select().position(spring.east()), Direction.DOWN);
+
+        scene.idle(5);
+        scene.world().showSection(util.select().position(spring), Direction.DOWN);
+
+        scene.idle(5);
+        scene.world().showSection(util.select().fromTo(spring.west().above(), spring.west()), Direction.DOWN);
+
+        scene.idle(5);
+        scene.world().showSection(util.select().position(spring.west().above().south()), Direction.DOWN);
+
+        scene.idle(5);
+        scene.world().showSection(util.select().position(lever), Direction.DOWN);
+
+        scene.idle(15);
 
         scene.overlay().showText(50)
                 .placeNearTarget()
+                .attachKeyFrame()
                 .text("")
                 .pointAt(util.vector().of(1.5, 1.5, 1.5));
+        scene.idle(50);
+
+        scene.idle(15);
+
+        Vec3 inputVec = util.vector().of(1.5, 1.5, 1);
+        scene.overlay().showFilterSlotInput(inputVec, Direction.NORTH, 60);
+
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("")
+                .pointAt(util.vector().of(1.5, 1.5, 1.5));
+        scene.idle(50);
+
+        scene.world().toggleRedstonePower(util.select().everywhere());
+        scene.effects().indicateRedstone(lever);
+        scene.world().modifyKineticSpeed(util.select().fromTo(spring.east(), spring), f -> 16f);
+        scene.world().modifyKineticSpeed(util.select().fromTo(spring.west().above(), spring.west().above().south()), f -> 256f);
+
+        scene.idle(30);
+
+        scene.overlay().showText(100)
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("")
+                .pointAt(util.vector().of(1.5, 1.5, 1.5));
+        scene.idle(100);
+
+        scene.idle(30);
     }
 
     public static void welding(SceneBuilder builder, SceneBuildingUtil util) {

@@ -8,6 +8,8 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -177,6 +179,12 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     }
 
     @Override
+    public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, worldIn, pos, oldState, isMoving);
+        withBlockEntityDo(worldIn, pos, be -> be.setGenerating(worldIn.hasNeighborSignal(pos)));
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         boolean hasSignal = level.hasNeighborSignal(pos);
         withBlockEntityDo(level, pos, be -> be.setGenerating(hasSignal));
@@ -225,5 +233,19 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
         Direction facing = state.getValue(FACING);
         return face == facing || face == facing.getOpposite();
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof SpringBlockEntity myBE) {
+            return myBE.getComparatorOutput(); // Получаем значение от BlockEntity
+        }
+        return 0;
     }
 }

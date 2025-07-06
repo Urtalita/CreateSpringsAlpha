@@ -50,6 +50,8 @@
   "tooltip.springstuf.saved": "Stored:",
   "create.spring.len": "Length:",
   "create.spring.su": "su",
+  "create.spring.switch.su": "000 su",
+  "spring.hardness": "select spring hardness",
 
   "createsprings.punchcard.executor.title": "Executors:",
   "createsprings.punchcard.name": "Name:",
