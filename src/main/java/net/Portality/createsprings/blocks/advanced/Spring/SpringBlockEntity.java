@@ -1,18 +1,9 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
-import com.google.common.collect.Lists;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.api.stress.BlockStressValues;
-import com.simibubi.create.compat.computercraft.ComputerCraftProxy;
 import com.simibubi.create.content.kinetics.KineticNetwork;
-import com.simibubi.create.content.kinetics.RotationPropagator;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.motor.KineticScrollValueBehaviour;
-import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlock;
-import com.simibubi.create.content.kinetics.speedController.SpeedControllerBlockEntity;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
@@ -21,44 +12,26 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
-import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
@@ -75,7 +48,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     private float hardness = DEFAULT_HARDNESS;
 
     public static final float DEFAULT_HARDNESS = 16;
-    public ScrollValueBehaviour targetSpeed;
+    public ScrollValueBehaviour targetHardness;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -83,7 +56,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     }
 
     public void setHardness(int hardness){
-        targetSpeed.setValue(hardness);
+        targetHardness.setValue(hardness);
         updateHardness(hardness);
     }
 
@@ -103,13 +76,13 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         super.addBehaviours(behaviours);
         Integer max = AllConfigs.server().kinetics.maxRotationSpeed.get();
 
-        targetSpeed = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
+        targetHardness = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
                 this, new SpringBlockEntity.SpringValueBoxTransform());
-        targetSpeed.between(1, max);
-        targetSpeed.value = (int) DEFAULT_HARDNESS;
-        targetSpeed.withCallback(this::updateHardness);
+        targetHardness.between(1, max);
+        targetHardness.value = (int) DEFAULT_HARDNESS;
+        targetHardness.withCallback(this::updateHardness);
 
-        behaviours.add(targetSpeed);
+        behaviours.add(targetHardness);
     }
 
     @Override
@@ -142,11 +115,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     }
 
     @Override
-    public float calculateAddedStressCapacity() {
-        return 0;
-    }
-
-    @Override
     public void tick() {
         super.tick();
 
@@ -174,7 +142,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         if (isGenerating && stored >= 0) {
             stored = Math.max(stored - CurSpeed / DEFAULT_HARDNESS * hardness, 0);
-            updateGeneratedRotation();
         }
 
         else if (!isGenerating) {
@@ -225,7 +192,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         }
     }
 
-    private void updateNetwork() {
+    public void updateNetwork() {
         if (level == null || level.isClientSide || isRemoved()) return;
 
         if (hasNetwork()) {

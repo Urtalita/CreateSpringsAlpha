@@ -21,6 +21,5 @@ public class CspringsContraptionTypes {
         return Registry.registerForHolder(CreateBuiltInRegistries.CONTRAPTION_TYPE, Create.asResource(name), type);
     }
 
-    public static void init() {
-    }
+    public static void init() {}
 }

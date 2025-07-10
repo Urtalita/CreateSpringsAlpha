@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -66,61 +67,50 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
 
         Vec3 distVector = BlPos.subtract(ExpPos);
         float distance = (float) distVector.length();
-        float power = getExplosionPower(explosion);
+        float power = 4;
         Direction facing = state.getValue(FACING);
-        Direction expDier = getClosestDirection(ExpPos, BlPos);
-        if(facing != expDier){return;}
+        float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
+
+        if(coef < 0.30f){
+            super.onBlockExploded(state, level, pos, explosion);
+        }
 
         withBlockEntityDo(level, pos, be ->{
-            be.stored += power / distance * 20000;
+            be.stored += power / distance * 20000 * coef;
         });
     }
 
-    public static Direction getClosestDirection(Vec3 from, Vec3 to) {
-        Vec3 delta = to.subtract(from);
-        if (delta.lengthSqr() == 0.0) {
-            return Direction.UP; // Возвращаем направление по умолчанию, если точки совпадают
+    public static float getSpringChargeCoefficient(Direction facing, BlockPos springPos, Vec3 explosionPos) {
+        facing = facing.getOpposite();
+        // Центр блока пружины
+        Vec3 springCenter = Vec3.atCenterOf(springPos);
+
+        // Вектор от пружины к точке взрыва
+        Vec3 toExplosion = explosionPos.subtract(springCenter);
+
+        // Вектор нормали направления пружины (уже нормализован)
+        Vec3 facingVector = Vec3.atLowerCornerOf(facing.getNormal());
+
+        // Нормализуем вектор к взрыву (с проверкой нулевой длины)
+        double distanceSqr = toExplosion.lengthSqr();
+        if (distanceSqr < 1e-7) {
+            // Взрыв точно в центре пружины
+            return 1.0f;
         }
-        Vec3 directionVec = delta.normalize();
+        Vec3 normalizedToExplosion = toExplosion.normalize();
 
-        Direction closestDir = Direction.UP;
-        double maxDot = -Double.MAX_VALUE;
+        // Вычисляем скалярное произведение
+        double dotProduct = normalizedToExplosion.dot(facingVector);
 
-        for (Direction dir : Direction.values()) {
-            // Получаем вектор направления в виде Vec3
-            Vec3 dirVec = new Vec3(
-                    dir.getNormal().getX(),
-                    dir.getNormal().getY(),
-                    dir.getNormal().getZ()
-            );
-            // Вычисляем скалярное произведение
-            double dot = directionVec.dot(dirVec);
-            if (dot > maxDot) {
-                maxDot = dot;
-                closestDir = dir;
-            }
-        }
-
-        return closestDir;
+        // Преобразуем в коэффициент 0-1:
+        // - Отрицательные значения → 0 (взрыв с обратной стороны)
+        // - Положительные значения → плавно возрастает до 1
+        return (float) Math.max(0, dotProduct);
     }
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return super.getDrops(state, builder);
-    }
-
-    public static float getExplosionPower(Explosion explosion) {
-        try {
-            if (radiusField == null) {
-                // Получаем доступ к приватному полю "radius"
-                radiusField = Explosion.class.getDeclaredField("radius");
-                radiusField.setAccessible(true);
-            }
-            return radiusField.getFloat(explosion);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 3.0F; // Возвращаем значение по умолчанию
-        }
     }
 
     /*

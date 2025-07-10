@@ -249,7 +249,6 @@ public class CSpringsScenes {
 
         scene.overlay().showText(50)
                 .placeNearTarget()
-                .attachKeyFrame()
                 .text("")
                 .pointAt(util.vector().of(1.5, 1.5, 1.5));
         scene.idle(50);
@@ -261,7 +260,6 @@ public class CSpringsScenes {
 
         scene.overlay().showText(50)
                 .placeNearTarget()
-                .attachKeyFrame()
                 .text("")
                 .pointAt(util.vector().of(1.5, 1.5, 1.5));
         scene.idle(50);
@@ -275,7 +273,6 @@ public class CSpringsScenes {
 
         scene.overlay().showText(100)
                 .placeNearTarget()
-                .attachKeyFrame()
                 .text("")
                 .pointAt(util.vector().of(1.5, 1.5, 1.5));
         scene.idle(100);

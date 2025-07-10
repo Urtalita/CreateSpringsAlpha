@@ -53,6 +53,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
                 throw new RuntimeException(e);
             }
         });
+        worldIn.scheduleTick(pos, this, 1);
         super.onPlace(state, worldIn, pos, oldState, isMoving);
     }
 

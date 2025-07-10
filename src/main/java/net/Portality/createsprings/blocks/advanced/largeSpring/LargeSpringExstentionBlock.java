@@ -22,8 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getClosestDirection;
-import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getExplosionPower;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 
 public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity> {
@@ -44,10 +43,13 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
 
         Vec3 distVector = BlPos.subtract(ExpPos);
         float distance = (float) distVector.length();
-        float power = getExplosionPower(explosion);
+        float power = 4;
+        float coef = getSpringChargeCoefficient(state.getValue(FACING).getOpposite(), pos, ExpPos);
 
         LargeSpringBlockEntity be = getBe(pos, state.getValue(FACING).getOpposite(), level);
-        be.onExploded(distance, power, pos);
+        if(be != null){
+            be.onExploded(distance, power * coef, pos);
+        }
     }
 
     @Override

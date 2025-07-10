@@ -10,6 +10,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -17,6 +19,7 @@ import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.
 import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 
 public class SpringCoilBlockEntity extends KineticBlockEntity {
+    private static final Logger log = LoggerFactory.getLogger(SpringCoilBlockEntity.class);
     public boolean plate = false;
     public Direction plateFacing = Direction.UP;
 
@@ -44,29 +47,19 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         Direction direction = state.getValue(FACING).getOpposite();
         BlockPos centerPos = isSpringLayerCompleted(pos, direction.getAxis(), true);
 
-        if(centerPos != null){
+        if(centerPos == null){return;}
 
-            Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
-            if(OcoilBE.isPresent()){
-                SpringCoilBlockEntity coilBE = OcoilBE.get();
-                coilBE.assemble(centerPos, direction);
-                coilBE.notifyUpdate();
-            }
-        }
+        Optional<SpringCoilBlockEntity> OcoilBE = getCoil(centerPos);
+        if(!OcoilBE.isPresent()){return;}
+
+        SpringCoilBlockEntity coilBE = OcoilBE.get();
+        coilBE.assemble(centerPos, direction);
     }
 
-    private void assemble(BlockPos pos, Direction direction){
-        int len = 0;
-        int axisCoefficient;
 
-        if((direction == Direction.UP) || (direction == Direction.EAST) || (direction == Direction.SOUTH)){
-            axisCoefficient = 1;
-        } else {
-            axisCoefficient = -1;
-        }
-
-        len++;
-        goDeeper(direction, axisCoefficient, pos, len);
+    private void assemble(BlockPos pos, Direction direction) {
+        int axisCoefficient = (direction == Direction.UP || direction == Direction.EAST || direction == Direction.SOUTH) ? 1 : -1;
+        goDeeper(direction, axisCoefficient, pos, 1); // Начинаем с длины 1
     }
 
     private void goDeeper(Direction direction, int axisCoefficient, BlockPos pos, int len) {
@@ -75,38 +68,27 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         int z = pos.getZ();
         Direction.Axis axis = direction.getAxis();
 
-        // Корректируем координаты в зависимости от оси
         switch (axis) {
-            case X:
-                x += len * axisCoefficient;
-                break;
-            case Y:
-                y += len * axisCoefficient;
-                break;
-            case Z:
-                z += len * axisCoefficient;
-                break;
+            case X: x += len * axisCoefficient; break;
+            case Y: y += len * axisCoefficient; break;
+            case Z: z += len * axisCoefficient; break;
         }
 
-        // Проверяем слой с новыми координатами
-        BlockPos pos1 = isSpringLayerCompleted(x, y, z, axis, false);
+        BlockPos nextLayerPos = isSpringLayerCompleted(x, y, z, axis, false);
 
-        if (pos1 == null) {
+        if (nextLayerPos == null || len >= Config.spring_len) {
             setSpring(pos, direction, len);
             return;
         }
 
-        if(len == Config.spring_len){
-            setSpring(pos, direction, len);
-            return;
-        }
-
-        len++;
-        goDeeper(direction, axisCoefficient, pos, len);
+        goDeeper(direction, axisCoefficient, pos, len + 1);
     }
 
     private void setSpring(BlockPos pos, Direction direction, int len){
-        level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 0);
+        if(len == 1){
+            direction = getBlockState().getValue(FACING);
+        }
+        level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
     }
 
     private Optional<SpringCoilBlockEntity> getCoil(BlockPos pos){
@@ -125,86 +107,58 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     }
 
     private BlockPos isSpringLayerCompleted(int x, int layer, int z, Direction.Axis axis, boolean mode) {
-        int fixedCoord;
-        int primaryStart, primaryEnd;
-        int secondaryStart, secondaryEnd;
-
-        // Определение фиксированной координаты и диапазонов для проверки
+        // Преобразование координат в зависимости от оси
         switch (axis) {
             case X:
-                fixedCoord = x;
-                primaryStart = layer - 2; // primary ось Y
-                primaryEnd = layer;
-                secondaryStart = z - 2;    // secondary ось Z
-                secondaryEnd = z;
-                break;
+                // Для оси X: fixed = x, primary = layer (Y), secondary = z (Z)
+                BlockPos resultX = checkLayerInYPlane(layer, x, z, mode, axis);
+                return resultX != null ? new BlockPos(x, resultX.getX(), resultX.getZ()) : null;
+
             case Y:
-                fixedCoord = layer;
-                primaryStart = x - 2;      // primary ось X
-                primaryEnd = x;
-                secondaryStart = z - 2;    // secondary ось Z
-                secondaryEnd = z;
-                break;
+                // Для оси Y: fixed = layer, primary = x (X), secondary = z (Z)
+                return checkLayerInYPlane(x, layer, z, mode, axis);
+
             case Z:
-                fixedCoord = z;
-                primaryStart = x - 2;      // primary ось X
-                primaryEnd = x;
-                secondaryStart = layer - 2; // secondary ось Y
-                secondaryEnd = layer;
-                break;
+                // Для оси Z: fixed = z, primary = x (X), secondary = layer (Y)
+                BlockPos resultZ = checkLayerInYPlane(x, z, layer, mode, axis);
+                return resultZ != null ? new BlockPos(resultZ.getX(), resultZ.getZ(), z) : null;
+
             default:
                 return null;
         }
+    }
 
-        // Перебор всех возможных стартовых позиций для квадрата 3x3
+    private BlockPos checkLayerInYPlane(int primary, int fixedY, int secondary, boolean mode, Direction.Axis axis) {
+        int primaryStart = primary - 2;
+        int primaryEnd = primary;
+        int secondaryStart = secondary - 2;
+        int secondaryEnd = secondary;
+
         for (int p = primaryStart; p <= primaryEnd; p++) {
             for (int s = secondaryStart; s <= secondaryEnd; s++) {
                 boolean isComplete = true;
 
-                // Проверка всех блоков в квадрате 3x3
                 outerLoop:
                 for (int dp = 0; dp < 3; dp++) {
                     for (int ds = 0; ds < 3; ds++) {
+                        // Пропуск центра при mode=false
                         if (!mode && dp == 1 && ds == 1) {
                             continue;
                         }
 
-                        int currentP = p + dp;
-                        int currentS = s + ds;
-                        BlockPos pos;
+                        // Создаем позицию в Y-плоскости
+                        BlockPos pos = new BlockPos(p + dp, fixedY, s + ds);
 
-                        // Формируем BlockPos в зависимости от оси
-                        switch (axis) {
-                            case X:
-                                pos = new BlockPos(fixedCoord, currentP, currentS);
-                                break;
-                            case Y:
-                                pos = new BlockPos(currentP, fixedCoord, currentS);
-                                break;
-                            case Z:
-                                pos = new BlockPos(currentP, currentS, fixedCoord);
-                                break;
-                            default:
-                                pos = null;
-                        }
-
-                        if (pos == null || !checkBlock(pos, axis)) {
+                        if (!checkBlock(pos, axis)) {
                             isComplete = false;
                             break outerLoop;
                         }
                     }
                 }
 
-                // Если слой завершен, возвращаем центр квадрата
                 if (isComplete) {
-                    switch (axis) {
-                        case X:
-                            return new BlockPos(fixedCoord, p + 1, s + 1);
-                        case Y:
-                            return new BlockPos(p + 1, fixedCoord, s + 1);
-                        case Z:
-                            return new BlockPos(p + 1, s + 1, fixedCoord);
-                    }
+                    // Возвращаем центр квадрата в Y-плоскости
+                    return new BlockPos(p + 1, fixedY, s + 1);
                 }
             }
         }
@@ -212,6 +166,22 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
     }
 
     private boolean checkBlock(BlockPos pos, Direction.Axis axis){
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+
+        switch (axis) {
+            case X:
+                return checkBlockInY(new BlockPos(y, x, z), axis);
+            case Y:
+                return checkBlockInY(new BlockPos(x, y, z), axis);
+            case Z:
+                return checkBlockInY(new BlockPos(x, z, y), axis);
+        }
+        return false;
+    }
+
+    private boolean checkBlockInY(BlockPos pos, Direction.Axis axis){
         BlockEntity coilBE = level.getBlockEntity(pos);
         if(coilBE instanceof SpringCoilBlockEntity){
             SpringCoilBlockEntity be = (SpringCoilBlockEntity) coilBE;

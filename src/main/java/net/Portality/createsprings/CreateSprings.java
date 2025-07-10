@@ -1,5 +1,6 @@
 package net.Portality.createsprings;
 
+import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import net.Portality.createsprings.Entities.ModEntities;
@@ -85,6 +86,7 @@ public class CreateSprings {
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModEntities::registerEntityAttributes);
+        modEventBus.addListener(CreateSprings::onRegister);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);
@@ -127,6 +129,9 @@ public class CreateSprings {
 
     private void clientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(MenuInit.SPRING_MENU.get(), SpringScreen::new);
+    }
+
+    public static void onRegister(final RegisterEvent event) {
         CspringsContraptionTypes.init();
     }
 

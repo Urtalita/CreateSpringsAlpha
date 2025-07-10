@@ -11,16 +11,19 @@ public class CSpringsPonders {
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
+
         HELPER.forComponents(ModBlocks.SPRING)
                 .addStoryBoard("spring", CSpringsScenes::spring, AllCreatePonderTags.KINETIC_RELAYS);
 
         HELPER.forComponents(ModBlocks.SPRING)
-                .addStoryBoard("hardness", CSpringsScenes::hardness, AllCreatePonderTags.REDSTONE);
+                .addStoryBoard("hardness", CSpringsScenes::hardness, AllCreatePonderTags.KINETIC_RELAYS);
 
         HELPER.forComponents(ModBlocks.SPRING)
                 .addStoryBoard("springsplash", CSpringsScenes::springSplash, AllCreatePonderTags.KINETIC_RELAYS);
 
         HELPER.forComponents(ModBlocks.FRICTION_WELDER)
                 .addStoryBoard("welding", CSpringsScenes::welding, AllCreatePonderTags.CONTRAPTION_ASSEMBLY);
+
+
     }
 }

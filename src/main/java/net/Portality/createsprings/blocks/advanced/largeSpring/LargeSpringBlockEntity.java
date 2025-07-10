@@ -42,6 +42,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public boolean splashMode = false;
     private int phase = 0;
     public float capacity;
+    private float hardness = DEFAULT_HARDNESS;
 
     private BlockPos stoppedPos = null;
 
@@ -84,14 +85,31 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         return len;
     }
 
+    public void setHardness(int value){
+        if (level == null || level.isClientSide) return;
+
+        if (hardness != value) {
+            hardness = value;
+            sendData();
+            setChanged();
+            updateNetwork();
+        }
+    }
+
     @Override
     public float calculateStressApplied() {
+        float stressApplied = calcStress();
+        this.lastStressApplied = stressApplied;
+        return stressApplied;
+    }
+
+    private float calcStress() {
         if (stored < capacity && !isGenerating) {
-            return 128.0f;
-        } else if (isGenerating) {
-            return -1024;
+            return 2f * hardness * 9;
+        } else if (isGenerating && stored >= 2f * hardness) {
+            return -2f * hardness * 9;
         }
-        return 0f;
+        return 0;
     }
 
     public void onPlace(BlockPos pos, Direction facing, int len) throws AssemblyException {
@@ -114,7 +132,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 }
             }
         }
-        level.setBlock(worldPosition.relative(getFacing()), AllBlocks.SHAFT.getDefaultState().setValue(FACING, getFacing()), 3);
+        level.setBlock(worldPosition.relative(getFacing()), AllBlocks.SHAFT.getDefaultState(), 3);
 
         assemble();
 
@@ -224,6 +242,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public void tick() {
         super.tick();
 
+        if(len == 0){
+            len = getBlockState().getValue(LEN);
+            curLen = len;
+            capacity = capacity * len;
+        }
+
         if(stoppedPos != null && isGenerating){
             if(breakBySpring(stoppedPos, level, (float) Config.spring_capacity)){
                 stoppedPos = null;
@@ -284,9 +308,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         float CurSpeed = Math.abs(getSpeed());
         if (isGenerating && stored > 0) {
-            stored = Math.max(stored - 256, 0);
-            updateGeneratedRotation();
-
+            stored = Math.max(stored - CurSpeed / DEFAULT_HARDNESS * hardness * 9, 0);
             if (platePos > (curLen+1)) {
                 curLen++;
                 breakBlocksInLayer(Mth.floor(platePos(progress) + 1), facing);
@@ -295,8 +317,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
         // Режим накопления, если не активировано
         else if (!isGenerating) {
-            stored = Mth.clamp(stored + CurSpeed*4, 0, capacity);
-
+            stored = Math.min(stored + CurSpeed / DEFAULT_HARDNESS * hardness * 9, capacity);
             if (platePos < (curLen+1)) {
                 removeLayer(Mth.floor(platePos(progress)), facing);
                 curLen--;
@@ -404,6 +425,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         compound.putInt("phase", phase);
         compound.putBoolean("splashMode", splashMode);
         compound.putFloat("capacity", capacity);
+        compound.putFloat("hardness", hardness);
         super.write(compound, clientPacket);
     }
 
@@ -418,6 +440,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         phase = compound.getInt("phase");
         splashMode =  compound.getBoolean("splashMode");
         capacity = compound.getFloat("capacity");
+        hardness = compound.getFloat("hardness");
 
         if(compound.contains("stoppedX")){
             stoppedPos = new BlockPos(
@@ -498,6 +521,10 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                             ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState().setValue(FACING, facing),
                             Block.UPDATE_ALL
                     );
+
+                    if(level.getBlockEntity(breakBlock) instanceof ExtentionBlockEntity extentionBlockEntity){
+                        extentionBlockEntity.targetHardness.setValue((int) hardness);
+                    }
                 }
             }
         }
@@ -532,5 +559,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             }
         }
         return true;
+    }
+
+    public void updateNetwork() {
+        if (level == null || level.isClientSide || isRemoved()) return;
+
+        if (hasNetwork()) {
+            getOrCreateNetwork().updateStressFor(this, calculateStressApplied());
+        }
     }
 }

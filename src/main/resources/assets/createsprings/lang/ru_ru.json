@@ -51,7 +51,7 @@
   "create.spring.len": "Длина:",
   "create.spring.su": "ен",
   "create.spring.switch.su": "000 ен",
-  "spring.hardness": "выберете жёсткость пружины",
+  "spring.hardness": "настройте жёсткость пружины",
 
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
@@ -96,7 +96,7 @@
   "createsprings.ponder.springsplash.text_2": "вы можете убрать крюк, кликнув пустой рукой",
   "createsprings.ponder.springsplash.text_3": "в режиме всплеска пружины моментально отдают накопленую энергию",
   "createsprings.ponder.springsplash.text_4": "в этом режиме пружины могут толкать сущностей",
-  "createsprings.ponder.springsplash.text_5": "также пружины могут ломать блоки",
+  "createsprings.ponder.springsplash.text_5": "также пружины способны ломать блоки",
   "createsprings.ponder.springsplash.text_6": "некоторые блоки требую больше заряда",
   "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты",
 

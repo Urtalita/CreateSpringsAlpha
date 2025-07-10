@@ -1,5 +1,6 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
+import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.blocks.ModBlocks;
