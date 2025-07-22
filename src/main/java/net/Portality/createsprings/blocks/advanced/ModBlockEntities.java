@@ -1,19 +1,10 @@
 package net.Portality.createsprings.blocks.advanced;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.contraptions.bearing.BearingRenderer;
-import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
-import com.simibubi.create.content.kinetics.motor.CreativeMotorRenderer;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldBlockEntity;
-import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldRenderer;
 import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldVisual;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer;
@@ -24,6 +15,9 @@ import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderRenderer;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlockEntity;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceRenderer;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceVisual;
 import net.Portality.createsprings.blocks.advanced.largeSpring.ExtentionBlockEntity;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringRenderer;
@@ -33,6 +27,13 @@ import net.Portality.createsprings.blocks.advanced.test.TestBlockEntity;
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
 public class ModBlockEntities {
+
+    public static final BlockEntityEntry<KineticInterfaceBlockEntity> KINETIC_INTERFACE = CSPRINGS_REGISTRATE
+            .blockEntity("kinetic_interface", KineticInterfaceBlockEntity::new)
+            .visual(() -> KineticInterfaceVisual::new)
+            .renderer(() -> KineticInterfaceRenderer::new)
+            .validBlocks(ModBlocks.KINETIC_INTERFACE)
+            .register();
 
     public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
             .blockEntity("mold", MoldBlockEntity::new)

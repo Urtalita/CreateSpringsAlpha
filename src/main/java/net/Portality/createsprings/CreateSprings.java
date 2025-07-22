@@ -1,8 +1,6 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
@@ -21,7 +19,6 @@ import net.Portality.createsprings.contraption.CspringsContraptionTypes;
 import net.Portality.createsprings.fluid.ModFluids;
 import net.Portality.createsprings.menus.MenuInit;
 import net.Portality.createsprings.menus.ModCreativeModeTabs;
-import com.mojang.logging.LogUtils;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
 import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
 import net.Portality.createsprings.recipe.ModRecipes;
@@ -54,7 +51,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -66,9 +62,13 @@ public class CreateSprings {
     public static final CreateRegistrate CSPRINGS_REGISTRATE = CreateRegistrate.create(CreateSprings.MODID);
     public static Item[] SPRING_TOOLS;
 
+    public CreateSprings() {
+        this(FMLJavaModLoadingContext.get());
+    }
+
     public CreateSprings(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-        modEventBus.addListener(this::test);
+        //modEventBus.addListener(this::test);
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         ModBlocks.register(modEventBus);

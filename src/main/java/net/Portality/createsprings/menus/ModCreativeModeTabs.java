@@ -42,6 +42,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.OBSIDIAN_SLAB.get());
                         pOutput.accept(ModBlocks.OBSIDIAN_PLATE.get());
                         pOutput.accept(ModBlocks.SPRING_ALLOY_BLOCK.get());
+                        pOutput.accept(ModBlocks.SPRING_ALLOY_CASING.get());
                         pOutput.accept(ModBlocks.UNFINISHED_SPRING.get());
                         pOutput.accept(ModBlocks.SPRING.get());
                         pOutput.accept(spring);
@@ -49,6 +50,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.FILLED_ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.LARGE_SPRING_COIL.get());
+                        pOutput.accept(ModBlocks.KINETIC_INTERFACE.get());
                         pOutput.accept(box);
 
                         pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());

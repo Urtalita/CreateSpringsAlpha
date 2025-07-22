@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "createsprings:block/kinetic_interface/base",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "createsprings:block/kinetic_interface/base"
+    },
+    "facing=east": {
+      "model": "createsprings:block/kinetic_interface/base",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "createsprings:block/kinetic_interface/base",
+      "y": 90
+    },
+    "facing=up": {
+      "model": "createsprings:block/kinetic_interface/base",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "createsprings:block/kinetic_interface/base",
+      "x": 270
+    }
+  }
+}

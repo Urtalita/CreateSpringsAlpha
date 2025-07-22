@@ -1,5 +1,7 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
+import com.simibubi.create.api.equipment.goggles.IProxyHoveringInformation;
+import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -21,13 +23,14 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.extensions.IForgeBlock;
 
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 
-public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity> {
+public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity>, IProxyHoveringInformation {
     public static final IntegerProperty COMPRESSION = IntegerProperty.create("compression", 0, 16);
-
     public LargeSpringExstentionBlock(Properties p_52591_) {
         super(p_52591_.dynamicShape());
         this.registerDefaultState(this.stateDefinition.any()
@@ -46,10 +49,15 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
         float power = 4;
         float coef = getSpringChargeCoefficient(state.getValue(FACING).getOpposite(), pos, ExpPos);
 
-        LargeSpringBlockEntity be = getBe(pos, state.getValue(FACING).getOpposite(), level);
+        LargeSpringBlockEntity be = getBe(pos, state.getValue(FACING), level);
         if(be != null){
             be.onExploded(distance, power * coef, pos);
         }
+    }
+
+    @Override
+    public boolean dropFromExplosion(Explosion explosion) {
+        return false;
     }
 
     @Override
@@ -65,9 +73,19 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
 
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if(pNewState != Blocks.COBBLESTONE.defaultBlockState()){
-            goDeeper(pPos, pState.getValue(FACING).getOpposite(), pLevel);
+        if (pIsMoving) {
+            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+            return;
         }
+
+        if(pNewState != Blocks.COBBLESTONE.defaultBlockState()){
+            if(pNewState.getBlock() != ModBlocks.LARGE_SPRING_EXTENTION.get()){
+                if(pNewState.getBlock() != ModBlocks.LARGE_SPRING_COIL.get()){
+                    goDeeper(pPos, pState.getValue(FACING).getOpposite(), pLevel);
+                }
+            }
+        }
+
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }
 
@@ -98,6 +116,7 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
     }
 
     private LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, Level level){
+        facing = facing.getOpposite();
         for(int y = 0; y < Config.spring_len + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
@@ -140,5 +159,20 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
     @Override
     public BlockEntityType<? extends ExtentionBlockEntity> getBlockEntityType() {
         return ModBlockEntities.EXTENTION_BLOCK_ENTITY.get();
+    }
+
+    @Override
+    public BlockPos getInformationSource(Level level, BlockPos pos, BlockState state) {
+        LargeSpringBlockEntity largeSpringBlockEntity = getBe(pos, state.getValue(FACING), level);
+        return largeSpringBlockEntity.getBlockPosition();
+    }
+
+    @Override
+    public boolean canStickTo(BlockState state, BlockState other) {
+        if (other.getBlock() == Blocks.SLIME_BLOCK) return true;
+        if (other.getBlock() == Blocks.HONEY_BLOCK) return true;
+        if (other.getBlock() == ModBlocks.LARGE_SPRING.get()) return true;
+        if (other.getBlock() == ModBlocks.LARGE_SPRING_EXTENTION.get()) return true;
+        return false;
     }
 }

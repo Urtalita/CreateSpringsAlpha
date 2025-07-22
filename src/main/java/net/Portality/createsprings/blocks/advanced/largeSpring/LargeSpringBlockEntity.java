@@ -1,20 +1,25 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.Portality.createsprings.contraption.SpringContraption;
 import net.Portality.createsprings.utill.Helpers.CspringsMath;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
@@ -25,13 +30,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.*;
 import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 
-public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption {
+public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, IConnectableToPSKI {
 
-    private float progress;
+    public float progress;
     public float stored = 0;
     private int len;
 
@@ -46,7 +53,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     private BlockPos stoppedPos = null;
 
-    private float prevProgress;
+    public float prevProgress;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -132,7 +139,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 }
             }
         }
-        level.setBlock(worldPosition.relative(getFacing()), AllBlocks.SHAFT.getDefaultState(), 3);
 
         assemble();
 
@@ -323,6 +329,10 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 curLen--;
             }
         }
+        if(stored ==0 && this.speed != 0){
+            updateNetwork();
+            updateGeneratedRotation();
+        }
     }
 
     public void onExploded(float distance, float power, BlockPos sourcePos){
@@ -395,7 +405,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     @Override
     public float getGeneratedSpeed() {
-        return isGenerating && stored > 0 ? 32.0f : 0.0f;
+        if(level.getBestNeighborSignal(worldPosition) == 0){return 0;}
+        float stress = 16.0f * level.getBestNeighborSignal(worldPosition) + 16;
+        return isGenerating && stored > 0 ? stress : 0.0f;
     }
 
     public void setGenerating(boolean generating) {
@@ -403,7 +415,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         phase = 0;
 
         isGenerating = generating;
-        updateGeneratedRotation(); // Обновляем физику
+        updateGeneratedRotation();
+        updateNetwork();
         sendData(); // Синхронизация
     }
 
@@ -411,6 +424,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
+        super.write(compound, clientPacket);
         if(stoppedPos != null){
             compound.putInt("stoppedX", stoppedPos.getX());
             compound.putInt("stoppedY", stoppedPos.getY());
@@ -426,7 +440,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         compound.putBoolean("splashMode", splashMode);
         compound.putFloat("capacity", capacity);
         compound.putFloat("hardness", hardness);
-        super.write(compound, clientPacket);
     }
 
     @Override
@@ -567,5 +580,56 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         if (hasNetwork()) {
             getOrCreateNetwork().updateStressFor(this, calculateStressApplied());
         }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+
+        if (this.stoppedPos != null){
+            CreateLang.translate("spring.stopped").style(ChatFormatting.YELLOW).forGoggles(tooltip);
+            return true;
+        }
+
+        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+        CreateLang.text(" ").add(
+                        CreateLang.number(stored).style(ChatFormatting.AQUA).space()
+                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                        .add(CreateLang.number(capacity).style(ChatFormatting.AQUA).space()
+                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
+                .forGoggles(tooltip);
+
+        CreateLang.translate("spring.len").style(ChatFormatting.GRAY).forGoggles(tooltip);
+        CreateLang.text(" ").add(
+                        CreateLang.number(Math.round(getPlatePos())).style(ChatFormatting.AQUA).space()
+                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                        .add(CreateLang.number(len).style(ChatFormatting.AQUA).space()))
+                .forGoggles(tooltip);
+        return true;
+    }
+
+    @Override
+    public float getStored() {
+        return stored;
+    }
+
+    @Override
+    public float getCapacity() {
+        return capacity;
+    }
+
+    @Override
+    public void setStored(float newStored) {
+        stored = newStored;
+    }
+
+    @Override
+    public float getHardness() {
+        return hardness;
+    }
+
+    @Override
+    public float getImpactCof() {
+        return 18;
     }
 }

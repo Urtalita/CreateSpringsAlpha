@@ -1,6 +1,10 @@
 package net.Portality.createsprings.blocks;
 
+import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
+import com.simibubi.create.content.decoration.encasing.CasingBlock;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.Portality.createsprings.CreateSprings;
@@ -13,14 +17,19 @@ import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlock;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceMovement;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringExstentionBlock;
+import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMovement;
 import net.Portality.createsprings.blocks.advanced.test.TestBlock;
 import net.Portality.createsprings.fluid.ModFluids;
+import net.Portality.createsprings.utill.CSpringsSpriteShifts;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,6 +37,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
+import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
@@ -76,6 +86,7 @@ public class ModBlocks {
             .initialProperties(SharedProperties::copperMetal)
             .properties(p -> p.noOcclusion())
             .simpleItem() // Убрать
+            .onRegister(movementBehaviour(new LargeSpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
@@ -113,10 +124,20 @@ public class ModBlocks {
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
-    private static <T extends Block> RegistryObject<T> registerBlockWithoutItem(String name, Supplier<T> block) {
-        RegistryObject<T> toReturn = BLOCKS.register(name, block);
-        return toReturn;
-    }
+    public static final BlockEntry<KineticInterfaceBlock> KINETIC_INTERFACE = CSPRINGS_REGISTRATE
+            .block("kinetic_interface", KineticInterfaceBlock::new)
+            .initialProperties(SharedProperties::wooden)
+            .properties(p -> p.noOcclusion())
+            .simpleItem()
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .onRegister(movementBehaviour(new KineticInterfaceMovement()))
+            .register();
+
+    public static final BlockEntry<CasingBlock> SPRING_ALLOY_CASING = CSPRINGS_REGISTRATE.block("spring_alloy_casing", CasingBlock::new)
+            .properties(p -> p.mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
+                    .sound(SoundType.COPPER))
+            .transform(BuilderTransformers.casing(() -> CSpringsSpriteShifts.SPRING_ALLOY_CASING))
+            .register();
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, String ItemProperty) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

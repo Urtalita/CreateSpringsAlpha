@@ -30,6 +30,8 @@ public class SpringProjectile extends AbstractArrow {
     private static final double GRAVITY = -0.08;
     private static boolean box = false;
 
+    private static int searchRadius = 10;
+
     public SpringProjectile(Level pLevl) {
         super(ModEntities.SPRING_PROJECTILE.get(),pLevl);
     }
@@ -143,7 +145,7 @@ public class SpringProjectile extends AbstractArrow {
                     direction.getStepZ()
             );
 
-            if(redirectProjectile(this, 10)){
+            if(redirectProjectile(this, searchRadius)){
                 return;
             }
 
@@ -211,7 +213,7 @@ public class SpringProjectile extends AbstractArrow {
                     .add(normal.scale(0.1));
             this.setPos(newPos.x, newPos.y, newPos.z);
 
-            if(redirectProjectile(this, 5, target)){
+            if(redirectProjectile(this, searchRadius, target)){
                 return;
             }
 

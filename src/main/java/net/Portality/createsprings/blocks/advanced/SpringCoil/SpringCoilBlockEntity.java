@@ -59,10 +59,15 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
 
     private void assemble(BlockPos pos, Direction direction) {
         int axisCoefficient = (direction == Direction.UP || direction == Direction.EAST || direction == Direction.SOUTH) ? 1 : -1;
-        goDeeper(direction, axisCoefficient, pos, 1); // Начинаем с длины 1
+
+        int len = goDeeper(direction, axisCoefficient, pos, 0);
+        if(len != 1){setSpring(pos, direction, len);}
+
+        int secondTryLen = goDeeper(direction.getOpposite(), axisCoefficient * -1, pos, 0);
+        setSpring(pos, direction.getOpposite(), secondTryLen);
     }
 
-    private void goDeeper(Direction direction, int axisCoefficient, BlockPos pos, int len) {
+    private int goDeeper(Direction direction, int axisCoefficient, BlockPos pos, int len) {
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
@@ -77,17 +82,17 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         BlockPos nextLayerPos = isSpringLayerCompleted(x, y, z, axis, false);
 
         if (nextLayerPos == null || len >= Config.spring_len) {
-            setSpring(pos, direction, len);
-            return;
+            return len;
         }
 
-        goDeeper(direction, axisCoefficient, pos, len + 1);
+        return goDeeper(direction, axisCoefficient, pos, len + 1);
     }
 
     private void setSpring(BlockPos pos, Direction direction, int len){
         if(len == 1){
             direction = getBlockState().getValue(FACING);
         }
+
         level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
     }
 

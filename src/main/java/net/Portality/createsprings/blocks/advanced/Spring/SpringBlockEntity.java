@@ -12,6 +12,7 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,7 @@ import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable {
+public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI {
 
     public final float capacity;
     public float stored = 0;
@@ -348,6 +349,32 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                 .add(Component.literal(" "))
                 .add(CreateLang.translate("spring.switch.su"))
                 .component();
+    }
+
+    //IConnectableToPKI
+    @Override
+    public float getStored() {
+        return stored;
+    }
+
+    @Override
+    public float getCapacity() {
+        return capacity;
+    }
+
+    @Override
+    public void setStored(float newStored) {
+        this.stored = newStored;
+    }
+
+    @Override
+    public float getHardness() {
+        return hardness;
+    }
+
+    @Override
+    public float getImpactCof() {
+        return 2;
     }
 
     private class SpringValueBoxTransform extends ValueBoxTransform.Sided {

@@ -46,6 +46,24 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
 
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (isMoving) {
+            withBlockEntityDo(worldIn, pos, be-> {
+                try {
+                    be.assemble();
+                } catch (AssemblyException e) {
+                    throw new RuntimeException(e);
+                }
+
+                be.updateGeneratedRotation();
+                be.notifyUpdate();
+                be.sendData();
+            });
+
+            worldIn.scheduleTick(pos, this, 1);
+            super.onPlace(state, worldIn, pos, oldState, isMoving);
+            return;
+        }
+
         withBlockEntityDo(worldIn, pos, be-> {
             try {
                 be.onPlace(pos, state.getValue(FACING), state.getValue(LEN));
@@ -143,5 +161,14 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LEN);
         super.createBlockStateDefinition(builder);
+    }
+
+    @Override
+    public boolean canStickTo(BlockState state, BlockState other) {
+        if (other.getBlock() == Blocks.SLIME_BLOCK) return true;
+        if (other.getBlock() == Blocks.HONEY_BLOCK) return true;
+        if (other.getBlock() == ModBlocks.LARGE_SPRING.get()) return true;
+        if (other.getBlock() == ModBlocks.LARGE_SPRING_EXTENTION.get()) return true;
+        return false;
     }
 }

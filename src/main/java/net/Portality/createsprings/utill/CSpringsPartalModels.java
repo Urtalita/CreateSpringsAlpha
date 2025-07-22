@@ -45,6 +45,13 @@ public class CSpringsPartalModels {
 
     MOLD = block("andesite_mold"),
 
+    INTERFACE_TOP = block("kinetic_interface/top"),
+    INTERFACE_PULLEY = block("kinetic_interface/pulley"),
+
+    CENTERED_SHAFT = block("shaft_sentered"),
+
+    DEBUG = block("debug"),
+
     WelderHead = block("friction_welder/top"),
             LARGE_SPRING_COIL_ROTATED = block("large_spring_coil_partal_rotated"),
     LARGE_SPRING_COIL = block("large_spring_coil_partal"),

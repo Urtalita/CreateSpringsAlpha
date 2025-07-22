@@ -15,11 +15,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.extensions.IForgeBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +33,6 @@ import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    private BlockPos controlerPos;
     public ScrollValueBehaviour targetHardness;
 
     public ExtentionBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -70,58 +73,7 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
         }
     }
 
-    @Override
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(controlerPos == null){
-            controlerPos = getBePos(worldPosition, getBlockState().getValue(FACING), level);
-            return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        }
-        BlockEntity entity = level.getBlockEntity(controlerPos);
-        if(entity instanceof LargeSpringBlockEntity springEntity){
-            if (springEntity.getStoppedPos() != null){
-                CreateLang.translate("spring.stopped").style(ChatFormatting.YELLOW).forGoggles(tooltip);
-                return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-            }
 
-            CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
-            CreateLang.text(" ").add(
-                            CreateLang.number(springEntity.stored).style(ChatFormatting.AQUA).space()
-                    ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                            .add(CreateLang.number(springEntity.capacity).style(ChatFormatting.AQUA).space()
-                                    .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
-                    .forGoggles(tooltip);
-
-            CreateLang.translate("spring.len").style(ChatFormatting.GRAY).forGoggles(tooltip);
-            CreateLang.text(" ").add(
-                            CreateLang.number(Math.round(springEntity.getPlatePos())).style(ChatFormatting.AQUA).space()
-                    ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                            .add(CreateLang.number(springEntity.getLen()).style(ChatFormatting.AQUA).space()))
-                    .forGoggles(tooltip);
-        }
-        return IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-    }
-
-    @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
-        if(tag.contains("controllerX")){
-            controlerPos = new BlockPos(
-                    tag.getInt("controllerX"),
-                    tag.getInt("controllerY"),
-                    tag.getInt("controllerZ")
-            );
-        }
-    }
-
-    @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        if(controlerPos != null){
-            tag.putInt("controllerX", controlerPos.getX());
-            tag.putInt("controllerY", controlerPos.getY());
-            tag.putInt("controllerZ", controlerPos.getZ());
-        }
-        super.write(tag, clientPacket);
-    }
 
     private BlockPos getBePos(BlockPos pos, Direction facing, Level level){
         facing = facing.getOpposite();
@@ -156,6 +108,5 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
         public float getScale() {
             return 0.5f;
         }
-
     }
 }
