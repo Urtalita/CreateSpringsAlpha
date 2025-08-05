@@ -43,6 +43,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.OBSIDIAN_PLATE.get());
                         pOutput.accept(ModBlocks.SPRING_ALLOY_BLOCK.get());
                         pOutput.accept(ModBlocks.SPRING_ALLOY_CASING.get());
+                        pOutput.accept(ModBlocks.WEATHERED_IRON.get());
                         pOutput.accept(ModBlocks.UNFINISHED_SPRING.get());
                         pOutput.accept(ModBlocks.SPRING.get());
                         pOutput.accept(spring);

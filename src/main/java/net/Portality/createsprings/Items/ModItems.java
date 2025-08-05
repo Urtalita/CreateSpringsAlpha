@@ -3,8 +3,12 @@ package net.Portality.createsprings.Items;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.builders.ItemBuilder;
+import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ChamberItem;
@@ -31,14 +35,20 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, CreateSprings.MODID);
 
-    public static final RegistryObject<Item> SPRING_ALLOY = ITEMS.register("spring_alloy",
-            () -> new Item(new Item.Properties().fireResistant()));
+    public static final ItemEntry<Item> SPRING_ALLOY = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy", Item::new)
+            .properties(p -> p.fireResistant())
+            .register();
 
-    public static final RegistryObject<Item> SPRING_ALLOY_NUGGET = ITEMS.register("spring_alloy_nugget",
-            () -> new Item(new Item.Properties().fireResistant()));
+    public static final ItemEntry<Item> SPRING_ALLOY_NUGGET = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy_nugget", Item::new)
+            .properties(p -> p.fireResistant())
+            .register();
 
-    public static final RegistryObject<Item> SPRING_ALLOY_SHEET = ITEMS.register("spring_alloy_sheet",
-            () -> new Item(new Item.Properties().fireResistant()));
+    public static final ItemEntry<Item> SPRING_ALLOY_SHEET = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy_sheet", Item::new)
+            .properties(p -> p.fireResistant())
+            .register();
 
     public static final ItemEntry<PunchcardItem> PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
             .item("punchcard", PunchcardItem::new)
@@ -81,8 +91,9 @@ public class ModItems {
             .properties(p -> p.stacksTo(1))
             .register();  // add to spring tools list
 
-    public static final RegistryObject<Item> SPRING_PROJECTILE_ITEM = ITEMS.register("spring_projectile",
-            () -> new Item(new Item.Properties()));
+    public static final ItemEntry<Item> SPRING_PROJECTILE_ITEM = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_projectile", Item::new)
+            .register();
 
     public static final RegistryObject<Item> SUS_PACKAGE = ITEMS.register("sus_package",
             () -> new SusPackageItem(new Item.Properties(), PackageStyles.STYLES.get(0)));

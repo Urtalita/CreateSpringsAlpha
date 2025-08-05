@@ -71,7 +71,7 @@ public class CreateSprings {
         //modEventBus.addListener(this::test);
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        ModBlocks.register(modEventBus);
+        ModBlocks.register();
         ModBlockEntities.register();
         ModItems.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);

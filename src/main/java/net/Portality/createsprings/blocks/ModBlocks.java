@@ -7,6 +7,7 @@ import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
@@ -15,6 +16,7 @@ import net.Portality.createsprings.blocks.advanced.AndesiteMold.AndesiteMoldBloc
 import net.Portality.createsprings.blocks.advanced.AndesiteMold.UnfilledAndesiteMoldBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
+import net.Portality.createsprings.blocks.advanced.Spring.SpringMovement;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlock;
@@ -35,29 +37,55 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Properties;
 import java.util.function.Supplier;
 
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
+import static net.minecraft.world.level.block.Blocks.*;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CreateSprings.MODID);
 
-    public static final RegistryObject<Block> SPRING_ALLOY_BLOCK = registerBlock("spring_alloy_block",
-            () -> new Block(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.IRON_BLOCK).sound(SoundType.METAL).destroyTime(2)), "fireResistant");
+    public static final BlockEntry<Block> SPRING_ALLOY_BLOCK = CSPRINGS_REGISTRATE
+            .block("spring_alloy_block", Block::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.sound(SoundType.METAL))
+            .item((block, properties) -> new BlockItem(block, properties.fireResistant()))
+            .build()
+            .register();
 
-    public static final RegistryObject<Block> UNFINISHED_SPRING = registerBlock("unfinished_spring",
-            () -> new Block(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.IRON_BLOCK).sound(SoundType.METAL).destroyTime(1).noOcclusion()), "StacksTo1");
+    public static final BlockEntry<Block> UNFINISHED_SPRING = CSPRINGS_REGISTRATE
+            .block("unfinished_spring", Block::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion().sound(SoundType.METAL))
+            .item((block, properties) -> new BlockItem(block, properties.stacksTo(1)))
+            .build()
+            .register();
 
-    public static final RegistryObject<Block> OBSIDIAN_PLATE = registerBlock("obsidian_plate",
-            () -> new ObsidianPlateBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()), "fireResistant");
+    public static final BlockEntry<ObsidianPlateBlock> OBSIDIAN_PLATE = CSPRINGS_REGISTRATE
+            .block("obsidian_plate", ObsidianPlateBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion().sound(SoundType.METAL))
+            .item((block, properties) -> new BlockItem(block, properties.fireResistant()))
+            .build()
+            .register();
 
-    public static final RegistryObject<Block> OBSIDIAN_SLAB = registerBlock("obsidian_slab",
-            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)), "fireResistant");
+    public static final BlockEntry<SlabBlock> OBSIDIAN_SLAB = CSPRINGS_REGISTRATE
+            .block("obsidian_slab", SlabBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion().sound(SoundType.METAL))
+            .item((block, properties) -> new BlockItem(block, properties.fireResistant()))
+            .build()
+            .register();
 
-    public static final RegistryObject<Block> ANDESITE_MOLD = registerBlock("andesite_mold",
-            () -> new UnfilledAndesiteMoldBlock(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).noOcclusion()), "");
+    public static final BlockEntry<SlabBlock> ANDESITE_MOLD = CSPRINGS_REGISTRATE
+            .block("andesite_mold", SlabBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties(p -> p.noOcclusion().sound(SoundType.METAL))
+            .simpleItem()
+            .register();
 
     public static final RegistryObject<LiquidBlock> SPRING_ALLOY_FLUID = BLOCKS.register(
             "custom_fluid_block",
@@ -113,6 +141,7 @@ public class ModBlocks {
             .properties(p -> p.noOcclusion())
             .item(SpringItem::new)
             .transform(customItemModel())
+            .onRegister(movementBehaviour(new SpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
@@ -139,25 +168,11 @@ public class ModBlocks {
             .transform(BuilderTransformers.casing(() -> CSpringsSpriteShifts.SPRING_ALLOY_CASING))
             .register();
 
-    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, String ItemProperty) {
-        RegistryObject<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn, ItemProperty);
-        return toReturn;
-    }
+    public static final BlockEntry<CasingBlock> WEATHERED_IRON = CSPRINGS_REGISTRATE
+            .block("weathered_iron", CasingBlock::new)
+            .transform(BuilderTransformers.layeredCasing(() -> CSpringsSpriteShifts.WEATHERED_IRON_SIDE, () -> CSpringsSpriteShifts.WEATHERED_IRON))
+            .properties(p -> p.mapColor(MapColor.TERRACOTTA_CYAN).sound(SoundType.NETHERITE_BLOCK))
+            .register();
 
-    private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block, String ItemProperty) {
-        if(ItemProperty.isEmpty()){
-            ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
-        } else if(ItemProperty.equals("fireResistant")){
-            ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().fireResistant()));
-        } else if(ItemProperty.equals("StacksTo1")){
-            ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1)));
-        } else if (ItemProperty.equals("fireResistant, StacksTo1")){
-            ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().stacksTo(1).fireResistant()));
-        }
-    }
-
-    public static void register(IEventBus eventBus) {
-        BLOCKS.register(eventBus);
-    }
+    public static void register() {}
 }

@@ -6,8 +6,4 @@ public interface IConnectableToPSKI {
     void setStored(float newStored);
     float getHardness();
     float getImpactCof();
-
-    default void handelUnchanging(float Speed){
-        setStored(Math.max(0, getStored() - 1000 * Speed));
-    }
 }

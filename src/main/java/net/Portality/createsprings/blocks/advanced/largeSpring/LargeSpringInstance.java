@@ -21,7 +21,6 @@ import static net.Portality.createsprings.utill.Helpers.RenderHelper.*;
 import static net.Portality.createsprings.utill.Helpers.RenderHelper.createInstance;
 
 public class LargeSpringInstance {
-    private final InstancerProvider instancerProvider;
     public final BlockPos instancePos;
     public final List<OrientedInstance> rings = new ArrayList<>();
     public final List<OrientedInstance> rings_corners = new ArrayList<>();
@@ -32,12 +31,9 @@ public class LargeSpringInstance {
     Quaternionf blockOrientation;
     private int SPRING_LEN;
     public int prevLen;
-    private boolean lit;
 
     public LargeSpringInstance(InstancerProvider instancerProvider, BlockState blockState, BlockPos instancePos, boolean lit) {
-        this.instancerProvider = instancerProvider;
         this.instancePos = instancePos;
-        this.lit = lit;
 
         SPRING_LEN = Config.spring_len * 4;
         prevLen = Config.spring_len * 4;

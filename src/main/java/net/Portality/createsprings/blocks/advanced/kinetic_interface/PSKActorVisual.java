@@ -5,7 +5,6 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.actors.psi.PIInstance;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceBlock;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
-import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceRenderer;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -42,8 +41,6 @@ import static net.Portality.createsprings.utill.Helpers.RenderHelper.createInsta
 public class PSKActorVisual extends ActorVisual {
     private final PSKInstance instance;
     private final TransformedInstance connection;
-    private final OrientedInstance From;
-    private final OrientedInstance To;
 
     public PSKActorVisual(VisualizationContext visualizationContext, BlockAndTintGetter world, MovementContext context) {
         super(visualizationContext, world, context);
@@ -54,12 +51,6 @@ public class PSKActorVisual extends ActorVisual {
         instance.top.light(localBlockLight(), 0);
 
         connection = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(CSpringsPartalModels.CENTERED_SHAFT))
-                .createInstance();
-
-        From = instancerProvider.instancer(InstanceTypes.ORIENTED, Models.partial(CSpringsPartalModels.DEBUG))
-                .createInstance();
-
-        To = instancerProvider.instancer(InstanceTypes.ORIENTED, Models.partial(CSpringsPartalModels.DEBUG))
                 .createInstance();
     }
 
@@ -151,7 +142,5 @@ public class PSKActorVisual extends ActorVisual {
     protected void _delete() {
         instance.remove();
         connection.delete();
-        To.delete();
-        From.delete();
     }
 }

@@ -1,0 +1,26 @@
+package net.Portality.createsprings.blocks.advanced.Spring;
+
+import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
+import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import com.simibubi.create.content.contraptions.render.ActorVisual;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
+import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import net.Portality.createsprings.Config;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.Nullable;
+
+public class SpringMovement implements MovementBehaviour {
+    private SpringActorVisual visual;
+
+    @Override
+    public @Nullable ActorVisual createVisual(VisualizationContext visualizationContext, VirtualRenderWorld simulationWorld, MovementContext movementContext) {
+        visual = new SpringActorVisual(visualizationContext, simulationWorld, movementContext);
+        return visual;
+    }
+
+    @Override
+    public boolean disableBlockEntityRendering() {
+        return true;
+    }
+}

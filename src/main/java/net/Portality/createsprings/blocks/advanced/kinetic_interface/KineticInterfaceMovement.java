@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
+import net.Portality.createsprings.blocks.advanced.Spring.SpringMovement;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMovement;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.VecHelper;
@@ -129,37 +130,53 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
 
         if(visual != null){visual.updateSpeed(stationaryInterface.getSpeed());}
 
-        //if(stationaryInterface.isOverStressed()){return;}
-
         float collectedImpact = 0;
+
+        if (!stationaryInterface.isGenerating) {
+            if (stationaryInterface.isOverStressed()) {
+                return;
+            }
+
+            float speed = Math.abs(stationaryInterface.getSpeed());
+            if (speed < 0.1f) {
+                return;
+            }
+        }
 
         for(ConnectedToPSKIInfo info : stationaryInterface.connectedSprings) {
             IConnectableToPSKI connectedEntity = info.connectedEntity;
             float stress;
+            stress = connectedEntity.getHardness() * connectedEntity.getImpactCof();
 
             if(stationaryInterface.isGenerating){
-                stress = connectedEntity.getHardness() * connectedEntity.getImpactCof() * Math.abs(stationaryInterface.getGeneratedSpeed() / SpringBlockEntity.DEFAULT_HARDNESS) / 2;
+                float speed = Math.abs(stationaryInterface.getGeneratedSpeed());
                 if (info.connectedEntity.getStored() < stress) {
                     connectedEntity.setStored(0);
                     stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
                     continue;
                 }
 
-                collectedImpact += stress * -1 / SpringBlockEntity.DEFAULT_HARDNESS * 2;
-                connectedEntity.setStored(Math.max(0, connectedEntity.getStored() - stress));
+                collectedImpact += stress * -1;
+                connectedEntity.setStored(Math.max(0, connectedEntity.getStored() - stress * speed / SpringBlockEntity.DEFAULT_HARDNESS / 2));
             } else {
                 float speed = Math.abs(stationaryInterface.getSpeed());
-                stress = connectedEntity.getHardness() * connectedEntity.getImpactCof() * Math.abs(speed / SpringBlockEntity.DEFAULT_HARDNESS) / 2;
-                collectedImpact += stress / SpringBlockEntity.DEFAULT_HARDNESS * 2;
-                connectedEntity.setStored(Math.min(connectedEntity.getCapacity(), connectedEntity.getStored() + stress));
+
+                if (stress + connectedEntity.getStored() > connectedEntity.getCapacity()) {
+                    connectedEntity.setStored(connectedEntity.getCapacity());
+                    stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
+                    continue;
+                }
+
+                connectedEntity.setStored(Math.min(connectedEntity.getCapacity(), connectedEntity.getStored() + stress * speed / SpringBlockEntity.DEFAULT_HARDNESS / 2));
+                collectedImpact += stress;
             }
 
             stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
-            MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(context.contraption.getActorAt(info.pos).left.state());
+        }
 
-            if(behaviour instanceof LargeSpringMovement largeSpringMovement){
-                largeSpringMovement.updateRender(connectedEntity.getStored() / connectedEntity.getCapacity());
-            }
+        if(collectedImpact != 0){
+            stationaryInterface.keepAlive += 1;
+            stationaryInterface.transferTimer += 1;
         }
 
         if (stationaryInterface.stressImpact != collectedImpact) {

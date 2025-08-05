@@ -16,6 +16,7 @@ import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockE
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -83,25 +84,40 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         for (StructureTemplate.StructureBlockInfo blockInfo : contraption.getBlocks().values()) {
             if (blockInfo.state().getBlock() == ModBlocks.LARGE_SPRING.get()) {
                 // 1. Создаём BE через наш зарегистрированный тип
-                LargeSpringBlockEntity be = ModBlockEntities.LARGE_SPRING.get().create(
-                        BlockPos.ZERO,
-                        blockInfo.state()
-                );
-
-                if (be != null && blockInfo.nbt() != null) {
-                    // 2. Загружаем данные напрямую в нашу BE
-                    be.load(blockInfo.nbt());
-
-                    // 3. Инициализируем необходимые зависимости
-                    be.setLevel(level); // Передаём контекст уровня!
-
-                    connectedSprings.add(new ConnectedToPSKIInfo(
-                            blockInfo.pos(),
-                            be,
-                            (IConnectableToPSKI) be
-                    ));
-                }
+                addSpring(blockInfo, true);
+            } else if (blockInfo.state().getBlock() == ModBlocks.SPRING.get()) {
+                // 1. Создаём BE через наш зарегистрированный тип
+                addSpring(blockInfo, false);
             }
+        }
+    }
+
+    private void addSpring(StructureTemplate.StructureBlockInfo blockInfo, boolean isLarge){
+        KineticBlockEntity be;
+        if(isLarge){
+            be = ModBlockEntities.LARGE_SPRING.get().create(
+                    BlockPos.ZERO,
+                    blockInfo.state()
+            );
+        } else {
+            be = ModBlockEntities.SPRING.get().create(
+                    BlockPos.ZERO,
+                    blockInfo.state()
+            );
+        }
+
+        if (be != null && blockInfo.nbt() != null) {
+            // 2. Загружаем данные напрямую в нашу BE
+            be.load(blockInfo.nbt());
+
+            // 3. Инициализируем необходимые зависимости
+            be.setLevel(level); // Передаём контекст уровня!
+
+            connectedSprings.add(new ConnectedToPSKIInfo(
+                    blockInfo.pos(),
+                    be,
+                    (IConnectableToPSKI) be
+            ));
         }
     }
 
@@ -150,7 +166,8 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         if(isGenerating && connectedSprings != null && !connectedSprings.isEmpty()) {
             for (ConnectedToPSKIInfo info : connectedSprings) {
                 if (info.connectedEntity.getStored() > 0) {
-                    return 256; // Только если есть что отдавать
+                    if(level.getBestNeighborSignal(worldPosition) == 0){return 0;}
+                    return 16.0f * level.getBestNeighborSignal(worldPosition) + 16;
                 }
             }
         }
@@ -175,6 +192,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
     protected void stopTransferring() {
         connectedEntity = null;
         level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+        stressImpact = 0;
 
         updateGeneratedRotation();
         sendData();
@@ -206,8 +224,9 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
             transferTimer--;
             if (transferTimer == ANIMATION - 1)
                 sendData();
-            if (transferTimer <= 0 || powered)
+            if (transferTimer <= 0){
                 stopTransferring();
+            }
         }
 
         boolean isConnected = isConnected();
@@ -234,6 +253,35 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         isGenerating = compound.getBoolean("isGenerating");
         if (clientPacket && powered != poweredPreviously && !powered)
             notifyContraptions();
+
+        int size = compound.getInt("ConnectedSpringsAmount");
+        connectedSprings = new ArrayList<>();
+        for (int i = 0; i < size; i++){
+            String key = String.valueOf(i);
+            KineticBlockEntity be;
+            if(compound.getBoolean(key + "isLarge")){
+                be = ModBlockEntities.LARGE_SPRING.get().create(
+                        BlockPos.ZERO,
+                        ModBlocks.LARGE_SPRING.get().defaultBlockState()
+                );
+            } else {
+                be = ModBlockEntities.SPRING.get().create(
+                        BlockPos.ZERO,
+                        ModBlocks.LARGE_SPRING.get().defaultBlockState()
+                );
+            }
+
+            be.load(compound.getCompound(key + "nbt"));
+            be.setLevel(level);
+            BlockPos pos = NbtUtils.readBlockPos(compound.getCompound(key + "pos"));
+
+            IConnectableToPSKI iConnectableToPSKI = (IConnectableToPSKI) be;
+            connectedSprings.add(new ConnectedToPSKIInfo(
+                    pos,
+                    be,
+                    iConnectableToPSKI
+            ));
+        }
     }
 
     @Override
@@ -243,6 +291,22 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         compound.putFloat("Distance", distance);
         compound.putBoolean("Powered", powered);
         compound.putBoolean("isGenerating", isGenerating);
+
+        if(connectedSprings == null){return;}
+        compound.putInt("ConnectedSpringsAmount", connectedSprings.size());
+        for (int i = 0; i < connectedSprings.size(); i++){
+            ConnectedToPSKIInfo info = connectedSprings.get(i);
+
+            String key = String.valueOf(i);
+            compound.put(key + "nbt", info.entity.serializeNBT());
+            compound.put(key + "pos", NbtUtils.writeBlockPos(info.pos));
+
+            if(connectedSprings.get(i).entity instanceof LargeSpringBlockEntity){
+                compound.putBoolean(key + "isLarge", true);
+            } else {
+                compound.putBoolean(key + "isLarge", false);
+            }
+        }
     }
 
     public void startConnecting() {

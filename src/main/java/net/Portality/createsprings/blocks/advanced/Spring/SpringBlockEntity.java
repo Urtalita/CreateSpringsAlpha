@@ -12,6 +12,7 @@ import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
