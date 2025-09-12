@@ -32,7 +32,7 @@ public class CSpringsScenes {
 
         scene.overlay().showText(30)
                 .placeNearTarget()
-                .text("")
+                .text("Springs is able to store rotational force")
                 .pointAt(util.vector().of(1.5, 1.5, 2.5));
 
         scene.idle(30);
@@ -41,7 +41,7 @@ public class CSpringsScenes {
 
         scene.overlay().showText(30)
                 .placeNearTarget()
-                .text("")
+                .text("direction of rotation does not matter")
                 .pointAt(util.vector().of(3.5, 1.5, 2.5));
         scene.idle(35);
 
@@ -68,7 +68,7 @@ public class CSpringsScenes {
 
         scene.overlay().showText(30)
                 .placeNearTarget()
-                .text("")
+                .text("when activated spring will release stored kinetic energy")
                 .pointAt(util.vector().of(1.5, 1.5, 2.5));
         scene.idle(35);
 
@@ -93,6 +93,7 @@ public class CSpringsScenes {
     }
 
     public static void springSplash(SceneBuilder builder, SceneBuildingUtil util) {
+        /*
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("springsplash", "Using rotational force stored in springs");
         scene.configureBasePlate(0, 0, 5);
@@ -218,9 +219,12 @@ public class CSpringsScenes {
         scene.idle(1);
 
         scene.idle(40);
+
+         */
     }
 
     public static void hardness(SceneBuilder builder, SceneBuildingUtil util) {
+        /*
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("hardness", "Using spring hardness");
         scene.configureBasePlate(0, 0, 3);
@@ -278,9 +282,12 @@ public class CSpringsScenes {
         scene.idle(100);
 
         scene.idle(30);
+
+         */
     }
 
     public static void welding(SceneBuilder builder, SceneBuildingUtil util) {
+        /*
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("welding", "Using welders");
         scene.configureBasePlate(0, 0, 6);
@@ -345,5 +352,7 @@ public class CSpringsScenes {
         scene.world().rotateBearing(new BlockPos(1, 1, 3), 360 * 40, 40);
 
         scene.idle(40);
+
+         */
     }
 }

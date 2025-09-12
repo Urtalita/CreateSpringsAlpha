@@ -1,13 +1,23 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
+import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.kinetics.press.PressingBehaviour;
+import com.simibubi.create.content.kinetics.press.PressingRecipe;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
+import com.simibubi.create.foundation.recipe.RecipeApplier;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -25,6 +35,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
@@ -33,8 +44,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
@@ -51,6 +66,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
     public static final float DEFAULT_HARDNESS = 16;
     public ScrollValueBehaviour targetHardness;
+    // public SpringPressingBehaviour pressingBehaviour;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -85,6 +101,10 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         targetHardness.withCallback(this::updateHardness);
 
         behaviours.add(targetHardness);
+
+
+        //pressingBehaviour = new SpringPressingBehaviour(this);
+        //behaviours.add(pressingBehaviour);
     }
 
     @Override
@@ -274,8 +294,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     private void breakBlocksInFront(){
         BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING).getOpposite());
         BlockState breakState = level.getBlockState(pos);
+
         if(breakState.getBlock() instanceof PressurePlateBlock){return;}
         if(breakState.getBlock() instanceof KineticBlock){return;}
+        if(breakState.getBlock() == AllBlocks.DEPOT.get()){return;}
+
         breakBySpring(pos, level, stored);
     }
 
@@ -377,6 +400,102 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     public float getImpactCof() {
         return 2;
     }
+
+    //PressingBehaviorSpecifics
+
+    /*
+    @Override
+    public boolean tryProcessInBasin(boolean simulate) {return false;}
+
+    @Override
+    public boolean tryProcessOnBelt(TransportedItemStack input, List<ItemStack> outputList, boolean simulate) {
+        Optional<PressingRecipe> recipe = getRecipe(input.stack);
+        if (!recipe.isPresent())
+            return false;
+        if (simulate)
+            return true;
+        pressingBehaviour.particleItems.add(input.stack);
+        List<ItemStack> outputs = RecipeApplier.applyRecipeOn(level,
+                canProcessInBulk() ? input.stack : ItemHandlerHelper.copyStackWithSize(input.stack, 1), recipe.get());
+
+        for (ItemStack created : outputs) {
+            if (!created.isEmpty()) {
+                onItemPressed(created);
+                break;
+            }
+        }
+
+        outputList.addAll(outputs);
+        return true;
+    }
+
+    @Override
+    public boolean tryProcessInWorld(ItemEntity itemEntity, boolean simulate) {
+        ItemStack item = itemEntity.getItem();
+        Optional<PressingRecipe> recipe = getRecipe(item);
+        if (!recipe.isPresent())
+            return false;
+        if (simulate)
+            return true;
+
+        ItemStack itemCreated = ItemStack.EMPTY;
+        pressingBehaviour.particleItems.add(item);
+        if (canProcessInBulk() || item.getCount() == 1) {
+            RecipeApplier.applyRecipeOn(itemEntity, recipe.get());
+            itemCreated = itemEntity.getItem()
+                    .copy();
+        } else {
+            for (ItemStack result : RecipeApplier.applyRecipeOn(level, ItemHandlerHelper.copyStackWithSize(item, 1),
+                    recipe.get())) {
+                if (itemCreated.isEmpty())
+                    itemCreated = result.copy();
+                ItemEntity created =
+                        new ItemEntity(level, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), result);
+                created.setDefaultPickUpDelay();
+                created.setDeltaMovement(VecHelper.offsetRandomly(Vec3.ZERO, level.random, .05f));
+                level.addFreshEntity(created);
+            }
+            item.shrink(1);
+        }
+
+        if (!itemCreated.isEmpty())
+            onItemPressed(itemCreated);
+        return true;
+    }
+
+    @Override
+    public boolean canProcessInBulk() {
+        return AllConfigs.server().recipes.bulkPressing.get();
+    }
+
+    @Override
+    public void onPressingCompleted() {}
+
+    @Override
+    public int getParticleAmount() {
+        return 15;
+    }
+
+    @Override
+    public float getKineticSpeed() {
+        return getSpeed();
+    }
+
+    private static final RecipeWrapper pressingInv = new RecipeWrapper(new ItemStackHandler(1));
+
+    public Optional<PressingRecipe> getRecipe(ItemStack item) {
+        Optional<PressingRecipe> assemblyRecipe =
+                SequencedAssemblyRecipe.getRecipe(level, item, AllRecipeTypes.PRESSING.getType(), PressingRecipe.class);
+        if (assemblyRecipe.isPresent())
+            return assemblyRecipe;
+
+        pressingInv.setItem(0, item);
+        return AllRecipeTypes.PRESSING.find(pressingInv, level);
+    }
+
+    public void onItemPressed(ItemStack result) {}
+
+     */
 
     private class SpringValueBoxTransform extends ValueBoxTransform.Sided {
 

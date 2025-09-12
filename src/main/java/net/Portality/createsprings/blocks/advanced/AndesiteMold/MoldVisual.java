@@ -6,6 +6,8 @@ import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
+import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
@@ -25,6 +27,7 @@ public class MoldVisual extends AbstractBlockEntityVisual implements SimpleDynam
         mold = createInstance(CSpringsPartalModels.MOLD, instancerProvider());
         mold.position(getVisualPosition().getX(), getVisualPosition().getY(), getVisualPosition().getZ());
         applyBaseTransformations(mold, moldBlockEntity.getBlockState().getValue(FACING));
+        mold.rotateDegrees(90, Direction.Axis.X);
 
         coil = createInstance(CSpringsPartalModels.LARGE_SPRING_COIL, instancerProvider());
         coil.position(getVisualPosition().getX(), getVisualPosition().getY(), getVisualPosition().getZ());
@@ -55,6 +58,12 @@ public class MoldVisual extends AbstractBlockEntityVisual implements SimpleDynam
 
     @Override
     public void beginFrame(Context context) {
-
+        if(blockEntity instanceof MoldBlockEntity moldBlockEntity){
+            if(!moldBlockEntity.filled){
+                coil.setVisible(false);
+            } else {
+                coil.setVisible(true);
+            }
+        }
     }
 }

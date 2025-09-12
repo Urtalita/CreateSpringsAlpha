@@ -15,13 +15,13 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.
 import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBase;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringFan.SpringFan;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSaw;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.Items.advanced.hat.HatModel;
-import net.Portality.createsprings.fluid.ModFluids;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -58,41 +58,55 @@ public class ModItems {
     public static final ItemEntry<SpringBase> SPRING_BASE = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_base", SpringBase::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<SpringDrill> SPRING_DRILL = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_drill", SpringDrill::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<SpringLauncher> SPRING_LAUNCHER = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_launcher", SpringLauncher::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<SpringSaw> SPRING_SAW = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_saw", SpringSaw::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<SpringShove> SPRING_SHOVE = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_shove", SpringShove::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
+            .register();  // add to spring tools list
+
+    public static final ItemEntry<SpringFan> SPRING_FAN = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_fan", SpringFan::new)
+            .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<ChamberItem> EXPLOSION_CHAMBER = CreateSprings.CSPRINGS_REGISTRATE
             .item("explosion_chamber", ChamberItem::new)
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<PortativeSteamEngineItem> PORTATIVE_STEAM_ENGINE = CreateSprings.CSPRINGS_REGISTRATE
             .item("portative_steam_engine", PortativeSteamEngineItem::new)
             .model(AssetLookup.customGenericItemModel("_", "item"))
             .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
     public static final ItemEntry<Item> SPRING_PROJECTILE_ITEM = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_projectile", Item::new)
+            .model(AssetLookup.itemModel("spring_projectile"))
             .register();
 
     public static final RegistryObject<Item> SUS_PACKAGE = ITEMS.register("sus_package",
@@ -102,20 +116,11 @@ public class ModItems {
             .item("hat", HatItem::new)
             .properties(p -> p.stacksTo(1))
             .onRegister(CreateRegistrate.itemModel(() -> HatModel::new))
+            .model(AssetLookup.itemModel("hat"))
             .register();
 
     public static final RegistryObject<Item> HITBOX_HAT = ITEMS.register("hitbox_hat",
             () -> new PackageItem(new Item.Properties(), new PackageStyles.PackageStyle("cardboard", 10, 7, 18f, false)));
-
-    public static final RegistryObject<Item> SPRING_ALLOY_BUCKET = ITEMS.register(
-            "spring_alloy_bucket",
-            () -> new BucketItem(
-                    ModFluids.SOURCE,
-                    new Item.Properties()
-                            .craftRemainder(Items.BUCKET)
-                            .stacksTo(1)
-            )
-    );
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

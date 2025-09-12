@@ -15,6 +15,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -42,6 +43,11 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
     @Override
     public BlockEntityType<? extends SpringCoilBlockEntity> getBlockEntityType() {
         return ModBlockEntities.LARGE_SPRING_COIL.get();
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState p_60550_) {
+        return RenderShape.INVISIBLE;
     }
 
     @Override

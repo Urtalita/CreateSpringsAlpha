@@ -9,6 +9,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -60,6 +61,7 @@ public class SpringBase extends Item implements CustomArmPoseItem {
 
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
         SpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 
@@ -78,6 +80,16 @@ public class SpringBase extends Item implements CustomArmPoseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         SpeedSys.appendHoverText(stack, level, tooltip, flag);
         core.appendHoverText(stack, level, tooltip, flag);
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
+        super.readShareTag(stack, nbt);
+    }
+
+    @Override
+    public @Nullable CompoundTag getShareTag(ItemStack stack) {
+        return super.getShareTag(stack);
     }
 
     @Override

@@ -11,16 +11,17 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
-import net.Portality.createsprings.utill.CSpringsScrollValueHandler;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class SpringDrillRenderer extends CustomRenderedItemModelRenderer {
 
-    protected final PartialModel Head = PartialModel.of(CreateSprings.asResource("item/drill/drill_head"));
+    protected final PartialModel Head = CSpringsPartalModels.SPRING_DRILL_HEAD;
     SpringBaseRenderer baseRenderer = new SpringBaseRenderer();
 
     @Override
@@ -31,8 +32,10 @@ public class SpringDrillRenderer extends CustomRenderedItemModelRenderer {
 
         CompoundTag tag = stack.getOrCreateTag();
 
-        double Speed = tag.getDouble("Speed") / 100;
-        float scroll = CSpringsScrollValueHandler.getScroll(stack, AnimationTickHolder.getPartialTicks(), (float) Speed) / 25f;
+        double speed = SpringBaseRenderer.getSpeed(tag);
+        speed = SpringBaseRenderer.isTooFast(tag, speed);
+
+        float scroll = (float) (AnimationTickHolder.getRenderTime() * speed * 2 % 360);
 
         float zOffset = -1/16f;
         ms.translate(0, 0, -zOffset);

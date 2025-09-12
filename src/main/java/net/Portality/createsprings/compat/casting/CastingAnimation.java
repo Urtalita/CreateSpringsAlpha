@@ -9,7 +9,7 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.compat.jei.category.animations.AnimatedSpout;
 import com.simibubi.create.foundation.fluid.FluidRenderer;
-import net.Portality.createsprings.fluid.ModFluids;
+import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -72,7 +72,7 @@ public class CastingAnimation extends AnimatedKinetics {
         matrixStack.scale(16, 16, 16);
         float from = 3f / 16f;
         float to = 17f / 16f;
-        FluidStack fluidStack = new FluidStack(ModFluids.SOURCE.get(),  1000);
+        FluidStack fluidStack = new FluidStack(CSpringsFluids.SPRING_ALLOY.get(),  1000);
 
         ForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluidStack, from, from, from, to, to, to, graphics.bufferSource(), matrixStack, LightTexture.FULL_BRIGHT, false, true);
         matrixStack.popPose();

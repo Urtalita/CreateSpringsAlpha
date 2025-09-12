@@ -9,7 +9,6 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.utill.CSpringsPartalModels;
-import net.Portality.createsprings.utill.CSpringsScrollValueHandler;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,7 +24,7 @@ import static net.Portality.createsprings.utill.CSpringsPartalModels.SPRING_PIEC
 import static net.Portality.createsprings.utill.CSpringsPartalModels.SPRING_PLATE;
 
 public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
-    protected final PartialModel Stress_Arrow = PartialModel.of(CreateSprings.asResource("item/drill/speedometer_arrow"));
+    protected final PartialModel Stress_Arrow = CSpringsPartalModels.STRESS_ARROW;
 
     private static final RandomSource RANDOM = RandomSource.create();
 
@@ -105,5 +104,13 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
     public static double getSpeed(CompoundTag tag){
         return Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1)
                 % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
+    }
+
+    public static double isTooFast(CompoundTag tag, double speed){
+        double actualSpeed = Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("LastSpeed") / 100);;
+        if(speed > actualSpeed){
+            return actualSpeed;
+        }
+        return speed;
     }
 }

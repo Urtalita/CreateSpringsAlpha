@@ -15,33 +15,37 @@ public class CSpringsPartalModels {
         SPRING_PIECE = block("spring/springpiece"),
         SPRING_PLATE = block("spring/springplate"),
         LARGE_SPRING_PLATE = block("spring/large_spring_plate"),
-        SPRING_RING = block("spring/springring"),
 
-    SPRING_SAW = item("saw/saw"),
-        SAW_HEAD = item("saw/saw_head"),
-        SAW_SHAFT = item("saw/saw_shaft"),
+    SPRING_SAW = item("spring_saw/saw"),
+        SAW_HEAD = item("spring_saw/saw_head"),
+        SAW_SHAFT = item("spring_saw/saw_shaft"),
 
-    SPRING_SHOVE = item("spring_shove_head"),
+    SPRING_SHOVE = item("spring_shove/head"),
 
     SUS_BOX = block("sus_box"),
 
-    SPRING_TOOL_SPRING_PLATE = item("drill/spring_tool_spring_plate"),
-    SPRING_TOOL_SPRING_PIECE = item("drill/spring_tool_spring_piece"),
+    SPRING_TOOL_SPRING_PLATE = item("spring_drill/spring_tool_spring_plate"),
+    SPRING_TOOL_SPRING_PIECE = item("spring_drill/spring_tool_spring_piece"),
 
-    CHAMBER_SPRING_PIECE = item("chamber/chamber_spring_piece"),
-    CHAMBER_SPRING_PLATE = item("chamber/chamber_spring_plate"),
-    CHAMBER_GUNPOWDER = item("chamber/chamber_gunpowder"),
+    CHAMBER_SPRING_PIECE = item("explosion_chamber/chamber_spring_piece"),
+    CHAMBER_SPRING_PLATE = item("explosion_chamber/chamber_spring_plate"),
+    CHAMBER_GUNPOWDER = item("explosion_chamber/chamber_gunpowder"),
 
     HAT = armor("hat"),
     HAT2 = armor("hat2"),
     HAT3 = armor("hat3"),
     HAT4 = armor("hat4"),
 
-    PORTATIVE_ENGINE = item("engine/base"),
-    ENGINE_SHAFT = item("engine/shaft"),
-    ENGINE_MID = item("engine/mid"),
-    ENGINE_PISTON = item("engine/piston"),
-    WHOLE_ENGINE = item("engine/portative_steam_engine"),
+    PORTATIVE_ENGINE = item("portative_steam_engine/base"),
+    ENGINE_SHAFT = item("portative_steam_engine/shaft"),
+    ENGINE_MID = item("portative_steam_engine/mid"),
+    ENGINE_PISTON = item("portative_steam_engine/piston"),
+    WHOLE_ENGINE = item("portative_steam_engine/portative_steam_engine"),
+
+    STRESS_ARROW = item("spring_drill/speedometer_arrow"),
+    SPRING_DRILL_HEAD = item("spring_drill/drill_head"),
+
+    SPRING_FAN_HEAD = item("spring_fan/fan"),
 
     MOLD = block("andesite_mold"),
 

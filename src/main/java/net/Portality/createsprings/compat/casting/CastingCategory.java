@@ -9,7 +9,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.compat.Welding.AnimatedWelder;
-import net.Portality.createsprings.fluid.ModFluids;
+import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.Portality.createsprings.recipe.Casting.CastingRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.minecraft.client.Minecraft;
@@ -36,7 +36,7 @@ public class CastingCategory extends CreateRecipeCategory<CastingRecipe> impleme
                 .setBackground(getRenderedSlot(), -1, -1)
                 .addIngredients(Ingredient.of(ModBlocks.ANDESITE_MOLD.get().asItem()));
 
-        addFluidSlot(builder, 27, 32, new FluidStack(ModFluids.SOURCE.get(),  500));
+        addFluidSlot(builder, 27, 32, new FluidStack(CSpringsFluids.SPRING_ALLOY.get(),  500));
 
         builder
                 .addSlot(RecipeIngredientRole.OUTPUT, 132, 51)

@@ -67,6 +67,7 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
 
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
         SpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 

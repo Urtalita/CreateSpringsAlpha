@@ -32,26 +32,6 @@ import static net.createmod.ponder.PonderClient.isGameActive;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class CSpringsClientEvents {
-    @SubscribeEvent
-    public static void onTick(TickEvent.ClientTickEvent event) {
-        if (!isGameActive()) return;
-
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            ItemStack stack = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
-            animationTick(stack);
-            stack = mc.player.getItemInHand(InteractionHand.OFF_HAND);
-            animationTick(stack);
-        }
-    }
-
-    private static void animationTick(ItemStack stack) {
-        Item item = stack.getItem();
-        if (item instanceof SpringDrill || item instanceof SpringSaw || item instanceof SpringShove) {
-            CSpringsScrollValueHandler.tick(stack);
-        }
-    }
-
     @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModBusEvents {
 

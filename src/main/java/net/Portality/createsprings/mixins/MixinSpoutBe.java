@@ -6,8 +6,7 @@ import com.simibubi.create.content.fluids.spout.SpoutBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.fluid.ModFluids;
-import net.Portality.createsprings.fluid.SpringAlloyType;
+import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -65,7 +64,7 @@ public abstract class MixinSpoutBe {
         } else {
             FluidStack currentFluidInTank = getCurrentFluidInTank();
             if (processingTicks == -1 && (((SpoutBlockEntity) be).isVirtual() || !level.isClientSide())
-                    && currentFluidInTank.getFluid().getFluidType() == ModFluids.SPRING_ALLOY_TYPE.get()
+                    && currentFluidInTank.getFluid().getFluidType() == CSpringsFluids.SPRING_ALLOY.getType()
                     && currentFluidInTank.getAmount() >= 500) {
 
                 BlockPos filling = pos.below(2);

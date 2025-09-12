@@ -10,6 +10,7 @@ import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class CSpringsPonderPlugin implements PonderPlugin {
+
     @Override
     public String getModId() {
         return CreateSprings.MODID;

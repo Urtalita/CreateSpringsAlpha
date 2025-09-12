@@ -1,6 +1,8 @@
 package net.Portality.createsprings;
 
+import com.simibubi.create.CreateClient;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.infrastructure.data.CreateDatagen;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
@@ -16,10 +18,12 @@ import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
-import net.Portality.createsprings.fluid.ModFluids;
+import net.Portality.createsprings.datagen.CSpringsDatagen;
+import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.Portality.createsprings.menus.MenuInit;
 import net.Portality.createsprings.menus.ModCreativeModeTabs;
 import net.Portality.createsprings.menus.Spring.SpringScreen;
+import net.Portality.createsprings.particles.CSpringsParticles;
 import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
@@ -40,6 +44,7 @@ import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEv
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -78,15 +83,16 @@ public class CreateSprings {
         ModRecipes.register(modEventBus);
         CSpringsPartalModels.register();
         ModEntities.register(modEventBus);
+        CSpringsParticles.register(modEventBus);
 
-        ModFluids.FLUID_TYPES.register(modEventBus);
-        ModFluids.FLUIDS.register(modEventBus);
+        //ModFluids.FLUID_TYPES.register(modEventBus);
         MenuInit.MENUS.register(modEventBus);
 
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModEntities::registerEntityAttributes);
         modEventBus.addListener(CreateSprings::onRegister);
+        modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);
@@ -99,6 +105,10 @@ public class CreateSprings {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, "create_springs-common.toml");
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
+
+        CSpringsFluids.register();
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CSpringsClient.onCtorClient(modEventBus, forgeBus));
     }
 
     private void test(GatherDataEvent event){

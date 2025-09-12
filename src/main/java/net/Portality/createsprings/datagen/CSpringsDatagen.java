@@ -1,30 +1,35 @@
 package net.Portality.createsprings.datagen;
 
-import com.simibubi.create.foundation.data.DamageTypeTagGen;
-import com.simibubi.create.infrastructure.data.GeneratedEntriesProvider;
+import com.simibubi.create.AllKeys;
+import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.Create;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
+import com.tterrag.registrate.providers.ProviderType;
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.Entities.damage.CSpringsEntriesProvider;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 public class CSpringsDatagen {
-
     public static void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput output = generator.getPackOutput();
-        ExistingFileHelper existing = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
+        addExtraRegistrateData();
+    }
 
-        CSpringsEntriesProvider generatedEntriesProvider = new CSpringsEntriesProvider(output, lookupProvider);
-        lookupProvider = generatedEntriesProvider.getRegistryProvider();
-        generator.addProvider(event.includeServer(), generatedEntriesProvider);
+    private static void addExtraRegistrateData() {
+        CreateSprings.CSPRINGS_REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
+            BiConsumer<String, String> langConsumer = provider::add;
+
+            providePonderLang(langConsumer);
+        });
+    }
+
+    private static void providePonderLang(BiConsumer<String, String> consumer) {
+        // Register this since FMLClientSetupEvent does not run during datagen
+        PonderIndex.addPlugin(new CSpringsPonderPlugin());
+
+        PonderIndex.getLangAccess().provideLang(CreateSprings.MODID, consumer);
     }
 }

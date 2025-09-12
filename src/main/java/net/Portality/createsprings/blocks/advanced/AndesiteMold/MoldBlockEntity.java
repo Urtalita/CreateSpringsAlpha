@@ -3,15 +3,18 @@ package net.Portality.createsprings.blocks.advanced.AndesiteMold;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.fluids.spout.SpoutBlockEntity;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.depot.DepotBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -25,13 +28,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class MoldBlockEntity extends SmartBlockEntity implements Container{
-    private NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
+public class MoldBlockEntity extends SmartBlockEntity {
+    public ItemStack heldStack = ItemStack.EMPTY;
 
     public boolean filled = true;
     private int delay = 20;
@@ -39,7 +44,7 @@ public class MoldBlockEntity extends SmartBlockEntity implements Container{
 
     public MoldBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        items.set(0, new ItemStack(ModBlocks.LARGE_SPRING_COIL.get().asItem()));
+        heldStack = new ItemStack(ModBlocks.LARGE_SPRING_COIL.get().asItem());
     }
 
     public float getDelay(float pt){
@@ -67,58 +72,70 @@ public class MoldBlockEntity extends SmartBlockEntity implements Container{
     }
 
     @Override
-    public int getContainerSize() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return items.get(0).isEmpty();
-    }
-
-    @Override
-    public ItemStack getItem(int slot) {
-        return items.get(slot);
-    }
-
-    @Override
-    public ItemStack removeItem(int slot, int amount) {
-        ItemStack result = ContainerHelper.removeItem(items, slot, amount);
-        setChanged();
-        filled = false;
-        return result;
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return ContainerHelper.takeItem(items, slot);
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        items.set(slot, stack);
-        setChanged();
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return false;
-    }
-
-    @Override
-    public void clearContent() {
-        items.clear();
-    }
-
-    @Override
     protected void read(CompoundTag tag, boolean clientPacket) {
         super.read(tag, clientPacket);
-        ContainerHelper.saveAllItems(tag, items);
+        heldStack = ItemStack.of(tag.getCompound("heldStack"));
     }
 
     @Override
     protected void write(CompoundTag tag, boolean clientPacket) {
         super.write(tag, clientPacket);
-        ContainerHelper.loadAllItems(tag, items);
+        tag.put("heldStack", heldStack.serializeNBT());
     }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            return LazyOptional.of(() -> new IItemHandler() {
+                private final int OUTPUT_SLOT = 0;
+                private final int SLOT_COUNT = 1;
+
+                @Override
+                public int getSlots() {
+                    return SLOT_COUNT;
+                }
+
+                @Override
+                public @NotNull ItemStack getStackInSlot(int slot) {
+                    if (slot == OUTPUT_SLOT) {
+                        return heldStack;
+                    }
+                    return ItemStack.EMPTY;
+                }
+
+                @Override
+                public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+                    if (!(stack.getItem() == ModBlocks.LARGE_SPRING_COIL.get().asItem())) {
+                        return stack;
+                    }
+
+                    ItemStack result = ItemStack.EMPTY;
+                    return result;
+                }
+
+                @Override
+                public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+                    if (slot != OUTPUT_SLOT || amount <= 0 || heldStack.isEmpty()) {
+                        return ItemStack.EMPTY;
+                    }
+                    ItemStack extracted = heldStack.copyWithCount(1);
+                    filled = false;
+
+                    return extracted;
+                }
+
+                @Override
+                public int getSlotLimit(int slot) {
+                    return 1;
+                }
+
+                @Override
+                public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+                    return slot == OUTPUT_SLOT && stack.getItem() == ModBlocks.LARGE_SPRING_COIL.get().asItem();
+                }
+            }).cast();
+        }
+        return super.getCapability(cap, side);
+    }
+
 }

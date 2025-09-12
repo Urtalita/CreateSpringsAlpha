@@ -4,6 +4,7 @@ import net.Portality.createsprings.Config;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPRING_ALLOY.get());
                         pOutput.accept(ModItems.SPRING_ALLOY_SHEET.get());
                         pOutput.accept(ModItems.SPRING_ALLOY_NUGGET.get());
+                        pOutput.accept(CSpringsFluids.SPRING_ALLOY.getBucket().get());
                         pOutput.accept(ModItems.PUNCHCARD.get());
 
                         pOutput.accept(ModBlocks.OBSIDIAN_SLAB.get());
@@ -46,15 +48,18 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.WEATHERED_IRON.get());
                         pOutput.accept(ModBlocks.UNFINISHED_SPRING.get());
                         pOutput.accept(ModBlocks.SPRING.get());
+
                         pOutput.accept(spring);
-                        pOutput.accept(ModBlocks.FRICTION_WELDER.get());
+
+                        pOutput.accept(ModBlocks.FRICTION_WELDER.asStack());
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.FILLED_ANDESITE_MOLD.get());
                         pOutput.accept(ModBlocks.LARGE_SPRING_COIL.get());
-                        pOutput.accept(ModBlocks.KINETIC_INTERFACE.get());
-                        pOutput.accept(box);
 
-                        pOutput.accept(ModItems.SPRING_ALLOY_BUCKET.get());
+                        pOutput.accept(ModBlocks.KINETIC_INTERFACE.get());
+
+
+                        pOutput.accept(box);
 
                         pOutput.accept(ModItems.HAT.get());
 
@@ -63,12 +68,12 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModItems.SPRING_DRILL.get());
                         pOutput.accept(ModItems.SPRING_SAW.get());
                         pOutput.accept(ModItems.SPRING_SHOVE.get());
+                        pOutput.accept(ModItems.SPRING_FAN.get());
                         pOutput.accept(ModItems.EXPLOSION_CHAMBER);
                         pOutput.accept(ModItems.PORTATIVE_STEAM_ENGINE);
 
                         pOutput.accept(ModBlocks.TEST);
                         pOutput.accept(ModBlocks.LARGE_SPRING);
-
                     })
                     .build());
 
