@@ -21,11 +21,11 @@ import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SP
 
 public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
 
-    protected final PartialModel LAUNCHER_SPRING_UNCHARGED = PartialModel.of(CreateSprings.asResource("item/launcher/spring_uncharged"));;
-    protected final PartialModel LAUNCHER_SPRING_CHARGED = PartialModel.of(CreateSprings.asResource("item/launcher/spring_charged"));;
-    protected final PartialModel LAUNCHER_AMMO = PartialModel.of(CreateSprings.asResource("item/launcher/spring_ammo"));;
-    protected final PartialModel LAUNCHER_SPYGLASS = PartialModel.of(CreateSprings.asResource("item/launcher/spyglass"));;
-    protected final PartialModel LAUNCHER_BLOCK_AMMO = PartialModel.of(CreateSprings.asResource("item/launcher/spring_alloy_block_ammo"));
+    protected final PartialModel LAUNCHER_SPRING_UNCHARGED = PartialModel.of(CreateSprings.asResource("item/spring_launcher/spring_uncharged"));;
+    protected final PartialModel LAUNCHER_SPRING_CHARGED = PartialModel.of(CreateSprings.asResource("item/spring_launcher/spring_charged"));;
+    protected final PartialModel LAUNCHER_AMMO = PartialModel.of(CreateSprings.asResource("item/spring_launcher/spring_ammo"));;
+    protected final PartialModel LAUNCHER_SPYGLASS = PartialModel.of(CreateSprings.asResource("item/spring_launcher/spyglass"));;
+    protected final PartialModel LAUNCHER_BLOCK_AMMO = PartialModel.of(CreateSprings.asResource("item/spring_launcher/spring_alloy_block_ammo"));
 
     @Override
     protected void render(ItemStack stack, CustomRenderedItemModel model, PartialItemModelRenderer renderer, ItemDisplayContext transformType, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {

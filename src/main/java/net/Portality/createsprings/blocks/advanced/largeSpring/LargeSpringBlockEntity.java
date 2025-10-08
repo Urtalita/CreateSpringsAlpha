@@ -1,15 +1,14 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
+import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.Portality.createsprings.contraption.SpringContraption;
@@ -22,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,10 +33,11 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.*;
 import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 
-public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, IConnectableToPSKI {
+public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, IConnectableToPSKI, ISpringBE {
 
     public float progress;
     public float stored = 0;
@@ -335,24 +336,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
     }
 
-    public void onExploded(float distance, float power, BlockPos sourcePos){
-        int oldLen = Mth.floor(platePos(progress));
-        stored += power / distance * 40000 / 9;
-        if(stored > capacity){stored = capacity;}
-        prevProgress = progress;
-        progress = stored / capacity;
-        int newLen = Mth.floor(platePos(progress));
-
-        if(newLen == oldLen){return;}
-
-        Direction facing = getFacing();
-
-        for(int i = newLen; i <= oldLen; i++){
-            removeLayer(i, facing);
-            curLen--;
-        }
-    }
-
     private Vec3 getContraptionPos(float progress){
         return CspringsMath.MoveWithoutVectors(
                 platePos(progress),
@@ -631,5 +614,45 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     @Override
     public float getImpactCof() {
         return 18;
+    }
+
+    @Override
+    public void onBlockExploded(BlockPos pos, Explosion explosion) {
+        Vec3 ExpPos = explosion.getPosition();
+        Vec3 BlPos = pos.getCenter();
+
+        Vec3 distVector = BlPos.subtract(ExpPos);
+        float distance = (float) distVector.length();
+        Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING).getOpposite();
+        float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
+
+        if(coef < 0.30f){
+            return;
+        }
+
+        onExploded(distance, 4, pos);
+    }
+
+    public void onExploded(float distance, float power, BlockPos sourcePos){
+        int oldLen = Mth.floor(platePos(progress));
+        stored += power / distance * 40000 / 8;
+        if(stored > capacity){stored = capacity;}
+        prevProgress = progress;
+        progress = stored / capacity;
+        int newLen = Mth.floor(platePos(progress));
+
+        sendData();
+        notifyUpdate();
+
+        if(newLen == oldLen){return;}
+
+        Direction facing = getFacing();
+
+        for(int i = newLen; i <= oldLen; i++){
+            removeLayer(i, facing);
+            curLen--;
+        }
+
+        updateGeneratedRotation();
     }
 }

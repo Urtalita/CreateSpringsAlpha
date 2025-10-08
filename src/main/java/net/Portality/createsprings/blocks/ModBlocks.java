@@ -1,49 +1,36 @@
 package net.Portality.createsprings.blocks;
 
-import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
 import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.foundation.data.*;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
-import net.Portality.createsprings.Items.advanced.frictionWelder.WelderItem;
 import net.Portality.createsprings.blocks.advanced.AndesiteMold.AndesiteMoldBlock;
-import net.Portality.createsprings.blocks.advanced.AndesiteMold.UnfilledAndesiteMoldBlock;
 import net.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
 import net.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlock;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringMovement;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultItem;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlock;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlock;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceMovement;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
-import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringExstentionBlock;
+import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockExstentionBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMovement;
 import net.Portality.createsprings.blocks.advanced.test.TestBlock;
 import net.Portality.createsprings.utill.CSpringsAssetLookup;
-import net.Portality.createsprings.utill.CSpringsBlockStateGen;
 import net.Portality.createsprings.utill.CSpringsSpriteShifts;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-
-import java.util.Properties;
-import java.util.function.Supplier;
 
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
@@ -140,8 +127,8 @@ public class ModBlocks {
             .simpleItem()
             .register();
 
-    public static final BlockEntry<LargeSpringExstentionBlock> LARGE_SPRING_EXTENTION = CSPRINGS_REGISTRATE
-            .block("large_spring_extention", LargeSpringExstentionBlock::new)
+    public static final BlockEntry<LargeSpringBlockExstentionBlock> LARGE_SPRING_EXTENTION = CSPRINGS_REGISTRATE
+            .block("large_spring_extention", LargeSpringBlockExstentionBlock::new)
             .initialProperties(SharedProperties::copperMetal)
             .properties(p -> p.noOcclusion())
             .tag(AllTags.AllBlockTags.COPYCAT_DENY.tag)
@@ -179,6 +166,16 @@ public class ModBlocks {
             .blockstate(BlockStateGen.directionalBlockProvider(false))
             .onRegister(movementBehaviour(new SpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .register();
+
+    public static final BlockEntry<SpringCatapultBlock> SPRING_CATAPULT = CSPRINGS_REGISTRATE
+            .block("spring_catapult", SpringCatapultBlock::new)
+            .initialProperties(SharedProperties::wooden)
+            .transform(axeOrPickaxe())
+            .properties(p -> p.noOcclusion())
+            .item(CatapultItem::new).build()
+            .blockstate(BlockStateGen.directionalBlockProvider(false))
+            .addLayer(() -> RenderType::cutoutMipped)
             .register();
 
     public static final BlockEntry<TestBlock> TEST = CSPRINGS_REGISTRATE

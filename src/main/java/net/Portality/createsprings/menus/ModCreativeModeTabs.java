@@ -48,6 +48,7 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.WEATHERED_IRON.get());
                         pOutput.accept(ModBlocks.UNFINISHED_SPRING.get());
                         pOutput.accept(ModBlocks.SPRING.get());
+                        pOutput.accept(ModBlocks.SPRING_CATAPULT);
 
                         pOutput.accept(spring);
 

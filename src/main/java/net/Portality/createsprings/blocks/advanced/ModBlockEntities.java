@@ -9,6 +9,9 @@ import net.Portality.createsprings.blocks.advanced.AndesiteMold.MoldVisual;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringVisual;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlockEntity;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultRenderer;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultVisual;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilRenderer;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
@@ -53,6 +56,13 @@ public class ModBlockEntities {
             .visual(() -> SpringVisual::new, false)
             .renderer(() -> SpringRenderer::new)
             .validBlocks(ModBlocks.SPRING)
+            .register();
+
+    public static final BlockEntityEntry<SpringCatapultBlockEntity> SPRING_CATAPULT = CSPRINGS_REGISTRATE
+            .blockEntity("spring_catapult", SpringCatapultBlockEntity::new)
+            .visual(() -> SpringCatapultVisual::new)
+            .validBlocks(ModBlocks.SPRING_CATAPULT)
+            .renderer(() -> SpringCatapultRenderer::new)
             .register();
 
     public static final BlockEntityEntry<WelderBlockEntity> FRICTION_WELDER = CSPRINGS_REGISTRATE

@@ -1,28 +1,18 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllRecipeTypes;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
-import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
-import com.simibubi.create.content.kinetics.press.PressingBehaviour;
-import com.simibubi.create.content.kinetics.press.PressingRecipe;
-import com.simibubi.create.content.processing.basin.BasinBlockEntity;
-import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
-import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.recipe.RecipeApplier;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
@@ -35,7 +25,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
@@ -44,16 +34,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 
-public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI {
+public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI, ISpringBE {
 
     public final float capacity;
     public float stored = 0;
@@ -105,6 +92,25 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         //pressingBehaviour = new SpringPressingBehaviour(this);
         //behaviours.add(pressingBehaviour);
+    }
+
+    public void onBlockExploded(BlockPos pos, Explosion explosion) {
+        Vec3 ExpPos = explosion.getPosition();
+        Vec3 BlPos = pos.getCenter();
+
+        Vec3 distVector = BlPos.subtract(ExpPos);
+        float distance = (float) distVector.length();
+        float power = 4;
+        Direction facing = getBlockState().getValue(FACING);
+        float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
+
+        if(coef < 0.30f){
+            return;
+        }
+
+        stored += power / distance * 20000 * coef;
+        if(stored > capacity) stored = capacity;
+        updateGeneratedRotation();
     }
 
     @Override
@@ -168,6 +174,10 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         else if (!isGenerating) {
             stored = Mth.clamp(stored + CurSpeed / DEFAULT_HARDNESS * hardness, 0, capacity);
+        }
+
+        if(stored == 0){
+            updateGeneratedRotation();
         }
 
         prevProgress = progress;

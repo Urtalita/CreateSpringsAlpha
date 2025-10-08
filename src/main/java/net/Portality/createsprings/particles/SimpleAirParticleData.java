@@ -63,7 +63,7 @@ public class SimpleAirParticleData implements ParticleOptions, ICustomParticleDa
 
     @Override
     public ParticleType<?> getType() {
-        return AllParticleTypes.AIR_FLOW.get();
+        return CSpringsParticles.SIMPLE_AIR_PARTICLE.get();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SimpleAirParticleData implements ParticleOptions, ICustomParticleDa
 
     @Override
     public String writeToString() {
-        return String.format(Locale.ROOT, "%s %d %d %d", AllParticleTypes.AIR_FLOW.parameter(), posX, posY, posZ);
+        return String.format(Locale.ROOT, "%s %d %d %d", CSpringsParticles.SIMPLE_AIR_PARTICLE.parameter(), posX, posY, posZ);
     }
 
     @Override

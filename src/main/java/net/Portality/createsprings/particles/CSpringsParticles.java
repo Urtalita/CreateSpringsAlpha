@@ -12,6 +12,7 @@ import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
 import com.simibubi.create.content.trains.CubeParticleData;
 import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
+import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -27,19 +28,7 @@ import java.util.function.Supplier;
 
 public enum CSpringsParticles {
 
-    ROTATION_INDICATOR(RotationIndicatorParticleData::new),
-    AIR_FLOW(AirFlowParticleData::new),
-    AIR(AirParticleData::new),
-    STEAM_JET(SteamJetParticleData::new),
-    CUBE(CubeParticleData::new),
-    FLUID_PARTICLE(FluidParticleData::new),
-    BASIN_FLUID(FluidParticleData::new),
-    FLUID_DRIP(FluidParticleData::new),
-    WIFI(WiFiParticle.Data::new),
-    SOUL(SoulParticle.Data::new),
-    SOUL_BASE(SoulBaseParticle.Data::new),
-    SOUL_PERIMETER(SoulParticle.PerimeterData::new),
-    SOUL_EXPANDING_PERIMETER(SoulParticle.ExpandingPerimeterData::new);
+    SIMPLE_AIR_PARTICLE(SimpleAirParticleData::new);
 
     private final CSpringsParticles.ParticleEntry<?> entry;
 
@@ -67,7 +56,7 @@ public enum CSpringsParticles {
     }
 
     private static class ParticleEntry<D extends ParticleOptions> {
-        private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, Create.ID);
+        private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, CreateSprings.MODID);
 
         private final String name;
         private final Supplier<? extends ICustomParticleData<D>> typeFactory;

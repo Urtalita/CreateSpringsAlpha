@@ -13,6 +13,7 @@ import static com.simibubi.create.AllContraptionTypes.BY_LEGACY_NAME;
 
 public class CspringsContraptionTypes {
     public static final Holder.Reference<ContraptionType> SPRING = register("spring", SpringContraption::new);
+    public static final Holder.Reference<ContraptionType> SPRING_CATAPULT = register("spring_catapult", SpringCatapultContraption::new);
 
     private static Holder.Reference<ContraptionType> register(String name, Supplier<? extends Contraption> factory) {
         ContraptionType type = new ContraptionType(factory);

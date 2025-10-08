@@ -136,4 +136,9 @@ public class SpringSpeedSys {
         speed = Math.max(speed + add, 0);
         tag.putDouble("Speed", speed);
     }
+
+    public static double getSpeedCoef(ItemStack stack){
+        double speed = stack.getOrCreateTag().getDouble("Speed");
+        return speed / 5000D;
+    }
 }

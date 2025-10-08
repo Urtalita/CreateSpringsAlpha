@@ -1,26 +1,16 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.content.kinetics.RotationPropagator;
-import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.Items.ModItems;
-import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.MinecartTNT;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -33,27 +23,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.ticks.TickPriority;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import static net.minecraft.world.level.block.WeepingVinesPlantBlock.SHAPE;
 
-public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity> {
+public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock {
     public SpringBlock(Properties properties) {
         super(properties);
     }
-    private static Field radiusField;
 
     @Override
     public boolean canDropFromExplosion(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
@@ -63,21 +46,13 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     @Override
     public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
         Vec3 ExpPos = explosion.getPosition();
-        Vec3 BlPos = pos.getCenter();
 
-        Vec3 distVector = BlPos.subtract(ExpPos);
-        float distance = (float) distVector.length();
-        float power = 4;
         Direction facing = state.getValue(FACING);
         float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
 
         if(coef < 0.30f){
             super.onBlockExploded(state, level, pos, explosion);
         }
-
-        withBlockEntityDo(level, pos, be ->{
-            be.stored += power / distance * 20000 * coef;
-        });
     }
 
     public static float getSpringChargeCoefficient(Direction facing, BlockPos springPos, Vec3 explosionPos) {

@@ -10,6 +10,7 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.particles.SimpleAirParticleData;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.particles.ParticleOptions;
@@ -69,6 +70,7 @@ public class SpringFan extends Item implements CustomArmPoseItem {
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
         SpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
 
+
         if(slotIndex != selectedIndex){
             if(slotIndex != 40){ // 40 - index for off hand in inventory
                 return;
@@ -77,7 +79,8 @@ public class SpringFan extends Item implements CustomArmPoseItem {
 
         final Vec3 vec = player.getViewVector(1);
         double distance = 10;
-        double launchVelocity = -0.15f;
+        double coef = SpringSpeedSys.getSpeedCoef(stack);
+        double launchVelocity = -0.15f * coef;
         if(player.isShiftKeyDown()){launchVelocity *= -1;}
         // Находим сущность в направлении взгляда
 
@@ -102,15 +105,21 @@ public class SpringFan extends Item implements CustomArmPoseItem {
             }
         }
 
-        if(isPlayerCreativeFlying(player)){return;}
         Vec3 playerMotion = new Vec3(vec.x * launchVelocity, vec.y * launchVelocity / 3, vec.z * launchVelocity);
+
+        if(level.isClientSide){
+            if(level.getGameTime() % Math.floor(21 - coef * 20) == 0){
+                Vec3 start = player.getEyePosition(1.0F);
+                start = start.add(playerMotion.scale(-8 * 7 * coef));
+
+                Vec3 particleMotion = playerMotion.scale(7 * coef);
+                level.addParticle(new SimpleAirParticleData(), start.x, start.y, start.z, particleMotion.x, particleMotion.y, particleMotion.z);
+            }
+        }
+
+        if(isPlayerCreativeFlying(player)){return;}
         playerMotion = calibratePushOnElytra(playerMotion, player);
         player.setDeltaMovement(player.getDeltaMovement().add(playerMotion.scale(-0.25)));
-
-        Vec3 start = player.getEyePosition(1.0F);
-
-        if (level.random.nextFloat() < AllConfigs.client().fanParticleDensity.get())
-            level.addParticle(ParticleTypes.FIREWORK, start.x, start.y, start.z, playerMotion.x, playerMotion.y, playerMotion.z);
     }
 
     private Vec3 calibratePushOnElytra(Vec3 motion, Player player){

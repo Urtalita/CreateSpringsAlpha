@@ -42,12 +42,38 @@ public class RenderHelper {
         MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress ,orientedInstance, movementDirection, pos);
     }
 
+    public static void MoveToPos(float StartPos, float EndPos, OrientedInstance orientedInstance, float Progress, Vec3i movementDirection, Vec3 pos){
+        MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress ,orientedInstance, movementDirection, pos);
+    }
+
+    public static void MoveToPos(float StartPos, float EndPos, OrientedInstance orientedInstance, float Progress, Vec3 movementDirection, Vec3 pos){
+        MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress ,orientedInstance, movementDirection, pos);
+    }
+
+    public static void MoveWithoutVectors(float Moving, OrientedInstance instance, Vec3 movementDirection, Vec3 pos){
+        float offset = 1 - Moving - 0.5f;
+        instance.position(
+                (float) (pos.x + movementDirection.x * offset),
+                (float) (pos.y + movementDirection.y * offset),
+                (float) (pos.z + movementDirection.z * offset)
+        ).setChanged();
+    }
+
     public static void MoveWithoutVectors(float Moving, OrientedInstance instance, Vec3i movementDirection, BlockPos pos){
         float offset = 1 - Moving - 0.5f;
         instance.position(
                 (pos.getX() + movementDirection.getX() * offset),
                 (pos.getY() + movementDirection.getY() * offset),
                 (pos.getZ() + movementDirection.getZ() * offset)
+        ).setChanged();
+    }
+
+    public static void MoveWithoutVectors(float Moving, OrientedInstance instance, Vec3i movementDirection, Vec3 pos){
+        float offset = 1 - Moving - 0.5f;
+        instance.position(
+                (float) (pos.x + movementDirection.getX() * offset),
+                (float) (pos.y + movementDirection.getY() * offset),
+                (float) (pos.z + movementDirection.getZ() * offset)
         ).setChanged();
     }
 

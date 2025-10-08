@@ -1,38 +1,33 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.createmod.catnip.math.VecHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.extensions.IForgeBlock;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.DEFAULT_HARDNESS;
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, ISpringBE {
     public ScrollValueBehaviour targetHardness;
 
     public ExtentionBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -73,7 +68,26 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
         }
     }
 
+    public void onBlockExploded(BlockPos pos, Explosion explosion) {
+        Vec3 ExpPos = explosion.getPosition();
+        Vec3 BlPos = pos.getCenter();
 
+        Vec3 distVector = BlPos.subtract(ExpPos);
+        float distance = (float) distVector.length();
+        Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING).getOpposite();
+        float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
+
+        if(coef < 0.30f){
+            return;
+        }
+
+        BlockPos pos1 = getBePos(worldPosition, getBlockState().getValue(FACING), level);
+        if(pos1 == null){return;}
+
+        if(level.getBlockEntity(pos1) instanceof LargeSpringBlockEntity largeSpringBlockEntity){
+            largeSpringBlockEntity.onExploded(distance, 4, pos);
+        }
+    }
 
     private BlockPos getBePos(BlockPos pos, Direction facing, Level level){
         facing = facing.getOpposite();

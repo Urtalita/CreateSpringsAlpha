@@ -258,7 +258,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
     }
 
     public void sendPacket() {
-        NetworkHandler.CHANNEL.sendToServer(new PunchcardUpdatePacket(tag));
+        //NetworkHandler.CHANNEL.sendToServer(new PunchcardUpdatePacket(tag));
     }
 
     @Override

@@ -1,11 +1,11 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.api.equipment.goggles.IProxyHoveringInformation;
-import com.simibubi.create.content.kinetics.waterwheel.LargeWaterWheelBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import net.Portality.createsprings.blocks.advanced.Spring.ISpringBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -23,15 +23,13 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.extensions.IForgeBlock;
 
-import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 
-public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity>, IProxyHoveringInformation {
+public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements IBE<ExtentionBlockEntity>, IProxyHoveringInformation, ISpringBlock {
     public static final IntegerProperty COMPRESSION = IntegerProperty.create("compression", 0, 16);
-    public LargeSpringExstentionBlock(Properties p_52591_) {
+    public LargeSpringBlockExstentionBlock(Properties p_52591_) {
         super(p_52591_.dynamicShape());
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.UP)
@@ -42,16 +40,10 @@ public class LargeSpringExstentionBlock extends DirectionalBlock implements IBE<
     @Override
     public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
         Vec3 ExpPos = explosion.getPosition();
-        Vec3 BlPos = pos.getCenter();
-
-        Vec3 distVector = BlPos.subtract(ExpPos);
-        float distance = (float) distVector.length();
-        float power = 4;
         float coef = getSpringChargeCoefficient(state.getValue(FACING).getOpposite(), pos, ExpPos);
 
-        LargeSpringBlockEntity be = getBe(pos, state.getValue(FACING), level);
-        if(be != null){
-            be.onExploded(distance, power * coef, pos);
+        if(coef < 0.30f){
+            super.onBlockExploded(state, level, pos, explosion);
         }
     }
 

@@ -56,6 +56,9 @@ public class CSpringsPartalModels {
 
     DEBUG = block("debug"),
 
+    SPRING_CATAPULT_CONNECTION = block("spring_catapult/connections"),
+    SPRING_CATAPULT_HOLDER = block("spring_catapult/second_connections"),
+
     WelderHead = block("friction_welder/top"),
             LARGE_SPRING_COIL_ROTATED = block("large_spring_coil_partal_rotated"),
     LARGE_SPRING_COIL = block("large_spring_coil_partal"),

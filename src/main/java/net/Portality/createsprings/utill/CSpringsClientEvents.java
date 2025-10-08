@@ -1,14 +1,18 @@
 package net.Portality.createsprings.utill;
 
 import com.simibubi.create.CreateClient;
+import com.simibubi.create.content.contraptions.actors.trainControls.ControlsHandler;
 import com.simibubi.create.content.equipment.armor.BacktankArmorLayer;
 import com.simibubi.create.content.equipment.hats.CreateHatArmorLayer;
+import com.simibubi.create.content.kinetics.fan.AirCurrent;
+import com.simibubi.create.content.redstone.link.controller.LinkedControllerClientHandler;
 import com.simibubi.create.content.trains.schedule.hat.TrainHatInfoReloadListener;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill.SpringDrill;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw.SpringSaw;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.SpringShove;
+import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.PartPose;
@@ -21,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -41,6 +46,15 @@ public class CSpringsClientEvents {
                     .getEntityRenderDispatcher();
             EngineArmorLayer.registerOnAll(dispatcher);
         }
+    }
 
+    @SubscribeEvent
+    public static void onTick(TickEvent.ClientTickEvent event) {
+        if (!isGameActive())
+            return;
+
+        Level world = Minecraft.getInstance().level;
+
+        CatapultTargetHandler.tick();
     }
 }
