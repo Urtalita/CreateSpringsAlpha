@@ -28,13 +28,6 @@ public class SpringCatapultBlock extends DirectionalKineticBlock implements IBE<
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         withBlockEntityDo(worldIn, pos, be -> be.upsideDown = state.getValue(FACING) == Direction.DOWN);
-        withBlockEntityDo(worldIn, pos, be -> {
-            try {
-                be.assemble();
-            } catch (AssemblyException e) {
-                throw new RuntimeException(e);
-            }
-        });
         super.onPlace(state, worldIn, pos, oldState, isMoving);
     }
 

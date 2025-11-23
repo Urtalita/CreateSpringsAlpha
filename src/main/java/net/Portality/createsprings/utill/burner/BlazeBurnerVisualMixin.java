@@ -8,7 +8,7 @@ import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.transform.Translate;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.mixins.CshatAccessor;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.client.renderer.LightTexture;

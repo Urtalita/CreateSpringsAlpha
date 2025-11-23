@@ -1,9 +1,16 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine;
 
-import com.simibubi.create.AllTags;
-import com.simibubi.create.Create;
+import com.simibubi.create.*;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.content.equipment.armor.BaseArmorItem;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
+import com.simibubi.create.content.kinetics.steamEngine.SteamEngineBlock;
+import com.simibubi.create.content.kinetics.steamEngine.SteamJetParticleData;
+import com.simibubi.create.content.logistics.filter.AttributeFilterMenu;
+import com.simibubi.create.content.logistics.filter.FilterItem;
+import com.simibubi.create.content.logistics.filter.FilterMenu;
+import com.simibubi.create.content.logistics.filter.PackageFilterMenu;
 import com.simibubi.create.foundation.item.LayeredArmorItem;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.CspringsArmorMaterials;
@@ -11,33 +18,66 @@ import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
+import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
+import net.Portality.createsprings.menus.PortativeEngine.PortativeEngineScreen;
+import net.Portality.createsprings.menus.PortativeEngine.PortativeSteamEngineMenu;
+import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
+import net.Portality.createsprings.server.BoostPSEPacket;
+import net.Portality.createsprings.server.CSpringsPackets;
+import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
-public class PortativeSteamEngineItem extends ArmorItem {
+public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider {
     public static final EquipmentSlot SLOT = EquipmentSlot.CHEST;
 
     private final SpringPoweredCore core;
@@ -64,8 +104,43 @@ public class PortativeSteamEngineItem extends ArmorItem {
         return item;
     }
 
+    @Nonnull
+    public InteractionResult useOn(UseOnContext context) {
+        return context.getPlayer() == null ? InteractionResult.PASS : this.use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if(player.isShiftKeyDown()){
+            if (!level.isClientSide && player instanceof ServerPlayer) {
+                ServerPlayer serverPlayer = (ServerPlayer)player;
+                openScreen(serverPlayer, stack);
+            }
+            return new InteractionResultHolder<>(InteractionResult.CONSUME, stack);
+        }
+        return super.use(level, player, hand);
+    }
+
+    public void openScreen(ServerPlayer serverPlayer, ItemStack stack){
+        NetworkHooks.openScreen(serverPlayer, this, (buf) -> {
+            buf.writeItem(stack);
+        });
+    }
+
+    public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+        ItemStack heldItem = player.getMainHandItem();
+        return PortativeSteamEngineMenu.create(id, inv, heldItem);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return this.getDescription();
+    }
+
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        super.overrideStackedOnOther(stack, slot, action, player);
         if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
@@ -74,28 +149,12 @@ public class PortativeSteamEngineItem extends ArmorItem {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess access) {
+        int boosted = stack1.getOrCreateTag().getInt("boosted");
+        if(boosted < 99){
+            super.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access);
+        }
+
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)) {
-            return true;
-        }
-
-        if(AllTags.AllItemTags.BLAZE_BURNER_FUEL_REGULAR.matches(stack2.getItem())){
-            int burnTime = ForgeHooks.getBurnTime(stack2, null);
-
-            CompoundTag tag = stack1.getOrCreateTag();
-            int fuel = tag.getInt("fuel");
-            if(fuel + burnTime < 1000){
-                stack2.setCount(0);
-                tag.putInt("fuel", fuel + burnTime);
-                return true;
-            }
-        }
-
-        if(core.addStackedLogick(ModItems.PUNCHCARD.get() ,stack1, stack2, action, player)){
-            CompoundTag tag = stack1.getOrCreateTag();
-            int fuel = tag.getInt("fuel");
-            int water = tag.getInt("water");
-            tag.putInt("fuel", fuel + 200);
-            tag.putInt("water", water + 200);
             return true;
         }
         return false;
@@ -103,16 +162,20 @@ public class PortativeSteamEngineItem extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        core.appendHoverText(stack, level, tooltip, flag);
         CompoundTag tag = stack.getOrCreateTag();
+        ItemStack lastFuel = ItemStack.of(stack.getOrCreateTag().getCompound("burnStack"));
 
         int water = (int) (tag.getInt("water") / 1000f * 20f);
         int fuel = (int) (tag.getInt("fuel") / 1000f * 20f);
         if(water > 20 || fuel > 20){return;}
         int remainingwater = 20 - water;
         int remainingfuel = 20 - fuel;
-        tooltip.add(Component.literal("|".repeat(water)).withStyle(ChatFormatting.BLUE).append(Component.literal("|".repeat(remainingwater)).withStyle(ChatFormatting.GRAY)));
-        tooltip.add(Component.literal("|".repeat(fuel)).withStyle(ChatFormatting.RED).append(Component.literal("|".repeat(remainingfuel)).withStyle(ChatFormatting.GRAY)));
+        tooltip.add(Component.literal("|".repeat(water)).withStyle(ChatFormatting.BLUE)
+                .append(Component.literal("|".repeat(remainingwater)).withStyle(ChatFormatting.GRAY)));
+
+        tooltip.add(Component.literal("|".repeat(fuel)).withStyle(ChatFormatting.RED)
+                .append(Component.literal("|".repeat(remainingfuel)).withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(" + " + lastFuel.getCount()).withStyle(ChatFormatting.GRAY)));
     }
 
     @Override
@@ -123,22 +186,180 @@ public class PortativeSteamEngineItem extends ArmorItem {
     @Override
     public void onArmorTick(ItemStack stack, Level level, Player player) {
         super.onArmorTick(stack, level, player);
+        CompoundTag tag = stack.getOrCreateTag();
+
+        if(tag.getBoolean("boost")) {
+            int boosted = tag.getInt("boosted");
+
+            if(boosted > 110){
+                player.addDeltaMovement(new Vec3(0, 0.5f, 0));
+                if(level.getGameTime() % 2 == 0){
+                    AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
+                }
+                player.setDeltaMovement(0, 0.5f, 0);
+                Vec3 offset = new Vec3(0, -0.5f, 0);
+                Vec3 v = offset.scale(0.5).add(player.position().add(0, 0, 0));
+                Vec3 m = offset;
+                level.addParticle(new SteamJetParticleData(1.0F), v.x, v.y, v.z, m.x, m.y, m.z);
+
+                if(boosted > 115){
+                    level.explode(
+                            null,
+                            player.position().x,
+                            player.position().y,
+                            player.position().z,
+                            1f,
+                            false,
+                            Level.ExplosionInteraction.MOB
+                    );
+                    player.getItemBySlot(EquipmentSlot.CHEST).setCount(0);
+                    CSpringsAdvancements.EXPLOSION.awardTo(player);
+                    return;
+                }
+            }
+            int dash = tag.getInt("DashTicks");
+
+            if(dash > 0){
+                player.fallDistance = 0;
+                if(dash > 39){
+                    tag.putInt("boosted", boosted - 3);
+                    AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                }
+                tag.putInt("DashTicks", dash - 1);
+            }
+        }
 
         if(level.getGameTime() % 5 != 0){
             return;
         }
 
+        int speed = tag.getInt("engineSpeed");
+        if(tag.getBoolean("boost")){speed = 150;}
+
+        int fuel = tag.getInt("fuel");
+        int water = tag.getInt("water");
+
+        int mode = (int) tag.getFloat("mode");
+
+        if(mode > 0){
+            if(fuel <= 0){
+                ItemStack lastFuel = ItemStack.of(stack.getOrCreateTag().getCompound("burnStack"));
+
+                lastFuel.shrink(1);
+                stack.getOrCreateTag().put("burnStack", lastFuel.serializeNBT());
+                fuel += ForgeHooks.getBurnTime(lastFuel, null);
+                tag.putInt("fuel", fuel);
+
+                if(player.containerMenu instanceof PortativeSteamEngineMenu menu){
+                    menu.shrink();
+                }
+            }
+            tag.putFloat("engineSpeed", tag.getFloat("mode"));
+        }
+
+        if(fuel >= mode / 15 * 3){
+            fuel -= mode / 15 * 3;
+        } else if (fuel == 0){
+            tag.putFloat("engineSpeed", 0);
+        } else {
+            fuel = 0;
+        }
+
+        if(speed != 0){
+            if(level.getGameTime() % (200 / (speed / 15)) == 0){
+                if(tag.getBoolean("boost")){
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                }
+                AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
+                spawnParticles(level, player);
+            }
+        }
+
+        tag.putInt("fuel", fuel);
+        tag.putInt("water", 500);
+        int boosted = tag.getInt("boosted");
+
+        if(boosted > 0){
+            if(tag.getBoolean("boost")){
+
+                if(boosted > 100){
+                    spawnParticles(level, player);
+                    AllSoundEvents.SCHEMATICANNON_LAUNCH_BLOCK.playOnServer(level, BlockPos.containing(player.position()).above(), 0.5f, 1f);
+                    spawnItems(level, player, AllItems.COPPER_NUGGET.asItem());
+                }
+                tag.putInt("boosted", boosted + 1);
+            } else {
+                tag.putInt("boosted", boosted - 1);
+            }
+
+            if(20 - (int) (boosted / 100f * 20) < 0){
+                if(level.getGameTime() % 10 > 5){
+                    player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.RED), true);
+                } else {
+                    player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.DARK_RED), true);
+                }
+                return;
+            }
+
+            MutableComponent boost, indicator, left;
+            boost = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
+            if(boosted >= 70){
+                indicator = Component.literal("|").withStyle(ChatFormatting.DARK_RED);
+            } else {
+                indicator = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY);
+            }
+            left = Component.literal("|".repeat(20 - (int) (boosted / 100f * 20))).withStyle(ChatFormatting.GRAY);
+
+            if(boosted <= 100 && level.isClientSide()){
+                player.displayClientMessage(boost.append(indicator).append(left), true);
+            } else if(level.isClientSide()){
+                player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.RED), true);
+            }
+        }
+
+        int actual = mode / 15;
+
+        if(mode > 0){
+            charge(stack, level, player, actual);
+        }
+
+        switch (mode / 15){
+            case 4: chargeTanks(stack, level, player, actual);
+            case 5: chargeTanks(stack, level, player, actual); speedUp(stack, level, player, actual);
+            case 6: chargeTanks(stack, level, player, actual); speedUp(stack, level, player, actual);
+        }
+    }
+
+    private void chargeTanks(ItemStack stack, Level level, Player player, int mode) {
+        for (ItemStack item : player.getInventory().items) {
+            if(item.getItem() == AllItems.COPPER_BACKTANK.get() || item.getItem() == AllItems.NETHERITE_BACKTANK.get()){
+                if(item.getOrCreateTag().getFloat("Air") <= 950){
+                    item.getOrCreateTag().putFloat("Air",item.getOrCreateTag().getFloat("Air") + 2f / 6f * mode);
+                }
+            }
+        }
+    }
+
+    private void speedUp(ItemStack stack, Level level, Player player, int mode){
+
+    }
+
+    private void charge(ItemStack stack, Level level, Player player, int mode){
         CompoundTag tag = stack.getOrCreateTag();
         float Stored0 = tag.getFloat("Stored0");
         float Stored1 = tag.getFloat("Stored1");
         int speed = tag.getInt("engineSpeed");
         int springs = tag.getInt("Springs_rn");
 
-        startEngine(tag);
         if(speed == 0){return;}
 
-        Stored0 += speed;
-        Stored1 += speed;
+        Stored0 += speed * 3;
+        Stored1 += speed * 3;
 
         if(springs > 0){
             tag.putFloat("Stored0", Stored0);
@@ -146,7 +367,100 @@ public class PortativeSteamEngineItem extends ArmorItem {
                 tag.putFloat("Stored1", Stored1);
             }
         }
+
+        ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if(handStack.getItem() instanceof SpringItem){
+            float charge = SpringItem.getStoredSu(handStack);
+            SpringItem.SetSu(handStack, charge + speed * 2);
+        }
+
+        for(Item tool : CreateSprings.SPRING_TOOLS){
+            if(tool == handStack.getItem()){
+                if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
+                    float[] charge = SpringPoweredCore.getAllStored(2, handStack.getOrCreateTag());
+                    charge[0] += speed;
+                    charge[1] += speed;
+                    SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());
+                }
+            }
+        }
     }
+
+    public static void steamDash(Player player, Level level){
+        if(level.isClientSide()){return;}
+
+        PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(Minecraft.getInstance().player);
+        if(item != null){
+            ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
+            CompoundTag tag = stack.getOrCreateTag();
+            int boosted = tag.getInt("boosted");
+            int speed = tag.getInt("engineSpeed");
+            int mode = speed / 15;
+
+
+            if(mode > 2 && boosted > 70){
+
+                if(boosted > 100){return;}
+
+                Vec3 view = player.getViewVector(0.5f);
+                player.setDeltaMovement(new Vec3(view.x * 3, view.y / 2 * 3, view.z * 3));
+                player.hurtMarked = true;
+                player.setSecondsOnFire(1);
+
+                if(tag.getInt("DashTicks") > 0){
+                    CSpringsAdvancements.DASH.awardTo(player);
+                }
+
+                tag.putInt("DashTicks", 60);
+                level.playSound(null, player.getOnPos().above(2),
+                        SoundEvents.FIREWORK_ROCKET_LAUNCH,
+                        SoundSource.NEUTRAL, 0.5F, 1.2F);
+            }
+        }
+    }
+
+    public static void spawnItems(Level level, LivingEntity entity, Item items){
+        Random random = new Random();
+        Vec3 eyePosition = entity.getEyePosition();
+
+        ItemStack stack = new ItemStack(items);
+        ItemEntity item = new ItemEntity(level, eyePosition.x, eyePosition.y, eyePosition.z, stack);
+
+        double speed = 0.15 * 2;
+
+        double motionX = (random.nextDouble() - 0.5) * 2 * speed;
+        double motionY = random.nextDouble() * speed + 0.1;
+        double motionZ = (random.nextDouble() - 0.5) * 2 * speed;
+
+        item.setDeltaMovement(motionX, motionY, motionZ);
+        item.setPickUpDelay(20);
+        item.lifespan = 60 * 20 * 5;
+
+        level.addFreshEntity(item);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void spawnParticles(Level level, Player player) {
+        Direction facing = player.getDirection().getOpposite();
+        Vec3 offset = VecHelper.rotate((new Vec3(0.0, 0.0, 1.0)).add(VecHelper.offsetRandomly(Vec3.ZERO, level.random, 1.0F).multiply(1.0, 1.0, 0.0).normalize().scale(0.5)), (double)AngleHelper.verticalAngle(facing), Direction.Axis.X);
+        offset = VecHelper.rotate(offset, (double)AngleHelper.horizontalAngle(facing), Direction.Axis.Y);
+        Vec3 v = offset.scale(0.5).add(player.position().add(0, 1.5f, 0));
+        Vec3 m = offset.subtract(Vec3.atLowerCornerOf(facing.getNormal()).scale(0.75));
+        level.addParticle(new SteamJetParticleData(1.0F), v.x, v.y, v.z, m.x, m.y, m.z);
+    }
+
+    private ItemStack ParseInv(Player player){
+        for (ItemStack item : player.getInventory().items) {
+            if(ForgeHooks.getBurnTime(item, (RecipeType)null) > 0){
+                ItemStack another = item.copy();
+                item.setCount(0);
+                return another;
+            }
+        }
+
+        return null;
+    }
+    /*
 
     private void startEngine(CompoundTag tag){
         int fuel = tag.getInt("fuel");
@@ -157,8 +471,10 @@ public class PortativeSteamEngineItem extends ArmorItem {
             return;
         }
 
-        tag.putInt("fuel", fuel - 1);
-        tag.putInt("water", water - 1);
-        tag.putFloat("engineSpeed", 10);
+        tag.putInt("fuel", 500);
+        tag.putInt("water", 500);
+        tag.putFloat("engineSpeed", tag.getFloat("targetSpeed"));
     }
+
+     */
 }

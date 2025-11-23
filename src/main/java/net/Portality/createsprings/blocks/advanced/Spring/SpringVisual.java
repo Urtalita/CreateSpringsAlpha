@@ -4,13 +4,11 @@ import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
 import dev.engine_room.flywheel.api.instance.Instance;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
-import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
-import dev.engine_room.flywheel.lib.model.Models;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -68,7 +66,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
         instance.rotation(rot).setChanged();
     }
 
-    public void beginFrame(Context context) {
+    public void beginFrame(DynamicVisual.Context context) {
         animate(context.partialTick());
     }
 

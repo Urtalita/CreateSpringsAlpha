@@ -7,18 +7,13 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRendere
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SPRING_LEN;

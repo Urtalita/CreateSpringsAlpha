@@ -6,7 +6,7 @@ import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;

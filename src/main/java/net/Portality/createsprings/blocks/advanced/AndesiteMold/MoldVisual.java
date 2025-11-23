@@ -1,21 +1,16 @@
 package net.Portality.createsprings.blocks.advanced.AndesiteMold;
 
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.visual.AbstractBlockEntityVisual;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
 
 import java.util.function.Consumer;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
-import static net.Portality.createsprings.utill.Helpers.RenderHelper.applyBaseTransformations;
 import static net.Portality.createsprings.utill.Helpers.RenderHelper.createInstance;
 
 public class MoldVisual extends AbstractBlockEntityVisual implements SimpleDynamicVisual {

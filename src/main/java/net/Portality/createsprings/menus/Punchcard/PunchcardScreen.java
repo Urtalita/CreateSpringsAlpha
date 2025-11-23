@@ -9,10 +9,9 @@ import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardFunction;
-import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.server.PunchcardUpdatePacket;
-import net.Portality.createsprings.utill.CSpringsGuiTextures;
+import net.Portality.createsprings.client.CSpringsGuiTextures;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
@@ -258,7 +257,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
     }
 
     public void sendPacket() {
-        //NetworkHandler.CHANNEL.sendToServer(new PunchcardUpdatePacket(tag));
+        NetworkHandler.CHANNEL.sendToServer(new PunchcardUpdatePacket(tag));
     }
 
     @Override

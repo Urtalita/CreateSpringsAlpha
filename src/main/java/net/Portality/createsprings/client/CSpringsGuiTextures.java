@@ -1,6 +1,5 @@
-package net.Portality.createsprings.utill;
+package net.Portality.createsprings.client;
 
-import com.simibubi.create.Create;
 import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -14,7 +13,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public enum CSpringsGuiTextures implements ScreenElement, TextureSheetSegment {
     PUNCHCARD_BG("punchcard_background", 0, 0, 256, 256),
     PUNCHCARD_ACTION("action", 0, 0, 67, 18),
-    PUNCHCARD_ACTION_PARAMETER("action", 67, 0, 61, 18)
+    PUNCHCARD_ACTION_PARAMETER("action", 67, 0, 61, 18),
+    LEVER_BASE("lever_base", 0, 0, 80, 30),
+    LEVER_HEAD("lever", 0, 0, 20, 100),
+    PORTATIVE_STEAM_BG("portative_steam_engine_bg", 0, 0, 256, 256),
+    PORTATIVE_STEAM_BG_POWERED("portative_steam_engine_bg_powered", 0, 0, 256, 256),
+    PORTATIVE_STEAM_SIDE("portative_steam_engine_side", 0, 0, 256, 256),
+    PORTATIVE_STEAM_SIDE_RIGHT("portative_steam_engine_side_right", 0, 0, 256, 256),
+    PORTATIVE_STEAM_BOOST("portative_steam_engine_boost", 0, 0, 256, 256),
+    PORTATIVE_STEAM_CORNER("portative_steam_engine_corner", 0, 0, 256, 256),
+    NO_BOOST("no_boost", 0, 0, 256, 256)
     ;
 
     public static final int FONT_COLOR = 0x575F7A;

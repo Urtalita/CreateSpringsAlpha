@@ -6,6 +6,7 @@ import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
+import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -114,7 +116,21 @@ public class SpringSpeedSys {
 
         if(speed > 0) {
             if(AnimationTickHolder.getTicks(level) % 40 == 0) {
-                changeSpeed(tag, -40);
+                ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
+                if(chestStack.getItem() instanceof PortativeSteamEngineItem){
+                    if (speed < 7500){
+                        if(chestStack.getOrCreateTag().getFloat("engineSpeed") < 30){
+                            changeSpeed(tag, -40);
+                        } else {
+                            tag.putDouble("LastSpeed", speed);
+                            tag.putDouble("Speed", speed);
+                        }
+                    } else {
+                        changeSpeed(tag, -40);
+                    }
+                } else {
+                    changeSpeed(tag, -40);
+                }
             }
 
             if(tag.getBoolean("splash")){

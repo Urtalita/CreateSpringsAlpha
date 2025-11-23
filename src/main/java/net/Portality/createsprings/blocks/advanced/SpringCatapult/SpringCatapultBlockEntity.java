@@ -69,7 +69,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     public BlockPos target = null;
 
     CatapultLauncher launcher;
-    CatapultMode mode = CatapultMode.WAITING;
+    CatapultMode mode = CatapultMode.NO_TARGET;
 
     public FilteringBehaviour filtering;
 
@@ -478,31 +478,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
             }
         }
         dropContent(worldPosition);
-    }
-
-    public void assemble() throws AssemblyException {
-        if (!(level.getBlockState(worldPosition)
-                .getBlock() instanceof SpringCatapultBlock))
-            return;
-
-        SpringCatapultContraption contraption = new SpringCatapultContraption(getBlockState().getValue(FACING));
-        boolean canAssembleStructure = contraption.assemble(level, worldPosition);
-
-        if (!canAssembleStructure) {
-            return;
-        }
-
-        movedContraption = ControlledContraptionEntity.create(level, this, contraption);
-
-        movedContraption.setPos(worldPosition.above(2).getCenter().add(0.5f, -8/16f, 0));
-        movedContraption.setAngle(180);
-
-        level.addFreshEntity(movedContraption);
-
-        if (contraption.containsBlockBreakers())
-            award(AllAdvancements.CONTRAPTION_ACTORS);
-
-        sendData();
     }
 
     public void dropContent(BlockPos pos){

@@ -1,13 +1,14 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -39,7 +40,7 @@ public class SpringCoilVisual extends SingleAxisRotatingVisual<SpringCoilBlockEn
     }
 
     @Override
-    public void beginFrame(Context context) {
+    public void beginFrame(DynamicVisual.Context context) {
         animate();
     }
 

@@ -1,6 +1,10 @@
 package net.Portality.createsprings;
 
+import com.simibubi.create.AllFluids;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.simibubi.create.foundation.item.ItemDescription;
+import com.simibubi.create.foundation.item.KineticStats;
+import com.simibubi.create.foundation.item.TooltipModifier;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
@@ -16,7 +20,11 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBlock;
+import net.Portality.createsprings.client.CSpringsMenus;
+import net.Portality.createsprings.client.Keybindings;
+import net.Portality.createsprings.compat.ColdSweatCompatibilityManager;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.datagen.CSpringsDatagen;
 import net.Portality.createsprings.fluid.CSpringsFluids;
 import net.Portality.createsprings.menus.MenuInit;
@@ -28,18 +36,23 @@ import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessRecipe;
 import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.server.NetworkHandler;
+import net.Portality.createsprings.client.CSpringsPartalModels;
+import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -55,12 +68,18 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
+import java.util.List;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreateSprings.MODID)
 public class CreateSprings {
 
     public static final String MODID = "createsprings";
-    public static final CreateRegistrate CSPRINGS_REGISTRATE = CreateRegistrate.create(CreateSprings.MODID);
+    public static final CreateRegistrate CSPRINGS_REGISTRATE =
+            CreateRegistrate.create(CreateSprings.MODID)
+                    .setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                    .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+            );
     public static Item[] SPRING_TOOLS;
 
     public CreateSprings() {
@@ -69,7 +88,6 @@ public class CreateSprings {
 
     public CreateSprings(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-        //modEventBus.addListener(this::test);
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         ModBlocks.register();
@@ -81,12 +99,12 @@ public class CreateSprings {
         ModEntities.register(modEventBus);
         CSpringsParticles.register(modEventBus);
         CSpringsPackets.registerPackets();
+        CSpringsMenus.register();
 
         //ModFluids.FLUID_TYPES.register(modEventBus);
         MenuInit.MENUS.register(modEventBus);
 
         modEventBus.addListener(this::clientSetup);
-        modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ModEntities::registerEntityAttributes);
         modEventBus.addListener(CreateSprings::onRegister);
@@ -107,9 +125,12 @@ public class CreateSprings {
         CSpringsFluids.register();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CSpringsClient.onCtorClient(modEventBus, forgeBus));
+
+        ColdSweatCompatibilityManager.checkAndLoadCompatibility();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        CSpringsFluids.registerFluidInteractions();
         event.enqueueWork(() -> {
             SPRING_TOOLS = new Item[]{
                     ModItems.SPRING_BASE.get(),
@@ -170,11 +191,22 @@ public class CreateSprings {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event){
             event.enqueueWork(() -> {
-               //NetworkHandler.register();
+               NetworkHandler.register();
                PunchcardInterpritator.registerActions();
+               CSpringsAdvancements.register();
             });
         }
+
+        @SubscribeEvent
+        public static void registerKeys(RegisterKeyMappingsEvent event){
+            event.register(Keybindings.INSTANCE.PSEOpenKey);
+            event.register(Keybindings.INSTANCE.PSEBoostKey);
+            event.register(Keybindings.INSTANCE.PSEDashKey);
+        }
     }
+
+    //end of @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    //TODO made a separate class for that
 
     @SubscribeEvent
     public void onExplosionStart(ExplosionEvent.Start event) {

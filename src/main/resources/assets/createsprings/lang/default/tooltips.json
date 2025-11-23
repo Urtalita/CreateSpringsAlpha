@@ -1,0 +1,9 @@
+{
+  "item.createsprings.portative_steam_engine.tooltip.summary": "Маломощный _Паровой двигатель_, способен _заряжать инструменты_, _освещать путь_ а ещё _согревать и ускорять игроков_",
+  "item.createsprings.portative_steam_engine.tooltip.condition1": "При нажатии Z",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Открывает интерфейс двигателя где можно _Выбрать режим работы_, переключить _Форсаж_ или добавить _Топливо_",
+  "item.createsprings.portative_steam_engine.tooltip.condition2": "При нажатии X",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour2": "Переключает _Форсаж_ на лету",
+  "item.createsprings.portative_steam_engine.tooltip.condition3": "При нажатии G",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour3": "Позволяет совершить _Паровой рывок_ когда уровень _Форсажа_ больше _70_, также снизит уровень _Форсажа_"
+}

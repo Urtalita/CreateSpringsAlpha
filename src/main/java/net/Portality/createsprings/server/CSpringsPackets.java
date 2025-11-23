@@ -32,7 +32,10 @@ import static net.minecraftforge.network.NetworkDirection.PLAY_TO_SERVER;
 
 public enum CSpringsPackets {
     S_PLACE_ARM(CatapultPlacementPacket.ClientBoundRequest.class, CatapultPlacementPacket.ClientBoundRequest::new, PLAY_TO_CLIENT),
-    S_PLACE_CATAPULT(CatapultPlacementPacket.class, CatapultPlacementPacket::new, PLAY_TO_SERVER);
+    S_PLACE_CATAPULT(CatapultPlacementPacket.class, CatapultPlacementPacket::new, PLAY_TO_SERVER),
+    OPEN_PSE(OpenPSEPacket.class, OpenPSEPacket::new, PLAY_TO_SERVER),
+    BOOST_PSE(BoostPSEPacket.class, BoostPSEPacket::new, PLAY_TO_SERVER),
+    DASH_PSE(DashPSEPacket.class, DashPSEPacket::new, PLAY_TO_SERVER);
 
     public static final ResourceLocation CHANNEL_NAME = CreateSprings.asResource("main");
     public static final int NETWORK_VERSION = 3;

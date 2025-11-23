@@ -7,10 +7,8 @@ import com.mojang.math.Axis;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
-import com.simibubi.create.compat.jei.category.animations.AnimatedSpout;
-import com.simibubi.create.foundation.fluid.FluidRenderer;
 import net.Portality.createsprings.fluid.CSpringsFluids;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.ForgeCatnipServices;
@@ -19,8 +17,6 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraftforge.fluids.FluidStack;
-
-import java.util.List;
 
 public class CastingAnimation extends AnimatedKinetics {
 

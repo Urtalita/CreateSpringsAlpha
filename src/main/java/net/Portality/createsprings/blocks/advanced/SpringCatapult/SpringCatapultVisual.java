@@ -1,27 +1,19 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.content.kinetics.base.ShaftVisual;
 import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.Models;
-import dev.engine_room.flywheel.lib.transform.TransformStack;
-import dev.engine_room.flywheel.lib.util.RecyclingPoseStack;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringInstance;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.theme.Color;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 
-import static net.Portality.createsprings.utill.Helpers.RenderHelper.applyBaseTransformations;
-import static net.Portality.createsprings.utill.Helpers.RenderHelper.createInstance;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class SpringCatapultVisual extends SingleAxisRotatingVisual<SpringCatapultBlockEntity> implements SimpleDynamicVisual {
@@ -60,7 +52,7 @@ public class SpringCatapultVisual extends SingleAxisRotatingVisual<SpringCatapul
     }
 
     @Override
-    public void beginFrame(Context context) {
+    public void beginFrame(DynamicVisual.Context context) {
         animate(context.partialTick());
     }
 

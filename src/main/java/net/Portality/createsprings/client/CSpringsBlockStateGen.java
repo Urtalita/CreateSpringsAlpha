@@ -1,4 +1,4 @@
-package net.Portality.createsprings.utill;
+package net.Portality.createsprings.client;
 
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;

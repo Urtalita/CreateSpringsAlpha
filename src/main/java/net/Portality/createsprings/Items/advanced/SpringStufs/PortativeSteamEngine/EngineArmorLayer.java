@@ -7,11 +7,12 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.Config;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.utill.CSpringsPartalModels;
+import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -61,6 +62,7 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
         CompoundTag tag = engineStack.getOrCreateTag();
 
         int engineSpeed = tag.getInt("engineSpeed");
+        boolean boost = tag.getBoolean("boost");
 
         BlockState renderedState = ModBlocks.SPRING.get().defaultBlockState();
         VertexConsumer vc = buffer.getBuffer(Sheets.cutoutBlockSheet());
@@ -71,6 +73,10 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
         SuperByteBuffer shaft = CachedBuffers.partial(CSpringsPartalModels.ENGINE_SHAFT, renderedState);
         SuperByteBuffer mid = CachedBuffers.partial(CSpringsPartalModels.ENGINE_MID, renderedState);
         SuperByteBuffer piston = CachedBuffers.partial(CSpringsPartalModels.ENGINE_PISTON, renderedState);
+
+        if(boost){
+            engineSpeed = 100;
+        }
 
         ms.pushPose();
 

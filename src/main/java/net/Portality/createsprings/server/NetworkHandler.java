@@ -5,10 +5,10 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
-    /*
+
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation("createsprings", "main"),
+            new ResourceLocation("createsprings", "main2"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
@@ -21,7 +21,11 @@ public class NetworkHandler {
                 PunchcardUpdatePacket::encode,
                 PunchcardUpdatePacket::new,
                 PunchcardUpdatePacket::handle);
-    }
 
-     */
+        CHANNEL.registerMessage(id++,
+                PortativeSteamEngineUpdatePacket.class,
+                PortativeSteamEngineUpdatePacket::encode,
+                PortativeSteamEngineUpdatePacket::new,
+                PortativeSteamEngineUpdatePacket::handle);
+    }
 }

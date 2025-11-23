@@ -26,6 +26,7 @@ import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockE
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringRenderer;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringVisual;
 import net.Portality.createsprings.blocks.advanced.test.TestBlockEntity;
+import net.Portality.createsprings.blocks.advanced.test.TestVisual;
 
 import static net.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
@@ -81,8 +82,7 @@ public class ModBlockEntities {
 
     public static final BlockEntityEntry<TestBlockEntity> TEST = CSPRINGS_REGISTRATE
             .blockEntity("test", TestBlockEntity::new)
-            .visual(() -> ShaftVisual::new)
-            .renderer(() -> ShaftRenderer::new)
+            .visual(() -> TestVisual::new)
             .validBlocks(ModBlocks.TEST)
             .register();
 

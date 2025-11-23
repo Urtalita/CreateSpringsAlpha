@@ -291,7 +291,7 @@ public class SpringItem extends BlockItem {
         tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
     }
 
-    private void SetSu(ItemStack stack, float su){
+    public static void SetSu(ItemStack stack, float su){
         CompoundTag tag = stack.getOrCreateTag();
 
         CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
