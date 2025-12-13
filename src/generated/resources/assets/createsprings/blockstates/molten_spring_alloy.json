@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "createsprings:block/molten_spring_alloy/block"
+    }
+  }
+}

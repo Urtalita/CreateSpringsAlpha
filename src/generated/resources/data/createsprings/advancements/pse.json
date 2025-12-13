@@ -1,0 +1,40 @@
+{
+  "parent": "createsprings:spring_age",
+  "criteria": {
+    "0": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "createsprings:portative_steam_engine"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.pse.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "createsprings:portative_steam_engine",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.pse"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

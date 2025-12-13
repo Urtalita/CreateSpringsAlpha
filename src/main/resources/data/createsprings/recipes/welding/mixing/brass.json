@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:veridium"
+  },
+  "second_block": {
+    "item": "create:asurine"
+  },
+  "result": {
+    "item": "create:brass_nugget",
+    "count": 3
+  },
+  "speed": "NORMAL"
+}

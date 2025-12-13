@@ -1,0 +1,39 @@
+{
+  "parent": "createsprings:root",
+  "criteria": {
+    "0": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "createsprings:spring_alloy"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.spring_alloy.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "createsprings:spring_alloy"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.spring_alloy"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "createsprings:pse",
+  "criteria": {
+    "0": {
+      "conditions": {},
+      "trigger": "create:pse_dash_builtin"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.pse_dash.desc"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "createsprings:portative_steam_engine",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.pse_dash"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

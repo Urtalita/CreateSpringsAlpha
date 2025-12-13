@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "ceiling=false": {
+      "model": "createsprings:block/spring_catapult/block"
+    },
+    "ceiling=true": {
+      "model": "createsprings:block/spring_catapult/block",
+      "x": 180
+    }
+  }
+}

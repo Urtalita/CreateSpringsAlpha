@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:rose_quartz_block"
+  },
+  "second_block": {
+    "item": "create:rose_quartz_block"
+  },
+  "result": {
+    "item": "create:polished_rose_quartz",
+    "count": 1
+  },
+  "speed": "FAST"
+}

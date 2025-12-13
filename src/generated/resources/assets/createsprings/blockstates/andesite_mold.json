@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createsprings:block/andesite_mold",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createsprings:block/andesite_mold",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createsprings:block/andesite_mold",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createsprings:block/andesite_mold",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createsprings:block/andesite_mold"
+    },
+    "facing=west": {
+      "model": "createsprings:block/andesite_mold",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "createsprings:obsidian_slab"
+  },
+  "second_block": {
+    "item": "createsprings:obsidian_slab"
+  },
+  "result": {
+    "item": "createsprings:obsidian_plate",
+    "count": 2
+  },
+  "speed": "FAST"
+}

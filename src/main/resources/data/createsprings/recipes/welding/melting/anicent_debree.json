@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:ancient_debris"
+  },
+  "second_block": {
+    "item": "minecraft:ancient_debris"
+  },
+  "result": {
+    "item": "minecraft:netherite_scrap",
+    "count": 2
+  },
+  "speed": "SLOW"
+}

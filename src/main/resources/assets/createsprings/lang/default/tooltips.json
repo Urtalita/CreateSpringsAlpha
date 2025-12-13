@@ -1,5 +1,5 @@
 {
-  "item.createsprings.portative_steam_engine.tooltip.summary": "A small Steam Engine capable of charging tools, lighting the way, and also warming and accelerating players",
+  "item.createsprings.portative_steam_engine.tooltip.summary": "A small _Steam Engine_ capable of _charging_ tools, lighting the way, and also _warming_ and _accelerating_ players",
   "item.createsprings.portative_steam_engine.tooltip.condition1": "When Z pressed",
   "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Opens the engine interface",
   "item.createsprings.portative_steam_engine.tooltip.condition2": "When X pressed",
