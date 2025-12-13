@@ -6,12 +6,13 @@ import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.Portality.createsprings.contraption.SpringContraption;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.Portality.createsprings.utill.Helpers.CspringsMath;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -59,10 +60,10 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
-        if(Config.debug_capacity){
-            capacity = Config.spring_capacity / 2;
+        if(ModConfigs.common().DEBUG_CAPACITY.get()){
+            capacity = (float) ModConfigs.common().SPRING_CAPACITY.get() / 2;
         } else {
-            capacity = Config.spring_capacity * 9 * Config.large_spring_capacity_coef;
+            capacity = ModConfigs.common().SPRING_CAPACITY.get() * 9 * ModConfigs.common().LARGE_SPRING_CAPACITY.get();
         }
     }
 
@@ -107,8 +108,21 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     @Override
     public float calculateStressApplied() {
         float stressApplied = calcStress();
+        if(isGenerating){
+            stressApplied = 0;
+        }
         this.lastStressApplied = stressApplied;
         return stressApplied;
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        float capacity = -calcStress();
+        if(!isGenerating){
+            capacity = 0;
+        }
+        this.lastCapacityProvided = capacity;
+        return capacity;
     }
 
     private float calcStress() {
@@ -124,7 +138,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         this.len = len;
         curLen = len;
 
-        if(!Config.debug_capacity){
+        if(!ModConfigs.common().DEBUG_CAPACITY.get()){
             capacity = capacity * len;
         }
 
@@ -141,7 +155,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             }
         }
 
-        assemble();
+        if(len > 1){
+            assemble();
+        }
 
         updateGeneratedRotation();
         notifyUpdate();
@@ -256,7 +272,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         if(stoppedPos != null && isGenerating){
-            if(breakBySpring(stoppedPos, level, (float) Config.spring_capacity)){
+            if(breakBySpring(stoppedPos, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
                 stoppedPos = null;
                 breakBlocksInLayer(Mth.floor(platePos(progress) + 1), getFacing());
             }
@@ -271,6 +287,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 if(movedContraption != null){
                     movedContraption.moveTo(Vec3.atLowerCornerOf(worldPosition));
                 }
+                CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition, 2, 1);
             }
 
             if(phase < 5){
@@ -279,16 +296,18 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             }
 
             phase++;
-            if(phase == Config.spring_splash_duration){
+            if(phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){
                 phase = 0;
                 stored = 1;
 
-                for (int i = (len-1); i > curLen; i--){
-                    breakBlocksInLayer(i, getFacing());
-                }
+                if(len > 1){
+                    for (int i = (len-1); i > curLen; i--){
+                        breakBlocksInLayer(i, getFacing());
+                    }
 
-                for (int i = (len-1); i > curLen; i--){
-                    restoreLayer(i, getFacing());
+                    for (int i = (len-1); i > curLen; i--){
+                        restoreLayer(i, getFacing());
+                    }
                 }
 
                 curLen = len;
@@ -315,7 +334,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         float CurSpeed = Math.abs(getSpeed());
         if (isGenerating && stored > 0) {
-            stored = Math.max(stored - CurSpeed / DEFAULT_HARDNESS * hardness * 9, 0);
+            stored = Math.max(stored - CurSpeed / 20 * hardness * 9 * 2, 0);
             if (platePos > (curLen+1)) {
                 curLen++;
                 breakBlocksInLayer(Mth.floor(platePos(progress) + 1), facing);
@@ -324,7 +343,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
         // Режим накопления, если не активировано
         else if (!isGenerating) {
-            stored = Math.min(stored + CurSpeed / DEFAULT_HARDNESS * hardness * 9, capacity);
+            stored = Math.min(stored + CurSpeed / 20 * hardness * 9 * 2, capacity);
             if (platePos < (curLen+1)) {
                 removeLayer(Mth.floor(platePos(progress)), facing);
                 curLen--;
@@ -375,7 +394,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             );
 
             Vec3 direction = Vec3.atLowerCornerOf(getFacing().getNormal());
-            double strength = Config.knockback_coef * stored / capacity * len; // Сила толчка
+            double strength = ModConfigs.common().KNOCKBACK_COEF.get() * stored / capacity * len; // Сила толчка
 
             entity.setDeltaMovement(direction.scale(strength));
             entity.hurtMarked = true; // Обязательно для синхронизации движения на клиенте
@@ -532,7 +551,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             for (int j = -1; j < 2; j++) {
                 if (!(i == 0 && j == 0)) {
                     BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
-                    if(!breakBySpring(breakBlock, level, (float) Config.spring_capacity)){
+                    if(!breakBySpring(breakBlock, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
                         stoppedPos = breakBlock;
                     }
                 }
@@ -547,7 +566,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 for (int j = -1; j < 2; j++) {
                     if (!(i == 0 && j == 0)) {
                         BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
-                        if(!canBreakBySpring(breakBlock, level, (float) Config.spring_capacity)){
+                        if(!canBreakBySpring(breakBlock, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
                             return false;
                         }
                     }
@@ -576,7 +595,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
         CreateLang.text(" ").add(
-                        CreateLang.number(stored).style(ChatFormatting.AQUA).space()
+                        CreateLang.number(Math.round(stored)).style(ChatFormatting.AQUA).space()
                 ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
                         .add(CreateLang.number(capacity).style(ChatFormatting.AQUA).space()
                                 .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))

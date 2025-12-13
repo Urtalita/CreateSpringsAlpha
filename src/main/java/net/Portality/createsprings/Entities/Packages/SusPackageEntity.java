@@ -1,13 +1,12 @@
 package net.Portality.createsprings.Entities.Packages;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
-import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
-import net.createmod.ponder.api.level.PonderLevel;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -97,9 +96,6 @@ public class SusPackageEntity extends PackageEntity {
 
     @Override
     public InteractionResult interact(Player pPlayer, InteractionHand pHand) {
-        if (!pPlayer.getItemInHand(pHand)
-                .isEmpty())
-            return super.interact(pPlayer, pHand);
         if (pPlayer.level().isClientSide)
             return InteractionResult.SUCCESS;
         level().playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, .2f,
@@ -114,12 +110,13 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public static void spawnSpring(LivingEntity entity, Level level, float power){
-        float progress = power / Config.spring_capacity;
+        float progress = power / ModConfigs.common().SPRING_CAPACITY.get();
         SpringProjectile projectile = (SpringProjectile) createProjectile(level, entity);
         projectile.shootFromRotation(entity, -90, 0, 0.0F,  3 * progress, 1.0F);
         projectile.redirectProjectile(projectile , 10, null);
         projectile.setBox(true);
         level.addFreshEntity(projectile);
+        CSpringsSounds.BWEUM_SHOOT.playOnServer(level, entity.getOnPos());
     }
 
     @Override

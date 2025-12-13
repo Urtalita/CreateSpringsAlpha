@@ -15,7 +15,7 @@ public class SpringCoilRenderer extends KineticBlockEntityRenderer {
 
     @Override
     protected SuperByteBuffer getRotatedModel(KineticBlockEntity be, BlockState state) {
-        SuperByteBuffer coilRenderer = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_COIL, state);
+        SuperByteBuffer coilRenderer = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED, state);
         return coilRenderer;
     }
 }

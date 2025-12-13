@@ -1,18 +1,43 @@
 package net.Portality.createsprings.Items.advanced.Punchcard;
 
-import net.Portality.createsprings.CreateSprings;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.content.equipment.armor.BacktankItem;
+import com.simibubi.create.content.equipment.extendoGrip.ExtendoGripItem;
+import com.simibubi.create.content.equipment.potatoCannon.PotatoCannonItem;
+import com.simibubi.create.content.equipment.symmetryWand.SymmetryEffectPacket;
+import com.simibubi.create.content.equipment.zapper.ShootableGadgetItemMethods;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ChamberItem;
+import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.server.AirDashPlayerPacket;
+import net.Portality.createsprings.server.CSpringsPackets;
+import net.Portality.createsprings.server.GrabPacket;
+import net.Portality.createsprings.server.RotatePlayerPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Function;
 
+import static net.Portality.createsprings.Items.advanced.Spring.SpringItem.getStoredSu;
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.*;
 
 public class PunchcardInterpritator {
@@ -61,10 +86,10 @@ public class PunchcardInterpritator {
             float stored = getAllStoredSum(getAllStored(2, tag));
             double speed = tag.getDouble("Speed");
 
-            if (stored > 5000 && speed < 5500){
+            if (stored > SpringSpeedSys.MAX_REGULAR_SPEED && speed < 5500){
                 speed += 250;
                 stored -= 2000;
-                if(speed > 5000) speed = 5000;
+                if(speed > SpringSpeedSys.MAX_REGULAR_SPEED) speed = SpringSpeedSys.MAX_REGULAR_SPEED;
             }
 
             float[] allsu = getAllStored(2, tag);
@@ -185,6 +210,176 @@ public class PunchcardInterpritator {
                 chamberItem.use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
                 info.nextAction();
             }
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> toggleBoost(){
+        return (info) -> {
+            if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
+                ItemStack stack = info.getStack();
+                int boosted = stack.getOrCreateTag().getInt("boosted");
+                if(boosted < 99){
+                    stack.getOrCreateTag().putBoolean("boost", !stack.getOrCreateTag().getBoolean("boost"));
+                    if(boosted <= 0){
+                        stack.getOrCreateTag().putInt("boosted", 1);
+                    }
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> steamDash(){
+        return (info) -> {
+            if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
+                PortativeSteamEngineItem.steamDash(info.getPlayer(), info.getLevel());
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> shootFromCannon(){
+        return (info) -> {
+            if(!info.getPlayer().getCooldowns().isOnCooldown(AllItems.POTATO_CANNON.asItem())){
+                if (info.getSelectedIndex() == info.getSlotIndex()){
+                    info.getItem().use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> tripleShot(){
+        return (info) -> {
+            if (info.getSelectedIndex() == info.getSlotIndex()){
+                if(!info.getPlayer().getCooldowns().isOnCooldown(AllItems.POTATO_CANNON.asItem())){
+                    for(int i = 0; i < 3; i++){
+                        info.getItem().use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
+                        info.getPlayer().setXRot(info.getPlayer().getXRot() - 5);
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof PotatoCannonItem, 60);
+                    }
+                    if(info.getPlayer() instanceof ServerPlayer serverPlayer){
+                        CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RotatePlayerPacket(serverPlayer.getXRot()));
+                    }
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> empty(){
+        return (info) -> {
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> airDash(){
+        return (info) -> {
+            if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof BacktankItem){
+                float air = info.getTag().getFloat("Air");
+                if(air > 25){
+                    if(info.getPlayer().getDeltaMovement().y < 2){
+                        info.getPlayer().addDeltaMovement(new Vec3(0, 0.8f, 0));
+                    }
+                    if(info.getPlayer() instanceof ServerPlayer serverPlayer){
+                        CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new AirDashPlayerPacket());
+                        AllSoundEvents.STEAM.playOnServer(info.getPlayer().level(), BlockPos.containing(info.getPlayer().position()).above(), 0.8f, 1f);
+                    }
+                    air -= 25;
+                    info.getTag().putFloat("Air", air);
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Function<ExecutorInfo, Void> grab() {
+        return (info) -> {
+            if(!info.getPlayer().getCooldowns().isOnCooldown(AllItems.EXTENDO_GRIP.asItem())){
+                if(AllItems.EXTENDO_GRIP.isIn(info.getPlayer().getItemInHand(InteractionHand.MAIN_HAND))){
+                    if(info.getPlayer() instanceof ServerPlayer serverPlayer){
+                        Vec3 newSpeed = getRaycastVector(info.getPlayer());
+                        newSpeed = new Vec3(newSpeed.x, newSpeed.y / 3, newSpeed.z);
+                        newSpeed = new Vec3(newSpeed.x % 3, newSpeed.y % 3, newSpeed.z % 3);
+                        CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new GrabPacket(newSpeed));
+                        serverPlayer.addDeltaMovement(newSpeed);
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 10);
+                    }
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+    public static Vec3 getRaycastVector(Player player) {
+        // Получаем позицию глаз игрока
+        Vec3 eyePosition = player.getEyePosition();
+
+        // Получаем направление взгляда
+        Vec3 lookVector = player.getViewVector(1.0F);
+
+        // Вычисляем конечную точку рейкаста
+        Vec3 endPoint = eyePosition.add(lookVector.x * 8, lookVector.y * 8, lookVector.z * 8);
+
+        // Создаем контекст для рейкаста, игнорируя жидкости
+        ClipContext clipContext = new ClipContext(
+                eyePosition,
+                endPoint,
+                ClipContext.Block.OUTLINE, // Проверяем collision-боксы блоков
+                ClipContext.Fluid.NONE,    // Игнорируем жидкости
+                player
+        );
+
+        // Выполняем рейкаст
+        HitResult hitResult = player.level().clip(clipContext);
+
+        // Если попали в блок или энтити и это не жидкость
+        if (hitResult.getType() == HitResult.Type.BLOCK || hitResult.getType() == HitResult.Type.ENTITY) {
+            // Возвращаем разницу между позицией попадания и позицией глаз
+            return hitResult.getLocation().subtract(eyePosition);
+        }
+
+        // Если блок не найден или попали в жидкость
+        return Vec3.ZERO;
+    }
+
+    public static Function<ExecutorInfo, Void> findAndReplaceSpring() {
+        return (info) -> {
+            if(info.getSelectedIndex() == info.getSlotIndex()){
+                Player player = info.getPlayer();
+                ItemStack found = null;
+                for(ItemStack slot : player.getInventory().items){
+                    if(slot.getItem() != ModBlocks.SPRING.asItem()){continue;}
+                    float stored = getStoredSu(slot);
+                    if(stored < 5000){continue;}
+                    found = slot;
+                }
+
+                if(found == null){return null;}
+                CompoundTag tag = info.getStack().getOrCreateTag();
+                int Springs_rn = tag.getInt("Springs_rn");
+                int springsMaxCount = (info.getItem() == ModItems.EXPLOSION_CHAMBER.get()) ? 1 : 2;
+                float[] allSu = getAllStored(2, tag);
+
+                if (springsMaxCount != Springs_rn && !tag.getBoolean("block") && exceptions(tag)){
+                    allSu[Springs_rn] = getStoredSu(found);
+
+                    Springs_rn++;
+
+                    tag.putInt("Springs_rn", Springs_rn);
+                    putAllStored(allSu, tag);
+
+                    found.shrink(1);
+                }
+            }
+            info.nextAction();
             return null;
         };
     }

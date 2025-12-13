@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " p ",
+    " m ",
+    " s "
+  ],
+  "key": {
+    "m": {
+      "tag": "forge:plates/iron"
+    },
+    "p": {
+      "item": "createsprings:spring"
+    },
+    "s": {
+      "item": "create:andesite_casing"
+    }
+  },
+  "result": {
+    "item": "createsprings:spring_catapult"
+  }
+}

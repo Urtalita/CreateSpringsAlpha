@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.client.CSpringsPartalModels;
@@ -12,7 +12,6 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -144,7 +143,7 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
     }
 
     public static void renderSpring(int light, PoseStack ms, float stored, int springLen, PartialModel plate, PartialModel piece, BlockState renderedState, VertexConsumer vc){
-        float progress = 1 - (stored / Config.spring_capacity / 2f);
+        float progress = 1 - (stored / ModConfigs.common().SPRING_CAPACITY.get() / 2f);
 
         SuperByteBuffer plateRenderer = CachedBuffers.partial(plate, renderedState);
         plateRenderer.disableDiffuse()

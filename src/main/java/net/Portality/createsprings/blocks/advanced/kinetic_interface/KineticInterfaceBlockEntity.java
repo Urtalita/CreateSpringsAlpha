@@ -13,10 +13,14 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
+import net.Portality.createsprings.server.CSpringsPackets;
+import net.Portality.createsprings.server.GrabPacket;
+import net.Portality.createsprings.server.PSKISpringUpdate;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.network.PacketDistributor;
 import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
@@ -134,6 +139,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
                     newNbt
             ));
         }
+        CSpringsPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> contraption.entity), new PSKISpringUpdate(contraption.entity.getUUID(), localPos, updatedEntity));
     }
 
     public boolean canTransfer() {
@@ -180,8 +186,27 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
 
     @Override
     public float calculateStressApplied() {
-        this.lastStressApplied = stressImpact;
-        return stressImpact;
+        float stressApplied = stressImpact;
+        if(isGenerating){
+            stressApplied = 0;
+        }
+        this.lastStressApplied = stressApplied;
+        return stressApplied;
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        float capacity = -stressImpact;
+        if(!isGenerating){
+            capacity = 0;
+        }
+        this.lastCapacityProvided = capacity;
+        return capacity;
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 
     private void notifyContraptions() {

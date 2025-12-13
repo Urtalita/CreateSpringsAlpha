@@ -1,5 +1,6 @@
 package net.Portality.createsprings.blocks.advanced;
 
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
@@ -47,9 +48,9 @@ public class ModBlockEntities {
 
     public static final BlockEntityEntry<LargeSpringBlockEntity> LARGE_SPRING = CSPRINGS_REGISTRATE
             .blockEntity("large_spring", LargeSpringBlockEntity::new)
-            .visual(() -> LargeSpringVisual::new, false)
-            .validBlocks(ModBlocks.LARGE_SPRING)
+            .visual(() -> LargeSpringVisual::new)
             .renderer(() -> LargeSpringRenderer::new)
+            .validBlocks(ModBlocks.LARGE_SPRING)
             .register();
 
     public static final BlockEntityEntry<SpringBlockEntity> SPRING = CSPRINGS_REGISTRATE
@@ -90,6 +91,16 @@ public class ModBlockEntities {
             .blockEntity("extention_block_entity", ExtentionBlockEntity::new)
             .validBlocks(ModBlocks.LARGE_SPRING_EXTENTION)
             .register();
+
+    /*
+    public static final BlockEntityEntry<KineticBlockEntity> ENCASED_SHAFT = CSPRINGS_REGISTRATE
+            .blockEntity("casing_encased_shaft", KineticBlockEntity::new)
+            .visual(() -> ShaftVisual::new, false)
+            .validBlocks(ModBlocks.SPRING_ALLOY_ENCASED_SHAFT)
+            .renderer(() -> ShaftRenderer::new)
+            .register();
+
+     */
 
 
     public static void register() {}

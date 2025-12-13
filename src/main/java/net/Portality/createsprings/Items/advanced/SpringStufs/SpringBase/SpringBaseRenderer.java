@@ -6,7 +6,8 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,7 +39,7 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         double Speed = getSpeed(tag);
 
-        if (tag.getFloat("Speed") > 5000){Speed += RANDOM.nextInt(-1, 1);}
+        if (tag.getFloat("Speed") > SpringSpeedSys.MAX_REGULAR_SPEED){Speed += RANDOM.nextInt(-1, 1);}
 
         int Springs = tag.getInt("Springs_rn");
 
@@ -73,10 +74,10 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
     public static void renderSpring(PartialItemModelRenderer renderer, int light, PoseStack ms, float stored, CompoundTag tag
             , int springLen, PartialModel plate, PartialModel piece){
-        float progress = 1 - (stored / Config.spring_capacity / 2f);
+        float progress = 1 - (stored / ModConfigs.common().SPRING_CAPACITY.get() / 2f);
 
         if(tag.getBoolean("splash")){
-            int phase = (AnimationTickHolder.getTicks() - tag.getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            int phase = (AnimationTickHolder.getTicks() - tag.getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
             progress = springAnimation(phase);
             float prevProgress = springAnimation(phase-1);
             progress = 1 - Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress);

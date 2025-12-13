@@ -1,16 +1,18 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
+import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
-import net.Portality.createsprings.Config;
-import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
-import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringInstance;
+import net.Portality.createsprings.config.ModConfigs;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+
+import java.util.UUID;
 
 public class SpringActorVisual extends ActorVisual {
     private SpringInstance springInstance;
@@ -23,12 +25,25 @@ public class SpringActorVisual extends ActorVisual {
 
         CompoundTag be = context.contraption.getActorAt(context.localPos).left.nbt();
         if(be != null){
-            progress = be.getFloat("Stored") / Config.spring_capacity;
+            progress = be.getFloat("Stored") / ModConfigs.common().SPRING_CAPACITY.get();
             prevProgress = progress;
         }
 
         setlight(springInstance.plate);
         springInstance.rings.forEach(this::setlight);
+        springInstance.animateInContraption(Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress));
+    }
+
+    public void setProgress(UUID contraption, BlockPos localPos, CompoundTag compoundTag){
+        if(context.contraption.entity != null){
+            if(contraption.equals(context.contraption.entity.getUUID())){
+                if(localPos.equals(context.localPos)){
+                    float prog = compoundTag.getFloat("Stored") / ModConfigs.common().SPRING_CAPACITY.get();
+                    this.prevProgress = this.progress;
+                    this.progress = prog;
+                }
+            }
+        }
     }
 
     @Override
@@ -43,16 +58,11 @@ public class SpringActorVisual extends ActorVisual {
     @Override
     public void beginFrame() {
         super.beginFrame();
-        CompoundTag be = context.contraption.getActorAt(context.localPos).left.nbt();
-        if(be != null){
-            progress = be.getFloat("Stored") / Config.spring_capacity;
-            prevProgress = progress;
-        }
-        springInstance.animate(Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress));
+        springInstance.animateInContraption(Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress));
     }
 
     @Override
     protected void _delete() {
-        springInstance.deleteSpring();
+        springInstance.deleteSpringInContraption();
     }
 }

@@ -35,6 +35,11 @@ public enum CSpringsPackets {
     S_PLACE_CATAPULT(CatapultPlacementPacket.class, CatapultPlacementPacket::new, PLAY_TO_SERVER),
     OPEN_PSE(OpenPSEPacket.class, OpenPSEPacket::new, PLAY_TO_SERVER),
     BOOST_PSE(BoostPSEPacket.class, BoostPSEPacket::new, PLAY_TO_SERVER),
+    PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard::new, PLAY_TO_SERVER),
+    ROTATE(RotatePlayerPacket.class, RotatePlayerPacket::new, PLAY_TO_CLIENT),
+    AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket::new, PLAY_TO_CLIENT),
+    GRAB(GrabPacket.class, GrabPacket::new, PLAY_TO_CLIENT),
+    UPDATE_CONTRAPTION_SPRINGS(PSKISpringUpdate.class, PSKISpringUpdate::new, PLAY_TO_CLIENT),
     DASH_PSE(DashPSEPacket.class, DashPSEPacket::new, PLAY_TO_SERVER);
 
     public static final ResourceLocation CHANNEL_NAME = CreateSprings.asResource("main");

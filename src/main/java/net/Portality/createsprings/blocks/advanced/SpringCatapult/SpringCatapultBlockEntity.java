@@ -1,31 +1,44 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.IControlContraption;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.content.logistics.funnel.AbstractFunnelBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
-import net.Portality.createsprings.Config;
-import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
-import net.Portality.createsprings.contraption.SpringCatapultContraption;
-import net.Portality.createsprings.contraption.SpringContraption;
-import net.Portality.createsprings.utill.Helpers.CspringsMath;
+import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase;
+import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
+import net.Portality.createsprings.config.ModConfigs;
+import net.Portality.createsprings.sounds.CSpringsSounds;
+import net.createmod.catnip.math.BlockFace;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DiscFragmentItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -33,24 +46,26 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class SpringCatapultBlockEntity extends KineticBlockEntity implements IControlContraption {
+public class SpringCatapultBlockEntity extends KineticBlockEntity implements IControlContraption, IHaveGoggleInformation {
     public float xAngle = 0;
     public float yAngle = 0;
-    public float stored = 20000;
-    public float capacity = 20000;
+    public float stored = 0;
+    public float capacity = ModConfigs.common().SPRING_CAPACITY.get() / 8f;
     private float progress = stored / capacity;
     private int phase = 0;
     private float hardness = DEFAULT_HARDNESS;
     public ItemStack heldStack = ItemStack.EMPTY;
-    public boolean upsideDown = false;
     protected ControlledContraptionEntity movedContraption;
 
     private float prevProgress = progress;
@@ -83,6 +98,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         filtering = new FilteringBehaviour(this, new SpringCatapultFilterSlot());
         behaviours.add(filtering);
+
     }
 
     public float getProgress(float pt){
@@ -158,6 +174,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         recalculateAngles(true);
     }
 
+    public boolean isUpsideDown(){
+        return getBlockState().getValue(SpringCatapultBlock.CEILING);
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -208,6 +228,11 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         }
 
         sendData();
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 
     public void noTarget(){
@@ -270,22 +295,22 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         int startOffset = 2;
         int endOffset = 0;
         BlockPos selectedTarget = getSelectedTarget();
-        if(upsideDown){
+        if(isUpsideDown()){
             startOffset = -2;
         }
         if(level != null){
             if(level.getBlockEntity(selectedTarget) instanceof SpringCatapultBlockEntity springCatapultBlockEntity){
                endOffset = 2;
-                if(springCatapultBlockEntity.upsideDown){
+                if(springCatapultBlockEntity.isUpsideDown()){
                     endOffset = -2;
                 }
             }
         }
         if(selectedTarget != null){
             if(launcher == null){
-                launcher = new CatapultLauncher(getSelectedTarget().above(endOffset), worldPosition.above(startOffset), Config.spring_splash_duration);
+                launcher = new CatapultLauncher(getSelectedTarget().above(endOffset), worldPosition.above(startOffset), ModConfigs.common().SPRING_SPLASH_DURATION.get());
             }
-            launcher.recalculateTrajectory(getSelectedTarget().above(endOffset), worldPosition.above(startOffset), Config.spring_splash_duration);
+            launcher.recalculateTrajectory(getSelectedTarget().above(endOffset), worldPosition.above(startOffset), ModConfigs.common().SPRING_SPLASH_DURATION.get());
         }
     }
 
@@ -303,10 +328,14 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     }
 
     public void shoot(){
+        if(phase == 0){
+            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition);
+        }
+
         progress = springAnimation(phase) * (stored / capacity);
         phase++;
 
-        if(phase == Config.spring_splash_duration){
+        if(phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){
             phase = 0;
             stored = 0;
             mode = CatapultMode.WAITING;
@@ -324,7 +353,15 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
                         nextTarget(); // -
                     }
                 } else {
-                    dropContent(selectedTarget);
+                    heldStack = ItemHandlerHelper.insertItem(getHandler(), heldStack, false);
+                    heldStack = insertToJukebox(heldStack, false);
+                    if(heldStack != ItemStack.EMPTY){
+                        dropContent(selectedTarget);
+                    }
+
+                    if(!targetingOriginal){
+                        nextTarget();
+                    }
                 }
             }
             notifyUpdate();
@@ -332,7 +369,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         }
 
         BlockPos pos;
-        if(upsideDown){
+        if(isUpsideDown()){
             pos = launcher.parseTrajectory(level, phase, yAngle, worldPosition.above(-2));
         } else {
             pos = launcher.parseTrajectory(level, phase, yAngle, worldPosition.above(2));
@@ -342,6 +379,36 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
             dropContent(pos);
             mode = CatapultMode.WAITING;
         }
+    }
+
+    public ItemStack insertToJukebox(ItemStack stack, boolean simulate) {
+        if (!(stack.getItem() instanceof RecordItem))
+            return stack;
+        if (level.getBlockState(getSelectedTarget()).getOptionalValue(JukeboxBlock.HAS_RECORD).orElse(true))
+            return stack;
+        if (!(level.getBlockEntity(getSelectedTarget()) instanceof JukeboxBlockEntity jukeboxBE))
+            return stack;
+        if (!jukeboxBE.getFirstItem().isEmpty())
+            return stack;
+        ItemStack remainder = stack.copy();
+        ItemStack toInsert = remainder.split(1);
+        if (!simulate){
+            jukeboxBE.setItem(0, toInsert);
+            mode = CatapultMode.RAVE;
+        }
+        return remainder;
+    }
+
+    @Nullable
+    protected IItemHandler getHandler() {
+        LazyOptional<IItemHandler> cachedHandler = LazyOptional.empty();
+        if (!cachedHandler.isPresent()) {
+            BlockEntity be = level.getBlockEntity(getSelectedTarget());
+            if (be == null)
+                return null;
+            cachedHandler = be.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
+        }
+        return cachedHandler.orElse(null);
     }
 
     private void rave(){
@@ -515,8 +582,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         targetInQueue = targetInQueueTag.isEmpty() ? null : NbtUtils.readBlockPos(targetInQueueTag);
 
         recalculateAngles(true);
-
-        upsideDown = getBlockState().getValue(FACING).equals(Direction.DOWN);
     }
 
     @Override
@@ -537,7 +602,9 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
         compound.putBoolean("targetingOriginal", targetingOriginal);
         compound.putBoolean("shootingContraption", shootingContraption);
 
-        compound.putString("mode", mode.name);
+        if(mode != null){
+            compound.putString("mode", mode.name);
+        }
 
         if(target != null){compound.put("target", NbtUtils.writeBlockPos(target));}
         if(targetInQueue != null){compound.put("target2", NbtUtils.writeBlockPos(targetInQueue));}
@@ -647,19 +714,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
 
     @Override
     public void attach(ControlledContraptionEntity contraption) {
-        BlockState blockState = getBlockState();
-        if (!(contraption.getContraption() instanceof BearingContraption))
-            return;
-        if (!blockState.hasProperty(SpringCatapultBlock.FACING))
-            return;
-
-        this.movedContraption = contraption;
-        setChanged();
-        BlockPos anchor = worldPosition.relative(blockState.getValue(SpringCatapultBlock.FACING));
-        movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
-        if (!level.isClientSide) {
-            sendData();
-        }
     }
 
     @Override

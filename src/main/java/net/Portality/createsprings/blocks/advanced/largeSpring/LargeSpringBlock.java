@@ -4,7 +4,7 @@ import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -108,7 +108,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
         InteractionResult use = super.use(state, level, pos, player, hand, result);
         ItemStack itemInHand = player.getItemInHand(hand);
 
-        if(!Config.springs_can_splash){
+        if(!ModConfigs.common().SPRINGS_CAN_SPLASH.get()){
             if(itemInHand.getItem() == Blocks.TRIPWIRE_HOOK.asItem()){
                 player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
                 itemInHand.shrink(1);

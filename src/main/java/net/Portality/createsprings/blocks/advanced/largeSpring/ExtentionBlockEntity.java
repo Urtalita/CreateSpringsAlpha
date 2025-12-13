@@ -7,7 +7,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -91,7 +91,7 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
 
     private BlockPos getBePos(BlockPos pos, Direction facing, Level level){
         facing = facing.getOpposite();
-        for(int y = 0; y < Config.spring_len + 1; y++){
+        for(int y = 0; y < ModConfigs.common().SPRING_LEN.get() + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){

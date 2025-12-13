@@ -1,7 +1,11 @@
 package net.Portality.createsprings.client;
 
+import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.Create;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.CreateSprings;
+import net.minecraft.resources.ResourceLocation;
 
 public class CSpringsPartalModels {
 
@@ -75,5 +79,11 @@ public class CSpringsPartalModels {
         return PartialModel.of(CreateSprings.asResource("entity/" + path));
     }
 
-    public static void register(){}
+    public static void register(){
+        AllPartialModels.PACKAGE_RIGGING.put(CreateSprings.asResource("sus_package"), PartialModel.of(PackageStyles.STYLES.get(0).getRiggingModel()));
+        AllPartialModels.PACKAGES.put(CreateSprings.asResource("sus_package"), SUS_BOX);
+
+        AllPartialModels.PACKAGE_RIGGING.put(CreateSprings.asResource("hat"), PartialModel.of(PackageStyles.STYLES.get(0).getRiggingModel()));
+        AllPartialModels.PACKAGES.put(CreateSprings.asResource("hat"), HAT);
+    }
 }

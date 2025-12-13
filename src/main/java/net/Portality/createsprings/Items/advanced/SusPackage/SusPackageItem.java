@@ -1,11 +1,12 @@
 package net.Portality.createsprings.Items.advanced.SusPackage;
 
+import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
-import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
+import net.Portality.createsprings.menus.PortativeEngine.TooltipDescription;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,9 +30,10 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class SusPackageItem extends PackageItem {
-    public SusPackageItem(Properties properties, PackageStyles.PackageStyle style) {
-        super(properties.stacksTo(1)
-                , style);
+    public SusPackageItem(Properties properties) {
+        super(properties.stacksTo(1), PackageStyles.STYLES.get(0));
+        PackageStyles.STANDARD_BOXES.remove(this);
+        PackageStyles.ALL_BOXES.remove(this);
     }
 
     @Override
@@ -115,12 +117,17 @@ public class SusPackageItem extends PackageItem {
 
     @Override
     public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        float capacity = Config.spring_capacity;
+        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get();
         CompoundTag tag = pStack.getOrCreateTag();
         pTooltipComponents.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
                 .append(Component.literal(String.valueOf(tag.getFloat("Stored")))).withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.GRAY));
-        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
+
+        pTooltipComponents.addAll(TooltipDescription.addShiftThing());
+        if(AllKeys.shiftDown()){
+            pTooltipComponents.addAll(TooltipDescription.splitAndFormat(Component.translatable("item.createsprings.sus_package.tooltip.summary")));
+        }
     }
 }

@@ -1,27 +1,27 @@
 package net.Portality.createsprings.menus.PortativeEngine;
 
-import com.simibubi.create.content.schematics.cannon.SchematicannonMenu;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
-import com.simibubi.create.foundation.gui.widget.IconButton;
-import net.Portality.createsprings.datagen.CSpringsAdvancements;
+import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.server.PortativeSteamEngineUpdatePacket;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
-import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.platform.ForgeCatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
+
+import static net.minecraft.ChatFormatting.*;
 import static net.minecraft.world.level.material.Fluids.WATER;
 
 public class PortativeEngineScreen extends AbstractSimiContainerScreen<PortativeSteamEngineMenu> {
@@ -34,6 +34,10 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
     private LampButton button;
     private RandomSource source = RandomSource.create();
     private int boosted = 0;
+
+    private TooltipDescription leverDescription;
+    private TooltipDescription overdriveDescription;
+    private TooltipDescription waterDescription;
 
     public PortativeEngineScreen(PortativeSteamEngineMenu menu, Inventory inventory, Component title){
         super(menu, inventory, title);
@@ -91,10 +95,19 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         int y = topPos;
         button = new LampButton(213 + x, 163 + y);
 
+        leverDescription = new TooltipDescription(x + 38, y + 68, 180, 100, this::updateMainDescTooltip);
+        overdriveDescription = new TooltipDescription(x + 255, y + 41, 62, 164, this::updateOverdriveDescTooltip);
+        waterDescription = new TooltipDescription(x - 61, y + 41, 62, 164, this::updateWaterDescTooltip);
+
         selector = new AnalogLeverSelector(x + 38, y + 68, 90, 6,
                 stack.getOrCreateTag().getFloat("targetSpeed") / 15, false);
+
         addRenderableWidget(selector).withCallback(this::onSelected);
         addRenderableWidget(button);
+
+        addRenderableWidget(leverDescription);
+        addRenderableWidget(overdriveDescription);
+        addRenderableWidget(waterDescription);
 
         boosted = stack.getOrCreateTag().getInt("boosted");
         if(stack.getOrCreateTag().getBoolean("boost")) {
@@ -140,7 +153,16 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         int invX = (background.getWidth() - AllGuiTextures.PLAYER_INVENTORY.getWidth()) / 2 + x - sx;
         int invY = background.getHeight() + y - 51 - sy;
 
+        leverDescription.render(graphics, mouseX, mouseY, partialTicks);
+        overdriveDescription.render(graphics, mouseX, mouseY, partialTicks);
+        waterDescription.render(graphics, mouseX, mouseY, partialTicks);
+
         this.renderPlayerInventory(graphics, invX, invY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+
     }
 
     private int getShift(){
@@ -149,11 +171,6 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
             return source.nextInt(-shift, shift);
         }
         return 0;
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
-
     }
 
     @Override
@@ -172,5 +189,44 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
 
         stack.getOrCreateTag().putInt("boosted", boosted);
         NetworkHandler.CHANNEL.sendToServer(new PortativeSteamEngineUpdatePacket(stack.getOrCreateTag()));
+    }
+
+    private ArrayList<Component> updateMainDescTooltip(){
+        ArrayList<Component> toolTip = new ArrayList<>();
+
+        int mode = selector.getState();
+
+        toolTip.add(Component.translatable(CreateSprings.MODID + ".pse." + "tooltip." + "cur_mode").append(Component.literal(" " + mode)));
+        toolTip.add(Component.empty());
+
+        for(int i = 1; i < 6; i++){
+            MutableComponent line = Component.literal("- ");
+            line.append(Component.translatable(CreateSprings.MODID + ".pse." + "tooltip." + i));
+
+            if(i == 3){continue;}
+
+            if(i > mode){
+                line.withStyle(DARK_GRAY);
+            } else {
+                line.withStyle(GRAY);
+            }
+            toolTip.add(line);
+        }
+
+        return toolTip;
+    }
+
+    private ArrayList<Component> updateOverdriveDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.pse.tooltip.overdrive")));
+        tooltip.add(Component.empty());
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.pse.tooltip.overdrive2")));
+        return tooltip;
+    }
+
+    private ArrayList<Component> updateWaterDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.pse.tooltip.water")));
+        return tooltip;
     }
 }

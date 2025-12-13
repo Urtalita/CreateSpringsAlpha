@@ -31,8 +31,9 @@ public class SpringInstance {
     final Vec3 instancePos;
 
     public SpringInstance(InstancerProvider instancerProvider, BlockState state, BlockPos localPos, boolean b) {
+
         facing = state.getValue(DirectionalKineticBlock.FACING);
-        instancePos = localPos.getCenter();
+        instancePos = localPos.getCenter().add(-0.5f, -0.5f, -0.5f);
 
         rotationAxis = getRotationAxis(facing);
 
@@ -122,12 +123,25 @@ public class SpringInstance {
         }
     }
 
+    public void animateInContraption(float progress) {
+        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, instancePos);
+
+        for (int i = 0; i < rings.size(); i++) {
+            updateRingPosition(progress, rings.get(i), i);
+        }
+    }
+
     private void updateRingPosition(float progress, OrientedInstance ring, int ringIndex) {
         MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, instancePos);
     }
 
     public void deleteSpring() {
         secondPlate.delete();
+        plate.delete();
+        rings.forEach(OrientedInstance::delete);
+    }
+
+    public void deleteSpringInContraption() {
         plate.delete();
         rings.forEach(OrientedInstance::delete);
     }

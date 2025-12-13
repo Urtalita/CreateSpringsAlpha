@@ -71,6 +71,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     private void animate(float partialTick){
+
         float progress = blockEntity.getProgress(partialTick);
 
         MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, getVisualPosition());

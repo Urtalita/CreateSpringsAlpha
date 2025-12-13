@@ -1,23 +1,19 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 
 public class SpringCatapultRenderer extends SmartBlockEntityRenderer<SpringCatapultBlockEntity> {
     public SpringCatapultRenderer(BlockEntityRendererProvider.Context context) {
@@ -27,7 +23,15 @@ public class SpringCatapultRenderer extends SmartBlockEntityRenderer<SpringCatap
     @Override
     protected void renderSafe(SpringCatapultBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+        renderItem(be, partialTicks, ms, buffer, light, overlay);
 
+        if (VisualizationManager.supportsVisualization(be.getLevel()))
+            return;
+
+        SpringRenderer.renderSpring(ms, light, buffer, be.getBlockState(), be.getYAngle(partialTicks), be.getXAngle(partialTicks), be.getProgress(partialTicks));
+    }
+
+    private void renderItem(SpringCatapultBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay){
         PoseStack msLocal = new PoseStack();
         var msr = TransformStack.of(msLocal);
 
@@ -46,7 +50,7 @@ public class SpringCatapultRenderer extends SmartBlockEntityRenderer<SpringCatap
         float itemScale = isBlockItem ? .5f : .625f;
         //msLocal.translate(0, isBlockItem ? -9 / 16f : -10 / 16f, 0);
 
-        if(be.upsideDown){
+        if(be.isUpsideDown()){
             msLocal.translate(0, -28 / 16f, 0);
         } else {
             msLocal.translate(0, 28 / 16f, 0);

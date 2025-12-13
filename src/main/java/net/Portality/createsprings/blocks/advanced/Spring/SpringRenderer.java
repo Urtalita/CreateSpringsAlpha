@@ -43,11 +43,10 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
         BlockState blockState = be.getBlockState();
         float progress = be.getProgress(partialTicks);
         Direction facing = be.getBlockState().getValue(DirectionalKineticBlock.FACING);
-        BlockPos pos = be.getBlockPos();
         Axis rotationAxis = getRotationAxis(facing);
 
         SuperByteBuffer plateRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PLATE, blockState, facing);
-        plateRender.translate(MoveToPos(1/16f, 8/16f, progress, facing, pos))
+        plateRender.translate(MoveToPos(1/16f, 8/16f, progress, facing))
                 .light(light)
                 .renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
@@ -56,18 +55,82 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
             float start = (2f+ringIndex)/16f + 1/16f;
 
             SuperByteBuffer pieceRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PIECE, blockState, facing);
-            pieceRender.translate(MoveToPos(start, end, progress, facing, pos))
+            pieceRender.translate(MoveToPos(start, end, progress, facing))
                     .light(light)
                     .rotateCenteredDegrees(45 + ringIndex * 90, rotationAxis)
                     .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
     }
 
-    private Vec3 MoveToPos(float start, float end, float progress, Direction facing, BlockPos pos){
+    public static void renderSpring(PoseStack ms, int light, MultiBufferSource buffer, BlockState state, float yRot, float xRot, float progress){
+        double horizontalAngleRad = Math.toRadians(yRot);
+        double verticalAngleRad = Math.toRadians(xRot);
+
+        double x = Math.sin(horizontalAngleRad) * Math.cos(verticalAngleRad);
+        double y = Math.sin(verticalAngleRad);
+        double z = Math.cos(horizontalAngleRad) * Math.cos(verticalAngleRad);
+
+        Vec3 offset = new Vec3(0, 28/16f, 0);
+        Vec3 movementDirection = new Vec3(x, y, z);
+
+        movementDirection = movementDirection.scale(-1);
+
+        SuperByteBuffer plateRender = CachedBuffers.partial(CSpringsPartalModels.SPRING_PLATE, state);
+        plateRender.translate(MoveToPos(1/16f, 8/16f, progress, movementDirection))
+                .translate(offset)
+                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
+                .rotateCenteredDegrees(-xRot , Direction.Axis.X)
+                .light(light)
+                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+
+        SuperByteBuffer plateRender2 = CachedBuffers.partial(CSpringsPartalModels.SPRING_PLATE, state);
+        plateRender2.translate(offset)
+                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
+                .rotateCenteredDegrees(-xRot , Direction.Axis.X)
+                .light(light)
+                .translate(new Vec3(0, 0, 7/16f))
+                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+
+        for (int ringIndex = 0; ringIndex < SPRING_LEN; ringIndex++) {
+            float end = (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f;
+            float start = (2f+ringIndex)/16f + 1/16f;
+
+            SuperByteBuffer pieceRender = CachedBuffers.partial(CSpringsPartalModels.SPRING_PIECE, state);
+            pieceRender.translate(MoveToPos(start, end, progress, movementDirection))
+                    .translate(offset)
+                    .light(light)
+                    .rotateCenteredDegrees(yRot, Direction.Axis.Y)
+                    .rotateCenteredDegrees(-xRot , Direction.Axis.X)
+                    .rotateCenteredDegrees(45 + ringIndex * 90, Direction.Axis.Z)
+                    .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+        }
+
+        SuperByteBuffer springHolderRenderer = CachedBuffers.partial(CSpringsPartalModels.SPRING_CATAPULT_HOLDER, state);
+        springHolderRenderer.translate(offset)
+                .rotateCenteredDegrees(-90, Direction.Axis.Y)
+                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
+                .rotateCenteredDegrees(xRot , Direction.Axis.Z)
+                .light(light)
+                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+
+        SuperByteBuffer connectionsRenderer = CachedBuffers.partial(CSpringsPartalModels.SPRING_CATAPULT_CONNECTION, state);
+        connectionsRenderer.translate(0, 1, 0)
+                .rotateCenteredDegrees(-90, Direction.Axis.Y)
+                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
+                .light(light)
+                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+    }
+
+    public static Vec3 MoveToPos(float start, float end, float progress, Direction facing){
         Vec3i normalVi = facing.getOpposite().getNormal();
         Vec3 normal = new Vec3(normalVi.getX(), normalVi.getY(), normalVi.getZ());
         Vec3 ret = normal.scale(1 - Mth.lerp(progress, start, end));
         return ret.subtract(normal.scale(0.5));
+    }
+
+    private static Vec3 MoveToPos(float start, float end, float progress, Vec3 movementDirection){
+        Vec3 ret = movementDirection.scale(1 - Mth.lerp(progress, start, end));
+        return ret.subtract(movementDirection.scale(0.5));
     }
 
     @Override

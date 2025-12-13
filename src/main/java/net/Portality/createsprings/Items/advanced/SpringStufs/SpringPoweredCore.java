@@ -1,8 +1,9 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
-import net.Portality.createsprings.Config;
+import com.simibubi.create.AllBlocks;
 import net.Portality.createsprings.Items.ModItems;
-import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -15,19 +16,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,42 +45,20 @@ public class SpringPoweredCore {
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
-        CompoundTag tag = stack.getOrCreateTag();
-        float capacity = tag.getInt("Springs_rn") * Config.spring_capacity;
 
-        tooltip.add((Component.translatable("create.spring.saved").withStyle(ChatFormatting.DARK_GRAY))
-                .append(Component.literal(" ").withStyle(ChatFormatting.DARK_GRAY))
-                .append(Component.literal(String.valueOf(getStoredSum(stack)))).withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
-                .append(Component.literal(capacity + " ")).withStyle(ChatFormatting.GRAY)
-                .append(Component.translatable("create.spring.su").withStyle(ChatFormatting.DARK_GRAY)))
-        ;
-
-        if (!RenderHelper.checkForDetails(tooltip)) {
-
-            tooltip.add(Component.translatable("tooltip.springstuf.needsprings1").withStyle(ChatFormatting.GOLD)
-                    .append(Component.literal(String.valueOf(springsMaxCount)).withStyle(ChatFormatting.YELLOW))
-                    .append(Component.translatable("tooltip.springstuf.needsprings2").withStyle(ChatFormatting.GOLD)));
-
-            tooltip.add(Component.empty());
-            appendHoverTextItemsCategory(tooltip, stack);
-        }
     }
 
-    private void appendHoverTextItemsCategory(List<Component> tooltip, ItemStack stack){
-        CompoundTag tag = stack.getOrCreateTag();
-        CompoundTag contains = tag.getCompound("contains");
+    public void checkAndAddModifier(ItemStack stack, Item item){
+        if(!stack.getOrCreateTag().contains("contains")){
+            CompoundTag tag = stack.getOrCreateTag();
+            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
 
-        tooltip.add(Component.translatable("tooltip.springstuf.modifiers").withStyle(ChatFormatting.GRAY));
+            CompoundTag contains = tag.getCompound("contains");
 
-        for (String key : contains.getAllKeys()) {
-            if (contains.getBoolean(key)){
-                String modiferName = I18n.get(getItemFromName(key).getDescriptionId());
-
-                tooltip.add(Component.literal(modiferName).withStyle(ChatFormatting.YELLOW)
-                        .append(Component.literal(" - ").withStyle(ChatFormatting.GOLD))
-                        .append(Component.translatable("tooltip.springstuf." + key).withStyle(ChatFormatting.GOLD)));
+            if (!contains.getBoolean(itemId.toString())){
+                contains.putBoolean(itemId.toString(), true);
             }
+            tag.put("contains", contains);
         }
     }
 
@@ -233,6 +210,77 @@ public class SpringPoweredCore {
         return false;
     }
 
+    public static boolean addItemWithCount(Item item, ItemStack stack1, ItemStack stack2){
+        CompoundTag tag = stack1.getOrCreateTag();
+        if (stack2.getItem() == item){
+
+            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
+            if (itemId == null) return false;
+
+            CompoundTag contains = tag.getCompound("contains");
+
+            if (!contains.getBoolean(itemId.toString())){
+                contains.putBoolean(itemId.toString(), true);
+                contains.putInt(itemId + "_count", stack2.getCount());
+                stack2.setCount(0);
+            }
+            tag.put("contains", contains);
+
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean removeWithCount(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
+        CompoundTag tag = stack1.getOrCreateTag();
+        if (stack2.isEmpty()) {
+            CompoundTag contains = tag.getCompound("contains");
+            String itemid = ForgeRegistries.ITEMS.getKey(item).toString();
+
+            if (action == ClickAction.SECONDARY) {
+                if (contains.getBoolean(itemid)){
+                    ItemStack addstack = new ItemStack(item);
+                    addstack.setCount(contains.getInt(itemid + "_count"));
+
+                    player.getInventory().add(addstack);
+
+                    contains.putBoolean(itemid, false);
+                    contains.putInt(itemid + "_count", 0);
+                    tag.put("contains", contains);
+
+                    contains.remove(itemid);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean removeOne(ItemStack stack1){
+        CompoundTag tag = stack1.getOrCreateTag();
+        CompoundTag contains = tag.getCompound("contains");
+
+        for(ExplosionChamberFuel fuel : ExplosionChamberFuel.values()){
+            String itemid = ForgeRegistries.ITEMS.getKey(fuel.item).toString();
+            if (contains.getBoolean(itemid)){
+                int itemCount = contains.getInt(itemid + "_count");
+                if(itemCount < 2){
+                    contains.putBoolean(itemid, false);
+                    contains.putInt(itemid + "_count", 0);
+                    tag.put("contains", contains);
+
+                    contains.remove(itemid);
+                    return false;
+                }
+
+                contains.putInt(itemid + "_count", contains.getInt(itemid + "_count") - 1);
+                tag.put("contains", contains);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean addStackedLogick(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
         CompoundTag tag = stack1.getOrCreateTag();
         int Springs_rn = tag.getInt("Springs_rn");
@@ -250,7 +298,7 @@ public class SpringPoweredCore {
         return false;
     }
 
-    private boolean exceptions(CompoundTag tag){
+    public static boolean exceptions(CompoundTag tag){
         CompoundTag contains = tag.getCompound("contains");
         if (contains.getBoolean(SpringLauncher.BlockAmmo)){
             return false;
@@ -353,7 +401,7 @@ public class SpringPoweredCore {
 
         for(int i = 0; i < allSu.length; i++){
             if((allSu[i] + addPerSpring) < 0){ifNotEnoughSu += addPerSpring; allSu[i] = 0; continue;}
-            if((allSu[i] + addPerSpring) > Config.spring_capacity){ifNotEnoughSu += addPerSpring; allSu[i] = 0; continue;}
+            if((allSu[i] + addPerSpring) > ModConfigs.common().SPRING_CAPACITY.get()){ifNotEnoughSu += addPerSpring; allSu[i] = 0; continue;}
 
             allSu[i] += addPerSpring;
             if(ifNotEnoughSu != 0){allSu[i] += ifNotEnoughSu; ifNotEnoughSu = 0;}
@@ -431,9 +479,9 @@ public class SpringPoweredCore {
         tag2.putInt("Springs_rn", tag2.getInt("Springs_rn") + 1);
         tag1.putInt("Springs_rn", tag1.getInt("Springs_rn") - 1);
 
-        if(tag1.getFloat("Stored") >= Config.spring_capacity){
-            tag1.putFloat("Stored", tag1.getInt("Stored") - Config.spring_capacity);
-            tag2.putFloat("Stored", tag2.getInt("Stored") + Config.spring_capacity);
+        if(tag1.getFloat("Stored") >= ModConfigs.common().SPRING_CAPACITY.get()){
+            tag1.putFloat("Stored", tag1.getInt("Stored") - ModConfigs.common().SPRING_CAPACITY.get());
+            tag2.putFloat("Stored", tag2.getInt("Stored") + ModConfigs.common().SPRING_CAPACITY.get());
             return true;
         }
 

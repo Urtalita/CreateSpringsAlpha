@@ -2,10 +2,12 @@ package net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher;
 
 import cpw.mods.modlauncher.Launcher;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,6 +33,19 @@ public class MouseSensitivityHandler {
                     }
                 }
             }
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if(Minecraft.getInstance().player == null){return;}
+        if(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SpringLauncher || Minecraft.getInstance().player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof SpringLauncher) return;
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.options != null && originalSensitivity != -1) {
+            minecraft.options.sensitivity().set(originalSensitivity);
+            originalSensitivity = -1;
         }
     }
 

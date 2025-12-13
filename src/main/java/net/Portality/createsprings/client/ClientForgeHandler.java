@@ -44,5 +44,9 @@ public class ClientForgeHandler {
                 CSpringsPackets.getChannel().send(PacketDistributor.SERVER.noArg(), new DashPSEPacket());
             }
         }
+
+        if(Keybindings.INSTANCE.ActivatePunchcard.consumeClick()){
+            CSpringsPackets.getChannel().send(PacketDistributor.SERVER.noArg(), new ActivatePunchcard());
+        }
     }
 }

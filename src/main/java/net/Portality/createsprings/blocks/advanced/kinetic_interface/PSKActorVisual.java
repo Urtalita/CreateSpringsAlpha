@@ -17,7 +17,7 @@ import java.util.function.UnaryOperator;
 
 public class PSKActorVisual extends ActorVisual {
     private final PSKInstance instance;
-    private final TransformedInstance connection;
+    //private final TransformedInstance connection;
 
     public PSKActorVisual(VisualizationContext visualizationContext, BlockAndTintGetter world, MovementContext context) {
         super(visualizationContext, world, context);
@@ -27,8 +27,8 @@ public class PSKActorVisual extends ActorVisual {
         instance.rotatingPulley.light(localBlockLight(), 0);
         instance.top.light(localBlockLight(), 0);
 
-        connection = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(CSpringsPartalModels.CENTERED_SHAFT))
-                .createInstance();
+        //connection = instancerProvider.instancer(InstanceTypes.TRANSFORMED, Models.partial(CSpringsPartalModels.CENTERED_SHAFT))
+                //.createInstance();
     }
 
     public void updateSpeed(float speed){
@@ -47,7 +47,7 @@ public class PSKActorVisual extends ActorVisual {
             instance.setActorRotation(0);
         }
 
-        connection.setVisible(false);
+        //connection.setVisible(false);
         /*
         //if(lf.getValue(AnimationTickHolder.getPartialTicks()) == 0){return;}
         connection.setVisible(false);
@@ -80,23 +80,25 @@ public class PSKActorVisual extends ActorVisual {
         From.position(from).setChanged();
          */
     }
-
+/*
     private void scaleConnection(float scaleFactor){
         float lenShaft = 8/16f;
         float lenWithShaft = 19/16f;
         float compensation = lenShaft * (1 - scaleFactor) / 2;
 
         connection.setIdentityTransform()
-                .translate(instance.instancePos)
+                //.translate(instance.instancePos)
                 .center()
-                .rotateYDegrees(instance.angleY)
-                .rotateXDegrees(instance.angleX - 90)
+               // .rotateYDegrees(instance.angleY)
+                //.rotateXDegrees(instance.angleX - 90)
                 .translate(0, 0, compensation + lenWithShaft - (lenShaft - scaleFactor/2f))
                 .scaleZ(scaleFactor)
                 .uncenter();
 
         connection.setChanged();
     }
+
+ */
 
     public Vec3 transformWorldToContraptionLocal(Vec3 worldPos, MovementContext context) {
         Vec3 diff = worldPos.subtract(context.position);
@@ -118,6 +120,6 @@ public class PSKActorVisual extends ActorVisual {
     @Override
     protected void _delete() {
         instance.remove();
-        connection.delete();
+        //connection.delete();
     }
 }

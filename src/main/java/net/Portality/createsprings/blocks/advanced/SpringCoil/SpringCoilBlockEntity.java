@@ -1,15 +1,17 @@
 package net.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
 
         BlockPos nextLayerPos = isSpringLayerCompleted(x, y, z, axis, false);
 
-        if (nextLayerPos == null || len >= Config.spring_len) {
+        if (nextLayerPos == null || len >= ModConfigs.common().SPRING_LEN.get()) {
             return len;
         }
 
@@ -94,6 +96,18 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         }
 
         level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
+
+        BlockPos min = worldPosition.above(5).east(5).north(5);
+        BlockPos max = worldPosition.below(5).west(5).south(5);
+        AABB area = new AABB(
+                min.getX(), min.getY(), min.getZ(),
+                max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0
+        );
+
+        for (Player player : level.getEntitiesOfClass(Player.class, area)) {
+            CSpringsAdvancements.LARGE_SPRING.awardTo(player);
+            return;
+        }
     }
 
     private Optional<SpringCoilBlockEntity> getCoil(BlockPos pos){

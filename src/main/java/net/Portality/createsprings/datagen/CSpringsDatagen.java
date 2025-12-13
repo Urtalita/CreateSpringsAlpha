@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.utility.FilesHelper;
 import com.tterrag.registrate.providers.ProviderType;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.ponders.CSpringsPonderPlugin;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -25,6 +26,7 @@ public class CSpringsDatagen {
 
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
+        generator.addProvider(event.includeClient(), CSpringsSounds.provider(generator));
 
         generator.addProvider(event.includeServer(), new CSpringsAdvancements(output));
     }
@@ -50,6 +52,7 @@ public class CSpringsDatagen {
             provideDefaultLang("tooltips", langConsumer);
             provideDefaultLang("manual", langConsumer);
 
+            CSpringsSounds.provideLang(langConsumer);
             CSpringsAdvancements.provideLang(langConsumer);
             providePonderLang(langConsumer);
         });

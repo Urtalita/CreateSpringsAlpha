@@ -5,7 +5,11 @@ import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class LargeSpringMovement implements MovementBehaviour {
     LargeSpringActorVisual visual;
@@ -31,6 +35,12 @@ public class LargeSpringMovement implements MovementBehaviour {
         MovementBehaviour.super.tick(context);
         if(visual != null){
             visual.prevProgress = visual.progress;
+        }
+    }
+
+    public void setProgress(UUID contraption, BlockPos localPos, CompoundTag updatedEntity) {
+        if(visual != null){
+            visual.setProgress(contraption, localPos, updatedEntity);
         }
     }
 }

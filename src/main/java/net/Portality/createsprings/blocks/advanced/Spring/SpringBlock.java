@@ -3,7 +3,7 @@ package net.Portality.createsprings.blocks.advanced.Spring;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.*;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,12 +26,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
-
-import static net.minecraft.world.level.block.WeepingVinesPlantBlock.SHAPE;
 
 public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock {
     public SpringBlock(Properties properties) {
@@ -109,7 +105,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         InteractionResult use = super.use(state, level, pos, player, hand, result);
         ItemStack itemInHand = player.getItemInHand(hand);
 
-        if(!Config.springs_can_splash){
+        if(!ModConfigs.common().SPRINGS_CAN_SPLASH.get()){
             if(itemInHand.getItem() == Blocks.TRIPWIRE_HOOK.asItem()){
                 player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
                 itemInHand.shrink(1);
@@ -161,11 +157,6 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
             withBlockEntityDo(level, pos, be -> be.setGenerating(false));
         }
         super.onRemove(state, level, pos, newState, isMoving);
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE;
     }
 
     @Override

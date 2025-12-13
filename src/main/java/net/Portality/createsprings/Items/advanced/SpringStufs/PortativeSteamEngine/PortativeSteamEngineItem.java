@@ -19,8 +19,10 @@ import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.Spring.SpringItem;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.menus.PortativeEngine.PortativeEngineScreen;
 import net.Portality.createsprings.menus.PortativeEngine.PortativeSteamEngineMenu;
@@ -77,7 +79,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
-public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider {
+public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider, ISpringPoweredTool {
     public static final EquipmentSlot SLOT = EquipmentSlot.CHEST;
 
     private final SpringPoweredCore core;
@@ -87,7 +89,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
         super(CspringsArmorMaterials.HAT, Type.CHESTPLATE, properties);
 
         Item[] allowedModifficators = new Item[]{
-
+            ModItems.PUNCHCARD.get()
         };
 
         this.core = new SpringPoweredCore(SPRINGS, allowedModifficators);
@@ -170,6 +172,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
         if(water > 20 || fuel > 20){return;}
         int remainingwater = 20 - water;
         int remainingfuel = 20 - fuel;
+        if(water < 0 || fuel < 0){return;}
         tooltip.add(Component.literal("|".repeat(water)).withStyle(ChatFormatting.BLUE)
                 .append(Component.literal("|".repeat(remainingwater)).withStyle(ChatFormatting.GRAY)));
 
@@ -237,6 +240,10 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
             return;
         }
 
+        if(level.getGameTime() % 10 == 0){
+            PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, PunchcardExecutor.PSE, ModItems.PORTATIVE_STEAM_ENGINE.get()));
+        }
+
         int speed = tag.getInt("engineSpeed");
         if(tag.getBoolean("boost")){speed = 150;}
 
@@ -261,8 +268,8 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
             tag.putFloat("engineSpeed", tag.getFloat("mode"));
         }
 
-        if(fuel >= mode / 15 * 3){
-            fuel -= mode / 15 * 3;
+        if(fuel >= mode / 15f * ModConfigs.common().PSE_FUEL_USAGE.get()){
+            fuel -= (int) (mode / 15f * ModConfigs.common().PSE_FUEL_USAGE.get());
         } else if (fuel == 0){
             tag.putFloat("engineSpeed", 0);
         } else {
@@ -278,10 +285,17 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
                 AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
                 spawnParticles(level, player);
             }
+
+            water -= 5;
+            if(water <= 1){
+                if(ParseInv(player)){
+                    water = 1000;
+                }
+            }
         }
 
         tag.putInt("fuel", fuel);
-        tag.putInt("water", 500);
+        tag.putInt("water", water);
         int boosted = tag.getInt("boosted");
 
         if(boosted > 0){
@@ -324,6 +338,12 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
 
         int actual = mode / 15;
 
+        if(tag.getBoolean("boost")){
+            chargeTanks(stack, level, player, actual); speedUp(stack, level, player, actual);
+            charge(stack, level, player, actual);
+            chargeTanks(stack, level, player, actual);
+        }
+
         if(mode > 0){
             charge(stack, level, player, actual);
         }
@@ -346,7 +366,23 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
     }
 
     private void speedUp(ItemStack stack, Level level, Player player, int mode){
+        CompoundTag tag = stack.getOrCreateTag();
 
+        int speed = tag.getInt("engineSpeed");
+        if(speed == 0){return;}
+
+        ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+        float toolSpeed = handStack.getOrCreateTag().getFloat("Speed");
+
+        if(handStack.getItem() instanceof ISpringPoweredTool){
+            if(toolSpeed < SpringSpeedSys.MAX_REGULAR_SPEED){
+                handStack.getOrCreateTag().putFloat("LastSpeed", toolSpeed);
+                toolSpeed += mode * 15 / 2f;
+                if(toolSpeed > SpringSpeedSys.MAX_REGULAR_SPEED) toolSpeed = SpringSpeedSys.MAX_REGULAR_SPEED;
+                handStack.getOrCreateTag().putFloat("Speed", toolSpeed);
+            }
+        }
     }
 
     private void charge(ItemStack stack, Level level, Player player, int mode){
@@ -360,6 +396,12 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
 
         Stored0 += speed * 3;
         Stored1 += speed * 3;
+        if(Stored0 > ModConfigs.common().SPRING_CAPACITY.get()){
+            Stored0 = ModConfigs.common().SPRING_CAPACITY.get();
+        }
+        if(Stored1 > ModConfigs.common().SPRING_CAPACITY.get()){
+            Stored1 = ModConfigs.common().SPRING_CAPACITY.get();
+        }
 
         if(springs > 0){
             tag.putFloat("Stored0", Stored0);
@@ -394,11 +436,8 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
             ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
             CompoundTag tag = stack.getOrCreateTag();
             int boosted = tag.getInt("boosted");
-            int speed = tag.getInt("engineSpeed");
-            int mode = speed / 15;
 
-
-            if(mode > 2 && boosted > 70){
+            if(boosted > 70){
 
                 if(boosted > 100){return;}
 
@@ -440,7 +479,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void spawnParticles(Level level, Player player) {
+    private static void spawnParticles(Level level, Player player) {
         Direction facing = player.getDirection().getOpposite();
         Vec3 offset = VecHelper.rotate((new Vec3(0.0, 0.0, 1.0)).add(VecHelper.offsetRandomly(Vec3.ZERO, level.random, 1.0F).multiply(1.0, 1.0, 0.0).normalize().scale(0.5)), (double)AngleHelper.verticalAngle(facing), Direction.Axis.X);
         offset = VecHelper.rotate(offset, (double)AngleHelper.horizontalAngle(facing), Direction.Axis.Y);
@@ -449,16 +488,19 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider 
         level.addParticle(new SteamJetParticleData(1.0F), v.x, v.y, v.z, m.x, m.y, m.z);
     }
 
-    private ItemStack ParseInv(Player player){
+    private boolean ParseInv(Player player){
         for (ItemStack item : player.getInventory().items) {
-            if(ForgeHooks.getBurnTime(item, (RecipeType)null) > 0){
-                ItemStack another = item.copy();
-                item.setCount(0);
-                return another;
+            if(item.getItem() == Items.WATER_BUCKET){
+                return true;
             }
         }
 
-        return null;
+        return false;
+    }
+
+    @Override
+    public SpringPoweredCore getCore() {
+        return core;
     }
     /*
 

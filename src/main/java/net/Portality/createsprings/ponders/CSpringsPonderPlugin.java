@@ -11,14 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CSpringsPonderPlugin implements PonderPlugin {
 
+    
     @Override
     public String getModId() {
         return CreateSprings.MODID;
-    }
-
-    @Override
-    public void onPonderLevelRestore(PonderLevel ponderLevel) {
-        PonderWorldBlockEntityFix.fixControllerBlockEntities(ponderLevel);
     }
 
     @Override

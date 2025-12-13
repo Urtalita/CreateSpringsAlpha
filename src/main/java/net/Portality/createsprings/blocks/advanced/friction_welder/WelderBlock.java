@@ -8,6 +8,8 @@ import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -48,10 +50,9 @@ public class WelderBlock extends BearingBlock implements IBE<WelderBlockEntity> 
             if (worldIn.isClientSide)
                 return InteractionResult.SUCCESS;
             withBlockEntityDo(worldIn, pos, be -> {
-                if(!be.isMainBlock)
-                    return;
                 if (be.getRunning()) {
                     be.disassemble();
+                    be.stopped = true;
                     return;
                 }
                 be.SetAssemble();

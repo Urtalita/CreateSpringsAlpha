@@ -1,9 +1,11 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -12,8 +14,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -57,7 +60,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
-        capacity = Config.spring_capacity;
+        capacity = ModConfigs.common().SPRING_CAPACITY.get();
     }
 
     public void setHardness(int hardness){
@@ -129,8 +132,21 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     @Override
     public float calculateStressApplied() {
         float stressApplied = calcStress();
+        if(isGenerating){
+            stressApplied = 0;
+        }
         this.lastStressApplied = stressApplied;
         return stressApplied;
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        float capacity = -calcStress();
+        if(!isGenerating){
+            capacity = 0;
+        }
+        this.lastCapacityProvided = capacity;
+        return capacity;
     }
 
     private float calcStress() {
@@ -153,10 +169,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             if(phase == 1){
                 launchEntitiesInFront();
                 breakBlocksInFront();
+                CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition);
             }
 
             phase++;
-            if(phase == Config.spring_splash_duration){
+            if(phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){
                 phase = 0;
                 stored = 0;
                 isGenerating = false;
@@ -169,14 +186,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         float CurSpeed = Math.abs(getSpeed());
 
         if (isGenerating && stored >= 0) {
-            stored = Math.max(stored - CurSpeed / DEFAULT_HARDNESS * hardness, 0);
+            stored = Math.max(stored - CurSpeed * hardness * 2 / 20f, 0);
         }
 
         else if (!isGenerating) {
-            stored = Mth.clamp(stored + CurSpeed / DEFAULT_HARDNESS * hardness, 0, capacity);
+            stored = Mth.clamp(stored + CurSpeed * hardness * 2 / 20f, 0, capacity);
         }
 
-        if(stored == 0){
+        if(stored == 0 && prevProgress == progress){
             updateGeneratedRotation();
         }
 
@@ -234,20 +251,65 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        //stored
+
         CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
         CreateLang.text(" ").add(
-                        CreateLang.number(stored).style(ChatFormatting.AQUA).space()
+                        CreateLang.number(Math.round(stored)).style(ChatFormatting.AQUA).space()
                 ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                        .add(CreateLang.number(Config.spring_capacity).style(ChatFormatting.AQUA).space()
+                        .add(CreateLang.number(ModConfigs.common().SPRING_CAPACITY.get()).style(ChatFormatting.AQUA).space()
                                 .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
                 .forGoggles(tooltip);
+
+        boolean added = false;
+        if(!isGenerating){
+            if (!IRotate.StressImpact.isEnabled())
+                return added;
+            float stressAtBase = calculateStressApplied();
+            if (Mth.equal(stressAtBase, 0))
+                return added;
+
+            CreateLang.translate("gui.goggles.kinetic_stats")
+                    .forGoggles(tooltip);
+
+            addStressImpactStats(tooltip, stressAtBase);
+        } else {
+            //generator
+
+            if (!IRotate.StressImpact.isEnabled())
+                return added;
+
+            float stressBase = calculateAddedStressCapacity();
+            if (Mth.equal(stressBase, 0))
+                return added;
+
+            CreateLang.translate("gui.goggles.generator_stats")
+                    .forGoggles(tooltip);
+            CreateLang.translate("tooltip.capacityProvided")
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+
+            float speed = getTheoreticalSpeed();
+            if (speed != getGeneratedSpeed() && speed != 0)
+                stressBase *= getGeneratedSpeed() / speed;
+
+            float stressTotal = Math.abs(stressBase * speed);
+
+            CreateLang.number(stressTotal)
+                    .translate("generic.unit.stress")
+                    .style(ChatFormatting.AQUA)
+                    .space()
+                    .add(CreateLang.translate("gui.goggles.at_current_speed")
+                            .style(ChatFormatting.DARK_GRAY))
+                    .forGoggles(tooltip, 1);
+        }
+
         return true;
     }
 
     public static float springAnimation(int phase) {
         if (phase == 0) {return 1.0f;}
-        if (phase == Config.spring_splash_duration){return 0f;}
+        if (phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){return 0f;}
 
         float decay = (float) Math.exp(-0.15 * phase);
 
@@ -296,7 +358,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                     facing.getStepZ()
             ).scale(1.0);
 
-            entity.setDeltaMovement(direction.scale(Config.knockback_coef).scale(stored / Config.spring_capacity));
+            entity.setDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
             entity.hurtMarked = true;
         }
     }

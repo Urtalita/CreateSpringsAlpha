@@ -1,6 +1,7 @@
 package net.Portality.createsprings.datagen;
 
 import com.google.common.collect.Sets;
+import com.simibubi.create.AllItems;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.advancements.Advancement;
@@ -10,6 +11,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
+import javax.swing.table.TableStringConverter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,13 +86,18 @@ public class CSpringsAdvancements implements DataProvider {
     ),
 
     DASH = create("pse_dash", b -> b.icon(ModItems.PORTATIVE_STEAM_ENGINE)
-            .title("Not a bug")
+            .title("Double jump")
             .description("use steam dash while using steam dash")
             .after(PSE)
             .special(SECRET)
     ),
 
-
+    LARGE_SPRING = create("large_spring", b -> b.icon(ModBlocks.LARGE_SPRING_COIL)
+            .title("large spring")
+            .description("assemble large spring")
+            .after(SPRING)
+    ),
+    
     END = null;
 
     //

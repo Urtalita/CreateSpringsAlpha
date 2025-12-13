@@ -14,6 +14,7 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.Direction;
 
+import static net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlock.CEILING;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class SpringCatapultVisual extends SingleAxisRotatingVisual<SpringCatapultBlockEntity> implements SimpleDynamicVisual {
@@ -24,7 +25,7 @@ public class SpringCatapultVisual extends SingleAxisRotatingVisual<SpringCatapul
 
     public SpringCatapultVisual(VisualizationContext context, SpringCatapultBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick, Models.partial(AllPartialModels.SHAFT_HALF));
-        upsideDown = blockEntity.getBlockState().getValue(FACING) == Direction.DOWN;
+        upsideDown = blockEntity.getBlockState().getValue(CEILING);
 
         rotatingModel.rotateToFace(Direction.SOUTH);
 
@@ -35,6 +36,7 @@ public class SpringCatapultVisual extends SingleAxisRotatingVisual<SpringCatapul
                 .instancer(InstanceTypes.ORIENTED, Models.partial(CSpringsPartalModels.SPRING_CATAPULT_HOLDER)).createInstance();
 
         if(upsideDown){
+            rotatingModel.rotateToFace(Direction.DOWN);
             spring = new SpringInstance(instancerProvider(), Direction.EAST, getVisualPosition().above().getCenter().add(-0.5, 4/16f - 3 - 9/16f, -0.5), false);
         } else {
             spring = new SpringInstance(instancerProvider(), Direction.EAST, getVisualPosition().above().getCenter().add(-0.5, 4/16f, -0.5), false);

@@ -23,12 +23,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import org.joml.Vector3f;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CSpringsFluids {
@@ -53,21 +55,10 @@ public class CSpringsFluids {
                     .register();
 
      */
-/*
-    public static FluidEntry<ForgeFlowingFluid.Flowing> SPRING_ALLOY =
-            CreateSprings.CSPRINGS_REGISTRATE.fluid("molten_spring_alloy", new ResourceLocation("createsprings","fluid/molten_spring_alloy_still"),
-                    new ResourceLocation("createsprings","fluid/molten_spring_alloy_flow"),
-                    NoColorFluidAttributes::new)
-            .properties(b -> b.viscosity(2000)
-                    .density(1400))
-            .fluidProperties(p -> p.levelDecreasePerBlock(2)
-                    .tickRate(15)
-                    .slopeFindDistance(6)
-                    .explosionResistance(100f))
-            .source(ForgeFlowingFluid.Source::new).register();
+    public static FluidEntry<ForgeFlowingFluid.Flowing> SPRING_ALLOY;
 
- */
 
+    /*
     public static final FluidEntry<ForgeFlowingFluid.Flowing> SPRING_ALLOY =
             CreateSprings.CSPRINGS_REGISTRATE.standardFluid("molten_spring_alloy",
                             NoColorFluidAttributes::new)
@@ -86,6 +77,8 @@ public class CSpringsFluids {
                     .onRegister(CSpringsFluids::registerFluidDispenseBehavior)
                     .build()
                     .register();
+
+     */
 
 
     private static final DispenseItemBehavior DEFAULT = new DefaultDispenseItemBehavior();
@@ -108,7 +101,7 @@ public class CSpringsFluids {
     }
 
     public static void register() {
-        /*
+
         var alloy = CreateSprings.CSPRINGS_REGISTRATE.fluid("molten_spring_alloy", new ResourceLocation("createsprings","fluid/molten_spring_alloy_still"),
                         new ResourceLocation("createsprings","fluid/molten_spring_alloy_flow"),
                         NoColorFluidAttributes::new)
@@ -124,19 +117,13 @@ public class CSpringsFluids {
                 .properties(p -> p.stacksTo(1))
                 .register();
         SPRING_ALLOY = alloy.register();
-
-         */
     }
 
     public static void registerFluidInteractions() {
         FluidInteractionRegistry.addInteraction(ForgeMod.WATER_TYPE.get(), new FluidInteractionRegistry.InteractionInformation(
                 SPRING_ALLOY.get().getFluidType(),
                 fluidState -> {
-                    if (fluidState.isSource()) {
-                        return Blocks.SMOOTH_STONE.defaultBlockState();
-                    } else {
-                        return Blocks.OBSIDIAN.defaultBlockState();
-                    }
+                    return Blocks.SMOOTH_STONE.defaultBlockState();
                 }
         ));
     }
@@ -158,5 +145,19 @@ public class CSpringsFluids {
             return 0x00ffffff;
         }
 
+        @Override
+        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+            consumer.accept(new IClientFluidTypeExtensions() {
+                @Override
+                public ResourceLocation getStillTexture() {
+                    return CreateSprings.asResource("block/spring_alloy_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture() {
+                    return CreateSprings.asResource("block/spring_alloy_flow");
+                }
+            });
+        }
     }
 }

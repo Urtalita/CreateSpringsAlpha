@@ -2,6 +2,7 @@ package net.Portality.createsprings.Items;
 
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.BuilderTransformers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -52,6 +53,11 @@ public class ModItems {
 
     public static final ItemEntry<PunchcardItem> PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
             .item("punchcard", PunchcardItem::new)
+            .properties(p -> p.stacksTo(1))
+            .register();
+
+    public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
+            .item("incomplete_punchcard", SequencedAssemblyItem::new)
             .properties(p -> p.stacksTo(1))
             .register();
 
@@ -110,7 +116,7 @@ public class ModItems {
             .register();
 
     public static final RegistryObject<Item> SUS_PACKAGE = ITEMS.register("sus_package",
-            () -> new SusPackageItem(new Item.Properties(), PackageStyles.STYLES.get(0)));
+            () -> new SusPackageItem(new Item.Properties()));
 
     public static final ItemEntry<HatItem> HAT = CreateSprings.CSPRINGS_REGISTRATE
             .item("hat", HatItem::new)
@@ -119,8 +125,8 @@ public class ModItems {
             .model(AssetLookup.itemModel("hat"))
             .register();
 
-    public static final RegistryObject<Item> HITBOX_HAT = ITEMS.register("hitbox_hat",
-            () -> new PackageItem(new Item.Properties(), new PackageStyles.PackageStyle("cardboard", 10, 7, 18f, false)));
+    public static final RegistryObject<HitboxPackageItem> HITBOX_HAT = ITEMS.register("hitbox_hat",
+            () -> new HitboxPackageItem(new Item.Properties(), new PackageStyles.PackageStyle("cardboard", 10, 7, 18f, false)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

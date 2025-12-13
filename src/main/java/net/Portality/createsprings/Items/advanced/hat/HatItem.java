@@ -1,6 +1,7 @@
 package net.Portality.createsprings.Items.advanced.hat;
 
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
@@ -45,15 +46,6 @@ public class HatItem extends Item implements IClientItemExtensions{
     public HatItem(Properties properties) {
         super(properties);
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        if (!RenderHelper.checkForDetails(tooltip)) {
-
-        }
-
-        super.appendHoverText(stack, level, tooltip, flag);
     }
 
     @Override

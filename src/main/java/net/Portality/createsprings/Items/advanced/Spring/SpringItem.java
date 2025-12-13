@@ -3,14 +3,13 @@ package net.Portality.createsprings.Items.advanced.Spring;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import net.Portality.createsprings.Config;
-import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
-import net.Portality.createsprings.Items.advanced.hat.render.HatRenderer;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -45,7 +43,6 @@ import java.util.function.Consumer;
 
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.readStackFromNBT;
 import static net.Portality.createsprings.Items.advanced.hat.HatItem.setPackageColor;
-import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BlockItem {
@@ -72,8 +69,8 @@ public class SpringItem extends BlockItem {
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
 
         if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
-            if(Config.spring_splash_duration == phase){
+            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
+            if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
                 stack.getOrCreateTag().putBoolean("splash", false);
             }
         }
@@ -129,6 +126,7 @@ public class SpringItem extends BlockItem {
 
         int time_pass = getUseDuration(stack) - timeCharged;
         if(time_pass > TimeNeed){
+            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, player.getOnPos());
             if(LaunchItemInHand(player, level)){return;}
 
             LaunchPlayerOrEntity(player, level, stack, entity);
@@ -199,10 +197,10 @@ public class SpringItem extends BlockItem {
                         player.getX(),
                         player.getY(),
                         player.getZ(),
-                        CHARGE_SOUND,
+                        CSpringsSounds.BWEUM.getMainEvent(),
                         SoundSource.PLAYERS,
                         1.0F,
-                        1.5F
+                        1.0F
                 );
             } else if (chargeTime > TimeNeed){
                 if(entity.onGround()){
@@ -218,7 +216,7 @@ public class SpringItem extends BlockItem {
     }
 
     private void  launchPlayer(float su, Player player) {
-        double launchVelocity = su / 16000;
+        double launchVelocity = su / 16000 * ModConfigs.common().KNOCKBACK_COEF.get() / 4f;
         final Vec3 vec = player.getViewVector(1);
 
         player.addDeltaMovement(new Vec3(vec.x * -launchVelocity, vec.y * -launchVelocity / 3, vec.z * -launchVelocity));
@@ -226,7 +224,7 @@ public class SpringItem extends BlockItem {
     }
 
     private void  launchEntity(LivingEntity entity, float su, Player player) {
-        double launchVelocity = su / 16000;
+        double launchVelocity = su / 16000 * ModConfigs.common().KNOCKBACK_COEF.get() / 4f;
         final Vec3 vec = player.getViewVector(1);
 
         entity.addDeltaMovement(new Vec3(vec.x * launchVelocity, vec.y * launchVelocity / 3, vec.z * launchVelocity));
@@ -234,7 +232,7 @@ public class SpringItem extends BlockItem {
     }
 
     public void launchPackage(ItemStack stack, Level world, Player player, ItemStack springStack, boolean isSusPackage, boolean isHat) {
-        float strength = Config.spring_capacity / getStoredSu(springStack);
+        float strength = ModConfigs.common().SPRING_CAPACITY.get() / getStoredSu(springStack);
 
         SetZeroSu(springStack, player);
 
@@ -278,7 +276,7 @@ public class SpringItem extends BlockItem {
     }
 
     public static float getPackageVelocity(float strength) {
-        return strength * 4;
+        return (float) (strength * ModConfigs.common().KNOCKBACK_COEF.get());
     }
 
     private void SetZeroSu(ItemStack stack, Player player){
@@ -288,7 +286,7 @@ public class SpringItem extends BlockItem {
 
         CompoundTag tag = stack.getOrCreateTag();
         tag.putBoolean("splash", true);
-        tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+        tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
     }
 
     public static void SetSu(ItemStack stack, float su){
@@ -327,11 +325,11 @@ public class SpringItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         float stored = getStoredSu(stack);
-        float capacity = Config.spring_capacity;
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get();
         tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(String.valueOf(stored))).withStyle(ChatFormatting.DARK_GRAY)
+                .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-               .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.DARK_GRAY));
+               .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));
     }
 
     @Override

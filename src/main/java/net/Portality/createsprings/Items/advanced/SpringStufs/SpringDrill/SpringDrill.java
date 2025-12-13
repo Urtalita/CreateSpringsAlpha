@@ -1,9 +1,11 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringDrill;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
@@ -33,17 +35,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
+public class SpringDrill extends PickaxeItem implements CustomArmPoseItem, ISpringPoweredTool {
 
     private static final Tier IRON_TIER = Tiers.IRON;
     private final SpringPoweredCore core;
-    private final SpringSpeedSys SpeedSys;
 
     public SpringDrill(Properties properties) {
         super(IRON_TIER, 1, -2.8F, properties
                 .durability(-1)
                 .rarity(Rarity.UNCOMMON));
-        SpeedSys = new SpringSpeedSys();
         Item[] allowedModifficators = new Item[]{
                 ModItems.PUNCHCARD.get(),
                 Items.TRIPWIRE_HOOK,
@@ -57,18 +57,18 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
         if(!isCorrectToolForDrops(stack, state))
             return 1.0F;
 
-        return SpeedSys.getDestroySpeed(stack, state);
+        return SpringSpeedSys.getDestroySpeed(stack, state);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        return SpeedSys.use(level, player, hand);
+        return SpringSpeedSys.use(level, player, hand);
     }
 
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
-        SpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+        SpringSpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
     }
 
     @Override
@@ -84,24 +84,14 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        if(!stack.getOrCreateTag().contains("contains")){
-            CompoundTag tag = stack.getOrCreateTag();
-            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(AllBlocks.MECHANICAL_DRILL.asItem());
-
-            CompoundTag contains = tag.getCompound("contains");
-
-            if (!contains.getBoolean(itemId.toString())){
-                contains.putBoolean(itemId.toString(), true);
-            }
-            tag.put("contains", contains);
-        }
-        SpeedSys.appendHoverText(stack, level, tooltip, flag);
+        core.checkAndAddModifier(stack, AllBlocks.MECHANICAL_DRILL.asItem());
+        SpringSpeedSys.appendHoverText(stack, level, tooltip, flag);
         core.appendHoverText(stack, level, tooltip, flag);
     }
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack p_150902_) {
-        return core.getTooltipImage(p_150902_);
+        return SpringPoweredCore.getTooltipImage(p_150902_);
     }
 
     @Override
@@ -115,17 +105,9 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
     }
 
     @Override
-    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
-        return false; // Отключаем сброс анимации ломания блоков
-    }
-
-    @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-        return true; // Отключаем анимацию взмаха рукой
-    }
-
-    @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess access) {
+        SpringPoweredCore core = getCore();
+        core.checkAndAddModifier(stack1, AllBlocks.MECHANICAL_DRILL.asItem());
 
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
@@ -136,6 +118,14 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
             return true;
         }
         return false;
+    }
+    @Override
+    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        core.checkAndAddModifier(stack, AllBlocks.MECHANICAL_DRILL.asItem());
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
+            return true;
+        }
+        return super.overrideStackedOnOther(stack, slot, action, player);
     }
 
     @Override
@@ -148,10 +138,17 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem {
     }
 
     @Override
-    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        if(core.overrideStackedOnOther(stack, slot, action, player)){
-            return true;
-        }
-        return super.overrideStackedOnOther(stack, slot, action, player);
+    public SpringPoweredCore getCore() {
+        return core;
+    }
+
+    @Override
+    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return false; // Отключаем сброс анимации ломания блоков
+    }
+
+    @Override
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+        return true; // Отключаем анимацию взмаха рукой
     }
 }

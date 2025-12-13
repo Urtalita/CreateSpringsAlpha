@@ -1,6 +1,6 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllFluids;
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -23,6 +23,7 @@ import net.Portality.createsprings.blocks.advanced.Spring.ISpringBlock;
 import net.Portality.createsprings.client.CSpringsMenus;
 import net.Portality.createsprings.client.Keybindings;
 import net.Portality.createsprings.compat.ColdSweatCompatibilityManager;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.contraption.CspringsContraptionTypes;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.datagen.CSpringsDatagen;
@@ -38,17 +39,17 @@ import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessReci
 import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.client.CSpringsPartalModels;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
@@ -61,26 +62,27 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
-import java.util.List;
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreateSprings.MODID)
 public class CreateSprings {
 
     public static final String MODID = "createsprings";
+    public static final String MOD_ID = MODID;
+    public static final String ID = MOD_ID;
+
     public static final CreateRegistrate CSPRINGS_REGISTRATE =
             CreateRegistrate.create(CreateSprings.MODID)
                     .setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
                     .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
             );
     public static Item[] SPRING_TOOLS;
+    public static final float STANDARD_SPRING_CAPACITY = 160000;
 
     public CreateSprings() {
         this(FMLJavaModLoadingContext.get());
@@ -90,6 +92,7 @@ public class CreateSprings {
         IEventBus modEventBus = context.getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
+        CSpringsSounds.prepare();
         ModBlocks.register();
         ModBlockEntities.register();
         ModItems.register(modEventBus);
@@ -109,6 +112,7 @@ public class CreateSprings {
         modEventBus.addListener(ModEntities::registerEntityAttributes);
         modEventBus.addListener(CreateSprings::onRegister);
         modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
+        modEventBus.addListener(CSpringsSounds::register);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);
@@ -116,9 +120,10 @@ public class CreateSprings {
             forgeBus.addListener(OverlayHandler::onRenderOverlay);
             forgeBus.addListener(MouseSensitivityHandler::onItemUseStart);
             forgeBus.addListener(MouseSensitivityHandler::onItemUseStop);
+            forgeBus.addListener(MouseSensitivityHandler::onClientTick);
         });
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC, "create_springs-common.toml");
+        ModConfigs.register(ModLoadingContext.get());
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
 
@@ -155,6 +160,10 @@ public class CreateSprings {
 
     public static ResourceLocation asResource(String path) {
         return new ResourceLocation(MODID,  path);
+    }
+
+    public static void hideItem(ItemLike it){
+
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -202,6 +211,7 @@ public class CreateSprings {
             event.register(Keybindings.INSTANCE.PSEOpenKey);
             event.register(Keybindings.INSTANCE.PSEBoostKey);
             event.register(Keybindings.INSTANCE.PSEDashKey);
+            event.register(Keybindings.INSTANCE.ActivatePunchcard);
         }
     }
 

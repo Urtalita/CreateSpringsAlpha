@@ -1,9 +1,67 @@
 {
-  "item.createsprings.portative_steam_engine.tooltip.summary": "Маломощный _Паровой двигатель_, способен _заряжать инструменты_, _освещать путь_ а ещё _согревать и ускорять игроков_",
-  "item.createsprings.portative_steam_engine.tooltip.condition1": "При нажатии Z",
-  "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Открывает интерфейс двигателя где можно _Выбрать режим работы_, переключить _Форсаж_ или добавить _Топливо_",
-  "item.createsprings.portative_steam_engine.tooltip.condition2": "При нажатии X",
-  "item.createsprings.portative_steam_engine.tooltip.behaviour2": "Переключает _Форсаж_ на лету",
-  "item.createsprings.portative_steam_engine.tooltip.condition3": "При нажатии G",
-  "item.createsprings.portative_steam_engine.tooltip.behaviour3": "Позволяет совершить _Паровой рывок_ когда уровень _Форсажа_ больше _70_, также снизит уровень _Форсажа_"
+  "item.createsprings.portative_steam_engine.tooltip.summary": "A small Steam Engine capable of charging tools, lighting the way, and also warming and accelerating players",
+  "item.createsprings.portative_steam_engine.tooltip.condition1": "When Z pressed",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Opens the engine interface",
+  "item.createsprings.portative_steam_engine.tooltip.condition2": "When X pressed",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour2": "Toggles Overdrive",
+  "item.createsprings.portative_steam_engine.tooltip.condition3": "When Z pressed",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour3": "Allows for a Steam Dash when the pressure level is above 70, Also reduces the pressure",
+
+  "item.createsprings.punchcard.tooltip.summary": "Can program some tools by executing simple instructions in cycle, can hold a small amount of commands",
+  "item.createsprings.punchcard.tooltip.condition1": "When shift-clicked",
+  "item.createsprings.punchcard.tooltip.behaviour1": "Opens the punchcard interface",
+  "item.createsprings.punchcard.tooltip.condition2": "When Tab pressed",
+  "item.createsprings.punchcard.tooltip.behaviour2": "if punchcard is in a tool and it is waiting for activation, the next instruction will be executed instantly",
+
+  "item.createsprings.sus_package.tooltip.summary": "This package when dropped from a height or destroyed, releases a spring that bounces off blocks or entities",
+
+  "item.createsprings.hat.tooltip.summary": "A hat. can be dyed or placed on the ground and also can store 1 stack of items, if engineer goggles are inside it will function as engineer goggles",
+
+  "item.createsprings.spring_base.tooltip.summary": "A Base for spring-powered tools, can hold up to 2 springs to transform it into a spring tool place a modifier inside",
+  "item.createsprings.spring_base.tooltip.condition1": "When a spring is stacked on the tool",
+  "item.createsprings.spring_base.tooltip.behaviour1": "Places a spring inside",
+
+  "item.createsprings.spring_drill.tooltip.summary": "A spring-powered drill, Can hold up to 2 springs Mining speed depends on the tool's speed",
+  "item.createsprings.spring_drill.tooltip.condition1": "R-Click",
+  "item.createsprings.spring_drill.tooltip.behaviour1": "increases the tool's speed",
+  "item.createsprings.spring_drill.tooltip.condition2": "R-click with a tripwire hook in the tool",
+  "item.createsprings.spring_drill.tooltip.behaviour2": "Instantly releases the spring charge in the tool, converting it to extreme speed",
+
+  "item.createsprings.spring_saw.tooltip.summary": "A spring-powered saw, Can hold up to 2 springs Harvesting speed depends on the tool's speed",
+  "item.createsprings.spring_saw.tooltip.condition1": "R-Click",
+  "item.createsprings.spring_saw.tooltip.behaviour1": "increases the tool's speed",
+  "item.createsprings.spring_saw.tooltip.condition2": "R-click with a tripwire hook in the tool",
+  "item.createsprings.spring_saw.tooltip.behaviour2": "Instantly releases the spring charge in the tool, converting it to extreme speed",
+
+  "item.createsprings.spring_shove.tooltip.summary": "A spring-powered shovel, Can hold up to 2 springs Harvesting speed depends on the tool's speed",
+  "item.createsprings.spring_shove.tooltip.condition1": "R-Click",
+  "item.createsprings.spring_shove.tooltip.behaviour1": "increases the tool's speed",
+  "item.createsprings.spring_shove.tooltip.condition2": "R-click with a tripwire hook in the tool",
+  "item.createsprings.spring_shove.tooltip.behaviour2": "Instantly releases the spring charge in the tool, converting it to extreme speed",
+
+  "item.createsprings.spring_fan.tooltip.summary": "A portable spring-powered Fan, Can hold up to 2 springs, pushes entities to or from the player, direction changes when Shift is pressed, Works on elytra.",
+  "item.createsprings.spring_fan.tooltip.condition1": "R-Click",
+  "item.createsprings.spring_fan.tooltip.behaviour1": "increases the tool's speed",
+  "item.createsprings.spring_fan.tooltip.condition2": "R-click with a tripwire hook in the tool",
+  "item.createsprings.spring_fan.tooltip.behaviour2": "Instantly releases the spring charge in the tool, converting it to extreme speed",
+
+  "item.createsprings.spring_launcher.tooltip.summary": "A powerful weapon that can fire springs or spring alloy blocks, scope can be added by placing a spyglass inside",
+  "item.createsprings.spring_launcher.tooltip.condition1": "R-click with springs in the launcher",
+  "item.createsprings.spring_launcher.tooltip.behaviour1": "releases a spring that bounces off blocks or entities",
+  "item.createsprings.spring_launcher.tooltip.condition2": "R-click with a spring and a spring alloy block in the launcher",
+  "item.createsprings.spring_launcher.tooltip.behaviour2": "fires a spring alloy block that explodes on landing",
+
+  "item.createsprings.explosion_chamber.tooltip.summary": "A durable chamber for springs charging",
+  "item.createsprings.explosion_chamber.tooltip.condition1": "R-click with a spring and fuel in the chamber",
+  "item.createsprings.explosion_chamber.tooltip.behaviour1": "Charges spring",
+
+  "createsprings.pse.tooltip.cur_mode": "Current engine mode:",
+  "createsprings.pse.tooltip.1": "charging item in hand",
+  "createsprings.pse.tooltip.2": "maintaining speed of spring tools",
+  "createsprings.pse.tooltip.4": "charging backtanks in inventory",
+  "createsprings.pse.tooltip.5": "increasing the speed of spring tools",
+
+  "createsprings.pse.tooltip.overdrive": "when _overdrive_ is turned on _PSE_ will work with maximum speed in any mode, but _pressure_ in engine will constantley _rise_, When _pressure_ hits _100_ engine _explodes_",
+  "createsprings.pse.tooltip.overdrive2": "you will be able to do _steam dash_ when pressure is more than 70 to lower pressure but it is a _temporary measure_",
+  "createsprings.pse.tooltip.water": "when there is _no water_ in the engine, _PSE_ will try find _water bucket_ in the _inventory_ if it finds _water bucket_ inner tank will be _restored_ and water bucket _wouldn't be spent_"
 }

@@ -1,5 +1,6 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringFan;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.fan.AirFlowParticle;
 import com.simibubi.create.content.kinetics.fan.AirFlowParticleData;
@@ -8,6 +9,7 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.Portality.createsprings.particles.SimpleAirParticleData;
@@ -44,7 +46,8 @@ import java.util.function.Consumer;
 
 import static com.simibubi.create.content.kinetics.fan.AirCurrent.isPlayerCreativeFlying;
 
-public class SpringFan extends Item implements CustomArmPoseItem {
+public class SpringFan extends Item implements CustomArmPoseItem, ISpringPoweredTool {
+
     private final SpringPoweredCore core;
     private final SpringSpeedSys SpeedSys;
     private final int SPRINGS = 2;
@@ -79,7 +82,7 @@ public class SpringFan extends Item implements CustomArmPoseItem {
 
         final Vec3 vec = player.getViewVector(1);
         double distance = 10;
-        double coef = SpringSpeedSys.getSpeedCoef(stack);
+        double coef = SpringSpeedSys.getSpeedCoef(stack) * 10;
         double launchVelocity = -0.15f * coef;
         if(player.isShiftKeyDown()){launchVelocity *= -1;}
         // Находим сущность в направлении взгляда
@@ -175,6 +178,7 @@ public class SpringFan extends Item implements CustomArmPoseItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        core.checkAndAddModifier(stack, AllItems.PROPELLER.asItem());
         SpeedSys.appendHoverText(stack, level, tooltip, flag);
         core.appendHoverText(stack, level, tooltip, flag);
     }
@@ -206,6 +210,7 @@ public class SpringFan extends Item implements CustomArmPoseItem {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess access) {
+        core.checkAndAddModifier(stack1, AllItems.PROPELLER.asItem());
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
@@ -228,9 +233,15 @@ public class SpringFan extends Item implements CustomArmPoseItem {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        core.checkAndAddModifier(stack, AllItems.PROPELLER.asItem());
         if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
         return super.overrideStackedOnOther(stack, slot, action, player);
+    }
+
+    @Override
+    public SpringPoweredCore getCore() {
+        return core;
     }
 }

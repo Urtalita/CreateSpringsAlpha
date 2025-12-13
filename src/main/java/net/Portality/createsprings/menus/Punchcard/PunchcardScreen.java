@@ -12,8 +12,10 @@ import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardFunction;
 import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.server.PunchcardUpdatePacket;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.resources.language.I18n;
@@ -21,6 +23,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -61,8 +67,14 @@ public class PunchcardScreen extends AbstractSimiScreen {
         }
 
         for(int i = 0; i < actions.length; i++){
-            actions[i] = PunchcardFunction.END;
-            parameters[i] = "";
+            if(stack.getOrCreateTag().getBoolean("Programmed")){
+                PunchcardAction action = PunchcardAction.getAllFromString(stack.getOrCreateTag().getString(String.valueOf(i)));
+                actions[i] = PunchcardFunction.getFromName(action.name);
+                parameters[i] = action.parameter;
+            } else {
+                actions[i] = PunchcardFunction.END;
+                parameters[i] = "";
+            }
         }
     }
 
@@ -71,7 +83,12 @@ public class PunchcardScreen extends AbstractSimiScreen {
         int x = guiLeft;
         int y = guiTop;
 
+        if(!canConfigure){
+            initParamsEditBoxesString(x, y, graphics);
+        }
+
         background.render(graphics, x, y);
+        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
 
         graphics.drawString(this.font, Component.translatable(CreateSprings.MODID + ".punchcard.name"), x + 47, y + 184 + 4, 0x505050, false);
         if(!canConfigure){graphics.drawString(font, itemName, x + 47, y + 199 + 4, 0xFFFFFF);}
@@ -83,7 +100,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
             CSpringsGuiTextures toDraw = CSpringsGuiTextures.PUNCHCARD_ACTION;
             toDraw.render(graphics, guiLeft + background.getWidth() - 173, guiTop + background.getHeight() - 195 + 23 * i);
             graphics.drawString(this.font,
-                    Component.translatable(CreateSprings.MODID + ".punchcard." + actions[i].getFunctionName() + ".slim"),
+                    truncateComponent(Component.translatable(CreateSprings.MODID + ".punchcard." + actions[i].getFunctionName()), 10),
                     guiLeft + background.getWidth() - 164 + 3, guiTop + background.getHeight() - 195 + 23 * i + 5, 0xFFFFFF);
         }
 
@@ -93,8 +110,12 @@ public class PunchcardScreen extends AbstractSimiScreen {
             CSpringsGuiTextures toDraw = CSpringsGuiTextures.PUNCHCARD_ACTION_PARAMETER;
             toDraw.render(graphics, guiLeft + background.getWidth() - 106, guiTop + background.getHeight() - 195 + 23 * i);
         }
+    }
 
-        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
+    public static MutableComponent truncateComponent(Component original, int maxLength) {
+        String plainText = original.getString();
+        String truncatedText = plainText.substring(0, Math.min(plainText.length(), maxLength));
+        return Component.literal(truncatedText);
     }
 
     @Override
@@ -166,6 +187,17 @@ public class PunchcardScreen extends AbstractSimiScreen {
             });
         }
         addRenderableWidget(editBoxes[i]);
+    }
+
+    private void initParamsEditBoxesString(int x, int y, GuiGraphics graphics){
+        int drawCnt = maxActions;
+        if(drawCnt != actions.length){drawCnt += 1;}
+        for(int i = 0; i < drawCnt; i++){
+            if(!actions[i].isRequestParam()){return;}
+
+            graphics.drawString(this.font, parameters[i],
+                    guiLeft + background.getWidth() - 100, guiTop + background.getHeight() - 195 + 23 * i + 5, 0xFFFFFF);
+        }
     }
 
     private void initNameEditBox(int x, int y){
@@ -288,7 +320,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
         for(int i = 0; i < actions.length; i++){
             if(actions[i] == PunchcardFunction.END){continue;}
 
-            if(!actions[i].isRequestParam()){
+            if(!actions[i].isRequestParam() || parameters[i].isEmpty()){
                 tag.putString(String.valueOf(i), PunchcardAction.putPunchcardActionInString(new PunchcardAction(actions[i].getFunctionName(), "0")));
                 continue;
             }

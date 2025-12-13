@@ -6,7 +6,7 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,10 +30,10 @@ public class SpringItemRenderer extends CustomRenderedItemModelRenderer {
 
     public void renderSpring(ItemStack stack, PartialItemModelRenderer renderer, PoseStack ms, int light){
         float su = GetStoredSu(stack);
-        float progress = su/Config.spring_capacity;
+        float progress = su/ ModConfigs.common().SPRING_CAPACITY.get();
 
         if(stack.getOrCreateTag().getBoolean("splash")){
-            int phase = (AnimationTickHolder.getTicks() - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
+            int phase = (AnimationTickHolder.getTicks() - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
             float nextprogress = springAnimation(phase);
             float prevProgress = springAnimation(phase-1);
             progress = Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, nextprogress);

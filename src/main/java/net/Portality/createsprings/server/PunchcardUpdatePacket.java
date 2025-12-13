@@ -1,10 +1,15 @@
 package net.Portality.createsprings.server;
 
 
+import com.simibubi.create.AllSoundEvents;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
+import net.Portality.createsprings.sounds.CSpringsSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
@@ -36,6 +41,9 @@ public class PunchcardUpdatePacket {
                 InteractionHand hand = player.getUsedItemHand();
                 ItemStack stack = player.getItemInHand(hand);
                 if(stack.getItem() instanceof PunchcardItem){
+                    if(stack.getOrCreateTag().getBoolean("Programmed") != updatedTag.getBoolean("Programmed")){
+                        CSpringsSounds.PUNCHCARD.playOnServer(ctx.get().getSender().level(), ctx.get().getSender().getOnPos(), 0.5f, 1);
+                    }
                     stack.setTag(updatedTag);
                 }
             }

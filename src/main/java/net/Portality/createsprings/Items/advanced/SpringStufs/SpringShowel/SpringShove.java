@@ -1,9 +1,11 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpringShove extends ShovelItem implements CustomArmPoseItem {
+public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISpringPoweredTool {
     private static final Tier IRON_TIER = Tiers.IRON;
     private final SpringPoweredCore core;
     private final SpringSpeedSys SpeedSys;
@@ -94,17 +96,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        if(!stack.getOrCreateTag().contains("contains")){
-            CompoundTag tag = stack.getOrCreateTag();
-            ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(AllItems.WHISK.asItem());
-
-            CompoundTag contains = tag.getCompound("contains");
-
-            if (!contains.getBoolean(itemId.toString())){
-                contains.putBoolean(itemId.toString(), true);
-            }
-            tag.put("contains", contains);
-        }
+        core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
         SpeedSys.appendHoverText(stack, level, tooltip, flag);
         core.appendHoverText(stack, level, tooltip, flag);
     }
@@ -136,7 +128,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem {
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess access) {
-
+        core.checkAndAddModifier(stack1, AllItems.WHISK.asItem());
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
@@ -159,9 +151,15 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem {
 
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
         if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
         return super.overrideStackedOnOther(stack, slot, action, player);
+    }
+
+    @Override
+    public SpringPoweredCore getCore() {
+        return core;
     }
 }

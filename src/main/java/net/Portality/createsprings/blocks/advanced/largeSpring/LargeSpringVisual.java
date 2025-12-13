@@ -6,7 +6,7 @@ import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.visual.SimpleDynamicVisual;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.BlockPos;
@@ -35,8 +35,8 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
     }
 
     public void createSpringVisual(Direction facing, int len, float progres){
-        SPRING_LEN = Config.spring_len * 4;
-        prevLen = Config.spring_len * 4;
+        SPRING_LEN = ModConfigs.common().SPRING_LEN.get() * 4;
+        prevLen = ModConfigs.common().SPRING_LEN.get() * 4;
 
         this.facing = facing;
 
@@ -47,8 +47,10 @@ public class LargeSpringVisual extends ShaftVisual<LargeSpringBlockEntity> imple
             rings.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED, instancerProvider()));
             rings_corners.add(createInstance(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER, instancerProvider()));
         }
+
         up_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE, instancerProvider());
         down_plate = createInstance(CSpringsPartalModels.LARGE_SPRING_PLATE, instancerProvider());
+
 
         for(int i = 0; i< rings.size(); i++){
             applyBaseRotation(rings.get(i), i);

@@ -2,7 +2,8 @@ package net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher;
 
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Entities.Projectile.SpringAlloyBlockProjectile;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
@@ -20,7 +21,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SlotAccess;
@@ -30,7 +30,6 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,7 +38,6 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -47,7 +45,7 @@ import java.util.function.Predicate;
 
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.*;
 
-public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPoseItem {
+public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPoseItem, ISpringPoweredTool {
     private final SpringPoweredCore core;
     public static final float ZOOM_FOV_MODIFIER = 0.1f;
     public static String BlockAmmo = CreateSprings.MODID + ":spring_alloy_block";
@@ -136,7 +134,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
         int Springs_rn = tag.getInt("Springs_rn");
         float Stored = getStoredSum(stack);
         tag.putBoolean("using", false);
-        float power = 1.0F * (Stored / Config.spring_capacity);
+        float power = 1.0F * (Stored / ModConfigs.common().SPRING_CAPACITY.get());
         int time = getUseDuration(stack) - timeLeft;
         CompoundTag contains = tag.getCompound("contains");
 
@@ -150,7 +148,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
                     tag.putInt("Springs_rn", 1);
                     putAllStored(new float[]{0f, 0f}, tag);
                     tag.putBoolean("splash", true);
-                    tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+                    tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
                 }
             }
 
@@ -255,11 +253,16 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER, this));
         }
         if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
-            if(Config.spring_splash_duration == phase){
+            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
+            if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
                 stack.getOrCreateTag().putBoolean("splash", false);
             }
         }
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+    }
+
+    @Override
+    public SpringPoweredCore getCore() {
+        return core;
     }
 }

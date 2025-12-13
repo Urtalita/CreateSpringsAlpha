@@ -1,0 +1,34 @@
+{
+  "standart_bweum": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "createsprings:standart_bweum"
+      }
+    ],
+    "subtitle": "createsprings.subtitle.standart_bweum"
+  },
+  "shooting_bweum1": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "createsprings:shooting_bweum1"
+      },
+      {
+        "type": "file",
+        "name": "createsprings:shooting_bweum2"
+      }
+    ],
+    "subtitle": "createsprings.subtitle.shooting_bweum"
+  },
+
+  "punchcard": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "createsprings:punchcard"
+      }
+    ],
+    "subtitle": "createsprings.subtitle.punchcard"
+  }
+}

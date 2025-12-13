@@ -31,6 +31,8 @@ public enum PunchcardFunction {
 
     SEND_MESSAGE(PunchcardInterpritator.sendMessage(), true, false,"sendMessage", PunchcardExecutor.values()),
 
+    WAIT_FOR_ACTIVATION(PunchcardInterpritator.empty(), false, false,"waitForActivation", PunchcardExecutor.values()),
+
     WAIT_TICKS(PunchcardInterpritator.waitTicks(), true, true,"wait", PunchcardExecutor.values()),
 
     WAIT_FOR_SLOT_SELECTED(PunchcardInterpritator.waitForSlotSelected(), false, false,"waitForSelected", PunchcardExecutor.values()),
@@ -42,6 +44,37 @@ public enum PunchcardFunction {
     EXPLODE_CHAMBER(PunchcardInterpritator.explodeChamber(), false, false, "explodeChamber", new PunchcardExecutor[]{
         PunchcardExecutor.EXPLOSION_CHAMBER
     }),
+
+    TOGGLE_BOOST(PunchcardInterpritator.toggleBoost(), false, false, "toggleBoost", new PunchcardExecutor[]{
+            PunchcardExecutor.PSE
+    }),
+
+    STEAM_DASH(PunchcardInterpritator.steamDash(), false, false, "steamDash", new PunchcardExecutor[]{
+        PunchcardExecutor.PSE
+    }),
+
+    SHOOTING(PunchcardInterpritator.shootFromCannon(), false, false, "potatoCannonShoot", new PunchcardExecutor[]{
+        PunchcardExecutor.POTATO_CANON
+    }),
+
+    TRIPPLE_SHOOTING(PunchcardInterpritator.tripleShot(), false, false, "potatoCannonTripleShoot", new PunchcardExecutor[]{
+        PunchcardExecutor.POTATO_CANON
+    }),
+
+    AIR_DASH(PunchcardInterpritator.airDash(), false, false, "airDash", new PunchcardExecutor[]{
+        PunchcardExecutor.NETHERITE_BACKTANK,
+        PunchcardExecutor.BACKTANK
+    }),
+
+    GRAB(PunchcardInterpritator.grab(), false, false, "grab", new PunchcardExecutor[]{
+            PunchcardExecutor.EXTENDRO_GRIP
+    }),
+
+    REPLACE_SPRING(PunchcardInterpritator.findAndReplaceSpring(), false, false, "replace", new PunchcardExecutor[]{
+            PunchcardExecutor.SPRING_BASE,
+            PunchcardExecutor.EXPLOSION_CHAMBER,
+            PunchcardExecutor.SPRING_LAUNCHER
+    })
     ;
 
     private Function<ExecutorInfo, Void> function;
@@ -87,7 +120,7 @@ public enum PunchcardFunction {
         return false;
     }
 
-    public PunchcardFunction getFromName(String nameFunction){
+    public static PunchcardFunction getFromName(String nameFunction){
         PunchcardFunction[] functions = PunchcardFunction.values();
 
         for(PunchcardFunction funk : functions){
@@ -95,7 +128,7 @@ public enum PunchcardFunction {
                 return funk;
             }
         }
-        return null;
+        return PunchcardFunction.END;
     }
 
     public static List<Component> getForSelector(PunchcardExecutor executor){

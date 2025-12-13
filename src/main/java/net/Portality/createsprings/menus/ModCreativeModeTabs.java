@@ -1,6 +1,6 @@
 package net.Portality.createsprings.menus;
 
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
@@ -14,8 +14,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.concurrent.Callable;
-
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateSprings.MODID);
@@ -28,12 +26,12 @@ public class ModCreativeModeTabs {
                         ItemStack spring = ModBlocks.SPRING.asStack();
                         CompoundTag SpTag = spring.getOrCreateTag();
                         CompoundTag SpBlTag = new CompoundTag();
-                        SpBlTag.putFloat("Stored", Config.spring_capacity);
+                        SpBlTag.putFloat("Stored", ModConfigs.common().SPRING_CAPACITY.get());
                         SpTag.put("BlockEntityTag", SpBlTag);
 
                         ItemStack box = ModItems.SUS_PACKAGE.get().getDefaultInstance();
                         CompoundTag boxtag = box.getOrCreateTag();
-                        boxtag.putFloat("Stored", Config.spring_capacity);
+                        boxtag.putFloat("Stored", ModConfigs.common().SPRING_CAPACITY.get());
 
                         pOutput.accept(ModItems.SPRING_ALLOY.get());
                         pOutput.accept(ModItems.SPRING_ALLOY_SHEET.get());
@@ -48,9 +46,8 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.WEATHERED_IRON.get());
                         pOutput.accept(ModBlocks.UNFINISHED_SPRING.get());
                         pOutput.accept(ModBlocks.SPRING.get());
-                        pOutput.accept(ModBlocks.SPRING_CATAPULT);
-
                         pOutput.accept(spring);
+                        pOutput.accept(ModBlocks.SPRING_CATAPULT);
 
                         pOutput.accept(ModBlocks.FRICTION_WELDER.asStack());
                         pOutput.accept(ModBlocks.ANDESITE_MOLD.get());

@@ -1,6 +1,7 @@
 package net.Portality.createsprings.Items;
 
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.nbt.CompoundTag;
@@ -32,7 +33,7 @@ public class ModItemColors {
     }
 
     private static int getHeatForSpringTool(ItemStack stack, int tintIndex){
-        int red = (int) (stack.getOrCreateTag().getDouble("Speed") / 25000 * 255);
+        int red = (int) (stack.getOrCreateTag().getDouble("Speed") / SpringSpeedSys.MAX_OVERCLOCKED_SPEED * 255);
         return getRGB( 255, 255 - red, 255 - red);
     }
 

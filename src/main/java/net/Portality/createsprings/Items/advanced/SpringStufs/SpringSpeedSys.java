@@ -1,12 +1,12 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
-import com.simibubi.create.AllBlocks;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
 import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
+import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -32,8 +32,10 @@ import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.
 import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.*;
 
 public class SpringSpeedSys {
+    public static float MAX_REGULAR_SPEED = 5000;
+    public static float MAX_OVERCLOCKED_SPEED = 25000;
 
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public static void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag tag = stack.getOrCreateTag();
         double speed = getSpeed(tag);
 
@@ -41,7 +43,7 @@ public class SpringSpeedSys {
                 .append(Component.literal(String.valueOf( (int) (speed * 2 * 2.56))).withStyle(getSpeedColor(speed, level))));
     }
 
-    private ChatFormatting getSpeedColor(Double speed, Level level){
+    private static ChatFormatting getSpeedColor(Double speed, Level level){
         if(speed == 0){return ChatFormatting.GRAY;}
         if(speed < 10){return ChatFormatting.GREEN;}
         if(speed < 40){return ChatFormatting.AQUA;}
@@ -51,12 +53,12 @@ public class SpringSpeedSys {
         return (level.getGameTime() % 40 < 21) ? ChatFormatting.DARK_RED : ChatFormatting.RED;
     }
 
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
+    public static float getDestroySpeed(ItemStack stack, BlockState state) {
         double speedMultiplier = 1 + stack.getOrCreateTag().getDouble("Speed")/300f;
-        return (float) (speedMultiplier * Config.speed_coef);
+        return (float) (speedMultiplier * ModConfigs.common().SPRING_TOOL_SPEED_COEF.get());
     }
 
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public static InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         CompoundTag tag = stack.getOrCreateTag();
         float stored;
@@ -71,22 +73,24 @@ public class SpringSpeedSys {
             speed += stored / 8 / 2;
             stored = 0;
 
-            if(speed > 25000){
-                speed = 25000;
+            if(speed > MAX_OVERCLOCKED_SPEED){
+                speed = MAX_OVERCLOCKED_SPEED;
                 tag.putBoolean("splash", true);
-                tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+                tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
                 placeLava(level, player, stack, hand);
             }
 
+            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, player.getOnPos());
+
             tag.putBoolean("splash", true);
-            tag.putInt("shiftTick", AnimationTickHolder.getTicks() % Config.spring_splash_duration);
+            tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
 
             player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
         } else {
-            if (stored > 5000 && speed < 5500){
+            if (stored > MAX_REGULAR_SPEED && speed < 5500){
                 speed += 250;
                 stored -= 2000;
-                if(speed > 5000) speed = 5000;
+                if(speed > MAX_REGULAR_SPEED) speed = MAX_REGULAR_SPEED;
             }
         }
 
@@ -110,7 +114,7 @@ public class SpringSpeedSys {
         level.setBlock(BlockPos.containing(viewVec), Blocks.ANDESITE.defaultBlockState(), 3);
     }
 
-    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+    public static void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         CompoundTag tag = stack.getOrCreateTag();
         double speed = tag.getDouble("Speed");
 
@@ -134,8 +138,8 @@ public class SpringSpeedSys {
             }
 
             if(tag.getBoolean("splash")){
-                long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % Config.spring_splash_duration + 1;
-                if(Config.spring_splash_duration == phase){
+                long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
+                if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
                     stack.getOrCreateTag().putBoolean("splash", false);
                 }
             }
@@ -155,6 +159,6 @@ public class SpringSpeedSys {
 
     public static double getSpeedCoef(ItemStack stack){
         double speed = stack.getOrCreateTag().getDouble("Speed");
-        return speed / 5000D;
+        return (speed / MAX_REGULAR_SPEED) / 10;
     }
 }

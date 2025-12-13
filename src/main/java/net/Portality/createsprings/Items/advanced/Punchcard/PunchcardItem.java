@@ -68,28 +68,6 @@ public class PunchcardItem extends Item {
         return use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
     }
 
-    @Override
-    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putBoolean("Programmed", false);
-        return super.overrideStackedOnOther(stack, slot, action, player);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        CompoundTag tag = stack.getTag();
-        if (tag != null && tag.getBoolean("Programmed")) {
-            tooltip.add(Component.literal("Programmed punchcard"));
-        } else {
-            tooltip.add(Component.literal("Empty punchcard"));
-        }
-    }
-
-    @Override
-    public boolean shouldOverrideMultiplayerNbt() {
-        return true;
-    }
-
     @OnlyIn(value = Dist.CLIENT)
     protected void displayScreen(ItemStack stack) {
         ScreenOpener.open(new PunchcardScreen(stack));

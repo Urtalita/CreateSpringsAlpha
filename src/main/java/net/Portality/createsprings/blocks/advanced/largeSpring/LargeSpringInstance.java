@@ -3,7 +3,7 @@ package net.Portality.createsprings.blocks.advanced.largeSpring;
 import com.mojang.math.Axis;
 import dev.engine_room.flywheel.api.instance.InstancerProvider;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.core.BlockPos;
@@ -33,8 +33,8 @@ public class LargeSpringInstance {
     public LargeSpringInstance(InstancerProvider instancerProvider, BlockState blockState, BlockPos instancePos, boolean lit) {
         this.instancePos = instancePos;
 
-        SPRING_LEN = Config.spring_len * 4;
-        prevLen = Config.spring_len * 4;
+        SPRING_LEN = ModConfigs.common().SPRING_LEN.get() * 4;
+        prevLen = ModConfigs.common().SPRING_LEN.get() * 4;
 
         this.facing = blockState.getValue(FACING);
 

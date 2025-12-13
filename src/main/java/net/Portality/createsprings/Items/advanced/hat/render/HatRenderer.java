@@ -34,7 +34,6 @@ public class HatRenderer extends CustomRenderedItemModelRenderer {
         if(stack.getEquipmentSlot() == EquipmentSlot.HEAD){
             CompoundTag tag = stack.getOrCreateTag();
             Item item = readStackFromNBT(stack).getItem();
-            ItemStack innerStack = readStackFromNBT(stack);
 
             if(item != Items.AIR){
                 if(item instanceof BlockItem){

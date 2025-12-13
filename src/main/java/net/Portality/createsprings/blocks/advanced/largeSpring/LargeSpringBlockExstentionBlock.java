@@ -2,7 +2,7 @@ package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.api.equipment.goggles.IProxyHoveringInformation;
 import com.simibubi.create.foundation.block.IBE;
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBlock;
@@ -82,7 +82,7 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
     }
 
     private void goDeeper(BlockPos pos, Direction facing, Level level){
-        for(int y = 0; y < Config.spring_len + 1; y++){
+        for(int y = 0; y < ModConfigs.common().SPRING_LEN.get() + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
@@ -109,7 +109,7 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
 
     private LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, Level level){
         facing = facing.getOpposite();
-        for(int y = 0; y < Config.spring_len + 1; y++){
+        for(int y = 0; y < ModConfigs.common().SPRING_LEN.get() + 1; y++){
             for (int i = -1; i < 2; i++){
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){

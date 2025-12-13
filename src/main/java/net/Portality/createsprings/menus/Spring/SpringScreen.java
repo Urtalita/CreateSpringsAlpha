@@ -1,6 +1,6 @@
 package net.Portality.createsprings.menus.Spring;
 
-import net.Portality.createsprings.Config;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +23,7 @@ public class SpringScreen extends AbstractContainerScreen<SpringMenu> {
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        int capacity = (int) Config.spring_capacity;
+        int capacity = (int) ModConfigs.common().SPRING_CAPACITY.get();
 
         guiGraphics.blit(BACKGROUND, x, y, 0, 0, this.imageWidth, this.imageHeight);
 
