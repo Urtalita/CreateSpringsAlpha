@@ -335,6 +335,59 @@ public class CSpringsScenes {
                     .pointAt(util.vector().of(1.5, 1.5, 1.5));
             scene.idle(80);
         }
+
+        public static void suSec(SceneBuilder builder, SceneBuildingUtil util){
+            CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+            scene.title("su_sec", "Stress units seconds");
+            scene.configureBasePlate(0, 0, 3);
+            scene.world().showSection(util.select().layer(0), Direction.UP);
+            scene.showBasePlate();
+
+            BlockPos spring = new BlockPos(1, 1, 1);
+            BlockPos lever = new BlockPos(0, 1, 1);
+            BlockPos fan = new BlockPos(1, 1, 0);
+
+            scene.idle(10);
+            scene.world().showSection(util.select().position(spring.south(2)), Direction.DOWN);
+            scene.idle(10);
+            scene.world().showSection(util.select().position(spring.south(1)), Direction.DOWN);
+            scene.idle(10);
+            scene.world().showSection(util.select().position(spring), Direction.DOWN);
+            scene.idle(10);
+            scene.world().showSection(util.select().position(lever), Direction.DOWN);
+            scene.idle(10);
+
+            scene.overlay().showText(90)
+                    .attachKeyFrame()
+                    .colored(PonderPalette.OUTPUT)
+                    .text("Su seconds (SuS) is a unit of measurement of charge")
+                    .pointAt(util.vector().blockSurface(spring, Direction.UP))
+                    .placeNearTarget();
+            scene.idle(100);
+
+            scene.overlay().showText(90)
+                    .attachKeyFrame()
+                    .colored(PonderPalette.OUTPUT)
+                    .text("1 Su Second - is how much charge would produce a source with stress capacity of 1 su for 1 second")
+                    .pointAt(util.vector().blockSurface(spring, Direction.UP))
+                    .placeNearTarget();
+            scene.idle(100);
+
+            scene.world().showSection(util.select().position(fan), Direction.DOWN);
+            scene.idle(10);
+            scene.world().showSection(util.select().position(lever), Direction.DOWN);
+            scene.idle(10);
+            scene.world().toggleRedstonePower(util.select().position(lever));
+            scene.idle(20);
+
+            scene.overlay().showText(90)
+                    .attachKeyFrame()
+                    .colored(PonderPalette.OUTPUT)
+                    .text("to calculate how long your spring would last, you need to divide amount of su-second on kinetic stress impact you need")
+                    .pointAt(util.vector().blockSurface(spring, Direction.UP))
+                    .placeNearTarget();
+            scene.idle(100);
+        }
     }
 
     public static class SpringCatapultPonders{

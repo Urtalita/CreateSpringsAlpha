@@ -221,8 +221,27 @@
   "createsprings.ponder.springsplash.text_6": "некоторые блоки требую больше заряда",
   "createsprings.ponder.springsplash.text_7": "пружины не ломают кинетические механизмы и нажимные плиты",
 
+  "createsprings.ponder.su_sec.header": "Стресс секунды",
+  "createsprings.ponder.su_sec.text_1": "Ен секунда это единица измерения заряда",
+  "createsprings.ponder.su_sec.text_2": "Ен секунда - это насколько много заряда произведёт источник с генерацией в 1ен за одну секунду",
+  "createsprings.ponder.su_sec.text_3": "чтобы рассчитать сколько времени ваша пружина будет вращаться нужно поделить количество ен секунд на необходимую нагрузку",
+
   "key.createsprings.activate_punchcard": "Активировать перфокарту",
   "key.createsprings.pse_boost": "переключит форсаж",
   "key.createsprings.pse_dash": "паровой рывок",
-  "key.createsprings.pse_open": "открыть портативный паровой двигатель"
+  "key.createsprings.pse_open": "открыть портативный паровой двигатель",
+  "advancement.createsprings.programmer": "Программист ",
+  "advancement.createsprings.programmer.desc": "запрограммируйте перфокарту",
+  "key.categories.createsprings": "Create Springs",
+  "tooltip.springstuf.saved": "Запасено:",
+  "tooltip.springstuf.speed": "Скорость: ",
+
+  "advancement.createsprings.pea_shooter": "Горохострел ",
+  "advancement.createsprings.pea_shooter.desc": "автоматизируйте картофельную пушку",
+  "advancement.createsprings.spring_trap": "Спрингтрап ",
+  "advancement.createsprings.spring_trap.desc": "Поставьте подозрительную коробку",
+  "advancement.createsprings.cash_back": "Не рой другому яму",
+  "advancement.createsprings.cash_back.desc": "Получите удар от собственной пружины",
+
+  "createsprings.pse.tooltip.overdrive_button": "Эта кнопка включает форсаж"
 }

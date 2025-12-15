@@ -65,5 +65,7 @@
   "key.createsprings.activate_punchcard": "activate punchcard",
   "key.createsprings.pse_boost": "toggle PSE boost",
   "key.createsprings.pse_dash": "Do Steam Dash",
-  "key.createsprings.pse_open": "open PSE interface"
+  "key.createsprings.pse_open": "open PSE interface",
+
+  "key.categories.createsprings": "Create Springs"
 }

@@ -3,6 +3,7 @@ package net.Portality.createsprings.Entities.Projectile;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.damage.CSpringsDamageSources;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class SpringProjectile extends AbstractArrow {
     private int bounceCount = 0;
@@ -201,6 +203,15 @@ public class SpringProjectile extends AbstractArrow {
                 if(box){
                     DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
                     livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+
+                    /*
+                    if(livingTarget instanceof Player player){
+                        if(player.getUUID().equals(Objects.requireNonNull(getOwner()).getUUID())){
+                            CSpringsAdvancements.CASH_BACK.awardTo(player);
+                        }
+                    }
+
+                     */
                 } else {
                     DamageSource damageSource = CSpringsDamageSources.spring(this.level());
                     livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));

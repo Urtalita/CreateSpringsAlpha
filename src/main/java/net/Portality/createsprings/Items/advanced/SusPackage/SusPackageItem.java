@@ -6,6 +6,7 @@ import com.simibubi.create.content.logistics.box.PackageStyles;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.menus.PortativeEngine.TooltipDescription;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -110,8 +111,12 @@ public class SusPackageItem extends PackageItem {
         ItemStack itemInHand = context.getItemInHand();
         packageEntity.power = itemInHand.getOrCreateTag().getFloat("Stored");
         packageEntity.setBox(itemInHand.copy());
+        packageEntity.owner = context.getPlayer();
         world.addFreshEntity(packageEntity);
         itemInHand.shrink(1);
+
+        CSpringsAdvancements.SPRING_TRAP.awardTo(context.getPlayer());
+
         return InteractionResult.SUCCESS;
     }
 

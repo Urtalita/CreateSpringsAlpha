@@ -38,6 +38,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
     private TooltipDescription leverDescription;
     private TooltipDescription overdriveDescription;
     private TooltipDescription waterDescription;
+    private OverdriveButtonDescription overdriveButtonDescription;
 
     public PortativeEngineScreen(PortativeSteamEngineMenu menu, Inventory inventory, Component title){
         super(menu, inventory, title);
@@ -99,6 +100,8 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         overdriveDescription = new TooltipDescription(x + 255, y + 41, 62, 164, this::updateOverdriveDescTooltip);
         waterDescription = new TooltipDescription(x - 61, y + 41, 62, 164, this::updateWaterDescTooltip);
 
+        overdriveButtonDescription = new OverdriveButtonDescription(x + 213, y + 163, 40, 40);
+
         selector = new AnalogLeverSelector(x + 38, y + 68, 90, 6,
                 stack.getOrCreateTag().getFloat("targetSpeed") / 15, false);
 
@@ -108,6 +111,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         addRenderableWidget(leverDescription);
         addRenderableWidget(overdriveDescription);
         addRenderableWidget(waterDescription);
+        addRenderableWidget(overdriveButtonDescription);
 
         boosted = stack.getOrCreateTag().getInt("boosted");
         if(stack.getOrCreateTag().getBoolean("boost")) {
@@ -156,6 +160,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         leverDescription.render(graphics, mouseX, mouseY, partialTicks);
         overdriveDescription.render(graphics, mouseX, mouseY, partialTicks);
         waterDescription.render(graphics, mouseX, mouseY, partialTicks);
+        overdriveButtonDescription.render(graphics, mouseX, mouseY, partialTicks);
 
         this.renderPlayerInventory(graphics, invX, invY);
     }

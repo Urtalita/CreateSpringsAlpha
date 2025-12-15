@@ -1,20 +1,17 @@
 package net.Portality.createsprings.server;
 
 
-import com.simibubi.create.AllSoundEvents;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
+import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.sounds.CSpringsSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class PunchcardUpdatePacket {
@@ -45,11 +42,25 @@ public class PunchcardUpdatePacket {
                         ctx.get().getSender().level().playSound(null, ctx.get().getSender().getOnPos(),
                                 CSpringsSounds.PUNCHCARD.get(),
                                 SoundSource.NEUTRAL, 1, 1F);
+                        CSpringsAdvancements.PROGRAMMER.awardTo(player);
+
+                        if(CheckForAchievement(updatedTag)){
+                            CSpringsAdvancements.PEA_SHOOTER.awardTo(player);
+                        }
                     }
                     stack.setTag(updatedTag);
                 }
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    public boolean CheckForAchievement(CompoundTag tag){
+        for (String key : tag.getAllKeys()){
+            if(tag.getString(key).equals("potatoCannonShoot:0")){
+                return true;
+            }
+        }
+        return false;
     }
 }

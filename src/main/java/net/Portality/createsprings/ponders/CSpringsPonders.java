@@ -13,6 +13,8 @@ public class CSpringsPonders {
 
         PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
+        HELPER.forComponents(ModBlocks.UNFINISHED_SPRING)
+                        .addStoryBoard("su_sec", CSpringsScenes.SpringPonders::suSec, AllCreatePonderTags.KINETIC_SOURCES);
 
         HELPER.forComponents(ModBlocks.SPRING)
                 .addStoryBoard("spring", CSpringsScenes.SpringPonders::spring, AllCreatePonderTags.KINETIC_RELAYS)

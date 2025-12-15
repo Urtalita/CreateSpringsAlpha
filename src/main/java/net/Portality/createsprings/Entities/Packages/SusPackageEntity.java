@@ -26,10 +26,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PlayMessages;
 
+import java.util.UUID;
+
 public class SusPackageEntity extends PackageEntity {
 
     private boolean inWater = false;
     public float power = 0;
+    public Player owner;
 
     public SusPackageEntity(EntityType<?> entityTypeIn, Level worldIn) {
         super(entityTypeIn, worldIn);

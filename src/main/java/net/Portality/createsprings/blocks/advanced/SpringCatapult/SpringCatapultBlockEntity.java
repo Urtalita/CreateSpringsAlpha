@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class SpringCatapultBlockEntity extends KineticBlockEntity implements IControlContraption, IHaveGoggleInformation {
+public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
     public float xAngle = 0;
     public float yAngle = 0;
     public float stored = 0;
@@ -66,7 +66,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     private int phase = 0;
     private float hardness = DEFAULT_HARDNESS;
     public ItemStack heldStack = ItemStack.EMPTY;
-    protected ControlledContraptionEntity movedContraption;
+    //protected ControlledContraptionEntity movedContraption;
 
     private float prevProgress = progress;
     private float prevyAngle = xAngle;
@@ -182,10 +182,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     public void tick() {
         super.tick();
 
-        if(heldStack.getItem() == Items.GOLD_INGOT.asItem()){
-            int a = 0;
-        }
-
         prevyAngle = yAngle;
         prevxAngle = xAngle;
 
@@ -194,10 +190,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
             return;
         }
 
-        if(movedContraption != null){
-            Vec3 move = worldPosition.above(2).getCenter().add(-0.5, -2 + 4/16f, 0);
-            movedContraption.moveTo(move);
-        }
+        //if(movedContraption != null){
+            //Vec3 move = worldPosition.above(2).getCenter().add(-0.5, -2 + 4/16f, 0);
+            //movedContraption.moveTo(move);
+        //}
 
         yAngle = handleAngling(yAngle, targetYAngle);
         xAngle = handleAngling(xAngle, targetXAngle);
@@ -207,6 +203,8 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
 
         prevProgress = progress;
         progress = stored / capacity;
+
+        if(mode == null){return;}
 
         switch (mode){
             case WAITING, CANSHOOT -> {
@@ -707,6 +705,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
 
     //IControlContraption
 
+    /*
     @Override
     public boolean isAttachedTo(AbstractContraptionEntity contraption) {
         return movedContraption == contraption;
@@ -731,4 +730,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
     public BlockPos getBlockPosition() {
         return worldPosition;
     }
+
+     */
 }

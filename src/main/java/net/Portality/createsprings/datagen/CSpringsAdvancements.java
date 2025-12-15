@@ -1,7 +1,6 @@
 package net.Portality.createsprings.datagen;
 
 import com.google.common.collect.Sets;
-import com.simibubi.create.AllItems;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.minecraft.advancements.Advancement;
@@ -11,7 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
-import javax.swing.table.TableStringConverter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +20,6 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import static net.Portality.createsprings.datagen.CreateSpringsAdvancement.TaskType.SILENT;
-import static net.Portality.createsprings.datagen.CreateSpringsAdvancement.TaskType.EXPERT;
-import static net.Portality.createsprings.datagen.CreateSpringsAdvancement.TaskType.NOISY;
 import static net.Portality.createsprings.datagen.CreateSpringsAdvancement.TaskType.SECRET;
 
 public class CSpringsAdvancements implements DataProvider {
@@ -97,7 +93,32 @@ public class CSpringsAdvancements implements DataProvider {
             .description("assemble large spring")
             .after(SPRING)
     ),
-    
+
+    PROGRAMMER = create("programmer", b -> b.icon(ModItems.PUNCHCARD)
+            .title("Programmer")
+            .description("program your first punchcard")
+            .after(SPRING_ALLOY)
+    ),
+
+    PEA_SHOOTER = create("pea_shooter", b -> b.icon(ModItems.PUNCHCARD)
+            .title("Pea shooter!")
+            .description("automate potato cannon")
+            .after(PROGRAMMER)
+            .special(SECRET)
+    ),
+
+    SPRING_TRAP = create("spring_trap", b -> b.icon(ModItems.SUS_PACKAGE.get())
+            .title("Spring trap")
+            .description("place sus package")
+            .after(SPRING)
+    ),
+
+    CASH_BACK = create("cash_back", b -> b.icon(ModBlocks.SPRING.asItem())
+            .title("Cash back")
+            .description("get hit by your own spring")
+            .after(SPRING_TRAP)
+            .special(SECRET)
+    ),
     END = null;
 
     //
