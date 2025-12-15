@@ -42,7 +42,9 @@ public class PunchcardUpdatePacket {
                 ItemStack stack = player.getItemInHand(hand);
                 if(stack.getItem() instanceof PunchcardItem){
                     if(stack.getOrCreateTag().getBoolean("Programmed") != updatedTag.getBoolean("Programmed")){
-                        CSpringsSounds.PUNCHCARD.playOnServer(ctx.get().getSender().level(), ctx.get().getSender().getOnPos(), 0.5f, 1);
+                        ctx.get().getSender().level().playSound(null, ctx.get().getSender().getOnPos(),
+                                CSpringsSounds.PUNCHCARD.get(),
+                                SoundSource.NEUTRAL, 1, 1F);
                     }
                     stack.setTag(updatedTag);
                 }

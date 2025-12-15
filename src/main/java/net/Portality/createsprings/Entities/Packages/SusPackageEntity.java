@@ -116,7 +116,7 @@ public class SusPackageEntity extends PackageEntity {
         projectile.redirectProjectile(projectile , 10, null);
         projectile.setBox(true);
         level.addFreshEntity(projectile);
-        CSpringsSounds.BWEUM_SHOOT.playOnServer(level, entity.getOnPos());
+        CSpringsSounds.playBweum(level, entity.getOnPos());
     }
 
     @Override

@@ -80,7 +80,7 @@ public class SpringSpeedSys {
                 placeLava(level, player, stack, hand);
             }
 
-            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, player.getOnPos());
+            CSpringsSounds.playBweum(level, player.getOnPos());
 
             tag.putBoolean("splash", true);
             tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());

@@ -26,7 +26,6 @@ public class CSpringsDatagen {
 
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        generator.addProvider(event.includeClient(), CSpringsSounds.provider(generator));
 
         generator.addProvider(event.includeServer(), new CSpringsAdvancements(output));
     }
@@ -52,7 +51,6 @@ public class CSpringsDatagen {
             provideDefaultLang("tooltips", langConsumer);
             provideDefaultLang("manual", langConsumer);
 
-            CSpringsSounds.provideLang(langConsumer);
             CSpringsAdvancements.provideLang(langConsumer);
             providePonderLang(langConsumer);
         });

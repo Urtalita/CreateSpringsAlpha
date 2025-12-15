@@ -1,2 +1,5 @@
 /run/
 /run-data/
+/backup_assets/
+/.vscode/
+/.idea/

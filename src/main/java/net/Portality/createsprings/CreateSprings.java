@@ -92,7 +92,6 @@ public class CreateSprings {
         IEventBus modEventBus = context.getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-        CSpringsSounds.prepare();
         ModBlocks.register();
         ModBlockEntities.register();
         ModItems.register(modEventBus);
@@ -103,6 +102,7 @@ public class CreateSprings {
         CSpringsParticles.register(modEventBus);
         CSpringsPackets.registerPackets();
         CSpringsMenus.register();
+        CSpringsSounds.register(modEventBus);
 
         //ModFluids.FLUID_TYPES.register(modEventBus);
         MenuInit.MENUS.register(modEventBus);
@@ -112,7 +112,6 @@ public class CreateSprings {
         modEventBus.addListener(ModEntities::registerEntityAttributes);
         modEventBus.addListener(CreateSprings::onRegister);
         modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
-        modEventBus.addListener(CSpringsSounds::register);
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);

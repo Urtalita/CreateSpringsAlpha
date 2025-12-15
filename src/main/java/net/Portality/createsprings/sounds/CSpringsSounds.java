@@ -4,100 +4,63 @@ import com.google.gson.JsonObject;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import net.Portality.createsprings.CreateSprings;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
+import net.minecraft.world.level.*;
+
+import static net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS;
 
 public class CSpringsSounds {
-    public static final Map<ResourceLocation, AllSoundEvents.SoundEntry> ALL = new HashMap<>();
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
+            DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, CreateSprings.MODID);
 
-    public static final AllSoundEvents.SoundEntry
-            BWEUM = create("standart_bweum").noSubtitle()
-                    .category(SoundSource.PLAYERS)
-                    .build(),
-
-            BWEUM_SHOOT = create("shooting_bweum1").noSubtitle()
-                    .addVariant("shooting_bweum2")
-                    .category(SoundSource.PLAYERS)
-                    .build(),
-
-            PUNCHCARD = create("punchcard").noSubtitle()
-                    .addVariant("punchcard")
-                    .category(SoundSource.PLAYERS)
-                    .build()
+    public static final RegistryObject<SoundEvent>
+            BWEUM = registerSoundEvent("standart_bweum"),
+            BWEUM_SHOOT1 = registerSoundEvent("shooting_bweum1"),
+            PUNCHCARD = registerSoundEvent("punchcard");
     ;
 
-    private static AllSoundEvents.SoundEntryBuilder create(String name) {
-        return create(CreateSprings.asResource(name));
+    private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
+        ResourceLocation id = new ResourceLocation(CreateSprings.MODID, name);
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
-    public static AllSoundEvents.SoundEntryBuilder create(ResourceLocation id) {
-        return new AllSoundEvents.SoundEntryBuilder(id);
+    public static void playOnServer(Level level, BlockPos pos, float volume, SoundEvent event){
+        level.playSound(null, pos,
+                event,
+                SoundSource.NEUTRAL, volume, 1F);
     }
 
-    public static void prepare() {
-        for (AllSoundEvents.SoundEntry entry : ALL.values())
-            entry.prepare();
+    public static void playBweum(Level level, BlockPos pos, float volume){
+
+        level.playSound(null, pos,
+                CSpringsSounds.BWEUM_SHOOT1.get(),
+                SoundSource.NEUTRAL, volume, 1F);
     }
 
-    public static void register(RegisterEvent event) {
-        event.register(Registries.SOUND_EVENT, helper -> {
-            for (AllSoundEvents.SoundEntry entry : ALL.values())
-                entry.register(helper);
-        });
+    public static void playBweum(Level level, BlockPos pos){
+        playBweum(level, pos, 1);
     }
 
-    public static void provideLang(BiConsumer<String, String> consumer) {
-        for (AllSoundEvents.SoundEntry entry : ALL.values())
-            if (entry.hasSubtitle())
-                consumer.accept(entry.getSubtitleKey(), entry.getSubtitle());
-    }
-
-    public static SoundEntryProvider provider(DataGenerator generator) {
-        return new SoundEntryProvider(generator);
-    }
-
-    public static class SoundEntryProvider implements DataProvider {
-
-        private PackOutput output;
-
-        public SoundEntryProvider(DataGenerator generator) {
-            output = generator.getPackOutput();
-        }
-
-        @Override
-        public CompletableFuture<?> run(CachedOutput cache) {
-            return generate(output.getOutputFolder(), cache);
-        }
-
-        @Override
-        public String getName() {
-            return "CreateSprings Custom Sounds";
-        }
-
-        public CompletableFuture<?> generate(Path path, CachedOutput cache) {
-            path = path.resolve("assets/createsprings");
-            JsonObject json = new JsonObject();
-            ALL.entrySet()
-                    .stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> {
-                        entry.getValue()
-                                .write(json);
-                    });
-            return DataProvider.saveStable(cache, json, path.resolve("sounds.json"));
-        }
-
+    public static void register(IEventBus eventBus) {
+        SOUND_EVENTS.register(eventBus);
     }
 }

@@ -329,7 +329,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements ICo
 
     public void shoot(){
         if(phase == 0){
-            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition);
+            CSpringsSounds.playBweum(level, worldPosition);
         }
 
         progress = springAnimation(phase) * (stored / capacity);

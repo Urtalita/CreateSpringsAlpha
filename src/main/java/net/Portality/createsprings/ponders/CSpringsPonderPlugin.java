@@ -10,8 +10,6 @@ import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class CSpringsPonderPlugin implements PonderPlugin {
-
-    
     @Override
     public String getModId() {
         return CreateSprings.MODID;
@@ -20,10 +18,5 @@ public class CSpringsPonderPlugin implements PonderPlugin {
     @Override
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         CSpringsPonders.register(helper);
-    }
-
-    @Override
-    public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        AllCreatePonderTags.register(helper);
     }
 }

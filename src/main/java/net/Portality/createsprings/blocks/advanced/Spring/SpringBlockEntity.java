@@ -169,7 +169,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             if(phase == 1){
                 launchEntitiesInFront();
                 breakBlocksInFront();
-                CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition);
+                CSpringsSounds.playBweum(level, worldPosition);
             }
 
             phase++;

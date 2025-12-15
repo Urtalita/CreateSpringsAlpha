@@ -102,7 +102,7 @@
   "item.createsprings.punchcard.tooltip.behaviour1": "Открывает _меню перфокарты_",
   "item.createsprings.punchcard.tooltip.behaviour2": "Если перфокарта находится в инструменте и _ждёт активации_ следующая инструкция будет выполненна _моментально_",
   "item.createsprings.punchcard.tooltip.condition1": "При шифт-клике",
-  "item.createsprings.punchcard.tooltip.condition2": "При при нажатии Ё",
+  "item.createsprings.punchcard.tooltip.condition2": "При при нажатии TAB",
   "item.createsprings.punchcard.tooltip.summary": "Способна _программировать_ некоторые инструменты исполняя последовательно простые инструкции, может вмещать небольшое количество комманд",
   "item.createsprings.spring_base.tooltip.behaviour1": "Кладёт внутрь _пружину_",
   "item.createsprings.spring_base.tooltip.condition1": "Когда пружина стакнута на инструменте",

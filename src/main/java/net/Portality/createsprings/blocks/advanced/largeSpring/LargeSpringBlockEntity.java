@@ -287,7 +287,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 if(movedContraption != null){
                     movedContraption.moveTo(Vec3.atLowerCornerOf(worldPosition));
                 }
-                CSpringsSounds.BWEUM_SHOOT.playOnServer(level, worldPosition, 2, 1);
+                CSpringsSounds.playBweum(level, worldPosition, 2);
             }
 
             if(phase < 5){

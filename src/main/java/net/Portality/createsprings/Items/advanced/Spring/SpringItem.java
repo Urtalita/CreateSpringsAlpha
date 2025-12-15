@@ -126,7 +126,7 @@ public class SpringItem extends BlockItem {
 
         int time_pass = getUseDuration(stack) - timeCharged;
         if(time_pass > TimeNeed){
-            CSpringsSounds.BWEUM_SHOOT.playOnServer(level, player.getOnPos());
+            CSpringsSounds.playBweum(level, player.getOnPos());
             if(LaunchItemInHand(player, level)){return;}
 
             LaunchPlayerOrEntity(player, level, stack, entity);
@@ -197,7 +197,7 @@ public class SpringItem extends BlockItem {
                         player.getX(),
                         player.getY(),
                         player.getZ(),
-                        CSpringsSounds.BWEUM.getMainEvent(),
+                        CSpringsSounds.BWEUM.get(),
                         SoundSource.PLAYERS,
                         1.0F,
                         1.0F
