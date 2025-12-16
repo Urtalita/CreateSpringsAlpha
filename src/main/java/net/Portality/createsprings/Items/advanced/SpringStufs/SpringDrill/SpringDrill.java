@@ -10,6 +10,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -140,6 +141,11 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem, ISpri
     @Override
     public SpringPoweredCore getCore() {
         return core;
+    }
+
+    @Override
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
+        return super.onBlockStartBreak(itemstack, pos, player);
     }
 
     @Override

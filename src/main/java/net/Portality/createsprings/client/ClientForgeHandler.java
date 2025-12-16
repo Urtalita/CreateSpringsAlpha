@@ -34,8 +34,6 @@ public class ClientForgeHandler {
             if(item != null){
                 CSpringsPackets.getChannel().send(PacketDistributor.SERVER.noArg(), new BoostPSEPacket());
             }
-
-
         }
 
         if(Keybindings.INSTANCE.PSEDashKey.consumeClick()){

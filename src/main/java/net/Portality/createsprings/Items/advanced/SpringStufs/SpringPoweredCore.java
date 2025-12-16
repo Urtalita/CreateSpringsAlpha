@@ -1,22 +1,17 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs;
 
-import com.simibubi.create.AllBlocks;
-import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.SpringLauncher;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +40,10 @@ public class SpringPoweredCore {
     }
 
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
+        CompoundTag tag = stack.getOrCreateTag();
+        if(!hasNoModifies(tag)){return;}
 
+        tooltip.add(Component.translatable("tooltip.springstuf.createsprings.no_modifires").withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.ITALIC));
     }
 
     public void checkAndAddModifier(ItemStack stack, Item item){
@@ -64,10 +62,17 @@ public class SpringPoweredCore {
 
     public static Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
+        if(hasNoModifies(tag)){return Optional.empty();}
         return Optional.of(new SpringPoweredCore.SpringSlotTooltipComponent(
                 tag.getInt("Springs_rn"),
                 tag.getCompound("contains"),
                 getAllStored(2, tag)));
+    }
+
+    public static boolean hasNoModifies(CompoundTag tag){
+        boolean noModifies = tag.getCompound("contains").getAllKeys().isEmpty();
+        boolean noSprings = tag.getInt("Springs_rn") == 0;
+        return noSprings && noModifies;
     }
 
     public static class SpringSlotTooltipComponent implements TooltipComponent {

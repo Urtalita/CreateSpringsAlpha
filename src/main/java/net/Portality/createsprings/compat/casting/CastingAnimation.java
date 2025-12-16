@@ -55,7 +55,6 @@ public class CastingAnimation extends AnimatedKinetics {
         matrixStack.popPose();
 
         blockElement(CSpringsPartalModels.MOLD)
-                .rotateBlock(90, 0, 0)
                 .atLocal(0, 2, 0)
                 .scale(scale)
                 .render(graphics);

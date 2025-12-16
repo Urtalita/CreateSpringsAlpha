@@ -35,6 +35,12 @@ public class BoostPSEPacket extends SimplePacketBase {
             ItemStack stack = player.getItemBySlot(PortativeSteamEngineItem.SLOT);
             int boosted = stack.getOrCreateTag().getInt("boosted");
             if(boosted < 99){
+                if(!stack.getOrCreateTag().getBoolean("boost")){
+                    if(stack.getOrCreateTag().getFloat("targetSpeed") == 0){
+                        return true;
+                    }
+                }
+
                 stack.getOrCreateTag().putBoolean("boost", !stack.getOrCreateTag().getBoolean("boost"));
                 if(boosted <= 0){
                     stack.getOrCreateTag().putInt("boosted", 1);

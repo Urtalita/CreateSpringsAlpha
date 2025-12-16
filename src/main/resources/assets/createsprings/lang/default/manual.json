@@ -1,12 +1,6 @@
 {
   "creativetab.create_springs_main_tab": "Create springs",
 
-  "advancement.createsprings.create_spring.title": "Create spring!",
-  "advancement.createsprings.create_spring.description": "Create your first spring",
-
-  "advancement.createsprings.create_springs.title": "Create springs!",
-  "advancement.createsprings.create_springs.description": "Create 8 springs",
-
   "createsprings.recipe.casting": "Casting",
 
   "createsprings.recipe.welding": "Welding",
@@ -67,5 +61,6 @@
   "key.createsprings.pse_dash": "Do Steam Dash",
   "key.createsprings.pse_open": "open PSE interface",
 
-  "key.categories.createsprings": "Create Springs"
+  "key.categories.createsprings": "Create Springs",
+  "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside"
 }

@@ -106,7 +106,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
                 stack.getOrCreateTag().getFloat("targetSpeed") / 15, false);
 
         addRenderableWidget(selector).withCallback(this::onSelected);
-        addRenderableWidget(button);
+        addRenderableWidget(button).withCallback(this::onClicked);
 
         addRenderableWidget(leverDescription);
         addRenderableWidget(overdriveDescription);
@@ -116,6 +116,16 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         boosted = stack.getOrCreateTag().getInt("boosted");
         if(stack.getOrCreateTag().getBoolean("boost")) {
             button.bg = CSpringsGuiTextures.PORTATIVE_STEAM_BG_POWERED;
+        }
+    }
+
+    private void onClicked(){
+        if(button.bg == CSpringsGuiTextures.PORTATIVE_STEAM_BG_POWERED){
+            if(selector.getState() == 0){
+                button.bg = CSpringsGuiTextures.PORTATIVE_STEAM_BG;
+                background = CSpringsGuiTextures.PORTATIVE_STEAM_BG;
+                Minecraft.getInstance().player.playSound(SoundEvents.ITEM_BREAK);
+            }
         }
     }
 

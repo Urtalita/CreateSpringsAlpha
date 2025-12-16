@@ -187,11 +187,17 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, Level level, Player player) {
-        super.onArmorTick(stack, level, player);
-        CompoundTag tag = stack.getOrCreateTag();
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+        if(!(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem)){return;}
+        onArmor(stack, level, player);
+    }
 
-        if(tag.getBoolean("boost")) {
+    public void onArmor(ItemStack stack, Level level, Player player) {
+        CompoundTag tag = stack.getOrCreateTag();
+        boolean boost = tag.getBoolean("boost");
+
+        if(boost) {
             int boosted = tag.getInt("boosted");
 
             if(boosted > 110){
@@ -245,12 +251,16 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
         }
 
         int speed = tag.getInt("engineSpeed");
-        if(tag.getBoolean("boost")){speed = 150;}
+        if(boost){speed = 150;}
 
         int fuel = tag.getInt("fuel");
         int water = tag.getInt("water");
 
         int mode = (int) tag.getFloat("mode");
+
+        if(boost && mode == 0){
+            tag.putBoolean("boost", false);
+        }
 
         if(mode > 0){
             if(fuel <= 0){
@@ -272,13 +282,14 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
             fuel -= (int) (mode / 15f * ModConfigs.common().PSE_FUEL_USAGE.get());
         } else if (fuel == 0){
             tag.putFloat("engineSpeed", 0);
+            tag.putBoolean("boost", false);
         } else {
             fuel = 0;
         }
 
         if(speed != 0){
             if(level.getGameTime() % (200 / (speed / 15)) == 0){
-                if(tag.getBoolean("boost")){
+                if(boost){
                     spawnParticles(level, player);
                     spawnParticles(level, player);
                 }
@@ -299,8 +310,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
         int boosted = tag.getInt("boosted");
 
         if(boosted > 0){
-            if(tag.getBoolean("boost")){
-
+            if(boost){
                 if(boosted > 100){
                     spawnParticles(level, player);
                     AllSoundEvents.SCHEMATICANNON_LAUNCH_BLOCK.playOnServer(level, BlockPos.containing(player.position()).above(), 0.5f, 1f);
@@ -320,8 +330,8 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
                 return;
             }
 
-            MutableComponent boost, indicator, left;
-            boost = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
+            MutableComponent boostComponent, indicator, left;
+            boostComponent = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
             if(boosted >= 70){
                 indicator = Component.literal("|").withStyle(ChatFormatting.DARK_RED);
             } else {
@@ -330,7 +340,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
             left = Component.literal("|".repeat(20 - (int) (boosted / 100f * 20))).withStyle(ChatFormatting.GRAY);
 
             if(boosted <= 100 && level.isClientSide()){
-                player.displayClientMessage(boost.append(indicator).append(left), true);
+                player.displayClientMessage(boostComponent.append(indicator).append(left), true);
             } else if(level.isClientSide()){
                 player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.RED), true);
             }
@@ -338,7 +348,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
 
         int actual = mode / 15;
 
-        if(tag.getBoolean("boost")){
+        if(boost){
             chargeTanks(stack, level, player, actual); speedUp(stack, level, player, actual);
             charge(stack, level, player, actual);
             chargeTanks(stack, level, player, actual);

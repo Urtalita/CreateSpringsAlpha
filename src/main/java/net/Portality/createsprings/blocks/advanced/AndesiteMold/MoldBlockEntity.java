@@ -39,7 +39,7 @@ public class MoldBlockEntity extends SmartBlockEntity {
     public ItemStack heldStack = ItemStack.EMPTY;
 
     public boolean filled = true;
-    private int delay = 20;
+    public int delay = 20;
     private int lastdelay = 20;
 
     public MoldBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

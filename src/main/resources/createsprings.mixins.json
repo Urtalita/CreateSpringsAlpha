@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "createsprings.refmap.json",
   "mixins": [
+    "BlockHelperMixin",
     "GogglesMixin",
     "MixinSpoutBe",
     "PackageItemMixin",
