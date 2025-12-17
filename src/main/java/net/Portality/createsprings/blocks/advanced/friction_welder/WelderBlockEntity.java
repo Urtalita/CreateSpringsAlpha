@@ -77,6 +77,12 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     }
 
     @Override
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        super.addBehaviours(behaviours);
+        behaviours.remove(movementMode);
+    }
+
+    @Override
     public void assemble() {
         if(cooldown != 0){return;}
 

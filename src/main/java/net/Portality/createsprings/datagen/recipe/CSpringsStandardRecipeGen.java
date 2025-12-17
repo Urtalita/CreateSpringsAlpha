@@ -1,7 +1,6 @@
-package net.Portality.createsprings.datagen;
+package net.Portality.createsprings.datagen.recipe;
 
 import com.simibubi.create.api.data.recipe.BaseRecipeProvider;
-import com.simibubi.create.foundation.data.recipe.CreateStandardRecipeGen;
 import net.Portality.createsprings.CreateSprings;
 import net.minecraft.data.PackOutput;
 
@@ -11,7 +10,6 @@ import java.util.List;
 public class CSpringsStandardRecipeGen extends BaseRecipeProvider {
 
     final List<GeneratedRecipe> all = new ArrayList<>();
-
 
 
     public CSpringsStandardRecipeGen(PackOutput output) {

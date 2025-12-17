@@ -1,6 +1,5 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
@@ -12,7 +11,6 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,7 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -132,7 +129,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
-        if (core.addStackedLogick(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
@@ -161,5 +158,10 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
     @Override
     public SpringPoweredCore getCore() {
         return core;
+    }
+
+    @Override
+    public boolean hasSpeedSystem() {
+        return true;
     }
 }

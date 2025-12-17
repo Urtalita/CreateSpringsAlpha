@@ -229,11 +229,11 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             return true;
         }
 
-        if (core.addStackedLogick(ModBlocks.SPRING_ALLOY_BLOCK.get().asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(ModBlocks.SPRING_ALLOY_BLOCK.get().asItem(), stack1, stack2, action, player)){
             return true;
         }
 
-        if (core.addStackedLogick(Items.SPYGLASS, stack1, stack2, action, player)){
+        if (core.addStackedLogic(Items.SPYGLASS, stack1, stack2, action, player)){
             return true;
         }
         return false;

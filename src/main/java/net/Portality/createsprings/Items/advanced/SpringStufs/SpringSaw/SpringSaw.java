@@ -1,7 +1,6 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringSaw;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.Portality.createsprings.Items.ModItems;
@@ -10,9 +9,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -120,7 +116,7 @@ public class SpringSaw extends AxeItem implements CustomArmPoseItem, ISpringPowe
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
-        if (core.addStackedLogick(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
@@ -149,5 +145,10 @@ public class SpringSaw extends AxeItem implements CustomArmPoseItem, ISpringPowe
     @Override
     public SpringPoweredCore getCore() {
         return core;
+    }
+
+    @Override
+    public boolean hasSpeedSystem() {
+        return true;
     }
 }

@@ -11,4 +11,8 @@ import net.minecraft.world.item.ItemStack;
 
 public interface ISpringPoweredTool {
     SpringPoweredCore getCore();
+
+    default boolean hasSpeedSystem(){
+        return false;
+    }
 }

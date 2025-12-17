@@ -78,6 +78,7 @@ public class SpringSpeedSys {
                 tag.putBoolean("splash", true);
                 tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
                 placeLava(level, player, stack, hand);
+                tag.put("contains", new CompoundTag());
             }
 
             CSpringsSounds.playBweum(level, player.getOnPos());
@@ -89,7 +90,7 @@ public class SpringSpeedSys {
         } else {
             if (stored > MAX_REGULAR_SPEED && speed < 5500){
                 speed += 250;
-                stored -= 2000;
+                stored -= 8000;
                 if(speed > MAX_REGULAR_SPEED) speed = MAX_REGULAR_SPEED;
             }
         }

@@ -365,6 +365,12 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
         }
     }
 
+    @Override
+    public boolean canBeDepleted() {
+        return false;
+    }
+
+
     private void chargeTanks(ItemStack stack, Level level, Player player, int mode) {
         for (ItemStack item : player.getInventory().items) {
             if(item.getItem() == AllItems.COPPER_BACKTANK.get() || item.getItem() == AllItems.NETHERITE_BACKTANK.get()){

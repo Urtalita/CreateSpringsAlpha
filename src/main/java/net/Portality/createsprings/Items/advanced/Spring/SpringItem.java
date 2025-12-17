@@ -172,12 +172,9 @@ public class SpringItem extends BlockItem {
 
         if (entityHit != null) {
             Entity target = entityHit.getEntity();
-
-            if (target instanceof LivingEntity livingTarget) {
-                float storedSu = getStoredSu(stack);
-                launchEntity(livingTarget, storedSu, (Player) entity);
-                SetZeroSu(stack, player);
-            }
+            float storedSu = getStoredSu(stack);
+            launchEntity(target, storedSu, (Player) entity);
+            SetZeroSu(stack, player);
         } else {
             float storedSu = getStoredSu(stack);
             launchPlayer(storedSu, (Player) entity);
@@ -223,7 +220,7 @@ public class SpringItem extends BlockItem {
         player.hurtMarked = true;
     }
 
-    private void  launchEntity(LivingEntity entity, float su, Player player) {
+    private void  launchEntity(Entity entity, float su, Player player) {
         double launchVelocity = su / 16000 * ModConfigs.common().KNOCKBACK_COEF.get() / 4f;
         final Vec3 vec = player.getViewVector(1);
 
@@ -326,7 +323,7 @@ public class SpringItem extends BlockItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         float stored = getStoredSu(stack);
         float capacity = ModConfigs.common().SPRING_CAPACITY.get();
-        tooltip.add(Component.literal("su: ").withStyle(ChatFormatting.GRAY)
+        tooltip.add(Component.translatable("create.spring.su").append(": ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));

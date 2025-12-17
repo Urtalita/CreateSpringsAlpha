@@ -1,6 +1,7 @@
 package net.Portality.createsprings.client;
 
 import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedClientHandler;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -30,9 +31,9 @@ public class CSpringsClientEvents {
     public static void onTick(TickEvent.ClientTickEvent event) {
         if (!isGameActive())
             return;
-
         Level world = Minecraft.getInstance().level;
 
         CatapultTargetHandler.tick();
+        SpringSpeedClientHandler.onTick();
     }
 }

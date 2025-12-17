@@ -1,5 +1,6 @@
 package net.Portality.createsprings.recipe.Welding;
 
+import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
-public class WelderRecipe implements Recipe<RecipeWrapper> {
+public class WelderRecipe implements Recipe<RecipeWrapper>, IRecipeTypeInfo {
     private final ResourceLocation id;
     public final Ingredient firstBlock;
     public final Ingredient secondBlock;

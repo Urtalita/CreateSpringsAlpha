@@ -7,10 +7,13 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRendere
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringBase.SpringBaseRenderer;
+import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedClientHandler;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,13 +27,13 @@ public class SpringDrillRenderer extends CustomRenderedItemModelRenderer {
                           PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
 
         baseRenderer.renderBase(stack, model, renderer, transformType, ms, buffer, light, overlay);
-
         CompoundTag tag = stack.getOrCreateTag();
 
-        double speed = SpringBaseRenderer.getSpeed(tag);
-        speed = SpringBaseRenderer.isTooFast(tag, speed);
-
-        float scroll = (float) (AnimationTickHolder.getRenderTime() * speed * 2 % 360);
+        float scroll = 0;
+        if(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == stack.getItem()){
+            SpringSpeedClientHandler.updateSpeed(tag.getFloat("LastSpeed"), tag.getFloat("Speed"));
+            scroll = SpringSpeedClientHandler.getScroll();
+        }
 
         float zOffset = -1/16f;
         ms.translate(0, 0, -zOffset);

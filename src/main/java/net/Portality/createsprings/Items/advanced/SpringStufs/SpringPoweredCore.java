@@ -39,14 +39,23 @@ public class SpringPoweredCore {
         this.allowedModifficators = allowedModifficators;
     }
 
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
+    public static void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
         CompoundTag tag = stack.getOrCreateTag();
+        if(!(stack.getItem() instanceof ISpringPoweredTool tool)){return;}
+
+        float stored = getAllStoredSum(getAllStored(tool.getCore().springsMaxCount, tag));
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get() * tag.getInt("Springs_rn");
+        tooltip.add(Component.translatable("create.spring.su").append(": ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));
+
         if(!hasNoModifies(tag)){return;}
 
         tooltip.add(Component.translatable("tooltip.springstuf.createsprings.no_modifires").withStyle(ChatFormatting.GREEN).withStyle(ChatFormatting.ITALIC));
     }
 
-    public void checkAndAddModifier(ItemStack stack, Item item){
+    public static void checkAndAddModifier(ItemStack stack, Item item){
         if(!stack.getOrCreateTag().contains("contains")){
             CompoundTag tag = stack.getOrCreateTag();
             ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(item);
@@ -162,7 +171,7 @@ public class SpringPoweredCore {
         return searchItem;
     }
 
-    public float getStoredSu(ItemStack stack){
+    public static float getStoredSu(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
         float stored;
 
@@ -286,7 +295,7 @@ public class SpringPoweredCore {
         return false;
     }
 
-    public boolean addStackedLogick(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
+    public static boolean addStackedLogic(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
         CompoundTag tag = stack1.getOrCreateTag();
         int Springs_rn = tag.getInt("Springs_rn");
 
@@ -341,12 +350,12 @@ public class SpringPoweredCore {
             if(allowedModifficators[i] instanceof PunchcardItem punchcardItem){
                 if(punchcardInOut(punchcardItem, stack1, stack2, action, player)){return true;}}
 
-            if(addStackedLogick(allowedModifficators[i], stack1, stack2, action, player)){return true;}
+            if(addStackedLogic(allowedModifficators[i], stack1, stack2, action, player)){return true;}
         }
         return false;
     }
 
-    private boolean punchcardInOut(PunchcardItem item, ItemStack stack, ItemStack stackedOn, ClickAction action, Player player){
+    private static boolean punchcardInOut(PunchcardItem item, ItemStack stack, ItemStack stackedOn, ClickAction action, Player player){
         CompoundTag tag = stack.getOrCreateTag();
 
         if(addItem(item, stack, stackedOn)){
@@ -372,8 +381,8 @@ public class SpringPoweredCore {
                     tag.remove("punchcard");
                     return true;
                 }
+                tag.remove("punchcard");
             }
-            tag.remove("punchcard");
         }
         return false;
     }
@@ -392,25 +401,79 @@ public class SpringPoweredCore {
 
     public static float getAllStoredSum(float[] allSu){
         float sum = 0;
-        for(int i = 0; i < allSu.length; i++){
-            sum += allSu[i];
+        for(float value : allSu){
+            sum += value;
         }
         return sum;
     }
 
     public static float[] spreadSu(float[] allSu, float add){
-        float past = getAllStoredSum(allSu);
-        float addSu = add - past;
-        float addPerSpring = addSu / allSu.length;
-        float ifNotEnoughSu = 0;
+        int springs = allSu.length;
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get();
+        float maxTotal = springs * capacity;
 
-        for(int i = 0; i < allSu.length; i++){
-            if((allSu[i] + addPerSpring) < 0){ifNotEnoughSu += addPerSpring; allSu[i] = 0; continue;}
-            if((allSu[i] + addPerSpring) > ModConfigs.common().SPRING_CAPACITY.get()){ifNotEnoughSu += addPerSpring; allSu[i] = 0; continue;}
+        float targetTotal = Math.min(add, maxTotal);
+        float currentTotal = getAllStoredSum(allSu);
+        float delta = targetTotal - currentTotal;
 
-            allSu[i] += addPerSpring;
-            if(ifNotEnoughSu != 0){allSu[i] += ifNotEnoughSu; ifNotEnoughSu = 0;}
+        if(Math.abs(delta) < 1f) return allSu;
+        if(delta > 0) {
+            return distributeCharge(allSu, delta, capacity);
+        } else {
+            return removeCharge(allSu, -delta, capacity);
         }
+    }
+
+    private static float[] distributeCharge(float[] allSu, float toAdd, float capacity){
+        int springs = allSu.length;
+        float remaining = toAdd;
+
+        for(int i = 0; i < springs && remaining > 0; i++){
+            float space = capacity - allSu[i];
+            if(space > 0) {
+                float addAmount = Math.min(space, remaining / (springs - i));
+                allSu[i] += addAmount;
+                remaining -= addAmount;
+            }
+        }
+
+        if(remaining > 0){
+            float addPerSpring = remaining / springs;
+            for(int i = 0; i < springs; i++){
+                allSu[i] += addPerSpring;
+            }
+        }
+
+        for(int i = 0; i < springs; i++){
+            allSu[i] = Math.min(allSu[i], capacity);
+        }
+
+        return allSu;
+    }
+
+    private static float[] removeCharge(float[] allSu, float toRemove, float capacity){
+        int springs = allSu.length;
+        float remaining = toRemove;
+
+        for(int i = 0; i < springs && remaining > 0; i++){
+            if(allSu[i] > 0) {
+                float removeAmount = Math.min(allSu[i], remaining / (springs - i));
+                allSu[i] -= removeAmount;
+                remaining -= removeAmount;
+            }
+        }
+
+        if(remaining > 0){
+            float removePerSpring = remaining / springs;
+            for(int i = 0; i < springs; i++){
+                allSu[i] = Math.max(0, allSu[i] - removePerSpring);
+            }
+        }
+
+        for(int i = 0; i < springs; i++){
+            allSu[i] = Math.max(allSu[i], 0);
+        }
+
         return allSu;
     }
 

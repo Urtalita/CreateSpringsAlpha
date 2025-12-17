@@ -1,12 +1,9 @@
 package net.Portality.createsprings.Items.advanced.SpringStufs.SpringFan;
 
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.content.kinetics.fan.AirFlowParticle;
 import com.simibubi.create.content.kinetics.fan.AirFlowParticleData;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SpringStufs.ISpringPoweredTool;
@@ -15,8 +12,6 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.Portality.createsprings.particles.SimpleAirParticleData;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -122,7 +117,14 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
 
         if(isPlayerCreativeFlying(player)){return;}
         playerMotion = calibratePushOnElytra(playerMotion, player);
+        playerMotion = calibratePushInWater(playerMotion, player);
         player.setDeltaMovement(player.getDeltaMovement().add(playerMotion.scale(-0.25)));
+    }
+
+    private Vec3 calibratePushInWater(Vec3 motion, Player player){
+        if(!player.isInWater()){return motion;}
+        if(player.getDeltaMovement().length() > 1.5f){return motion.scale(0);}
+        return motion.scale(1.5f);
     }
 
     private Vec3 calibratePushOnElytra(Vec3 motion, Player player){
@@ -214,7 +216,7 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
-        if (core.addStackedLogick(AllItems.PROPELLER.get(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllItems.PROPELLER.get(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
@@ -243,5 +245,10 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
     @Override
     public SpringPoweredCore getCore() {
         return core;
+    }
+
+    @Override
+    public boolean hasSpeedSystem() {
+        return true;
     }
 }

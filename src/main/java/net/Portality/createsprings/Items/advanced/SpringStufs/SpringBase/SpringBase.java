@@ -122,22 +122,22 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
-        if (core.addStackedLogick(AllBlocks.MECHANICAL_DRILL.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllBlocks.MECHANICAL_DRILL.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_DRILL.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
-        if (core.addStackedLogick(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_SAW.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
-        if (core.addStackedLogick(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_SHOVE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
-        if (core.addStackedLogick(AllItems.PROPELLER.asItem(), stack1, stack2, action, player)){
+        if (core.addStackedLogic(AllItems.PROPELLER.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_FAN.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
