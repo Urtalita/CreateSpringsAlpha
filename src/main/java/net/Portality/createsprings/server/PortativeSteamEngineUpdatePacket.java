@@ -43,6 +43,8 @@ public class PortativeSteamEngineUpdatePacket {
 
                 stack = player.getItemBySlot(PortativeSteamEngineItem.SLOT);
                 if(stack.getItem() instanceof PortativeSteamEngineItem){
+                    if(updatedTag.getInt("boosted") > 99 && !updatedTag.getBoolean("boost")){return;} //copper nugget dupe fix
+
                     stack.setTag(updatedTag);
                 }
 
