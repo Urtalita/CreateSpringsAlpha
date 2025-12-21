@@ -41,9 +41,8 @@ public class SpringPoweredCore {
 
     public static void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {;
         CompoundTag tag = stack.getOrCreateTag();
-        if(!(stack.getItem() instanceof ISpringPoweredTool tool)){return;}
 
-        float stored = getAllStoredSum(getAllStored(tool.getCore().springsMaxCount, tag));
+        float stored = getAllStoredSum(getAllStored(tag));
         float capacity = ModConfigs.common().SPRING_CAPACITY.get() * tag.getInt("Springs_rn");
         tooltip.add(Component.translatable("create.spring.su").append(": ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
@@ -75,7 +74,7 @@ public class SpringPoweredCore {
         return Optional.of(new SpringPoweredCore.SpringSlotTooltipComponent(
                 tag.getInt("Springs_rn"),
                 tag.getCompound("contains"),
-                getAllStored(2, tag)));
+                getAllStored(tag)));
     }
 
     public static boolean hasNoModifies(CompoundTag tag){
@@ -387,11 +386,8 @@ public class SpringPoweredCore {
         return false;
     }
 
-    private float[] getAllStored(CompoundTag tag){
-        return getAllStored(springsMaxCount, tag);
-    }
-
-    public static float[] getAllStored(int springs, CompoundTag tag){
+    public static float[] getAllStored(CompoundTag tag){
+        int springs = tag.getInt("Springs_rn");
         float[] allSu = new float[springs];
         for(int i = 0; i < springs; i++){
             allSu[i] = tag.getFloat("Stored" + i);
@@ -498,7 +494,7 @@ public class SpringPoweredCore {
 
     public static float getStoredSum(ItemStack stack){
         CompoundTag tag = stack.getOrCreateTag();
-        float[] allSu = getAllStored(2, tag);
+        float[] allSu = getAllStored(tag);
         float sum = 0;
 
         for(int i = 0; i < allSu.length; i++){
@@ -588,7 +584,7 @@ public class SpringPoweredCore {
 
     public static boolean detachSpring(CompoundTag tag, Player player){
         int Springs_rn = tag.getInt("Springs_rn");
-        float[] allSu = getAllStored(2, tag);
+        float[] allSu = getAllStored(tag);
 
         if (Springs_rn > 0){
             float springSu;

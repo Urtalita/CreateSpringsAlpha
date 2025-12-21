@@ -18,6 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
 import javax.swing.plaf.PanelUI;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class RenderHelper {

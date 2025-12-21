@@ -21,6 +21,12 @@ public class CSpringsDamageSources {
                 .getHolderOrThrow(CSpringsDamageTypes.SPRING_BOX));
     }
 
+    public static DamageSource pse(Level level) {
+        return new DamageSource(level.registryAccess()
+                .registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(CSpringsDamageTypes.PSE));
+    }
+
     private static DamageSource source(ResourceKey<DamageType> key, LevelReader level) {
         Registry<DamageType> registry = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE);
         return new DamageSource(registry.getHolderOrThrow(key));

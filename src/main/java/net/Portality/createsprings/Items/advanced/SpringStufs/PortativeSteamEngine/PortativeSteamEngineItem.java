@@ -13,6 +13,7 @@ import com.simibubi.create.content.logistics.filter.FilterMenu;
 import com.simibubi.create.content.logistics.filter.PackageFilterMenu;
 import com.simibubi.create.foundation.item.LayeredArmorItem;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.Entities.damage.CSpringsDamageSources;
 import net.Portality.createsprings.Items.CspringsArmorMaterials;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
@@ -29,6 +30,7 @@ import net.Portality.createsprings.menus.PortativeEngine.PortativeSteamEngineMen
 import net.Portality.createsprings.menus.Punchcard.PunchcardScreen;
 import net.Portality.createsprings.server.BoostPSEPacket;
 import net.Portality.createsprings.server.CSpringsPackets;
+import net.Portality.createsprings.utill.Helpers.ParticleHelper;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
@@ -36,6 +38,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -49,6 +52,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -212,16 +216,15 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
                 level.addParticle(new SteamJetParticleData(1.0F), v.x, v.y, v.z, m.x, m.y, m.z);
 
                 if(boosted > 115){
-                    level.explode(
-                            null,
-                            player.position().x,
-                            player.position().y,
-                            player.position().z,
-                            1f,
-                            false,
-                            Level.ExplosionInteraction.MOB
-                    );
-                    player.getItemBySlot(EquipmentSlot.CHEST).setCount(0);
+
+                    DamageSource damageSource = CSpringsDamageSources.pse(level);
+                    player.hurt(damageSource, 6f + level.random.nextInt(-2, 2));
+                    level.playSound(null, BlockPos.containing(player.position()),
+                            SoundEvents.GENERIC_EXPLODE,
+                            SoundSource.NEUTRAL, 1F, 1F);
+                    ParticleHelper.SpawnAtPlayer(player, ParticleTypes.EXPLOSION_EMITTER, level);
+
+                    player.setItemSlot(EquipmentSlot.CHEST, ModItems.BROKEN_PSE.asStack());
                     CSpringsAdvancements.EXPLOSION.awardTo(player);
                     return;
                 }
@@ -435,7 +438,7 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
         for(Item tool : CreateSprings.SPRING_TOOLS){
             if(tool == handStack.getItem()){
                 if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
-                    float[] charge = SpringPoweredCore.getAllStored(2, handStack.getOrCreateTag());
+                    float[] charge = SpringPoweredCore.getAllStored(handStack.getOrCreateTag());
                     charge[0] += speed;
                     charge[1] += speed;
                     SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());

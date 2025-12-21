@@ -109,6 +109,8 @@
   "item.createsprings.portative_steam_engine.tooltip.condition3": "При нажатии G",
   "item.createsprings.portative_steam_engine.tooltip.summary": "Маломощный _Паровой двигатель_, способен _заряжать инструменты_, _освещать путь_ ,а также _согревать и ускорять игроков_",
 
+  "item.createsprings.broken_portative_steam_engine.tooltip.summary": "_Механизм_ который стал жертвой неправильных _условий использования_, несмотря на повреждения _подлежит починке_",
+
   "item.createsprings.punchcard.tooltip.behaviour1": "Открывает _меню перфокарты_",
   "item.createsprings.punchcard.tooltip.behaviour2": "Если перфокарта находится в инструменте и _ждёт активации_ ,следующая инструкция будет выполненна _моментально_",
   "item.createsprings.punchcard.tooltip.condition1": "При ПКМ крадучись",
@@ -181,6 +183,7 @@
   "block.createsprings.andesite_mold": "Корпус для отливки",
   "block.createsprings.filled_andesite_mold": "Заполненный корпус для отливки",
   "block.createsprings.large_spring_coil": "Кольцо большой пружины",
+  "item.createsprings.broken_portative_steam_engine": "Сломанный портативный паровой двигатель",
 
   "creativetab.create_springs_main_tab": "Create springs",
 
@@ -207,6 +210,7 @@
   "createsprings.punchcard.end": "Конец",
   "createsprings.punchcard.detachSpring": "Убрать пружину",
   "createsprings.punchcard.sendMessage": "Отправить сообщение игроку",
+  "createsprings.punchcard.push_off": "Оттолкнуться от блока",
   "createsprings.punchcard.wait": "Ждать тиков",
   "createsprings.punchcard.waitForSelected": "Ждать пока предмет не будет выбран",
 
@@ -216,6 +220,8 @@
   "death.attack.createsprings.spring_box.player": "%1$s не пережил распаковку",
   "death.attack.createsprings.spring": "%1$s столкнулся с пружиной",
   "death.attack.createsprings.spring.player": "%1$s столкнулся с пружиной",
+  "death.attack.createsprings.pse": "%1$s взорвал бойлер",
+  "death.attack.createsprings.spring.pse": "%1$s взорвал бойлер",
 
   "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
   "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",

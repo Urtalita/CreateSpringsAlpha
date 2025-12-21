@@ -58,7 +58,8 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
             ms.translate(6/16f, 0, 0);
         } else if (Springs == 1){
             ms.translate(6/16f, 0, 0);
-            renderSmallSpring(renderer, light, ms, tag.getFloat("Stored0") + tag.getFloat("Stored1"), tag, SPRING_LEN*2);
+            renderSmallSpring(renderer, light, ms, tag.getFloat("Stored0") + tag.getFloat("Stored1")
+                    , tag, SPRING_LEN*2);
             ms.translate(-6/16f, 0, 0);
         }
         ms.translate(0, 0, 2/16f);

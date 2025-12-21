@@ -41,13 +41,15 @@ public class PunchcardScreen extends AbstractSimiScreen {
 
     private final CSpringsGuiTextures background = CSpringsGuiTextures.PUNCHCARD_BG;
 
+    private int maxActionsZise = 5;
+
     private IconButton confirmButton;
     private ScrollInput executorSelector;
     private EditBox nameInput;
-    private ScrollInput[] selectors = new ScrollInput[5];
-    private PunchcardFunction[] actions = new PunchcardFunction[5];
-    private String[] parameters = new String[5];
-    private EditBox[] editBoxes = new EditBox[5];
+    private ScrollInput[] selectors = new ScrollInput[maxActionsZise];
+    private PunchcardFunction[] actions = new PunchcardFunction[maxActionsZise];
+    private String[] parameters = new String[maxActionsZise];
+    private EditBox[] editBoxes = new EditBox[maxActionsZise];
 
     private final CompoundTag tag;
     private boolean canConfigure;

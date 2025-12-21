@@ -31,7 +31,7 @@ public class SpringLauncherRenderer extends CustomRenderedItemModelRenderer {
         CompoundTag contains = tag.getCompound("contains");
 
         int Springs_rn = tag.getInt("Springs_rn");
-        float Stored = getAllStoredSum(getAllStored(2, tag));
+        float Stored = getAllStoredSum(getAllStored(tag));
 
         renderer.render(model.getOriginalModel(), light);
 

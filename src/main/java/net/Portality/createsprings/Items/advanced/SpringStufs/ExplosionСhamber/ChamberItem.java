@@ -129,7 +129,7 @@ public class ChamberItem extends Item implements ISpringPoweredTool {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         CompoundTag tag = stack.getOrCreateTag();
-        float stored = getAllStoredSum(getAllStored(SPRINGS, tag));
+        float stored = getAllStoredSum(getAllStored(tag));
 
         if(tag.getInt("Springs_rn") < 1){return super.use(level, player, hand);}
         if(tag.getInt("fuel") < 1){return super.use(level, player, hand);}
@@ -145,7 +145,7 @@ public class ChamberItem extends Item implements ISpringPoweredTool {
 
         if(stored > ModConfigs.common().SPRING_CAPACITY.get()){stored = ModConfigs.common().SPRING_CAPACITY.get();}
 
-        putAllStored(spreadSu(getAllStored(SPRINGS, tag), stored), tag);
+        putAllStored(spreadSu(getAllStored(tag), stored), tag);
 
         level.playSound(null, BlockPos.containing(player.position()),
                 SoundEvents.GENERIC_EXPLODE,

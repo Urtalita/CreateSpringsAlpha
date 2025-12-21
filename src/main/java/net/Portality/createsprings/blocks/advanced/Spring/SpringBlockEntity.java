@@ -358,7 +358,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                     facing.getStepZ()
             ).scale(1.0);
 
-            entity.setDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
+            entity.addDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
             entity.hurtMarked = true;
         }
     }

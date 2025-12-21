@@ -15,10 +15,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.Spr
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
 import net.Portality.createsprings.blocks.ModBlocks;
-import net.Portality.createsprings.server.AirDashPlayerPacket;
-import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.server.GrabPacket;
-import net.Portality.createsprings.server.RotatePlayerPacket;
+import net.Portality.createsprings.server.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -83,7 +80,7 @@ public class PunchcardInterpritator {
             CompoundTag tag = info.getTag();
             String param = getParam(tag);
 
-            float stored = getAllStoredSum(getAllStored(2, tag));
+            float stored = getAllStoredSum(getAllStored(tag));
             double speed = tag.getDouble("Speed");
 
             if (stored > SpringSpeedSys.MAX_REGULAR_SPEED && speed < 5500){
@@ -92,7 +89,7 @@ public class PunchcardInterpritator {
                 if(speed > SpringSpeedSys.MAX_REGULAR_SPEED) speed = SpringSpeedSys.MAX_REGULAR_SPEED;
             }
 
-            float[] allsu = getAllStored(2, tag);
+            float[] allsu = getAllStored(tag);
             putAllStored(spreadSu(allsu, stored), tag);
             tag.putDouble("Speed", speed);
 
@@ -140,7 +137,7 @@ public class PunchcardInterpritator {
         return (info) -> {
             CompoundTag tag = info.getTag();
             int Springs_rn = tag.getInt("Springs_rn");
-            float[] allSu = getAllStored(2, tag);
+            float[] allSu = getAllStored(tag);
 
             if (Springs_rn > 0){
                 float springSu;
@@ -366,7 +363,7 @@ public class PunchcardInterpritator {
                 CompoundTag tag = info.getStack().getOrCreateTag();
                 int Springs_rn = tag.getInt("Springs_rn");
                 int springsMaxCount = (info.getItem() == ModItems.EXPLOSION_CHAMBER.get()) ? 1 : 2;
-                float[] allSu = getAllStored(2, tag);
+                float[] allSu = getAllStored(tag);
 
                 if (springsMaxCount != Springs_rn && !tag.getBoolean("block") && exceptions(tag)){
                     allSu[Springs_rn] = getStoredSu(found);
@@ -377,6 +374,29 @@ public class PunchcardInterpritator {
                     putAllStored(allSu, tag);
 
                     found.shrink(1);
+                }
+            }
+            info.nextAction();
+            return null;
+        };
+    }
+
+
+    public static Function<ExecutorInfo, Void> pushOff() {
+        return (info) -> {
+            if(!info.getPlayer().getCooldowns().isOnCooldown(AllItems.EXTENDO_GRIP.asItem())){
+                if(AllItems.EXTENDO_GRIP.isIn(info.getPlayer().getItemInHand(InteractionHand.MAIN_HAND))){
+                    if(info.getPlayer() instanceof ServerPlayer serverPlayer){
+                        Vec3 check = getRaycastVector(serverPlayer);
+                        Vec3 newSpeed = serverPlayer.getViewVector(1).scale(-1);
+
+                        if(check != Vec3.ZERO){
+                            CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new PushOffPacket());
+                            serverPlayer.addDeltaMovement(newSpeed);
+                        }
+
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 10);
+                    }
                 }
             }
             info.nextAction();

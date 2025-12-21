@@ -66,7 +66,7 @@ public class SpringSpeedSys {
 
         if(tag.getInt("Springs_rn") == 0){return InteractionResultHolder.fail(stack);}
 
-        stored = getAllStoredSum(getAllStored(2, tag));
+        stored = getAllStoredSum(getAllStored(tag));
 
         Item hook = getItemFromContains(stack, Blocks.TRIPWIRE_HOOK.asItem());
         if(hook != null){
@@ -90,14 +90,15 @@ public class SpringSpeedSys {
         } else {
             if (stored > MAX_REGULAR_SPEED && speed < 5500){
                 speed += 250;
-                stored -= 8000;
+                stored -= 6000;
                 if(speed > MAX_REGULAR_SPEED) speed = MAX_REGULAR_SPEED;
             }
         }
 
         tag.putDouble("Speed", speed);
 
-        float[] allsu = getAllStored(2, tag);
+        float[] allsu = getAllStored(tag);
+        putAllPrevStored(allsu, tag);
         putAllStored(spreadSu(allsu, stored), tag);
         return InteractionResultHolder.pass(stack);
     }

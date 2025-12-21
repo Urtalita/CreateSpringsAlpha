@@ -14,6 +14,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import org.joml.Quaternionf;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;

@@ -39,6 +39,7 @@ public enum CSpringsPackets {
     ROTATE(RotatePlayerPacket.class, RotatePlayerPacket::new, PLAY_TO_CLIENT),
     AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket::new, PLAY_TO_CLIENT),
     GRAB(GrabPacket.class, GrabPacket::new, PLAY_TO_CLIENT),
+    PUSH_OFF(PushOffPacket.class, PushOffPacket::new, PLAY_TO_CLIENT),
     UPDATE_CONTRAPTION_SPRINGS(PSKISpringUpdate.class, PSKISpringUpdate::new, PLAY_TO_CLIENT),
     DASH_PSE(DashPSEPacket.class, DashPSEPacket::new, PLAY_TO_SERVER);
 

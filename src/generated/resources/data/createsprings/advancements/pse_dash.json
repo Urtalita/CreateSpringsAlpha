@@ -15,8 +15,7 @@
     "frame": "goal",
     "hidden": true,
     "icon": {
-      "item": "createsprings:portative_steam_engine",
-      "nbt": "{Damage:0}"
+      "item": "createsprings:portative_steam_engine"
     },
     "show_toast": true,
     "title": {

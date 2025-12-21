@@ -70,6 +70,10 @@ public enum PunchcardFunction {
             PunchcardExecutor.EXTENDRO_GRIP
     }),
 
+    PUSH_OFF(PunchcardInterpritator.pushOff(), false, false, "push_off", new PunchcardExecutor[]{
+            PunchcardExecutor.EXTENDRO_GRIP
+    }),
+
     REPLACE_SPRING(PunchcardInterpritator.findAndReplaceSpring(), false, false, "replace", new PunchcardExecutor[]{
             PunchcardExecutor.SPRING_BASE,
             PunchcardExecutor.EXPLOSION_CHAMBER,
@@ -87,6 +91,14 @@ public enum PunchcardFunction {
         this.function = function;
         this.requestParam = requestParam;
         this.executors = executors;
+        this.nameFunction = nameFunction;
+        this.needNumericInput = needNumericInput;
+    }
+
+    PunchcardFunction(Function<ExecutorInfo, Void> function, boolean requestParam, boolean needNumericInput, String nameFunction, PunchcardExecutor executor){
+        this.function = function;
+        this.requestParam = requestParam;
+        this.executors = new PunchcardExecutor[]{executor};
         this.nameFunction = nameFunction;
         this.needNumericInput = needNumericInput;
     }

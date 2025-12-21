@@ -9,7 +9,8 @@ import net.minecraft.world.damagesource.DamageType;
 public class CSpringsDamageTypes {
     public static final ResourceKey<DamageType>
             SPRING = key("spring"),
-            SPRING_BOX = key("spring_box")
+            SPRING_BOX = key("spring_box"),
+            PSE = key("pse")
     ;
 
     private static ResourceKey<DamageType> key(String name) {

@@ -39,9 +39,10 @@
   "createsprings.punchcard.explodeChamber": "explode gunpowder in chamber",
   "createsprings.punchcard.toggleBoost": "Toggle Boost",
   "createsprings.punchcard.steamDash": "Do Steam Dash",
-  "createsprings.punchcard.potatoCannonTripleShoot": "Tripple Shoot",
+  "createsprings.punchcard.potatoCannonTripleShoot": "Triple Shoot",
   "createsprings.punchcard.airDash": "Air Dash",
   "createsprings.punchcard.grab": "Grab Block",
+  "createsprings.punchcard.push_off": "Push off block",
   "createsprings.punchcard.slim": "End",
 
   "create.spring.stopped": "it looks like the spring can't move further because of non breakable blocks",
@@ -52,6 +53,9 @@
 
   "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
   "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
+
+  "death.attack.createsprings.pse": "%1$s died from a boiler explosion",
+  "death.attack.createsprings.spring.pse": "%1$s died from a boiler explosion",
 
   "death.attack.createsprings.spring_box": "%1$s should have read the label",
   "death.attack.createsprings.spring_box.player": "%1$s should have read the label",

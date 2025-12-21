@@ -23,6 +23,7 @@ import net.Portality.createsprings.Items.advanced.SpringStufs.SpringShowel.Sprin
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.Items.advanced.hat.HatModel;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -109,6 +110,12 @@ public class ModItems {
             .properties(p -> p.stacksTo(1))
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
+
+    public static final ItemEntry<ArmorItem> BROKEN_PSE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("broken_portative_steam_engine", p -> new ArmorItem(CspringsArmorMaterials.HAT, ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)))
+            .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModel("broken_portative_steam_engine"))
+            .register();
 
     public static final ItemEntry<Item> SPRING_PROJECTILE_ITEM = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_projectile", Item::new)
