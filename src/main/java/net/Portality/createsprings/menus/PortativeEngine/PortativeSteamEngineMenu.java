@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -71,7 +72,7 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
             // Если кликнули по burnStack слоту (индекс 0)
             if (pIndex == 0) {
                 // Перемещаем из burnStack в инвентарь игрока
-                if (!this.moveItemStackTo(slotStack, 1, 37, true)) {
+                if (!moveItemStackTo(slotStack, 1, 37, true)) {
                     return ItemStack.EMPTY;
                 }
                 clickedSlot.onQuickCraft(slotStack, itemstack);
@@ -79,7 +80,7 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
             // Если кликнули по инвентарю игрока
             else {
                 // Пытаемся переместить в burnStack слот
-                if (this.moveItemStackTo(slotStack, 0, 1, false)) {
+                if (moveItemStackTo(slotStack, 0, 1, false)) {
                     // Успешно переместили в burnStack
                 }
                 else {
@@ -104,6 +105,14 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
         }
 
         return itemstack;
+    }
+
+    @Override
+    protected boolean moveItemStackTo(ItemStack pStack, int pStartIndex, int pEndIndex, boolean pReverseDirection) {
+        if(ForgeHooks.getBurnTime(pStack, null) <= 0){
+            return false;
+        }
+        return super.moveItemStackTo(pStack, pStartIndex, pEndIndex, pReverseDirection);
     }
 
     @Override

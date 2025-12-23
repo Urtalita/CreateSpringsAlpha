@@ -1,7 +1,6 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -24,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +37,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+//import org.valkyrienskies.core.api.ships.ServerShip;
+//import org.valkyrienskies.core.api.ships.Ship;
+//import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.List;
 
@@ -361,6 +364,19 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             entity.addDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
             entity.hurtMarked = true;
         }
+
+        launchShips();
+    }
+
+    public void launchShips(){
+        /*
+        if(!(level instanceof ServerLevel serverLevel)){return;}
+        Direction facing = getBlockState().getValue(FACING).getOpposite();
+        BlockPos targetPos = worldPosition.relative(facing);
+        ServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, targetPos);
+        Ship
+
+         */
     }
 
     private void breakBlocksInFront(){

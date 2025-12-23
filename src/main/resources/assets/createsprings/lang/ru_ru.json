@@ -200,6 +200,7 @@
   "create.spring.su": "ен-секунд",
   "create.spring.switch.su": "000 ен-секунд",
   "spring.hardness": "настройте жёсткость пружины",
+  "createsprings.charge": "Заряд",
 
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
@@ -258,5 +259,6 @@
   "advancement.createsprings.cash_back.desc": "Получите удар от собственной пружины",
 
   "createsprings.pse.tooltip.overdrive_button": "Эта кнопка включает форсаж",
+  "createsprings.pse.tooltip.fuel": "слот для _топлива_, вы можете положить сюда любые _сгораемые_ предметы",
   "tooltip.springstuf.createsprings.no_modifires": "Положите пружину или модификатор внутрь"
 }

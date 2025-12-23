@@ -38,6 +38,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
     private TooltipDescription leverDescription;
     private TooltipDescription overdriveDescription;
     private TooltipDescription waterDescription;
+    private TooltipDescription fuelDescription;
     private OverdriveButtonDescription overdriveButtonDescription;
 
     public PortativeEngineScreen(PortativeSteamEngineMenu menu, Inventory inventory, Component title){
@@ -99,6 +100,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         leverDescription = new TooltipDescription(x + 38, y + 68, 180, 100, this::updateMainDescTooltip);
         overdriveDescription = new TooltipDescription(x + 255, y + 41, 62, 164, this::updateOverdriveDescTooltip);
         waterDescription = new TooltipDescription(x - 61, y + 41, 62, 164, this::updateWaterDescTooltip);
+        fuelDescription = new TooltipDescription(x, y + 163, 40, 40, this::updateFuelDescTooltip);
 
         overdriveButtonDescription = new OverdriveButtonDescription(x + 213, y + 163, 40, 40);
 
@@ -112,6 +114,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         addRenderableWidget(overdriveDescription);
         addRenderableWidget(waterDescription);
         addRenderableWidget(overdriveButtonDescription);
+        addRenderableWidget(fuelDescription);
 
         boosted = stack.getOrCreateTag().getInt("boosted");
         if(stack.getOrCreateTag().getBoolean("boost")) {
@@ -171,6 +174,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         overdriveDescription.render(graphics, mouseX, mouseY, partialTicks);
         waterDescription.render(graphics, mouseX, mouseY, partialTicks);
         overdriveButtonDescription.render(graphics, mouseX, mouseY, partialTicks);
+        fuelDescription.render(graphics, mouseX, mouseY, partialTicks);
 
         this.renderPlayerInventory(graphics, invX, invY);
     }
@@ -242,6 +246,12 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
     private ArrayList<Component> updateWaterDescTooltip(){
         ArrayList<Component> tooltip = new ArrayList<>();
         tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.pse.tooltip.water")));
+        return tooltip;
+    }
+
+    private ArrayList<Component> updateFuelDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.pse.tooltip.fuel")));
         return tooltip;
     }
 }

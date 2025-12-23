@@ -4,6 +4,7 @@ import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.redstone.displayLink.source.ItemCountDisplaySource;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.config.ModConfigs;

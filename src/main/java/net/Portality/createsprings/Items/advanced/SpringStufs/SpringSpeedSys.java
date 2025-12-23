@@ -90,7 +90,7 @@ public class SpringSpeedSys {
         } else {
             if (stored > MAX_REGULAR_SPEED && speed < 5500){
                 speed += 250;
-                stored -= 6000;
+                stored -= 2500;
                 if(speed > MAX_REGULAR_SPEED) speed = MAX_REGULAR_SPEED;
             }
         }

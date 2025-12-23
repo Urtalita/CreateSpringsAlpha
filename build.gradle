@@ -15,6 +15,7 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 group = mod_group_id
@@ -143,12 +144,17 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+
+    maven {
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+
+    mavenCentral()
+
     maven { url "https://maven.tterrag.com/"}
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
-
-
 
     maven {
         url "https://cursemaven.com"
@@ -162,14 +168,17 @@ repositories {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
-    // Put repositories for dependencies here
-    // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
-    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
-    // flatDir {
-    //     dir 'libs'
-    // }
+    maven {
+        name = "Valkyrien Skies"
+        url = "https://maven.valkyrienskies.org"
+    }
+
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content { includeGroup "thedarkcolour" }
+    }
 }
 
 sourceSets {
@@ -219,7 +228,28 @@ dependencies {
     implementation fg.deobf("curse.maven:embed-dium-908741:5681725")
     //implementation fg.deobf("curse.maven:sodium-dynamicLight-551736:6044481")
 
-    //implementation fg.deobf("curse.maven:cold-sweat-506194:6503192")
+    implementation fg.deobf("curse.maven:cold-sweat-506194:6503192") //cold-sweet compatibility
+
+    //vs compatibility
+
+    /*
+    implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
+        exclude group: 'com.simibubi'
+        exclude group: 'dev.engine-room'
+        exclude group: 'com.jozufozu'
+    }
+    implementation fg.deobf("org.valkyrienskies.core:api:${vscore_version}") {
+        exclude group: 'org.joml'
+    }
+    implementation fg.deobf("org.valkyrienskies.core:internal:${vscore_version}") {
+        exclude group: 'org.joml'
+    }
+    implementation fg.deobf("org.valkyrienskies.core:util:${vscore_version}") {
+        exclude group: 'org.joml'
+    }
+    implementation "thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"
+
+     */
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -269,5 +299,3 @@ processResources {
         expand "version": project.version
     }
 }
-
-

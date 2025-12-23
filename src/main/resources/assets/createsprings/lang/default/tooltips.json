@@ -67,5 +67,6 @@
   "createsprings.pse.tooltip.overdrive2": "you will be able to do _steam dash_ when pressure is more than 70 to lower pressure but it is a _temporary measure_",
   "createsprings.pse.tooltip.water": "when there is _no water_ in the engine, _PSE_ will try find _water bucket_ in the _inventory_ if it finds _water bucket_ inner tank will be _restored_ and water bucket _wouldn't be spent_",
 
-  "createsprings.pse.tooltip.overdrive_button": "That button turns on overdrive"
+  "createsprings.pse.tooltip.overdrive_button": "That button turns on overdrive",
+  "createsprings.pse.tooltip.fuel": "a slot for _fuel_, you can put any _furnace fuel_ in that slot"
 }

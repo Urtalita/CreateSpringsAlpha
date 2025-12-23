@@ -25,6 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,10 +45,12 @@ public class SpringPoweredCore {
 
         float stored = getAllStoredSum(getAllStored(tag));
         float capacity = ModConfigs.common().SPRING_CAPACITY.get() * tag.getInt("Springs_rn");
-        tooltip.add(Component.translatable("create.spring.su").append(": ").withStyle(ChatFormatting.GRAY)
+        tooltip.add(Component.translatable("createsprings.charge").append(": ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));
+                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(" ").append(Component.translatable("create.spring.su")).withStyle(ChatFormatting.GRAY))
+        );
 
         if(!hasNoModifies(tag)){return;}
 
@@ -322,17 +325,22 @@ public class SpringPoweredCore {
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess slotaccess) {
         CompoundTag tag = stack1.getOrCreateTag();
         int Springs_rn = tag.getInt("Springs_rn");
-        float[] allSu = getAllStored(tag);
+
+        float[] all = getAllStored(tag);
+        ArrayList<Float> allSu = new ArrayList<>();
+        for (float f : all){allSu.add(f);}
 
         if (stack2.getItem() == ModBlocks.SPRING.asItem()){
             if (springsMaxCount != Springs_rn && !tag.getBoolean("block") && exceptions(tag)){
-                allSu[Springs_rn] = getStoredSu(stack2);
-
+                allSu.add(getStoredSu(stack2));
                 Springs_rn++;
 
                 tag.putInt("Springs_rn", Springs_rn);
-                putAllStored(allSu, tag);
 
+                float[] newAll = new float[allSu.size()];
+                for(int i = 0; i < newAll.length; i++){newAll[i] = allSu.get(i);}
+
+                putAllStored(newAll, tag);
                 stack2.shrink(1);
                 return true;
             }
