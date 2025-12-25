@@ -34,6 +34,7 @@ import net.Portality.createsprings.blocks.advanced.SpringAlloyCasing.SpringAlloy
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultItem;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlock;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
+import net.Portality.createsprings.blocks.advanced.StorageFlywheel.SFlywheelBlock;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlock;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceMovement;
@@ -186,6 +187,18 @@ public class ModBlocks {
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.directionalBlockProvider(true))
             .transform(CSStress.setImpact(4))
+            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .item()
+            .transform(customItemModel())
+            .register();
+
+    public static final BlockEntry<SFlywheelBlock> STORAGE_FLYWHEEL = CSPRINGS_REGISTRATE
+            .block("storage_flywheel", SFlywheelBlock::new)
+            .initialProperties(SharedProperties::netheriteMetal)
+            .properties(p -> p.noOcclusion())
+            .transform(pickaxeOnly())
+            .blockstate(BlockStateGen.axisBlockProvider(true))
+            .transform(CSStress.setImpact(16))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .item()
             .transform(customItemModel())

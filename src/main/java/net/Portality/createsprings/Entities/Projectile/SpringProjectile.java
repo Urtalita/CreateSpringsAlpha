@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.*;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -156,13 +157,12 @@ public class SpringProjectile extends AbstractArrow {
                     .scale(BOUNCE_FACTOR);
 
             if (newMotion.length() > 0.15) {
-                Vec3 newPos = result.getLocation().add(normal.scale(0.1));
+                Vec3 newPos = result.getLocation().add(normal.scale(0.2));
                 this.setPos(newPos.x, newPos.y, newPos.z);
                 this.setDeltaMovement(newMotion);
                 bounceCount++;
             } else {
                 super.onHitBlock(result);
-                this.inGround = true;
                 this.setDeltaMovement(Vec3.ZERO);
             }
 
@@ -200,9 +200,17 @@ public class SpringProjectile extends AbstractArrow {
         if (bounceCount < MAX_BOUNCES) {
 
             if (target instanceof LivingEntity livingTarget) {
-                if(box){
-                    DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
-                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                boolean canHurt = true;
+                if(livingTarget instanceof AgeableMob ageableMob){
+                    if(ageableMob.isBaby()){
+                        canHurt = false;
+                    }
+                }
+
+                if(canHurt){
+                    if(box){
+                        DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
+                        livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
 
                     /*
                     if(livingTarget instanceof Player player){
@@ -210,11 +218,11 @@ public class SpringProjectile extends AbstractArrow {
                             CSpringsAdvancements.CASH_BACK.awardTo(player);
                         }
                     }
-
                      */
-                } else {
-                    DamageSource damageSource = CSpringsDamageSources.spring(this.level());
-                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                    } else {
+                        DamageSource damageSource = CSpringsDamageSources.spring(this.level());
+                        livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                    }
                 }
             }
 
@@ -300,7 +308,7 @@ public class SpringProjectile extends AbstractArrow {
     }
 
     private static Vec3 calculateInterceptionPoint(Projectile projectile, Entity target, double projectileSpeed) {
-        Vec3 targetPos = target.position().add(0, 0.5, 0);
+        Vec3 targetPos = target.position().add(0, 0.2f, 0);
         Vec3 targetVel = target.getDeltaMovement();
         Vec3 projectilePos = projectile.position();
 

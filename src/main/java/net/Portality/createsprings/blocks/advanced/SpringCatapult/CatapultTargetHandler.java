@@ -1,21 +1,15 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
-import com.simibubi.create.AllItems;
-import com.simibubi.create.content.logistics.depot.EntityLauncher;
 import com.simibubi.create.foundation.utility.CreateLang;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.server.CatapultPlacementPacket;
+import net.Portality.createsprings.server.packets.CatapultPlacementPacket;
 import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +25,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
-import org.joml.Vector3f;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class CatapultTargetHandler {

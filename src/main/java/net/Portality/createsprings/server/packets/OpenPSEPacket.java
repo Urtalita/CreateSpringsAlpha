@@ -1,4 +1,4 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
@@ -14,14 +14,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-public class BoostPSEPacket extends SimplePacketBase {
+public class OpenPSEPacket extends SimplePacketBase implements MenuProvider {
 
-    public BoostPSEPacket(FriendlyByteBuf buffer) {}
+    public OpenPSEPacket(FriendlyByteBuf buffer) {}
 
-    public BoostPSEPacket() {}
+    public OpenPSEPacket() {}
 
     @Override
     public void write(FriendlyByteBuf friendlyByteBuf) {
@@ -33,21 +32,26 @@ public class BoostPSEPacket extends SimplePacketBase {
         PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(player);
         if(item != null){
             ItemStack stack = player.getItemBySlot(PortativeSteamEngineItem.SLOT);
-            int boosted = stack.getOrCreateTag().getInt("boosted");
-            if(boosted < 99){
-                if(!stack.getOrCreateTag().getBoolean("boost")){
-                    if(stack.getOrCreateTag().getFloat("targetSpeed") == 0){
-                        return true;
-                    }
-                }
-
-                stack.getOrCreateTag().putBoolean("boost", !stack.getOrCreateTag().getBoolean("boost"));
-                if(boosted <= 0){
-                    stack.getOrCreateTag().putInt("boosted", 1);
-                }
-            }
+            NetworkHooks.openScreen(player, this, (buf) -> {
+                buf.writeItem(stack);
+            });
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+        ItemStack heldItem = player.getMainHandItem();
+        if(!(heldItem.getItem() instanceof PortativeSteamEngineItem)){
+            ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
+            return PortativeSteamEngineMenu.create(id, inv, stack);
+        }
+        return PortativeSteamEngineMenu.create(id, inv, heldItem);
     }
 }

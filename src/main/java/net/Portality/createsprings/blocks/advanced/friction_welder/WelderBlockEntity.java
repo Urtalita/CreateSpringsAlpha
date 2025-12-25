@@ -13,6 +13,7 @@ import com.simibubi.create.content.kinetics.drill.DrillBlock;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.blocks.advanced.BearingExtension;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
@@ -51,10 +52,9 @@ import java.util.Optional;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class WelderBlockEntity extends MechanicalBearingBlockEntity implements IHaveGoggleInformation {
+public class WelderBlockEntity extends BearingExtension implements IHaveGoggleInformation {
     public float HeadMove = 0;
     private float prevHeadMove = 0;
-    private final Vec3i movementDirection;
     private boolean velding = false;
     private int cooldown = 0;
     private WelderRecipeSpeed recipeSpeed = WelderRecipeSpeed.NORMAL;
@@ -68,18 +68,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     public WelderBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
-    }
-
-    @Override
-    public void onSpeedChanged(float prevSpeed) {
-        super.onSpeedChanged(prevSpeed);
-        assembleNextTick = false;
-    }
-
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        super.addBehaviours(behaviours);
-        behaviours.remove(movementMode);
     }
 
     @Override
@@ -219,16 +207,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
     }
 
-    private Vec3 MoveWithoutVectors(float Moving){
-        float offset = 1 - Moving - 0.5f;
-        BlockPos pos = worldPosition;
-        return new Vec3(
-                (pos.getX() + movementDirection.getX() * offset),
-                (pos.getY() + movementDirection.getY() * offset),
-                (pos.getZ() + movementDirection.getZ() * offset)
-        );
-    }
-
     private boolean CanStartWelding(){
         Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
 
@@ -275,14 +253,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                 return Optional.of((WelderBlockEntity) welderBE);
             }
         return Optional.empty();
-    }
-
-    public void SetAssemble(){
-        this.assembleNextTick = true;
-    }
-
-    public boolean getRunning(){
-        return running;
     }
 
     public void ActivateResipe() {

@@ -1,8 +1,7 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
-import com.simibubi.create.AllPackets;
 import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.server.CatapultPlacementPacket;
+import net.Portality.createsprings.server.packets.CatapultPlacementPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;

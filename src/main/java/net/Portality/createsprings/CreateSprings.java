@@ -1,10 +1,11 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
+import net.Portality.compat.vs.CSpringsVsCompatibility;
+import net.Portality.compat.vs.SpringForceAttachment;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.renderer.SpringAlloyBlockProjectileRenderer;
 import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
@@ -67,9 +68,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import org.valkyrienskies.core.impl.hooks.VSEvents;
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreateSprings.MODID)
@@ -118,6 +118,10 @@ public class CreateSprings {
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(ViewModificationHandler::onFovUpdate);
+
+        ValkyrienSkiesMod.getApi().registerAttachment(SpringForceAttachment.class);
+        MinecraftForge.EVENT_BUS.addListener(CSpringsVsCompatibility::onSpringSplash);
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             forgeBus.addListener(OverlayHandler::onRenderOverlay);
             forgeBus.addListener(MouseSensitivityHandler::onItemUseStart);

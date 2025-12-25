@@ -15,6 +15,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
+import net.Portality.createsprings.server.SpringSplashEvent;
 import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
@@ -37,9 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-//import org.valkyrienskies.core.api.ships.ServerShip;
-//import org.valkyrienskies.core.api.ships.Ship;
-//import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
 
@@ -365,18 +364,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             entity.hurtMarked = true;
         }
 
-        launchShips();
-    }
-
-    public void launchShips(){
-        /*
-        if(!(level instanceof ServerLevel serverLevel)){return;}
-        Direction facing = getBlockState().getValue(FACING).getOpposite();
-        BlockPos targetPos = worldPosition.relative(facing);
-        ServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, targetPos);
-        Ship
-
-         */
+        MinecraftForge.EVENT_BUS.post(new SpringSplashEvent(level, worldPosition, stored, false, getBlockState().getValue(FACING)));
     }
 
     private void breakBlocksInFront(){

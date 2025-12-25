@@ -4,7 +4,7 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.server.NetworkHandler;
-import net.Portality.createsprings.server.PortativeSteamEngineUpdatePacket;
+import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
 import net.createmod.catnip.platform.ForgeCatnipServices;
 import net.minecraft.client.Minecraft;

@@ -1,10 +1,9 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;

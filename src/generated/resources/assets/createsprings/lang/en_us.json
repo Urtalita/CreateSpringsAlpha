@@ -42,6 +42,7 @@
   "block.createsprings.spring_alloy_block": "Block of Spring Alloy",
   "block.createsprings.spring_alloy_casing": "Spring Alloy Casing",
   "block.createsprings.spring_catapult": "Spring Catapult",
+  "block.createsprings.storage_flywheel": "Storage Flywheel",
   "block.createsprings.test": "Test",
   "block.createsprings.unfinished_spring": "Unfinished Spring",
   "create.spring.len": "Length:",

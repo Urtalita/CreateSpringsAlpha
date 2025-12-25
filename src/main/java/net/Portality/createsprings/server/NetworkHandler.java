@@ -1,5 +1,7 @@
 package net.Portality.createsprings.server;
 
+import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
+import net.Portality.createsprings.server.packets.PunchcardUpdatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;

@@ -16,6 +16,9 @@ import net.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapult
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilRenderer;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
+import net.Portality.createsprings.blocks.advanced.StorageFlywheel.SFlywheelBE;
+import net.Portality.createsprings.blocks.advanced.StorageFlywheel.SFlywheelRenderer;
+import net.Portality.createsprings.blocks.advanced.StorageFlywheel.SFlywheelVisual;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderRenderer;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
@@ -72,6 +75,13 @@ public class ModBlockEntities {
             .visual(() -> WelderVisual::new)
             .validBlocks(ModBlocks.FRICTION_WELDER)
             .renderer(() -> WelderRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<SFlywheelBE> STORAGE_FLYWHEEL = CSPRINGS_REGISTRATE
+            .blockEntity("storage_flywheel", SFlywheelBE::new)
+            .visual(() -> SFlywheelVisual::new, false)
+            .validBlocks(ModBlocks.STORAGE_FLYWHEEL)
+            .renderer(() -> SFlywheelRenderer::new)
             .register();
 
     public static final BlockEntityEntry<SpringCoilBlockEntity> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
