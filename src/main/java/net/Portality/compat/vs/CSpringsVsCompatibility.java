@@ -21,7 +21,7 @@ public class CSpringsVsCompatibility {
                 5
         );
 
-        Direction direction = Direction.fromDelta((int) event.getDir().x, (int) event.getDir().y, (int) event.getDir().z).getOpposite();
+        Direction direction = Direction.fromDelta((int) event.getDir().x, (int) event.getDir().y, (int) event.getDir().z);
         Vec3 impactBP = event.getPos().relative(direction).getCenter();
         SpringForceAttachment attachment = SpringForceAttachment.get(serverLevel, new Vector3d(impactBP.x, impactBP.y, impactBP.z));
 

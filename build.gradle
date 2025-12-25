@@ -232,7 +232,7 @@ dependencies {
 
     //vs compatibility
 
-    /*
+
     implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
         exclude group: 'com.simibubi'
         exclude group: 'dev.engine-room'
@@ -249,6 +249,7 @@ dependencies {
     }
     implementation "thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"
 
+    /*
      */
 }
 
