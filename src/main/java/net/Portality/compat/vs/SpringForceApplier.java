@@ -5,6 +5,7 @@ import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.PhysShip;
 import org.valkyrienskies.core.api.ships.properties.ShipTransform;
 import org.valkyrienskies.core.api.world.PhysLevel;
+import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
 public class SpringForceApplier implements ICreateSpringsForceApplyer{
     private final SpringForceData data;
@@ -21,18 +22,21 @@ public class SpringForceApplier implements ICreateSpringsForceApplyer{
     public void applyForces(BlockPos pos, PhysShip ship, PhysLevel physLevel) {
         Vector3d dir = data.getDir();
         double thrust = data.getForce();
-        Vector3d posD = data.getPos();
 
         if (thrust == 0) {
             return;
         }
 
-        // Transform force direction from ship relative to world relative
         ShipTransform transform = ship.getTransform();
+
+        Vector3d posD = VectorConversionsMCKt.toJOMLD(pos)
+                .add(0.5, 0.5, 0.5, new Vector3d())
+                .sub(transform.getPositionInShip());
+
         Vector3d tForce = transform.getShipToWorld().transformDirection(dir.div(transform.getShipToWorldScaling(), dir));
         tForce.mul(thrust);
 
-        ship.applyInvariantForceToPos(tForce, posD);
+        ship.applyWorldForceToBodyPos(tForce, posD);
         data.physTick();
     }
 }
