@@ -13,6 +13,7 @@ import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import net.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import net.Portality.createsprings.contraption.SpringContraption;
+import net.Portality.createsprings.server.SpringSplashEvent;
 import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.Portality.createsprings.utill.Helpers.CspringsMath;
 import net.minecraft.ChatFormatting;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
 
@@ -288,6 +290,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 if(movedContraption != null){
                     movedContraption.moveTo(Vec3.atLowerCornerOf(worldPosition));
                 }
+                vsCompact();
                 CSpringsSounds.playBweum(level, worldPosition, 2);
             }
 
@@ -354,6 +357,16 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             updateNetwork();
             updateGeneratedRotation();
         }
+    }
+
+    private void vsCompact(){
+        BlockPos pos = BlockPos.containing(CspringsMath.MoveWithoutVectors(
+                calculateCurPos(progress),
+                worldPosition,
+                movementDirection));
+        Direction direction = getBlockState().getValue(FACING);
+
+        MinecraftForge.EVENT_BUS.post(new SpringSplashEvent(level, pos, stored, true, direction));
     }
 
     private Vec3 getContraptionPos(float progress){

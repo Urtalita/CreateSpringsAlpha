@@ -187,18 +187,6 @@ sourceSets {
             srcDirs = ['src/main/java']
         }
     }
-    coldsweat_compat {
-        java {
-            srcDirs = ['src/coldsweat_compat/java']
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-        }
-    }
-}
-
-configurations {
-    coldsweat_compatImplementation.extendsFrom implementation
-    coldsweat_compatRuntimeOnly.extendsFrom runtimeOnly
 }
 
 dependencies {
@@ -248,6 +236,8 @@ dependencies {
         exclude group: 'org.joml'
     }
     implementation "thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"
+
+    implementation "org.joml:joml-primitives:1.10.0" // joml for vs
 
     /*
      */

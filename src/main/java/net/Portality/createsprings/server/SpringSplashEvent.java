@@ -20,26 +20,32 @@ public class SpringSplashEvent extends Event {
         return suSecSplashed;
     }
 
-    public boolean isOnShip() {
-        return isOnShip;
+    public boolean isLargeSpring() {
+        return isLargeSpring;
     }
 
     public Vector3d getDir() {
         return dir;
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
     private final Level level;
     private final BlockPos pos;
     private final float suSecSplashed;
-    private final boolean isOnShip;
+    private final boolean isLargeSpring;
     private final Vector3d dir;
+    private final Direction direction;
 
-    public SpringSplashEvent(Level level, BlockPos pos, float suSecSplashed, boolean isOnShip, Direction dir) {
+    public SpringSplashEvent(Level level, BlockPos pos, float suSecSplashed, boolean isLargeSpring, Direction dir) {
         this.level = level;
         this.pos = pos;
         this.suSecSplashed = suSecSplashed;
-        this.isOnShip = isOnShip;
+        this.isLargeSpring = isLargeSpring;
         Vec3i normal = dir.getNormal();
         this.dir = new Vector3d(normal.getX(), normal.getY(), normal.getZ());
+        this.direction = dir;
     }
 }
