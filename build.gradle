@@ -186,22 +186,20 @@ sourceSets {
         java {
             srcDirs = ['src/main/java']
         }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-        compileClasspath += configurations.vsCompatCompileOnly
-        runtimeClasspath += configurations.vsCompatCompileOnly
     }
-
+    coldsweat_compat {
+        java {
+            srcDirs = ['src/coldsweat_compat/java']
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+    }
     vs_compat {
         java {
             srcDirs = ['src/vs_compat/java']
+            compileClasspath += main.output
+            runtimeClasspath += main.output
         }
-        resources {
-            srcDirs = ['src/vs_compat/resources']
-        }
-        compileClasspath += sourceSets.main.output
-        compileClasspath += sourceSets.main.compileClasspath
     }
 }
 
