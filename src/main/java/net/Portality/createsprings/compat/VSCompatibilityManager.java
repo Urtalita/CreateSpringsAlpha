@@ -16,9 +16,9 @@ public class VSCompatibilityManager {
             try {
                 Class<?> loaderClass = Class.forName("vs.VSCompatibilityLoader");
                 loaderClass.getMethod("load").invoke(null);
-                if(ModConfigs.common().VS_COMPATIBILITY.get()){
+                //if(ModConfigs.common().VS_COMPATIBILITY.get()){
 
-                }
+                //}
             } catch (Exception e) {
                 return;
             }
