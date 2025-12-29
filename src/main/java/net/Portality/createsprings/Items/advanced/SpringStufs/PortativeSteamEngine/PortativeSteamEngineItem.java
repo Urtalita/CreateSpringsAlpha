@@ -409,14 +409,11 @@ public class PortativeSteamEngineItem extends ArmorItem implements MenuProvider,
             SpringItem.SetSu(handStack, charge + speed * 2);
         }
 
-        for(Item tool : CreateSprings.SPRING_TOOLS){
-            if(tool == handStack.getItem()){
-                if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
-                    float[] charge = SpringPoweredCore.getAllStored(handStack.getOrCreateTag());
-                    charge[0] += speed;
-                    charge[1] += speed;
-                    SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());
-                }
+        if(handStack.getItem() instanceof ISpringPoweredTool){
+            if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
+                float[] charge = SpringPoweredCore.getAllStored(handStack.getOrCreateTag());
+                charge = SpringPoweredCore.spreadSu(charge, SpringPoweredCore.getAllStoredSum(charge) + speed * 2);
+                SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());
             }
         }
     }

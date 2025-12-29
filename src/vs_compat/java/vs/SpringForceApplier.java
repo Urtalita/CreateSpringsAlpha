@@ -1,4 +1,4 @@
-package net.Portality.compat.vs;
+package vs;
 
 import net.minecraft.core.BlockPos;
 import org.joml.Vector3d;
@@ -18,7 +18,6 @@ public class SpringForceApplier implements ICreateSpringsForceApplyer{
         return data;
     }
 
-    @Override
     public void applyForces(BlockPos pos, PhysShip ship, PhysLevel physLevel) {
         Vector3d dir = data.getDir();
         double thrust = data.getForce();

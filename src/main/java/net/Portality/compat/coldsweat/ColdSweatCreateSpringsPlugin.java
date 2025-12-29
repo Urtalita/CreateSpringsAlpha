@@ -1,5 +1,6 @@
 package net.Portality.compat.coldsweat;
 
+
 import net.Portality.createsprings.CreateSprings;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -7,9 +8,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 public class ColdSweatCreateSpringsPlugin {
+
+
     @SubscribeEvent
     public static void onModifiersRegister(com.momosoftworks.coldsweat.api.event.core.registry.TempModifierRegisterEvent event) {
-        event.register(new ResourceLocation(CreateSprings.MODID, "portative_steam_engine"), () -> new PSETempModifier());
+        event.register(ResourceLocation.fromNamespaceAndPath(CreateSprings.MODID, "portative_steam_engine"), () -> new PSETempModifier());
     }
 
     @SubscribeEvent

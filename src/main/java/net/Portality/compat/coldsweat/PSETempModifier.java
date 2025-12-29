@@ -12,7 +12,10 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Function;
 
+import com.momosoftworks.coldsweat.api.temperature.modifier.TempModifier;
+
 public class PSETempModifier extends TempModifier {
+
 
     @Override
     protected Function<Double, Double> calculate(LivingEntity livingEntity, Temperature.Trait trait) {

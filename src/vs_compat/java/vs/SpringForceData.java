@@ -1,4 +1,4 @@
-package net.Portality.compat.vs;
+package vs;
 
 import net.minecraft.core.BlockPos;
 import org.joml.Vector3d;

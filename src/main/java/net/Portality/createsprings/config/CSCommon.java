@@ -19,6 +19,8 @@ public class CSCommon extends ConfigBase {
     public final ConfigFloat SPRING_TOOL_SPEED_COEF = new ConfigFloat("soring_tool_speed_coef", 1f, 0, 1024, Comments.SPRING_TOOLS_SPEED_COEF);
     public final ConfigFloat PSE_FUEL_USAGE = new ConfigFloat("pse_fuel_usage", 2.5f, 0, 1024, Comments.PSE_FUEL_USAGE);
 
+    //public final ConfigBool VS_COMPATIBILITY = new ConfigBool("vs_compat", false, Comments.VS_COMPATIBILITY);
+
     @Override
     public String getName() {
         return "common";
@@ -35,5 +37,7 @@ public class CSCommon extends ConfigBase {
         static String KNOCKBACK_COEF = "knockback coefficient of springs";
         static String SPRING_TOOLS_SPEED_COEF = "speed coefficient of spring tools";
         static String PSE_FUEL_USAGE = "how much fuel PSE will consume per 1 level";
+
+        static String VS_COMPATIBILITY = "Turns on VS compatibility(alpha), WARNING it can make your world unplayable";
     }
 }
