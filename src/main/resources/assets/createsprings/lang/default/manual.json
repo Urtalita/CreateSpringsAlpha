@@ -19,7 +19,7 @@
   "create.spring.su": "su-sec",
   "createsprings.charge": "Charge",
   "create.spring.switch.su": "000 su",
-  "spring.hardness": "select spring hardness",
+  "spring.hardness": "select spring stiffness",
 
   "createsprings.punchcard.executor.title": "Executors:",
   "createsprings.punchcard.name": "Name:",
@@ -47,10 +47,6 @@
   "createsprings.punchcard.slim": "End",
 
   "create.spring.stopped": "it looks like the spring can't move further because of non breakable blocks",
-
-  "tooltip.springstuf.createsprings:punchcard": "allows you to program spring tools",
-  "tooltip.springstuf.createsprings:spring_alloy_block": "an explosive ammo",
-  "tooltip.springstuf.minecraft:spyglass": "spring launcher sight",
 
   "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
   "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",

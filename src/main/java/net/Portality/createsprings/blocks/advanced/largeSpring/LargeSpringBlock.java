@@ -9,11 +9,13 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -93,6 +95,22 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
             return 0;
         }
         return super.getDestroyProgress(state, player, getter, pos);
+    }
+
+    @Override
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        return canNotWrench(context.getPlayer());
+    }
+
+    @Override
+    public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
+        return canNotWrench(context.getPlayer());
+    }
+
+    public InteractionResult canNotWrench(Player player){
+        if(player instanceof ServerPlayer){return InteractionResult.CONSUME;}
+        AllSoundEvents.DENY.playFrom(player);
+        return InteractionResult.CONSUME;
     }
 
     @Override

@@ -249,7 +249,7 @@ public class CSpringsScenes {
         public static void hardness(SceneBuilder builder, SceneBuildingUtil util) {
 
             CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-            scene.title("hardness", "Using spring hardness");
+            scene.title("stiffness", "Spring stiffness");
             scene.configureBasePlate(0, 0, 3);
             scene.world().showSection(util.select().layer(0), Direction.UP);
             scene.showBasePlate();
@@ -302,7 +302,7 @@ public class CSpringsScenes {
 
             scene.overlay().showText(100)
                     .placeNearTarget()
-                    .text("the greater the spring hardness, the more su the spring consumes when charging and the more energy it produces when unchanging")
+                    .text("the greater the spring stiffness, the more su the spring consumes when charging and the more energy it produces when unchanging")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 1.5));
             scene.idle(100);
@@ -570,7 +570,7 @@ public class CSpringsScenes {
             scene.overlay().showText(70)
                     .placeNearTarget()
                     .attachKeyFrame()
-                    .text("All placed coils should be directed in the same direction")
+                    .text("All placed coils should face the same direction")
                     .pointAt(util.vector().of(5.5, 2, 3.5));
 
             scene.idle(80);

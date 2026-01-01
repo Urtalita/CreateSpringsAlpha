@@ -4,10 +4,15 @@ import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.foundation.block.IBE;
+import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -16,6 +21,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 
 public class SpringCatapultBlock extends KineticBlock implements IBE<SpringCatapultBlockEntity> {
     public SpringCatapultBlock(Properties properties) {
@@ -63,5 +72,28 @@ public class SpringCatapultBlock extends KineticBlock implements IBE<SpringCatap
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
         return face.getAxis() == Direction.Axis.Y;
+    }
+
+    @Override
+    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        return onBlockEntityUse(pLevel, pPos, b ->{
+            if(pPlayer.getItemInHand(pHand).isEmpty()){
+                LazyOptional<IItemHandler> lazyHandler = b.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
+                lazyHandler.ifPresent(handler -> {
+                    ItemStack stack = handler.extractItem(0, 64, false);
+                    pPlayer.setItemInHand(pHand, stack);
+                });
+
+                return InteractionResult.CONSUME;
+            }
+
+            LazyOptional<IItemHandler> lazyHandler = b.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
+            lazyHandler.ifPresent(handler -> {
+                ItemStack stack = handler.insertItem(0, pPlayer.getItemInHand(pHand), false);
+                pPlayer.setItemInHand(pHand, stack);
+            });
+
+            return InteractionResult.CONSUME;
+        });
     }
 }
