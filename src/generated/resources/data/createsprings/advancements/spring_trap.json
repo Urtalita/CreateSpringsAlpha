@@ -1,0 +1,31 @@
+{
+  "parent": "createsprings:spring",
+  "criteria": {
+    "0": {
+      "conditions": {},
+      "trigger": "create:spring_trap_builtin"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.spring_trap.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "createsprings:sus_package"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.spring_trap"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

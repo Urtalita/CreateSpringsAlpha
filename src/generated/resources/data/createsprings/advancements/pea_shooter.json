@@ -1,0 +1,31 @@
+{
+  "parent": "createsprings:programmer",
+  "criteria": {
+    "0": {
+      "conditions": {},
+      "trigger": "create:pea_shooter_builtin"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.pea_shooter.desc"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "createsprings:punchcard"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.pea_shooter"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

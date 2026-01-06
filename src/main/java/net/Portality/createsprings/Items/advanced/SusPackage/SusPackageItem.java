@@ -7,7 +7,7 @@ import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
-import net.Portality.createsprings.menus.PortativeEngine.TooltipDescription;
+import net.Portality.createsprings.menus.TooltipDescription;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

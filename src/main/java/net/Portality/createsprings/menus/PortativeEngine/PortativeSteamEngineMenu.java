@@ -2,7 +2,7 @@ package net.Portality.createsprings.menus.PortativeEngine;
 
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.MenuBase;
-import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
+import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
 import net.Portality.createsprings.client.CSpringsMenus;
 import net.minecraft.client.Minecraft;

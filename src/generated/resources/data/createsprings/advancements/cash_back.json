@@ -1,0 +1,31 @@
+{
+  "parent": "createsprings:spring_trap",
+  "criteria": {
+    "0": {
+      "conditions": {},
+      "trigger": "create:cash_back_builtin"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.cash_back.desc"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "createsprings:spring"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.cash_back"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,7 +1,6 @@
 package net.Portality.createsprings.Items;
 
-import net.Portality.createsprings.CreateSprings;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedSys;
+import net.Portality.createsprings.Items.SpringStufs.SpringSpeedSys;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.nbt.CompoundTag;

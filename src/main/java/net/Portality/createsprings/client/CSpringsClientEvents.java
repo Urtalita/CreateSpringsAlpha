@@ -1,7 +1,7 @@
 package net.Portality.createsprings.client;
 
-import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringSpeedClientHandler;
+import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
+import net.Portality.createsprings.Items.SpringStufs.SpringSpeedClientHandler;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;

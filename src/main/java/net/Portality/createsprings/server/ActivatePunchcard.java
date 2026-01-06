@@ -7,7 +7,6 @@ import net.Portality.createsprings.Items.advanced.Punchcard.ExecutorInfo;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardAction;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardExecutor;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
-import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +17,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Function;
 
 import static net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator.allPunchcardActions;
-import static net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore.checkItemInContains;
+import static net.Portality.createsprings.Items.SpringStufs.SpringPoweredCore.checkItemInContains;
 
 public class ActivatePunchcard extends SimplePacketBase {
 

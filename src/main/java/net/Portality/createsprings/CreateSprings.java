@@ -1,6 +1,5 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -11,10 +10,10 @@ import net.Portality.createsprings.Entities.renderer.SpringProjectileRenderer;
 import net.Portality.createsprings.Items.ModItemColors;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardInterpritator;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.MouseSensitivityHandler;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.OverlayHandler;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringLauncher.ViewModificationHandler;
-import net.Portality.createsprings.Items.advanced.SpringStufs.SpringPoweredCore;
+import net.Portality.createsprings.Items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
+import net.Portality.createsprings.Items.SpringStufs.SpringLauncher.OverlayHandler;
+import net.Portality.createsprings.Items.SpringStufs.SpringLauncher.ViewModificationHandler;
+import net.Portality.createsprings.Items.SpringStufs.SpringPoweredCore;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
@@ -67,9 +66,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-
-import java.io.FileWriter;
-import java.io.IOException;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CreateSprings.MODID)

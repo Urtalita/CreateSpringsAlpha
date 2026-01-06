@@ -224,6 +224,9 @@
   "death.attack.createsprings.pse": "%1$s взорвал бойлер",
   "death.attack.createsprings.spring.pse": "%1$s взорвал бойлер",
 
+  "createsprings.pse.boost": "Давление: ",
+  "createsprings.pse.dash": "Паровой рывок: ",
+
   "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
   "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",
   "createsprings.ponder.spring.text_3": "При активации пружина будет отдавать накопленную кинетическую энергию",

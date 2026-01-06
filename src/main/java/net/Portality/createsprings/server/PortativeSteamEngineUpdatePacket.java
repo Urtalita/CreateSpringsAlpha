@@ -1,10 +1,7 @@
 package net.Portality.createsprings.server;
 
-import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
-import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
-import net.Portality.createsprings.client.CSpringsGuiTextures;
+import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

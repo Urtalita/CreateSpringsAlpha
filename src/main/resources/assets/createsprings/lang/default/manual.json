@@ -62,6 +62,9 @@
   "key.createsprings.pse_dash": "Do Steam Dash",
   "key.createsprings.pse_open": "open PSE interface",
 
+  "createsprings.pse.boost": "Overdrive: ",
+  "createsprings.pse.dash": "Steam Dash: ",
+
   "key.categories.createsprings": "Create Springs",
   "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside"
 }

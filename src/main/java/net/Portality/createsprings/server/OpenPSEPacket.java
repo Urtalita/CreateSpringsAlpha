@@ -1,7 +1,7 @@
 package net.Portality.createsprings.server;
 
 import com.simibubi.create.foundation.networking.SimplePacketBase;
-import net.Portality.createsprings.Items.advanced.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
+import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.menus.PortativeEngine.PortativeSteamEngineMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -15,8 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class OpenPSEPacket extends SimplePacketBase implements MenuProvider {
 

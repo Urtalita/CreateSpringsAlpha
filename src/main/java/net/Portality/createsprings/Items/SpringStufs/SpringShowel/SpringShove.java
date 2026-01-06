@@ -1,0 +1,167 @@
+package net.Portality.createsprings.Items.SpringStufs.SpringShowel;
+
+import com.simibubi.create.AllItems;
+import com.simibubi.create.foundation.item.CustomArmPoseItem;
+import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import net.Portality.createsprings.Items.ModItems;
+import net.Portality.createsprings.Items.SpringStufs.ISpringPoweredTool;
+import net.Portality.createsprings.Items.SpringStufs.SpringPoweredCore;
+import net.Portality.createsprings.Items.SpringStufs.SpringSpeedSys;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISpringPoweredTool {
+    private static final Tier IRON_TIER = Tiers.IRON;
+    private final SpringPoweredCore core;
+    private final SpringSpeedSys SpeedSys;
+
+    public SpringShove(Item.Properties properties) {
+        super(IRON_TIER, 1, -2.8F, properties
+                .durability(-1)
+                .rarity(Rarity.UNCOMMON));
+        SpeedSys = new SpringSpeedSys();
+
+        Item[] allowedModifficators = new Item[]{
+                ModItems.PUNCHCARD.get(),
+                Items.TRIPWIRE_HOOK,
+        };
+
+        this.core = new SpringPoweredCore(2, allowedModifficators);
+    }
+
+    @Override
+    public @Nullable CompoundTag getShareTag(ItemStack stack) {
+        CompoundTag serverNbt = super.getShareTag(stack);
+        if (serverNbt == null) serverNbt = new CompoundTag();
+
+        serverNbt.remove("Scroll");
+        serverNbt.remove("LastScroll");
+        return serverNbt;
+    }
+
+    @Override
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
+        if(!isCorrectToolForDrops(stack, state))
+            return 1.0F;
+
+        return SpeedSys.getDestroySpeed(stack, state);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        return SpeedSys.use(level, player, hand);
+    }
+
+    @Override
+    public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
+        super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+        SpeedSys.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(SimpleCustomRenderer.create(this, new SpringShoveRenderer()));
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
+        SpeedSys.appendHoverText(stack, level, tooltip, flag);
+        core.appendHoverText(stack, level, tooltip, flag);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack p_150902_) {
+        return core.getTooltipImage(p_150902_);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack p_41452_) {
+        return UseAnim.NONE;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 0; // Убираем длительность использования
+    }
+
+    @Override
+    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return false; // Отключаем сброс анимации ломания блоков
+    }
+
+    @Override
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+        return true; // Отключаем анимацию взмаха рукой
+    }
+
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess access) {
+        core.checkAndAddModifier(stack1, AllItems.WHISK.asItem());
+        if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
+            return true;
+        }
+        if (core.addStackedLogic(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
+            core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
+            player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Nullable
+    public HumanoidModel.ArmPose getArmPose(ItemStack stack, AbstractClientPlayer player, InteractionHand hand) {
+        if (!player.swinging) {
+            return HumanoidModel.ArmPose.CROSSBOW_HOLD;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
+            return true;
+        }
+        return super.overrideStackedOnOther(stack, slot, action, player);
+    }
+
+    @Override
+    public SpringPoweredCore getCore() {
+        return core;
+    }
+
+    @Override
+    public boolean hasSpeedSystem() {
+        return true;
+    }
+}

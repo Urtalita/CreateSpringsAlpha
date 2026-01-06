@@ -1,0 +1,31 @@
+{
+  "parent": "createsprings:spring_alloy",
+  "criteria": {
+    "0": {
+      "conditions": {},
+      "trigger": "create:programmer_builtin"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.createsprings.programmer.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "createsprings:punchcard"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.createsprings.programmer"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
