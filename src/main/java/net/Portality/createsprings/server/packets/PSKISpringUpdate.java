@@ -1,4 +1,4 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.foundation.networking.SimplePacketBase;

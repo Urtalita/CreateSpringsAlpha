@@ -60,8 +60,4 @@ public class AndesiteMoldBlock extends DirectionalBlock implements IBE<MoldBlock
     public BlockEntityType<? extends MoldBlockEntity> getBlockEntityType() {
         return ModBlockEntities.MOLD.get();
     }
-
-    @Override public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
-    }
 }

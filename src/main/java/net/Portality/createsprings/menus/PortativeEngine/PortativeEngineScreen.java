@@ -3,9 +3,10 @@ package net.Portality.createsprings.menus.PortativeEngine;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.menus.TooltipDescription;
 import net.Portality.createsprings.server.NetworkHandler;
-import net.Portality.createsprings.server.PortativeSteamEngineUpdatePacket;
+import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
 import net.createmod.catnip.platform.ForgeCatnipServices;
 import net.minecraft.client.Minecraft;
@@ -231,7 +232,32 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
                 line.withStyle(GRAY);
             }
             toolTip.add(line);
+
+            if(i == 1){
+                MutableComponent line1 = Component.literal("- ");
+                line1.append(Component.translatable(CreateSprings.MODID + ".pse." + "tooltip." + 0));
+                if(i > mode){
+                    line1.withStyle(DARK_GRAY);
+                } else {
+                    line1.withStyle(GRAY);
+                }
+                toolTip.add(line1);
+            }
         }
+
+        toolTip.add(Component.empty());
+
+        MutableComponent fuelUsage = Component.translatable(CreateSprings.MODID + ".pse." + "fuel_usage").withStyle(GRAY);
+        double usage = mode * ModConfigs.common().PSE_FUEL_USAGE.get() / 5d;
+        MutableComponent amount = Component.literal(String.valueOf(Math.round(usage * 10) / 10d));
+
+        if(mode == 0){
+            fuelUsage.append(amount.withStyle(WHITE));
+        } else {
+            fuelUsage.append(amount.withStyle(RED));
+        }
+        fuelUsage.append(Component.translatable(CreateSprings.MODID + ".pse." + "furnace").withStyle(GRAY));
+        toolTip.add(fuelUsage);
 
         return toolTip;
     }

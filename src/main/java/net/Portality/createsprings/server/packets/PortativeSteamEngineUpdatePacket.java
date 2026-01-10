@@ -1,4 +1,4 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;

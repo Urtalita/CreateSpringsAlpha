@@ -40,9 +40,9 @@ public class CatapultLauncher {
 
     public BlockPos parseTrajectory(Level level, int phase, float yAngle, BlockPos worldPosition){
         Vector2d trajectoryPoint = trajectory[phase];
-        BlockPos parsePos = new BlockPos((int) (worldPosition.getX() + Math.sin(Math.toRadians(yAngle)) * trajectoryPoint.x),
-                                         (int) (worldPosition.getY() + trajectoryPoint.y),
-                                         (int) (worldPosition.getZ() + Math.cos(Math.toRadians(yAngle)) * trajectoryPoint.x));
+        BlockPos parsePos = new BlockPos((int) Math.round((worldPosition.getX() + Math.sin(Math.toRadians(yAngle)) * trajectoryPoint.x)),
+                                         (int) Math.round((worldPosition.getY() + trajectoryPoint.y)),
+                                         (int) Math.round((worldPosition.getZ() + Math.cos(Math.toRadians(yAngle)) * trajectoryPoint.x)));
         BlockState state = level.getBlockState(parsePos);
         if(state.isAir() || state.getBlock() == Blocks.WATER){
             return null;

@@ -41,6 +41,8 @@ public class WelderVisual<B extends WelderBlockEntity & IBearingBlockEntity> ext
 
         PartialModel top = CSpringsPartalModels.WelderHead;
 
+
+
         topInstance = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(top))
                 .createInstance();
 
@@ -49,6 +51,7 @@ public class WelderVisual<B extends WelderBlockEntity & IBearingBlockEntity> ext
                 .setChanged();
 
         animate(partialTick);
+
     }
 
     @Override

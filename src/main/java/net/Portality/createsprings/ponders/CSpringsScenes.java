@@ -49,21 +49,21 @@ public class CSpringsScenes {
             }
             scene.idle(10);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(50)
                     .placeNearTarget()
                     .text("Springs is able to store rotational force")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 2.5));
 
-            scene.idle(30);
+            scene.idle(60);
             scene.world().showSection(util.select().position(3, 1, 1), Direction.UP);
             scene.idle(20);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(50)
                     .placeNearTarget()
                     .text("direction of rotation does not matter")
                     .pointAt(util.vector().of(3.5, 1.5, 2.5));
-            scene.idle(35);
+            scene.idle(65);
 
             BlockPos leverPos = new BlockPos(3, 1, 1);
             scene.world().toggleRedstonePower(util.select().fromTo(leverPos, leverPos.south()));
@@ -86,12 +86,12 @@ public class CSpringsScenes {
             scene.world().showSection(util.select().position(4, 1, 1), Direction.UP);
             scene.idle(20);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(60)
                     .placeNearTarget()
                     .text("when activated spring will release stored kinetic energy")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 2.5));
-            scene.idle(35);
+            scene.idle(70);
 
             leverPos = new BlockPos(4, 1, 1);
             scene.world().toggleRedstonePower(util.select().fromTo(leverPos, leverPos.south()));
@@ -185,13 +185,13 @@ public class CSpringsScenes {
 
             scene.idle(20);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(50)
                     .placeNearTarget()
                     .text("and break blocks")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 2.5));
 
-            scene.idle(40);
+            scene.idle(60);
 
             buttonPos = new BlockPos(2, 1, 1);
             scene.world().toggleRedstonePower(util.select().fromTo(buttonPos, buttonPos.south()));
@@ -208,12 +208,12 @@ public class CSpringsScenes {
 
             scene.idle(20);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(60)
                     .placeNearTarget()
                     .text("some blocks needs more charge to break")
                     .pointAt(util.vector().of(0.5, 1.5, 2.5));
 
-            scene.idle(20);
+            scene.idle(70);
 
             buttonPos = new BlockPos(1, 1, 1);
             scene.world().toggleRedstonePower(util.select().fromTo(buttonPos, buttonPos.south()));
@@ -229,13 +229,13 @@ public class CSpringsScenes {
 
             scene.idle(20);
 
-            scene.overlay().showText(30)
+            scene.overlay().showText(50)
                     .placeNearTarget()
                     .text("springs do not break kinetic mechanisms and pressure plates")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(-0.5, 1.5, 2.5));
 
-            scene.idle(20);
+            scene.idle(60);
 
             buttonPos = new BlockPos(0, 1, 1);
             scene.world().toggleRedstonePower(util.select().fromTo(buttonPos, buttonPos.south()));
@@ -249,7 +249,7 @@ public class CSpringsScenes {
         public static void hardness(SceneBuilder builder, SceneBuildingUtil util) {
 
             CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-            scene.title("stiffness", "Spring stiffness");
+            scene.title("hardness", "Spring stiffness");
             scene.configureBasePlate(0, 0, 3);
             scene.world().showSection(util.select().layer(0), Direction.UP);
             scene.showBasePlate();
@@ -441,7 +441,7 @@ public class CSpringsScenes {
             scene.overlay().showText(70)
                     .attachKeyFrame()
                     .colored(PonderPalette.GREEN)
-                    .text("A valid target can be anywhere with in range of 150 blocks")
+                    .text("A valid target can be anywhere with in range of 100 blocks")
                     .pointAt(util.vector().blockSurface(catapult, Direction.UP))
                     .placeNearTarget();
             scene.idle(80);
@@ -631,13 +631,13 @@ public class CSpringsScenes {
             scene.world().showSection(util.select().position(lever), Direction.EAST);
             scene.idle(10);
 
-            scene.overlay().showText(70)
+            scene.overlay().showText(90)
                     .placeNearTarget()
                     .attachKeyFrame()
                     .text("When central block of first layer is powered large spring will start releasing stored energy")
                     .pointAt(util.vector().of(2.5, 2.5, 2.5));
 
-            scene.idle(80);
+            scene.idle(100);
 
             scene.world().toggleRedstonePower(util.select().everywhere());
             scene.world().modifyBlockEntityNBT(util.select().position(spring), LecternBlockEntity.class, (nbt) -> nbt.putBoolean("Generating", true));
@@ -779,13 +779,13 @@ public class CSpringsScenes {
 
         scene.world().showSection(util.select().fromTo(flywheel, staticInterface), Direction.DOWN);
 
-        scene.overlay().showText(60)
+        scene.overlay().showText(70)
                 .pointAt(util.vector().topOf(staticInterface))
                 .colored(PonderPalette.GREEN)
                 .placeNearTarget()
                 .attachKeyFrame()
                 .text("This component can interact with springs without the need to stop the contraption");
-        scene.idle(70);
+        scene.idle(80);
 
         scene.overlay().showOutlineWithText(util.select().position(staticInterface.west()), 50)
                 .colored(PonderPalette.RED)
@@ -802,32 +802,32 @@ public class CSpringsScenes {
             nbt.putFloat("Timer", 12);
         });
 
-        scene.overlay().showOutlineWithText(util.select().position(movingInterface), 70)
+        scene.overlay().showOutlineWithText(util.select().position(movingInterface), 90)
                 .placeNearTarget()
                 .colored(PonderPalette.GREEN)
                 .attachKeyFrame()
                 .text("While engaged, the stationary interface will represent ALL springs and large springs on the contraption");
 
-        scene.idle(80);
+        scene.idle(100);
 
         scene.world().modifyKineticSpeed(util.select().layer(3), (f) -> 64F);
 
-        scene.overlay().showOutlineWithText(util.select().position(movingInterface), 70)
+        scene.overlay().showOutlineWithText(util.select().position(movingInterface), 80)
                 .placeNearTarget()
                 .attachKeyFrame()
                 .text("if stationary interface is rotating, springs on contraption will charge");
 
-        scene.idle(80);
+        scene.idle(90);
 
         scene.world().setBlock(staticInterface.north(), Blocks.REDSTONE_BLOCK.defaultBlockState(), true);
         scene.world().showSection(util.select().position(staticInterface.north()), Direction.EAST);
         scene.world().modifyKineticSpeed(util.select().layer(3), (f) -> -64F);
 
-        scene.overlay().showOutlineWithText(util.select().position(staticInterface.north()), 70)
+        scene.overlay().showOutlineWithText(util.select().position(staticInterface.north()), 90)
                 .placeNearTarget()
                 .attachKeyFrame()
                 .text("if stationary interface is powered it will generate energy using springs on the contraption");
 
-        scene.idle(80);
+        scene.idle(100);
     }
 }

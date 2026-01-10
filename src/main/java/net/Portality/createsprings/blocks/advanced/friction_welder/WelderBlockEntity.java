@@ -121,6 +121,8 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     public void tick() {
         super.tick();
 
+        prevHeadMove = HeadMove;
+
         if(!running && !stopped && getSpeed() != 0){
             if(!level.isClientSide){
                 BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING));
@@ -160,7 +162,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
 
         if (HeadMove > 0 && !velding){
-            prevHeadMove = HeadMove;
             HeadMove -= 10;
             if(HeadMove < 0){
                 HeadMove = 0;

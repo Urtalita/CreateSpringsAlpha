@@ -42,7 +42,6 @@ public class ModBlockEntities {
 
     public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
             .blockEntity("mold", MoldBlockEntity::new)
-            .visual(() -> MoldVisual::new)
             .validBlocks(ModBlocks.FILLED_ANDESITE_MOLD)
             .register();
 

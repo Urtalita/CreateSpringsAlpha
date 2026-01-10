@@ -1,4 +1,4 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;

@@ -46,8 +46,6 @@ import static net.Portality.createsprings.Items.advanced.hat.HatItem.setPackageC
 import static net.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BlockItem {
-
-    private static final SoundEvent CHARGE_SOUND = SoundEvents.NOTE_BLOCK_PLING.get();
     private static final int TimeNeed = 2;
 
     public SpringItem(Block p_40565_, Properties p_40566_) {
@@ -79,13 +77,6 @@ public class SpringItem extends BlockItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        /* if (!stack.getOrCreateTag().hasUUID("TargetUUID") && !level.isClientSide) {
-            player.openMenu(new SimpleMenuProvider(
-                    (containerId, inv, p) -> new SpringMenu(containerId, inv, stack),
-                    Component.literal("")
-            ));
-        } */
-
 
         InteractionHand hand2 = getOppositeHand(player.getUsedItemHand());
         if(player.getItemInHand(hand2).getItem() instanceof PackageItem){
@@ -97,7 +88,7 @@ public class SpringItem extends BlockItem {
             return InteractionResultHolder.consume(stack);
         }
 
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return InteractionResultHolder.pass(stack);
     }
 
 

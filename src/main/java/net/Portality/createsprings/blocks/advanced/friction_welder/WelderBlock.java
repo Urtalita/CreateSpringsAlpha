@@ -62,4 +62,9 @@ public class WelderBlock extends BearingBlock implements IBE<WelderBlockEntity> 
         }
         return InteractionResult.PASS;
     }
+
+    @Override
+    public Direction.Axis getRotationAxis(BlockState state) {
+        return super.getRotationAxis(state);
+    }
 }

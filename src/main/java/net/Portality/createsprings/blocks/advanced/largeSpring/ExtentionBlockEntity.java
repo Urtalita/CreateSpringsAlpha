@@ -36,7 +36,7 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        Integer max = AllConfigs.server().kinetics.maxRotationSpeed.get() * 2;
+        Integer max = 256;
 
         targetHardness = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
                 this, new ExtentionBlockEntity.ExtentionValueBoxTransform());
@@ -50,7 +50,7 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
     private void updateHardness(int value){
         BlockPos controller = getBePos(worldPosition, getBlockState().getValue(FACING), level);
         if(!(level.getBlockEntity(controller) instanceof LargeSpringBlockEntity controllerBe)){return;}
-        controllerBe.setHardness(value);
+        controllerBe.setHardness(value * 2);
 
         for(int y = 0; y <= controllerBe.getLen() + 1; y++){
             for (int i = -1; i < 2; i++){

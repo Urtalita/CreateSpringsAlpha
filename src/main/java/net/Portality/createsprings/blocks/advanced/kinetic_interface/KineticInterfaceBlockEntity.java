@@ -1,43 +1,40 @@
 package net.Portality.createsprings.blocks.advanced.kinetic_interface;
 
-import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
-import com.simibubi.create.api.stress.BlockStressValues;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.server.GrabPacket;
-import net.Portality.createsprings.server.PSKISpringUpdate;
+import net.Portality.createsprings.server.packets.PSKISpringUpdate;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.PacketDistributor;
-import oshi.util.tuples.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
+public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity implements IHaveGoggleInformation {
     public static final int ANIMATION = 4;
     protected int transferTimer;
     protected float distance;
@@ -47,6 +44,8 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
     public List<ConnectedToPSKIInfo> connectedSprings;
     public boolean isGenerating;
     float stressImpact = 0;
+    public float storedSum = 0;
+    public float capacitySum = 0;
 
     public int keepAlive = 0;
 
@@ -133,6 +132,9 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         if (info != null) {
 
             CompoundTag newNbt = updatedEntity.saveWithoutMetadata();
+
+            storedSum += newNbt.getFloat("Stored");
+
             blocks.put(localPos, new StructureTemplate.StructureBlockInfo(
                     info.pos(),
                     info.state(),
@@ -140,8 +142,9 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
             ));
         }
         CSpringsPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> contraption.entity), new PSKISpringUpdate(contraption.entity.getUUID(), localPos, updatedEntity));
-    }
 
+
+    }
     public boolean canTransfer() {
         if (connectedEntity != null && !connectedEntity.isAlive())
             stopTransferring();
@@ -206,7 +209,63 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        if(connectedSprings != null && !connectedSprings.isEmpty()){
+            CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+            CreateLang.text(" ").add(
+                            CreateLang.number(Math.round(storedSum)).style(ChatFormatting.AQUA).space()
+                    ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                            .add(CreateLang.number(capacitySum).style(ChatFormatting.AQUA).space()
+                                    .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
+                    .add(Component.literal(" (").withStyle(ChatFormatting.DARK_GRAY))
+                    .add(CreateLang.number(Math.round(storedSum / capacitySum * 100)))
+                    .add(Component.literal("%").withStyle(ChatFormatting.DARK_GRAY))
+                    .add(Component.literal(")").withStyle(ChatFormatting.DARK_GRAY))
+                    .forGoggles(tooltip);
+        }
+
+        if(!isGenerating){
+            if (!IRotate.StressImpact.isEnabled())
+                return true;
+            float stressAtBase = calculateStressApplied();
+            if (Mth.equal(stressAtBase, 0))
+                return true;
+
+            CreateLang.translate("gui.goggles.kinetic_stats")
+                    .forGoggles(tooltip);
+
+            addStressImpactStats(tooltip, stressAtBase);
+        } else {
+            //generator
+
+            if (!IRotate.StressImpact.isEnabled())
+                return true;
+
+            float stressBase = calculateAddedStressCapacity();
+            if (Mth.equal(stressBase, 0))
+                return true;
+
+            CreateLang.translate("gui.goggles.generator_stats")
+                    .forGoggles(tooltip);
+            CreateLang.translate("tooltip.capacityProvided")
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+
+            float speed = getTheoreticalSpeed();
+            if (speed != getGeneratedSpeed() && speed != 0)
+                stressBase *= getGeneratedSpeed() / speed;
+
+            float stressTotal = Math.abs(stressBase * speed);
+
+            CreateLang.number(stressTotal)
+                    .translate("generic.unit.stress")
+                    .style(ChatFormatting.AQUA)
+                    .space()
+                    .add(CreateLang.translate("gui.goggles.at_current_speed")
+                            .style(ChatFormatting.DARK_GRAY))
+                    .forGoggles(tooltip, 1);
+        }
+
+        return true;
     }
 
     private void notifyContraptions() {
@@ -218,6 +277,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         connectedEntity = null;
         level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         stressImpact = 0;
+        connectedSprings = null;
 
         updateGeneratedRotation();
         sendData();
@@ -276,6 +336,12 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         boolean poweredPreviously = powered;
         powered = compound.getBoolean("Powered");
         isGenerating = compound.getBoolean("isGenerating");
+
+        stressImpact = compound.getFloat("impact");
+
+        storedSum = compound.getFloat("storedSum");
+        capacitySum = compound.getFloat("capacitySum");
+
         if (clientPacket && powered != poweredPreviously && !powered)
             notifyContraptions();
 
@@ -316,6 +382,11 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity {
         compound.putFloat("Distance", distance);
         compound.putBoolean("Powered", powered);
         compound.putBoolean("isGenerating", isGenerating);
+
+        compound.putFloat("storedSum", storedSum);
+        compound.putFloat("capacitySum", capacitySum);
+
+        compound.putFloat("impact", stressImpact);
 
         if(connectedSprings == null){return;}
         compound.putInt("ConnectedSpringsAmount", connectedSprings.size());

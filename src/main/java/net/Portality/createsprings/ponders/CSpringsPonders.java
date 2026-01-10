@@ -18,9 +18,10 @@ public class CSpringsPonders {
 
         HELPER.forComponents(ModBlocks.SPRING)
                 .addStoryBoard("spring", CSpringsScenes.SpringPonders::spring, AllCreatePonderTags.KINETIC_RELAYS)
-                .addStoryBoard("hardness", CSpringsScenes.SpringPonders::hardness, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("springsplash", CSpringsScenes.SpringPonders::springSplash, AllCreatePonderTags.KINETIC_RELAYS)
-                .addStoryBoard("explosion", CSpringsScenes.SpringPonders::explosions, AllCreatePonderTags.KINETIC_RELAYS);
+                .addStoryBoard("hardness", CSpringsScenes.SpringPonders::hardness, AllCreatePonderTags.KINETIC_RELAYS)
+                .addStoryBoard("explosion", CSpringsScenes.SpringPonders::explosions, AllCreatePonderTags.KINETIC_RELAYS)
+        ;
 
         HELPER.forComponents(ModBlocks.FRICTION_WELDER)
                 .addStoryBoard("welding", CSpringsScenes::welding, AllCreatePonderTags.CONTRAPTION_ASSEMBLY);

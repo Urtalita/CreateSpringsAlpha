@@ -1,4 +1,4 @@
-package net.Portality.createsprings.server;
+package net.Portality.createsprings.server.packets;
 
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import com.simibubi.create.foundation.networking.SimplePacketBase;

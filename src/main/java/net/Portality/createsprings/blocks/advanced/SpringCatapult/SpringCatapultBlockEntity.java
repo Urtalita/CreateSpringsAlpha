@@ -1,20 +1,13 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
-import com.simibubi.create.content.contraptions.IControlContraption;
-import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.logistics.funnel.AbstractFunnelBlock;
+import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.inventory.CapManipulationBehaviourBase;
-import com.simibubi.create.foundation.blockEntity.behaviour.inventory.InvManipulationBehaviour;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.sounds.CSpringsSounds;
-import net.createmod.catnip.math.BlockFace;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,22 +15,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DiscFragmentItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.RecordItem;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +32,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -55,14 +39,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.springAnimation;
-import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
     public float xAngle = 0;
     public float yAngle = 0;
     public float stored = 0;
     public float capacity = ModConfigs.common().SPRING_CAPACITY.get() / 8f;
-    private float progress = stored / capacity;
+    float progress = stored / capacity;
     private int phase = 0;
     private float hardness = DEFAULT_HARDNESS;
     public ItemStack heldStack = ItemStack.EMPTY;
@@ -86,19 +69,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
     CatapultLauncher launcher;
     CatapultMode mode = CatapultMode.NO_TARGET;
 
-    public FilteringBehaviour filtering;
-
     public SpringCatapultBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         recalculateTrajectory();
         recalculateAngles(true);
-    }
-
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        filtering = new FilteringBehaviour(this, new SpringCatapultFilterSlot());
-        behaviours.add(filtering);
-
     }
 
     public float getProgress(float pt){
@@ -202,6 +176,11 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         stored = Mth.clamp(stored + CurSpeed / DEFAULT_HARDNESS * hardness, 0, capacity);
 
         prevProgress = progress;
+
+        if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
+        }
+
         progress = stored / capacity;
 
         if(mode == null){return;}
@@ -228,6 +207,32 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         sendData();
     }
 
+    public void processEntitiesAbove(){
+        if(level.getGameTime() % 2 == 1){return;}
+        if(!heldStack.isEmpty() && heldStack.getCount() >= 64){return;}
+
+        BlockPos offset = (!isUpsideDown()) ?
+                worldPosition.offset(0, 1, 0) :
+                worldPosition.offset(0, -1, 0);
+
+        List<Entity> entities = this.level.getEntitiesOfClass(Entity.class,
+                (new AABB(offset)).inflate((double)-0.0625F, (double)0.0F, (double)-0.0625F));
+
+        for(Entity entity : entities) {
+            if(entity instanceof ItemEntity item){
+                ItemStack stack = item.getItem();
+                ItemStack left = insertItem(stack);
+
+                if(left.isEmpty()){
+                    item.remove(Entity.RemovalReason.DISCARDED);
+                    continue;
+                }
+
+                item.setItem(left);
+            }
+        }
+    }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -252,6 +257,8 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public void waiting(){
+        processEntitiesAbove();
+
         if(normalizeAngle(xAngle) == normalizeAngle(targetXAngle) &&
                 normalizeAngle(yAngle) == normalizeAngle(targetYAngle) &&
                 progress == 1 && !heldStack.isEmpty() && getSelectedTarget() != null){
@@ -283,10 +290,31 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
                     }
                 }
             } else {
-                mode = CatapultMode.SHOOTING;
-                recalculateTrajectory();
+                if(checkForFreeInventory(getSelectedTarget())){
+                    mode = CatapultMode.SHOOTING;
+                    recalculateTrajectory();
+                    return;
+                }
+
+                if(checkForFreeInventory(getUnselectedTarget())){
+                    nextTarget();
+                }
             }
         }
+    }
+
+    public boolean checkForFreeInventory(BlockPos target){
+        DirectBeltInputBehaviour targetOpenInv = BlockEntityBehaviour.get(level, target, DirectBeltInputBehaviour.TYPE);
+        if (targetOpenInv != null && heldStack != null
+                && targetOpenInv.handleInsertion(heldStack, Direction.UP, true)
+                .getCount() == heldStack.getCount())
+            return false;
+        return true;
+    }
+
+    public DirectBeltInputBehaviour getTargetOpenInv() {
+        BlockPos targetPos = getSelectedTarget();
+        return BlockEntityBehaviour.get(level, targetPos, DirectBeltInputBehaviour.TYPE);
     }
 
     private void recalculateTrajectory(){
@@ -351,9 +379,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
                         nextTarget(); // -
                     }
                 } else {
+                    int oldCount = heldStack.getCount();
                     heldStack = ItemHandlerHelper.insertItem(getHandler(), heldStack, false);
                     heldStack = insertToJukebox(heldStack, false);
-                    if(heldStack != ItemStack.EMPTY){
+                    if(heldStack != ItemStack.EMPTY && oldCount == heldStack.getCount()){
                         dropContent(selectedTarget);
                     }
 
@@ -431,7 +460,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
 
             if(doLauncher){
                 recalculateTrajectory();
-                targetXAngle = targetXAngle - launcher.getShootingAngle();
+                targetXAngle = -launcher.getShootingAngle();
             }
         }
     }
@@ -453,12 +482,13 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         final float EPSILON = 0.1f; // Допустимая погрешность
 
         // Нормализуем разницу в диапазон [-180, 180]
-        while (difference > 180) difference -= 360;
-        while (difference < -180) difference += 360;
+        if (difference > 180) difference -= 360;
+        if (difference < -180) difference += 360;
 
         // Если разница уже в пределах погрешности - считаем цель достигнутой
         if (Math.abs(difference) <= EPSILON) {
-            return targetAngle; // Возвращаем точное целевое значение
+            if (difference > 180) return targetAngle -= 360;
+            if (difference < -180) return targetAngle += 360;
         }
 
         float step = Mth.sqrt(Mth.abs(getSpeed()));
@@ -502,17 +532,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
             return dY > 0 ? -90.0f : 90.0f;
         }
 
-        double verticalDistance = Math.sqrt(dY * dY + horizontalDistance * horizontalDistance);
+        double verticalAngleRad = Math.atan2(dY, horizontalDistance);
+        double verticalAngleDeg = Math.toDegrees(verticalAngleRad);
 
-        double sin = dY / verticalDistance;
-        double asin = Math.asin(sin);
-
-        double angleDeg = -Math.toDegrees(asin);
-
-        if(dY > 0){
-            return (float) -angleDeg;
-        }
-        return (float) angleDeg;
+        return (float) -verticalAngleDeg;
     }
 
     public BlockPos getSelectedTarget(){
@@ -633,8 +656,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
                     if (slot != OUTPUT_SLOT) return stack;
                     if (!isItemValid(slot, stack)) return stack;
 
-                    if(stack.getItem() != filtering.getFilter().getItem() && !filtering.getFilter().isEmpty()){return stack;}
-
                     if (heldStack.isEmpty()) {
                         if (!simulate) {
                             heldStack = stack.copy(); // Use copy for a new stack
@@ -690,17 +711,24 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         return super.getCapability(cap, side);
     }
 
-    public static class SpringCatapultFilterSlot extends ValueBoxTransform.Sided {
-        @Override
-        protected Vec3 getSouthLocation() {
-            return VecHelper.voxelSpace(8, 8, 16);
-        }
+    public @NotNull ItemStack insertItem(@NotNull ItemStack stack) {
+        if (heldStack.isEmpty()) {
+            heldStack = stack.copy(); // Use copy for a new stack
+            setChanged(); // Mark data as dirty
+            return ItemStack.EMPTY;
+        } else if (ItemStack.isSameItemSameTags(heldStack, stack)) { // Check if items can be merged
+            int maxStackSize = Math.min(64, heldStack.getMaxStackSize());
+            int spaceAvailable = maxStackSize - heldStack.getCount();
 
-        @Override
-        protected boolean isSideActive(BlockState state, Direction direction) {
-            return direction.getAxis()
-                    .isHorizontal();
+            if (spaceAvailable <= 0) return stack;
+
+            int toAdd = Math.min(spaceAvailable, stack.getCount());
+            heldStack.grow(toAdd); // Add to the existing stack
+            setChanged(); // Mark data as dirty
+
+            return stack.copyWithCount(stack.getCount() - toAdd);
         }
+        return stack; // Cannot merge, return the original stack
     }
 
     //IControlContraption

@@ -21,6 +21,10 @@
   "create.spring.switch.su": "000 su",
   "spring.hardness": "select spring stiffness",
 
+  "create.createsprings.splash_mode": "Splash mode:",
+  "createsprings.on": "On",
+  "createsprings.off": "Off",
+
   "createsprings.punchcard.executor.title": "Executors:",
   "createsprings.punchcard.name": "Name:",
   "createsprings.punchcard.action.title": "Instructions for current executor:",
@@ -64,6 +68,8 @@
 
   "createsprings.pse.boost": "Overdrive: ",
   "createsprings.pse.dash": "Steam Dash: ",
+  "createsprings.pse.fuel_usage": "uses as much fuel as: ",
+  "createsprings.pse.furnace": " furnaces",
 
   "key.categories.createsprings": "Create Springs",
   "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside"

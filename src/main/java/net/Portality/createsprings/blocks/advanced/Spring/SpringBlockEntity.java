@@ -264,13 +264,19 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                                 .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
                 .forGoggles(tooltip);
 
-        boolean added = false;
+        MutableComponent state = (splashMode) ?
+                Component.translatable("createsprings.on").withStyle(ChatFormatting.GREEN) :
+                Component.translatable("createsprings.off").withStyle(ChatFormatting.RED);
+
+        CreateLang.translate("createsprings.splash_mode").style(ChatFormatting.GRAY)
+                .add(Component.literal(" ").append(state)).forGoggles(tooltip);
+
         if(!isGenerating){
             if (!IRotate.StressImpact.isEnabled())
-                return added;
+                return true;
             float stressAtBase = calculateStressApplied();
             if (Mth.equal(stressAtBase, 0))
-                return added;
+                return true;
 
             CreateLang.translate("gui.goggles.kinetic_stats")
                     .forGoggles(tooltip);
@@ -280,11 +286,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             //generator
 
             if (!IRotate.StressImpact.isEnabled())
-                return added;
+                return true;
 
             float stressBase = calculateAddedStressCapacity();
             if (Mth.equal(stressBase, 0))
-                return added;
+                return true;
 
             CreateLang.translate("gui.goggles.generator_stats")
                     .forGoggles(tooltip);
@@ -364,19 +370,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             entity.addDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
             entity.hurtMarked = true;
         }
-
-        launchShips();
-    }
-
-    public void launchShips(){
-        /*
-        if(!(level instanceof ServerLevel serverLevel)){return;}
-        Direction facing = getBlockState().getValue(FACING).getOpposite();
-        BlockPos targetPos = worldPosition.relative(facing);
-        ServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, targetPos);
-        Ship
-
-         */
     }
 
     private void breakBlocksInFront(){

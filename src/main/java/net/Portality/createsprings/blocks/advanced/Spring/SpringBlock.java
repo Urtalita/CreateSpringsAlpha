@@ -36,19 +36,26 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
 
     @Override
     public boolean canDropFromExplosion(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        return false;
+        return !successExplosionCharging(state, pos, explosion);
     }
 
     @Override
     public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+        if(!successExplosionCharging(state, pos, explosion)){
+            super.onBlockExploded(state, level, pos, explosion);
+        }
+    }
+
+    public static boolean successExplosionCharging(BlockState state, BlockPos pos, Explosion explosion){
         Vec3 ExpPos = explosion.getPosition();
 
         Direction facing = state.getValue(FACING);
         float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
 
         if(coef < 0.30f){
-            super.onBlockExploded(state, level, pos, explosion);
+            return false;
         }
+        return true;
     }
 
     public static float getSpringChargeCoefficient(Direction facing, BlockPos springPos, Vec3 explosionPos) {
@@ -84,22 +91,6 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         return super.getDrops(state, builder);
     }
 
-    /*
-    @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state);
-        SpringBlockEntity blockEntity = (SpringBlockEntity) level.getBlockEntity(pos);
-        if (blockEntity != null) {
-            CompoundTag tag = new CompoundTag();
-            CompoundTag blockEntityTag = new CompoundTag();
-            blockEntityTag.putFloat("Stored", blockEntity.stored);
-            tag.put("BlockEntityTag", blockEntityTag);
-            stack.setTag(tag);
-        }
-        return stack;
-    }
-     */
-
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         InteractionResult use = super.use(state, level, pos, player, hand, result);
@@ -108,7 +99,9 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         if(!ModConfigs.common().SPRINGS_CAN_SPLASH.get()){
             if(itemInHand.getItem() == Blocks.TRIPWIRE_HOOK.asItem()){
                 player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
-                itemInHand.shrink(1);
+                if(!player.isCreative()){
+                    itemInHand.shrink(1);
+                }
             }
             return use;
         }
@@ -118,7 +111,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
                 if(be.splashMode){
                     return InteractionResult.FAIL;
                 }
-                if(player.isCreative()){itemInHand.shrink(1);}
+                if(!player.isCreative()){itemInHand.shrink(1);}
                 be.splashMode = true;
                 AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
                 return InteractionResult.SUCCESS;
@@ -195,7 +188,6 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
-
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -204,4 +196,5 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         }
         return 0;
     }
+
 }

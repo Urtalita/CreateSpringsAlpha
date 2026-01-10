@@ -62,7 +62,7 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
         }
     }
 
-    public static void renderSpring(PoseStack ms, int light, MultiBufferSource buffer, BlockState state, float yRot, float xRot, float progress){
+    public static void renderSpring(PoseStack ms, int light, MultiBufferSource buffer, BlockState state, float yRot, float xRot, float progress, Vec3 offset){
         double horizontalAngleRad = Math.toRadians(yRot);
         double verticalAngleRad = Math.toRadians(xRot);
 
@@ -70,7 +70,6 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
         double y = Math.sin(verticalAngleRad);
         double z = Math.cos(horizontalAngleRad) * Math.cos(verticalAngleRad);
 
-        Vec3 offset = new Vec3(0, 28/16f, 0);
         Vec3 movementDirection = new Vec3(x, y, z);
 
         movementDirection = movementDirection.scale(-1);
@@ -104,21 +103,6 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
                     .rotateCenteredDegrees(45 + ringIndex * 90, Direction.Axis.Z)
                     .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
-
-        SuperByteBuffer springHolderRenderer = CachedBuffers.partial(CSpringsPartalModels.SPRING_CATAPULT_HOLDER, state);
-        springHolderRenderer.translate(offset)
-                .rotateCenteredDegrees(-90, Direction.Axis.Y)
-                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
-                .rotateCenteredDegrees(xRot , Direction.Axis.Z)
-                .light(light)
-                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
-
-        SuperByteBuffer connectionsRenderer = CachedBuffers.partial(CSpringsPartalModels.SPRING_CATAPULT_CONNECTION, state);
-        connectionsRenderer.translate(0, 1, 0)
-                .rotateCenteredDegrees(-90, Direction.Axis.Y)
-                .rotateCenteredDegrees(yRot, Direction.Axis.Y)
-                .light(light)
-                .renderInto(ms, buffer.getBuffer(RenderType.solid()));
     }
 
     public static Vec3 MoveToPos(float start, float end, float progress, Direction facing){

@@ -23,7 +23,6 @@ public class AnalogLeverSelector extends AbstractSimiWidget {
     private int state;
     private boolean isClicked = false;
     private Consumer<Integer> Callback;
-    private boolean firstClick = true;
 
     private CSpringsGuiTextures lever = CSpringsGuiTextures.LEVER_HEAD;
     private CSpringsGuiTextures lever_base = CSpringsGuiTextures.LEVER_BASE;
@@ -36,7 +35,6 @@ public class AnalogLeverSelector extends AbstractSimiWidget {
         this.angleBetweenStates = maxAngle / states;
         this.angle = -90 + 45 + standartState * (angleBetweenStates + 3);
         state = (int) standartState;
-        firstClick = ignoreFirstClick;
     }
 
     public AnalogLeverSelector withCallback(Consumer<Integer> Callback) {
@@ -62,10 +60,6 @@ public class AnalogLeverSelector extends AbstractSimiWidget {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int pButton) {
-        if(firstClick){
-            firstClick = false;
-            return true;
-        }
         Vector2i shift = new Vector2i(50, 100);
         Vector2i leverShift = new Vector2i(40 + shift.x, 20 + shift.y);
 
@@ -90,13 +84,11 @@ public class AnalogLeverSelector extends AbstractSimiWidget {
 
         if(!isHovered){
             if(isClicked){
-                if(!firstClick){
-                    isClicked = false;
-                    if(Callback != null){
-                        Callback.accept(state);
-                    }
-                    angle = stickToState(applyLimits(getAngle(mouseX, mouseY, x + leverShift.x, y + leverShift.y)), 0.5f);
+                isClicked = false;
+                if(Callback != null){
+                    Callback.accept(state);
                 }
+                angle = stickToState(applyLimits(getAngle(mouseX, mouseY, x + leverShift.x, y + leverShift.y)), 0.5f);
             }
         }
 

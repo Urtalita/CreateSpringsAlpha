@@ -129,7 +129,9 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
         if(!ModConfigs.common().SPRINGS_CAN_SPLASH.get()){
             if(itemInHand.getItem() == Blocks.TRIPWIRE_HOOK.asItem()){
                 player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
-                itemInHand.shrink(1);
+                if(!player.isCreative()){
+                    itemInHand.shrink(1);
+                }
             }
             return use;
         }
@@ -139,7 +141,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
                 if(be.splashMode){
                     return InteractionResult.FAIL;
                 }
-                if(player.isCreative()){itemInHand.shrink(1);}
+                if(!player.isCreative()){itemInHand.shrink(1);}
                 be.splashMode = true;
                 AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
                 return InteractionResult.SUCCESS;

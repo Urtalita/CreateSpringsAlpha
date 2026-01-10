@@ -19,6 +19,7 @@ import net.Portality.createsprings.client.Keybindings;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.menus.PortativeEngine.PortativeSteamEngineMenu;
+import net.Portality.createsprings.server.PSEHeatEvent;
 import net.Portality.createsprings.utill.Helpers.ParticleHelper;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
@@ -53,6 +54,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +69,7 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
     private final int SPRINGS = 2;
 
     public PortativeSteamEngineItem(Properties properties) {
-        super(CspringsArmorMaterials.HAT, Type.CHESTPLATE, properties);
+        super(CspringsArmorMaterials.HAT, Type.CHESTPLATE, properties, Create.asResource("copper_diving"));
 
         Item[] allowedModifficators = new Item[]{
             ModItems.PUNCHCARD.get()
@@ -271,15 +273,17 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
             displayAboveHotbar(tag, player, boosted, boost);
         }
 
-        int actual = mode / 15;
+        int actual = tag.getInt("engineSpeed") / 15;
 
         if(boost){
             chargeTanks(stack, level, player, actual); speedUp(stack, level, player, actual);
             charge(stack, level, player, actual);
             chargeTanks(stack, level, player, actual);
+            heating(stack, level, player, actual);
         }
 
         if(mode > 0){
+            heating(stack, level, player, actual);
             charge(stack, level, player, actual);
         }
 
@@ -369,6 +373,14 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
         return false;
     }
 
+    private void heating(ItemStack stack, Level level, Player player, int mode) {
+        if(player.getTicksFrozen() != 0){
+            player.setTicksFrozen(0);
+        }
+
+        MinecraftForge.EVENT_BUS.post(new PSEHeatEvent(player, mode));
+    }
+
     private void chargeTanks(ItemStack stack, Level level, Player player, int mode) {
         for (ItemStack item : player.getInventory().items) {
             if(item.getItem() == AllItems.COPPER_BACKTANK.get() || item.getItem() == AllItems.NETHERITE_BACKTANK.get()){
@@ -430,14 +442,11 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
             SpringItem.SetSu(handStack, charge + speed * 2);
         }
 
-        for(Item tool : CreateSprings.SPRING_TOOLS){
-            if(tool == handStack.getItem()){
-                if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
-                    float[] charge = SpringPoweredCore.getAllStored(handStack.getOrCreateTag());
-                    charge[0] += speed;
-                    charge[1] += speed;
-                    SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());
-                }
+        if(handStack.getItem() instanceof ISpringPoweredTool){
+            if(handStack.getOrCreateTag().getInt("Springs_rn") > 0){
+                float[] charge = SpringPoweredCore.getAllStored(handStack.getOrCreateTag());
+                charge = SpringPoweredCore.spreadSu(charge, SpringPoweredCore.getAllStoredSum(charge) + speed * 2);
+                SpringPoweredCore.putAllStored(charge, handStack.getOrCreateTag());
             }
         }
     }

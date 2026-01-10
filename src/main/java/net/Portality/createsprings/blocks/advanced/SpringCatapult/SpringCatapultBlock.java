@@ -1,5 +1,6 @@
 package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
+import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
@@ -9,6 +10,7 @@ import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -77,23 +80,41 @@ public class SpringCatapultBlock extends KineticBlock implements IBE<SpringCatap
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         return onBlockEntityUse(pLevel, pPos, b ->{
-            if(pPlayer.getItemInHand(pHand).isEmpty()){
+            if((pHit.getDirection() == Direction.UP && !pState.getValue(CEILING)) || (pHit.getDirection() == Direction.DOWN && pState.getValue(CEILING))){
+                if(pPlayer.getItemInHand(pHand).isEmpty()){
+                    LazyOptional<IItemHandler> lazyHandler = b.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
+                    lazyHandler.ifPresent(handler -> {
+                        ItemStack stack = handler.extractItem(0, 64, false);
+                        pPlayer.setItemInHand(pHand, stack);
+                        AllSoundEvents.DEPOT_PLOP.playOnServer(pLevel, pPos);
+                    });
+
+                    return InteractionResult.CONSUME;
+                }
+
                 LazyOptional<IItemHandler> lazyHandler = b.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
                 lazyHandler.ifPresent(handler -> {
-                    ItemStack stack = handler.extractItem(0, 64, false);
+                    ItemStack stack = handler.insertItem(0, pPlayer.getItemInHand(pHand), false);
                     pPlayer.setItemInHand(pHand, stack);
+                    AllSoundEvents.DEPOT_SLIDE.playOnServer(pLevel, pPos);
                 });
-
                 return InteractionResult.CONSUME;
             }
-
-            LazyOptional<IItemHandler> lazyHandler = b.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP);
-            lazyHandler.ifPresent(handler -> {
-                ItemStack stack = handler.insertItem(0, pPlayer.getItemInHand(pHand), false);
-                pPlayer.setItemInHand(pHand, stack);
-            });
-
-            return InteractionResult.CONSUME;
+            return InteractionResult.PASS;
         });
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof SpringCatapultBlockEntity myBE) {
+            return Mth.floor(myBE.progress * 15); // Получаем значение от BlockEntity
+        }
+        return 0;
     }
 }

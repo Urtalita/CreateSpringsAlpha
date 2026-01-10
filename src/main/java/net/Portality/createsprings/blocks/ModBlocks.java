@@ -1,9 +1,6 @@
 package net.Portality.createsprings.blocks;
 
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.AllSpriteShifts;
-import com.simibubi.create.AllTags;
-import com.simibubi.create.Create;
+import com.simibubi.create.*;
 import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
@@ -41,6 +38,7 @@ import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockExstentionBlock;
 import net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMovement;
 import net.Portality.createsprings.blocks.advanced.test.TestBlock;
+import net.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
 import net.Portality.createsprings.client.CSpringsAssetLookup;
 import net.Portality.createsprings.client.CSpringsSpriteShifts;
 import net.Portality.createsprings.config.CSStress;
@@ -61,6 +59,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
@@ -196,6 +195,7 @@ public class ModBlocks {
             .initialProperties(SharedProperties::copperMetal)
             .transform(pickaxeOnly())
             .properties(p -> p.noOcclusion())
+            .transform(displaySource(CSpringsDisplaySources.CHARGE))
             .item(SpringItem::new)
             .transform(customItemModel())
             .blockstate(BlockStateGen.directionalBlockProvider(false))

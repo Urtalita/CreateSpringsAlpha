@@ -145,8 +145,16 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
             }
         }
 
-        for(ConnectedToPSKIInfo info : stationaryInterface.connectedSprings) {
+        float collectedCapacity = 0;
+        stationaryInterface.storedSum = 0;
+
+        for(int i = 0; i < stationaryInterface.connectedSprings.size(); i++) {
+            ConnectedToPSKIInfo info = stationaryInterface.connectedSprings.get(i);
+
             IConnectableToPSKI connectedEntity = info.connectedEntity;
+
+            collectedCapacity += connectedEntity.getCapacity();
+
             float stress;
             stress = connectedEntity.getHardness() * connectedEntity.getImpactCof();
 
@@ -175,6 +183,9 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
 
             stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
         }
+
+        stationaryInterface.capacitySum = collectedCapacity;
+        stationaryInterface.sendData();
 
         if(collectedImpact != 0){
             stationaryInterface.keepAlive += 1;

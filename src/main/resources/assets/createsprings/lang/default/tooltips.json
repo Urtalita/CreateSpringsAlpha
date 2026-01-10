@@ -58,6 +58,7 @@
   "item.createsprings.explosion_chamber.tooltip.behaviour1": "_Charges spring_",
 
   "createsprings.pse.tooltip.cur_mode": "Current engine mode:",
+  "createsprings.pse.tooltip.0": "Heating",
   "createsprings.pse.tooltip.1": "charging item in hand",
   "createsprings.pse.tooltip.2": "maintaining speed of spring tools",
   "createsprings.pse.tooltip.4": "charging backtanks in inventory",

@@ -19,6 +19,7 @@ import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBlock;
+import net.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
 import net.Portality.createsprings.client.CSpringsMenus;
 import net.Portality.createsprings.client.Keybindings;
 import net.Portality.createsprings.compat.ColdSweatCompatibilityManager;
@@ -103,6 +104,8 @@ public class CreateSprings {
         CSpringsMenus.register();
         CSpringsSounds.register(modEventBus);
 
+        CSpringsDisplaySources.register();
+
         //ModFluids.FLUID_TYPES.register(modEventBus);
         MenuInit.MENUS.register(modEventBus);
 
@@ -162,6 +165,10 @@ public class CreateSprings {
 
     public static void hideItem(ItemLike it){
 
+    }
+
+    public static CreateRegistrate registrate() {
+        return CSPRINGS_REGISTRATE;
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

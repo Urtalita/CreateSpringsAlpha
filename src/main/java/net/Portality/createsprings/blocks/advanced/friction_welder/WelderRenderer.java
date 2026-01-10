@@ -5,6 +5,7 @@ import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.math.AngleHelper;
@@ -13,9 +14,12 @@ import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 
 public class WelderRenderer extends KineticBlockEntityRenderer<WelderBlockEntity> {
     public WelderRenderer(BlockEntityRendererProvider.Context context) {
@@ -36,6 +40,7 @@ public class WelderRenderer extends KineticBlockEntityRenderer<WelderBlockEntity
         SuperByteBuffer superBuffer = CachedBuffers.partial(top, be.getBlockState());
 
         float interpolatedAngle = be.getInterpolatedAngle(partialTicks - 1);
+        superBuffer.translate(MoveWithoutVectors(be.getHeadMove(partialTicks), facing.getOpposite().getNormal()));
         kineticRotationTransform(superBuffer, be, facing.getAxis(), (float) (interpolatedAngle / 180 * Math.PI), light);
 
         if (facing.getAxis()
@@ -48,8 +53,15 @@ public class WelderRenderer extends KineticBlockEntityRenderer<WelderBlockEntity
 
     @Override
     protected SuperByteBuffer getRotatedModel(WelderBlockEntity be, BlockState state) {
-        return CachedBuffers.partialFacing(AllPartialModels.SHAFT, state, state
-                .getValue(BearingBlock.FACING)
-                .getOpposite());
+        return CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state, state.getValue(WelderBlock.FACING).getOpposite());
+    }
+
+    private Vec3 MoveWithoutVectors(float Moving, Vec3i movementDirection){
+        float offset = 1 - Moving - 0.5f;
+        return new Vec3(
+                (movementDirection.getX() * offset),
+                (movementDirection.getY() * offset),
+                (movementDirection.getZ() * offset)
+        );
     }
 }

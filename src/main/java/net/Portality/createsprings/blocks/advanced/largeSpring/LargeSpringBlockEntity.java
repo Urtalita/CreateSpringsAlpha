@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -608,6 +609,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
                         .add(CreateLang.number(len).style(ChatFormatting.AQUA).space()))
                 .forGoggles(tooltip);
+
+        MutableComponent state = (splashMode) ?
+                Component.translatable("createsprings.on").withStyle(ChatFormatting.GREEN) :
+                Component.translatable("createsprings.off").withStyle(ChatFormatting.RED);
+
+        CreateLang.translate("createsprings.splash_mode").style(ChatFormatting.GRAY)
+                .add(Component.literal(" ").append(state)).forGoggles(tooltip);
         return true;
     }
 

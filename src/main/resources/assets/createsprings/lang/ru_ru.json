@@ -31,7 +31,7 @@
   "createsprings.ponder.catapult.header": "Передача предметов с помощью пружинной катапульты",
   "createsprings.ponder.catapult.text_1": "ПКМ крадучись на блок с Пружинной катапультой в руках чтобы выбрать её цель",
   "createsprings.ponder.catapult.text_2": "Установленная катапульта теперь будет запускать предметы в выбранную цель",
-  "createsprings.ponder.catapult.text_3": "Целью может быть любой блок в радиусе 150 блоков",
+  "createsprings.ponder.catapult.text_3": "Целью может быть любой блок в радиусе 100 блоков",
   "createsprings.ponder.catapult.text_4": "Если цель не выбрана, катапульта не будет ничего делать",
   "createsprings.ponder.catapult.text_5": "Попадание предметов на катапульту вызывает срабатывание",
   "createsprings.ponder.catapult.text_6": "Предоставьте вращение чтобы зарядить её",
@@ -157,6 +157,7 @@
   "item.createsprings.sus_package.tooltip.summary": "Эта, на первый взгляд обычная коробка, при _падении_ с высоты или _разрушении_ выпускает _пружину_ которая, _самонаводиться_ при _отскоке_ от блока или сущности",
 
   "createsprings.pse.tooltip.cur_mode": "Текущий режим работы двигателя:",
+  "createsprings.pse.tooltip.0": "Обогрев",
   "createsprings.pse.tooltip.1": "Зарядка предмета в руке",
   "createsprings.pse.tooltip.2": "Поддерживание скорости пружинных инструментов",
   "createsprings.pse.tooltip.4": "Зарядка баллонов в инвентаре",
@@ -195,12 +196,15 @@
   "createsprings.speed.normal": "обычная",
   "createsprings.speed.slow": "медленная",
 
-  "create.spring.saved": "Сохранено:",
+  "create.spring.saved": "Заряд:",
   "create.spring.len": "Длина:",
   "create.spring.su": "ен-секунд",
   "create.spring.switch.su": "000 ен-секунд",
   "spring.hardness": "настройте жёсткость пружины",
   "createsprings.charge": "Заряд",
+  "create.createsprings.splash_mode": "Режим всплеска:",
+  "createsprings.on": "Вкл",
+  "createsprings.off": "Выкл",
 
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
@@ -226,6 +230,8 @@
 
   "createsprings.pse.boost": "Давление: ",
   "createsprings.pse.dash": "Паровой рывок: ",
+  "createsprings.pse.fuel_usage": "Использует топливо как: ",
+  "createsprings.pse.furnace": " Печек",
 
   "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
   "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",
@@ -263,5 +269,13 @@
 
   "createsprings.pse.tooltip.overdrive_button": "Эта кнопка включает форсаж",
   "createsprings.pse.tooltip.fuel": "слот для _топлива_, вы можете положить сюда любые _сгораемые_ предметы",
-  "tooltip.springstuf.createsprings.no_modifires": "Положите пружину или модификатор внутрь"
+  "tooltip.springstuf.createsprings.no_modifires": "Положите пружину или модификатор внутрь",
+  "createsprings.ponder.stiffness.header": "Spring stiffness",
+  "createsprings.ponder.stiffness.text_1": "Input and output speed can be configured",
+  "createsprings.ponder.stiffness.text_2": "Using the value panel, you can select it",
+  "createsprings.ponder.stiffness.text_3": "the greater the spring stiffness, the more su the spring consumes when charging and the more energy it produces when unchanging",
+  "createsprings.punchcard.slim": "End",
+  "tooltip.springstuf.modifiers": "Contains:",
+  "tooltip.springstuf.needsprings1": "can accept up to ",
+  "tooltip.springstuf.needsprings2": " springs"
 }
