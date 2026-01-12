@@ -40,6 +40,30 @@ public class RenderHelper {
         return Axis.ZN;
     }
 
+    public static Direction.Axis getPerpendicularAxis(Direction.Axis axis){
+        switch (axis){
+            case X: return Direction.Axis.Y;
+            case Z: return Direction.Axis.X;
+            default: return Direction.Axis.Z;
+        }
+    }
+
+    public static Direction.Axis getSecondPerpendicularAxis(Direction.Axis axis){
+        switch (axis){
+            case X: return Direction.Axis.Z;
+            case Z: return Direction.Axis.Y;
+            default: return Direction.Axis.X;
+        }
+    }
+
+    public static Direction.Axis getPerpendicularAxis(Direction axis){
+        return getPerpendicularAxis(axis.getAxis());
+    }
+
+    public static Direction.Axis getSecondPerpendicularAxis(Direction axis){
+        return getSecondPerpendicularAxis(axis.getAxis());
+    }
+
     public static void MoveToPos(float StartPos, float EndPos, OrientedInstance orientedInstance, float Progress, Vec3i movementDirection, BlockPos pos){
         MoveWithoutVectors(StartPos + (EndPos - StartPos) * Progress ,orientedInstance, movementDirection, pos);
     }

@@ -26,6 +26,7 @@ public enum CSpringsPackets {
     OPEN_PSE(OpenPSEPacket.class, OpenPSEPacket::new, PLAY_TO_SERVER),
     BOOST_PSE(BoostPSEPacket.class, BoostPSEPacket::new, PLAY_TO_SERVER),
     PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard::new, PLAY_TO_SERVER),
+
     ROTATE(RotatePlayerPacket.class, RotatePlayerPacket::new, PLAY_TO_CLIENT),
     AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket::new, PLAY_TO_CLIENT),
     GRAB(GrabPacket.class, GrabPacket::new, PLAY_TO_CLIENT),

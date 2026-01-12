@@ -4,6 +4,8 @@ import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 public class RotatePlayerPacket extends SimplePacketBase {
@@ -24,8 +26,10 @@ public class RotatePlayerPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        Player player = Minecraft.getInstance().player;
-        player.setXRot(xRot);
-        return false;
+        context.enqueueWork( () -> {
+            Player player = Minecraft.getInstance().player;
+            player.setXRot(xRot);
+        });
+        return true;
     }
 }

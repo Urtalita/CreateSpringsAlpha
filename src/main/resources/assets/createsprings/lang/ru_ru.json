@@ -200,6 +200,7 @@
   "create.spring.len": "Длина:",
   "create.spring.su": "ен-секунд",
   "create.spring.switch.su": "000 ен-секунд",
+  "create.large_spring.switch.su": "000 000 ен",
   "spring.hardness": "настройте жёсткость пружины",
   "createsprings.charge": "Заряд",
   "create.createsprings.splash_mode": "Режим всплеска:",
@@ -209,8 +210,8 @@
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
   "createsprings.punchcard.name": "Название:",
-  "createsprings.punchcard.waitForSpeedIncreased": "Ждать пока скорость не увеличется до",
-  "createsprings.punchcard.waitForSpeedDecreased": "Ждать пока скорость не уменьшиться до",
+  "createsprings.punchcard.waitForSpeedIncreased": "Ждать пока скорость не уменьшиться до",
+  "createsprings.punchcard.waitForSpeedDecreased": "Ждать пока скорость не увеличется до",
   "createsprings.punchcard.use": "Использовать предмет",
   "createsprings.punchcard.end": "Конец",
   "createsprings.punchcard.detachSpring": "Убрать пружину",
@@ -270,12 +271,26 @@
   "createsprings.pse.tooltip.overdrive_button": "Эта кнопка включает форсаж",
   "createsprings.pse.tooltip.fuel": "слот для _топлива_, вы можете положить сюда любые _сгораемые_ предметы",
   "tooltip.springstuf.createsprings.no_modifires": "Положите пружину или модификатор внутрь",
-  "createsprings.ponder.stiffness.header": "Spring stiffness",
-  "createsprings.ponder.stiffness.text_1": "Input and output speed can be configured",
-  "createsprings.ponder.stiffness.text_2": "Using the value panel, you can select it",
-  "createsprings.ponder.stiffness.text_3": "the greater the spring stiffness, the more su the spring consumes when charging and the more energy it produces when unchanging",
-  "createsprings.punchcard.slim": "End",
-  "tooltip.springstuf.modifiers": "Contains:",
-  "tooltip.springstuf.needsprings1": "can accept up to ",
-  "tooltip.springstuf.needsprings2": " springs"
+
+  "createsprings.punchcard.slim": "Конец",
+  "tooltip.springstuf.modifiers": "Содержит:",
+  "tooltip.springstuf.needsprings1": "может принимать до: ",
+  "tooltip.springstuf.needsprings2": " пружин",
+
+  "createsprings.display_source.spring.progress_bar": "Полоса прогресса",
+  "createsprings.display_source.spring.precent": "Процент заряда",
+  "createsprings.display_source.spring.stored": "Заряд",
+  "createsprings.display_source.spring.capacity": "Вместимость",
+  "createsprings.display_source.spring.len": "Длинна",
+  "createsprings.display_source.spring.max_len": "Максимальная длинна",
+  "createsprings.display_source.spring.stress": "Нагрузка",
+  "createsprings.display_source.spring.gen": "Выработка",
+
+  "createsprings.display_source.spring": "Пружина",
+  "createsprings.display_source.spring.display": "Отображаемая информация:",
+  "createsprings.display_source.large_spring": "Большая пружина",
+
+  "createsprings.spring_catapult.target_set": "Установленна первая цель",
+  "createsprings.spring_catapult.target2_set": "Установленна вторая цель",
+  "createsprings.spring_catapult.target_cleared": "Цели очищены"
 }

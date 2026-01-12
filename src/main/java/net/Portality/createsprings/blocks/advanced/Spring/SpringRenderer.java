@@ -1,13 +1,21 @@
 package net.Portality.createsprings.blocks.advanced.Spring;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.Portality.createsprings.client.CSpringsPartalModels;
+import net.Portality.createsprings.config.ModConfigs;
+import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -17,6 +25,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Objects;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringVisual.SPRING_LEN;
 import static net.Portality.createsprings.utill.Helpers.RenderHelper.MoveToPos;
@@ -102,6 +112,41 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
                     .rotateCenteredDegrees(-xRot , Direction.Axis.X)
                     .rotateCenteredDegrees(45 + ringIndex * 90, Direction.Axis.Z)
                     .renderInto(ms, buffer.getBuffer(RenderType.solid()));
+        }
+    }
+
+    public static void renderSpringInContraption(
+            MovementContext context, VirtualRenderWorld renderWorld, ContraptionMatrices matrices, MultiBufferSource buffer, Float theoreticalStored){
+        BlockState state = context.state;
+        VertexConsumer builder = buffer.getBuffer(RenderType.solid());
+        Direction facing = state.getValue(SpringBlock.FACING);
+        PoseStack m = matrices.getModel();
+        Axis rotationAxis = getRotationAxis(facing);
+
+        float stored;
+        stored = Objects.requireNonNullElseGet(theoreticalStored, () -> context.blockEntityData.getFloat("Stored"));
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get();
+        float progress = stored / capacity;
+
+        SuperByteBuffer plate = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PLATE, state, facing);
+
+        plate.transform(m).translate(MoveToPos(1/16f, 8/16f, progress, facing));
+
+        plate.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                .useLevelLight(context.world, matrices.getWorld())
+                .renderInto(matrices.getViewProjection(), builder);
+
+        for (int ringIndex = 0; ringIndex < SPRING_LEN; ringIndex++) {
+            float end = (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f;
+            float start = (2f+ringIndex)/16f + 1/16f;
+
+            SuperByteBuffer pieceRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PIECE, state, facing);
+            pieceRender.transform(m).translate(MoveToPos(start, end, progress, facing))
+                    .rotateCenteredDegrees(45 + ringIndex * 90, rotationAxis);
+
+            pieceRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                    .useLevelLight(context.world, matrices.getWorld())
+                    .renderInto(matrices.getViewProjection(), builder);
         }
     }
 

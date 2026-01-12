@@ -43,8 +43,12 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
-        boolean hasSignal = level.hasNeighborSignal(pos);
-        withBlockEntityDo(level, pos, be -> be.setGenerating(hasSignal));
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+
+        withBlockEntityDo(level, pos, b ->{
+            if(level.isClientSide()){return;}
+            b.onExtensionChanged(pos);
+        });
     }
 
     @Override

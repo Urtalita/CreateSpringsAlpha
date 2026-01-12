@@ -100,7 +100,7 @@ public class PunchcardInterpritator {
     public static Function<ExecutorInfo, Void> waitForSpeedIncreased(){
         return (info) -> {
             CompoundTag tag = info.getTag();
-            float param = Integer.parseInt(getParam(tag));
+            float param = (float) Integer.parseInt(getParam(tag)) / 256 * 5000;
             float speed = (float) tag.getDouble("Speed");
 
             if(param >= speed){
@@ -114,7 +114,7 @@ public class PunchcardInterpritator {
     public static Function<ExecutorInfo, Void> waitForSpeedDecreased(){
         return (info) -> {
             CompoundTag tag = info.getTag();
-            float param = Integer.parseInt(getParam(tag));
+            float param = (float) Integer.parseInt(getParam(tag)) / 256 * 5000;
             float speed = (float) tag.getDouble("Speed");
 
             if(param < speed){

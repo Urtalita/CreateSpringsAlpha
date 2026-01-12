@@ -1,18 +1,24 @@
 package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.simibubi.create.content.contraptions.behaviour.MovementContext;
+import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
+import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.instance.OrientedInstance;
 import net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity;
 import net.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.config.ModConfigs;
+import net.Portality.createsprings.utill.Helpers.RenderHelper;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -20,6 +26,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Objects;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringRenderer.MoveToPos;
 import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringVisual.calculateLen;
@@ -82,7 +90,57 @@ public class LargeSpringRenderer extends ShaftRenderer<LargeSpringBlockEntity> {
         }
     }
 
-    private Vec3 updateRingPosition(int ringIndex, float progres, Direction facing) {
+    public static void renderSpringInContraption(
+            MovementContext context, VirtualRenderWorld renderWorld, ContraptionMatrices matrices, MultiBufferSource buffer, Float theoreticalStored){
+        BlockState blockState = context.state;
+
+        float stored = Objects.requireNonNullElseGet(theoreticalStored, () -> context.blockEntityData.getFloat("stored"));
+        float capacity = context.blockEntityData.getFloat("capacity");
+        float progress = 1 - stored / capacity;
+
+        Direction facing = blockState.getValue(DirectionalKineticBlock.FACING);
+        Direction facingInverted = facing.getOpposite();
+        Direction.Axis rotationAxis = facing.getAxis();
+        int len = context.blockEntityData.getInt("len") * 4;
+        PoseStack m = matrices.getModel();
+        VertexConsumer builder = buffer.getBuffer(RenderType.solid());
+
+        SuperByteBuffer plateRender = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_PLATE, blockState, facingInverted);
+        plateRender.transform(m);
+        plateRender.translate(setPos(0, 0, -7/16f, facing));
+        plateRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                .useLevelLight(context.world, matrices.getWorld())
+                .renderInto(matrices.getViewProjection(), builder);
+
+        SuperByteBuffer UPPlateRender = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_PLATE, blockState, facingInverted);
+        UPPlateRender.transform(m);
+        UPPlateRender.translate(setPos(0, 0,calculateLen(progress, len) - 4/16f*(1-progress), facing));
+        UPPlateRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                .useLevelLight(context.world, matrices.getWorld())
+                .renderInto(matrices.getViewProjection(), builder);
+
+        for (int i = 0; i < len; i++) {
+            SuperByteBuffer RingRender = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_COIL_ROTATED, blockState, facingInverted);
+            RingRender.transform(m);
+            SuperByteBuffer RingCornerRender = CachedBuffers.partialFacing(CSpringsPartalModels.LARGE_SPRING_COIL_CORNER, blockState, facingInverted);
+            RingCornerRender.transform(m);
+
+            RingCornerRender.translate(updateCornerPosition(i, progress, facing));
+            RingCornerRender.rotateCenteredDegrees(90, RenderHelper.getSecondPerpendicularAxis(facing));
+            RingCornerRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                    .useLevelLight(context.world, matrices.getWorld())
+                    .renderInto(matrices.getViewProjection(), builder);
+
+            RingRender.translate(updateRingPosition(i, progress, facing))
+                    .rotateCenteredDegrees(-90 * i - 90, rotationAxis);
+            RingRender.rotateCenteredDegrees(90, RenderHelper.getPerpendicularAxis(facing));
+            RingRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
+                    .useLevelLight(context.world, matrices.getWorld())
+                    .renderInto(matrices.getViewProjection(), builder);
+        }
+    }
+
+    private static Vec3 updateRingPosition(int ringIndex, float progres, Direction facing) {
         int x = 0;
         int z = 0;
 
@@ -97,7 +155,7 @@ public class LargeSpringRenderer extends ShaftRenderer<LargeSpringBlockEntity> {
         return setPos(x, z, calculateLen(progres, ringIndex), facing);
     }
 
-    private Vec3 updateCornerPosition(int ringIndex, float progres, Direction facing) {
+    private static Vec3 updateCornerPosition(int ringIndex, float progres, Direction facing) {
         int x = 0;
         int z = 0;
 
@@ -127,7 +185,7 @@ public class LargeSpringRenderer extends ShaftRenderer<LargeSpringBlockEntity> {
         return 90 * index;
     }
 
-    private Vec3 setPos(int x, int z, float len, Direction facing){
+    private static Vec3 setPos(int x, int z, float len, Direction facing){
         float dierectionFactor = 1;
         if(facing == Direction.DOWN || facing == Direction.WEST || facing == Direction.NORTH){
             dierectionFactor = -1;

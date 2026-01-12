@@ -2,6 +2,7 @@ package net.Portality.createsprings.blocks.advanced.SpringCatapult;
 
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.blocks.ModBlocks;
+import net.Portality.createsprings.client.CSpringsLang;
 import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.server.packets.CatapultPlacementPacket;
 import net.createmod.catnip.outliner.Outliner;
@@ -45,16 +46,30 @@ public class CatapultTargetHandler {
         if (player == null || player.isSpectator() || !player.isShiftKeyDown())
             return;
 
-        String key = "weighted_ejector.target_set";
-        ChatFormatting colour = ChatFormatting.GOLD;
-        player.displayClientMessage(CreateLang.translateDirect(key)
-                .withStyle(colour), true);
+        String key = "spring_catapult.target_set";
+        String key2 = "spring_catapult.target2_set";
+        String key0 = "spring_catapult.target_cleared";
 
-        if(currentSelection != null && currentSelection.equals(pos)){
-            secondSelection = pos;
+        ChatFormatting colour = ChatFormatting.GOLD;
+        ChatFormatting colour2 = ChatFormatting.AQUA;
+        ChatFormatting colour0 = ChatFormatting.GREEN;
+
+        if(currentSelection != null && secondSelection != null){
+            secondSelection = null;
             currentSelection = null;
+
+            player.displayClientMessage(CSpringsLang.translateDirect(key0)
+                    .withStyle(colour0), true);
+        }
+
+        if(currentSelection != null && !currentSelection.equals(pos)){
+            secondSelection = pos;
+            player.displayClientMessage(CSpringsLang.translateDirect(key2)
+                    .withStyle(colour2), true);
         } else {
             currentSelection = pos;
+            player.displayClientMessage(CSpringsLang.translateDirect(key)
+                    .withStyle(colour), true);
         }
 
         event.setCanceled(true);

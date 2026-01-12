@@ -26,8 +26,10 @@ public class GrabPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
-        Minecraft.getInstance().player.addDeltaMovement(new Vec3(speed.x, speed.y, speed.z));
+        context.enqueueWork( () -> {
+            Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
+            Minecraft.getInstance().player.addDeltaMovement(new Vec3(speed.x, speed.y, speed.z));
+        });
         return true;
     }
 }

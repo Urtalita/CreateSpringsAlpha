@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -41,7 +42,7 @@ import java.util.function.Consumer;
 
 import static com.simibubi.create.content.logistics.box.PackageItem.getPackageVelocity;
 
-public class HatItem extends Item implements IClientItemExtensions{
+public class HatItem extends Item {
 
     public HatItem(Properties properties) {
         super(properties);
@@ -56,10 +57,13 @@ public class HatItem extends Item implements IClientItemExtensions{
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(SimpleCustomRenderer.create(this, new HatRenderer()));
+        if (FMLEnvironment.dist.isClient()) {
+            consumer.accept(SimpleCustomRenderer.create(this, new HatRenderer()));
+        }
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.of(new HatSlotTooltipComponent(readStackFromNBT(stack), stack.getOrCreateTag().getBoolean("goggles")));
     }

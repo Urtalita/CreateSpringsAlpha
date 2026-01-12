@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -23,6 +24,8 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
@@ -107,7 +110,24 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
         }
     }
 
-    private LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, Level level){
+    public LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, Level level){
+        facing = facing.getOpposite();
+        for(int y = 0; y < ModConfigs.common().SPRING_LEN.get() + 1; y++){
+            for (int i = -1; i < 2; i++){
+                for (int j = -1; j < 2; j++){
+                    if(!(i == 0 && j == 0)){
+                        BlockEntity be = level.getBlockEntity(calcPosM(i, y, j, pos, facing));
+                        if(be instanceof LargeSpringBlockEntity blockEntity){
+                            return blockEntity;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public LargeSpringBlockEntity getBe(BlockPos pos, Direction facing, LevelReader level){
         facing = facing.getOpposite();
         for(int y = 0; y < ModConfigs.common().SPRING_LEN.get() + 1; y++){
             for (int i = -1; i < 2; i++){
@@ -166,5 +186,29 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
         if (other.getBlock() == ModBlocks.LARGE_SPRING.get()) return true;
         if (other.getBlock() == ModBlocks.LARGE_SPRING_EXTENTION.get()) return true;
         return false;
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
+        super.neighborChanged(state, level, pos, pBlock, pFromPos, pIsMoving);
+        if(level.isClientSide()){return;}
+        LargeSpringBlockEntity entity = getBe(pos, state.getValue(FACING), level);
+        if(entity != null){
+            entity.onExtensionChanged(pos);
+        }
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState pState) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
+        AtomicInteger s = new AtomicInteger();
+        withBlockEntityDo(pLevel, pPos, b ->{
+            s.set(Math.round((float) b.getCurrentValue() / b.getMaxValue() * 15));
+        });
+        return s.get();
     }
 }

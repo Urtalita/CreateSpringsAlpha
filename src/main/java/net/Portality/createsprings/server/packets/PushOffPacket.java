@@ -16,8 +16,10 @@ public class PushOffPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
-        Minecraft.getInstance().player.addDeltaMovement(Minecraft.getInstance().player.getViewVector(1f).scale(-1));
+        context.enqueueWork( () -> {
+            Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
+            Minecraft.getInstance().player.addDeltaMovement(Minecraft.getInstance().player.getViewVector(1f).scale(-1));
+        });
         return true;
     }
 }

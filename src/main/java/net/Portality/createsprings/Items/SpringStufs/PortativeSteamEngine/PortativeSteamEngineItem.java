@@ -55,6 +55,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,6 +114,7 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
         });
     }
 
+    @OnlyIn(Dist.CLIENT)
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
         ItemStack heldItem = player.getMainHandItem();
         return PortativeSteamEngineMenu.create(id, inv, heldItem);
@@ -165,6 +167,7 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Optional<TooltipComponent> getTooltipImage(ItemStack p_150902_) {
         return core.getTooltipImage(p_150902_);
     }
@@ -231,11 +234,15 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
         if(speed != 0){
             if(level.getGameTime() % (200 / (speed / 15)) == 0){
                 if(boost){
-                    spawnParticles(level, player);
-                    spawnParticles(level, player);
+                    if(level.isClientSide()){
+                        spawnParticles(level, player);
+                        spawnParticles(level, player);
+                    }
                 }
                 AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
-                spawnParticles(level, player);
+                if(level.isClientSide()){
+                    spawnParticles(level, player);
+                }
             }
 
             water -= 5;
@@ -252,7 +259,9 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
         if(boosted > 0){
             if(boost){
                 if(boosted > 100){
-                    spawnParticles(level, player);
+                    if(level.isClientSide()){
+                        spawnParticles(level, player);
+                    }
                     AllSoundEvents.SCHEMATICANNON_LAUNCH_BLOCK.playOnServer(level, BlockPos.containing(player.position()).above(), 0.5f, 1f);
                     spawnItems(level, player, AllItems.COPPER_NUGGET.asItem());
                 }
@@ -327,10 +336,12 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
             if(dash > 39){
                 tag.putInt("boosted", boosted - 3);
                 AllSoundEvents.STEAM.playOnServer(level, BlockPos.containing(player.position()).above(), 0.1f, 1f);
-                spawnParticles(level, player);
-                spawnParticles(level, player);
-                spawnParticles(level, player);
-                spawnParticles(level, player);
+                if (level.isClientSide()) {
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                    spawnParticles(level, player);
+                }
             }
             tag.putInt("DashTicks", dash - 1);
         }
@@ -338,34 +349,36 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
 
     public void displayAboveHotbar(CompoundTag tag, Player player, int boosted, boolean isBoosted){
         if(!player.level().isClientSide()){return;}
-        MutableComponent boost, boostComponent, indicator, left, desc, SD;
-        boostComponent = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
+        if (FMLEnvironment.dist.isClient()) {
+            MutableComponent boost, boostComponent, indicator, left, desc, SD;
+            boostComponent = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
 
-        boost = Component.translatable(CreateSprings.MODID + ".pse.boost");
-        desc = Component.translatable(CreateSprings.MODID + ".pse.dash");
-        Component K = Keybindings.INSTANCE.PSEDashKey.getKey().getDisplayName();
+            boost = Component.translatable(CreateSprings.MODID + ".pse.boost");
+            desc = Component.translatable(CreateSprings.MODID + ".pse.dash");
+            Component K = Keybindings.INSTANCE.PSEDashKey.getKey().getDisplayName();
 
-        if(boosted >= 70){
-            indicator = Component.literal("|").withStyle(ChatFormatting.DARK_RED);
-            SD = Component.literal(K.getString()).withStyle(ChatFormatting.DARK_RED);
-        } else {
-            indicator = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY);
-            SD = Component.literal(K.getString()).withStyle(ChatFormatting.DARK_GRAY);
-        }
-
-        SD = Component.literal("[").withStyle(ChatFormatting.GRAY).append(SD).append(Component.literal("]").withStyle(ChatFormatting.GRAY));
-        left = Component.literal("|".repeat(20 - (int) (boosted / 100f * 20))).withStyle(ChatFormatting.GRAY);
-
-        if(boosted <= 100){
-            if(isBoosted){
-                player.displayClientMessage(boost.append(boostComponent).append(indicator).append(left)
-                        .append(Component.literal(" ").append(desc).append(SD)), true);
+            if(boosted >= 70){
+                indicator = Component.literal("|").withStyle(ChatFormatting.DARK_RED);
+                SD = Component.literal(K.getString()).withStyle(ChatFormatting.DARK_RED);
             } else {
-                player.displayClientMessage(boostComponent.append(indicator).append(left), true);
+                indicator = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY);
+                SD = Component.literal(K.getString()).withStyle(ChatFormatting.DARK_GRAY);
             }
-            return;
+
+            SD = Component.literal("[").withStyle(ChatFormatting.GRAY).append(SD).append(Component.literal("]").withStyle(ChatFormatting.GRAY));
+            left = Component.literal("|".repeat(20 - (int) (boosted / 100f * 20))).withStyle(ChatFormatting.GRAY);
+
+            if(boosted <= 100){
+                if(isBoosted){
+                    player.displayClientMessage(boost.append(boostComponent).append(indicator).append(left)
+                            .append(Component.literal(" ").append(desc).append(SD)), true);
+                } else {
+                    player.displayClientMessage(boostComponent.append(indicator).append(left), true);
+                }
+                return;
+            }
+            player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.RED), true);
         }
-        player.displayClientMessage(Component.literal("|".repeat(20)).withStyle(ChatFormatting.RED), true);
     }
 
     @Override
@@ -454,7 +467,7 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
     public static void steamDash(Player player, Level level){
         if(level.isClientSide()){return;}
 
-        PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(Minecraft.getInstance().player);
+        PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(player);
         if(item != null){
             ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
             CompoundTag tag = stack.getOrCreateTag();

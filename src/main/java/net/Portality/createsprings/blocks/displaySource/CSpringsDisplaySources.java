@@ -19,11 +19,13 @@ public class CSpringsDisplaySources {
     private static final CreateRegistrate REGISTRATE = CreateSprings.registrate();
 
     public static final RegistryEntry<SpringDisplaySource> CHARGE = simple("spring", SpringDisplaySource::new);
+    public static final RegistryEntry<LargeSpringDisplaySource> LARGE_CHARGE = simple("large_spring", LargeSpringDisplaySource::new);
 
     public static final Map<String, RegistryEntry<? extends DisplaySource>> LEGACY_NAMES = Util.make(() -> {
         Map<String, RegistryEntry<? extends DisplaySource>> map = new HashMap<>();
 
         map.put("spring_display_source", CHARGE);
+        map.put("large_spring_display_source", LARGE_CHARGE);
 
         return map;
     });

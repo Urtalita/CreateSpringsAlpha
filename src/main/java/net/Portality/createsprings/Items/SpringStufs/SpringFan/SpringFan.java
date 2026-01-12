@@ -123,8 +123,8 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
 
     private Vec3 calibratePushInWater(Vec3 motion, Player player){
         if(!player.isInWater()){return motion;}
-        if(player.getDeltaMovement().length() > 1.5f){return motion.scale(0);}
-        return motion.scale(1.5f);
+        if(player.getDeltaMovement().length() > 1f){return motion.scale(0);}
+        return motion.scale(1f);
     }
 
     private Vec3 calibratePushOnElytra(Vec3 motion, Player player){

@@ -4,7 +4,7 @@ import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.simibubi.create.content.redstone.displayLink.source.ItemCountDisplaySource;
+import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.Portality.createsprings.config.ModConfigs;
@@ -25,6 +25,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,14 +34,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlock.getSpringChargeCoefficient;
 import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEntity.*;
 import static net.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 
-public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, IConnectableToPSKI, ISpringBE {
+public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements
+        IControlContraption, IConnectableToPSKI, ISpringBE {
 
     public float progress;
     public float stored = 0;
@@ -56,8 +60,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     private float hardness = DEFAULT_HARDNESS;
 
     private BlockPos stoppedPos = null;
-
     public float prevProgress;
+    private HashMap<BlockPos, Integer> extensionsCount = new HashMap<>();
+    int maxSignal = 0;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -127,7 +132,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         return capacity;
     }
 
-    private float calcStress() {
+    public float calcStress() {
         if (stored < capacity && !isGenerating) {
             return 2f * hardness * 9;
         } else if (isGenerating && stored >= 2f * hardness) {
@@ -281,6 +286,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             return;
         }
 
+        if(level.getGameTime() % 20 == 0){
+            if(level != null) {
+                updatePoweredExtensions();
+            }
+        }
+
         if(isGenerating && splashMode && stored > 1){
             prevProgress = progress;
             progress = springAnimation(phase) * (stored / capacity);
@@ -355,6 +366,24 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             updateNetwork();
             updateGeneratedRotation();
         }
+
+        if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
+            updateComparators();
+        }
+    }
+
+    private void updateComparators(){
+        Direction facing = getFacing();
+        for(int y = 0; y < curLen; y++){
+            for (int i = -1; i < 2; i++){
+                for (int j = -1; j < 2; j++){
+                    if(!(i == 0 && j == 0)){
+                        BlockPos pos = calcPos(i, y, j, worldPosition, facing);
+                        level.updateNeighbourForOutputSignal(pos, level.getBlockState(pos).getBlock());
+                    }
+                }
+            }
+        }
     }
 
     private Vec3 getContraptionPos(float progress){
@@ -409,9 +438,10 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
     @Override
     public float getGeneratedSpeed() {
-        if(level.getBestNeighborSignal(worldPosition) == 0){return 0;}
-        float stress = 16.0f * level.getBestNeighborSignal(worldPosition) + 16;
-        return isGenerating && stored > 0 ? stress : 0.0f;
+        int signal = getMaxSignal();
+        if(signal == 0){return 0;}
+        float speed = 16.0f * signal + 16;
+        return isGenerating && stored > 0 ? speed : 0.0f;
     }
 
     public void setGenerating(boolean generating) {
@@ -444,6 +474,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         compound.putBoolean("splashMode", splashMode);
         compound.putFloat("capacity", capacity);
         compound.putFloat("hardness", hardness);
+
+        compound.putInt("maxSignal", maxSignal);
     }
 
     @Override
@@ -466,6 +498,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                     compound.getInt("stoppedZ")
             );
         }
+
+        if(level != null && !level.isClientSide()) {
+            updatePoweredExtensions();
+        }
+
+        maxSignal = compound.getInt("maxSignal");
     }
 
     @Override
@@ -682,5 +720,64 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         updateGeneratedRotation();
+    }
+
+    //redstone
+    private void updatePoweredExtensions(){
+        Direction facing = getFacing();
+        extensionsCount = new HashMap<>();
+
+        for(int y = 0; y < curLen; y++){
+            for (int i = -1; i < 2; i++){
+                for (int j = -1; j < 2; j++){
+                    if(!(i == 0 && j == 0)){
+                        int signal = getSignalForPos(calcPos(i, y, j, worldPosition, facing), level);
+                        if(signal > 0){
+                            extensionsCount.put(calcPos(i, y, j, worldPosition, facing), signal);
+                        }
+                    }
+                }
+            }
+        }
+        int signal = getSignalForPos(worldPosition, level);
+        if(signal > 0){
+            extensionsCount.put(worldPosition, signal);
+        }
+        maxSignal = getMaxSignal();
+    }
+
+    private int getMaxSignal(){
+        int maxSignal = 0;
+        for(Integer signal : extensionsCount.values()){
+            if(signal > maxSignal){
+                maxSignal = signal;
+            }
+        }
+        return maxSignal;
+    }
+
+    public void onExtensionChanged(BlockPos pos){
+        int signal = getSignalForPos(pos, level);
+        if(extensionsCount == null){return;}
+        Integer prevSignal = extensionsCount.get(pos);
+        if(Objects.equals(prevSignal, signal)) return;
+        extensionsCount.put(pos, signal);
+
+        int newSignal = getMaxSignal();
+        maxSignal = newSignal;
+
+        if(getMaxSignal() > 0){
+            setGenerating(true);
+            return;
+        }
+        setGenerating(false);
+    }
+
+    public static int getSignalForPos(BlockPos pos, Level level){
+        int signal = 0;
+        for (Direction dir : Direction.values()) {
+            signal = Math.max(signal, level.getSignal(pos, dir));
+        }
+        return signal;
     }
 }

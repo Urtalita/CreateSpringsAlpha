@@ -221,51 +221,51 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
                     .add(Component.literal("%").withStyle(ChatFormatting.DARK_GRAY))
                     .add(Component.literal(")").withStyle(ChatFormatting.DARK_GRAY))
                     .forGoggles(tooltip);
+
+            if(!isGenerating){
+                if (!IRotate.StressImpact.isEnabled())
+                    return true;
+                float stressAtBase = calculateStressApplied();
+                if (Mth.equal(stressAtBase, 0))
+                    return true;
+
+                CreateLang.translate("gui.goggles.kinetic_stats")
+                        .forGoggles(tooltip);
+
+                addStressImpactStats(tooltip, stressAtBase);
+            } else {
+                //generator
+
+                if (!IRotate.StressImpact.isEnabled())
+                    return true;
+
+                float stressBase = calculateAddedStressCapacity();
+                if (Mth.equal(stressBase, 0))
+                    return true;
+
+                CreateLang.translate("gui.goggles.generator_stats")
+                        .forGoggles(tooltip);
+                CreateLang.translate("tooltip.capacityProvided")
+                        .style(ChatFormatting.GRAY)
+                        .forGoggles(tooltip);
+
+                float speed = getTheoreticalSpeed();
+                if (speed != getGeneratedSpeed() && speed != 0)
+                    stressBase *= getGeneratedSpeed() / speed;
+
+                float stressTotal = Math.abs(stressBase * speed);
+
+                CreateLang.number(stressTotal)
+                        .translate("generic.unit.stress")
+                        .style(ChatFormatting.AQUA)
+                        .space()
+                        .add(CreateLang.translate("gui.goggles.at_current_speed")
+                                .style(ChatFormatting.DARK_GRAY))
+                        .forGoggles(tooltip, 1);
+            }
+            return true;
         }
-
-        if(!isGenerating){
-            if (!IRotate.StressImpact.isEnabled())
-                return true;
-            float stressAtBase = calculateStressApplied();
-            if (Mth.equal(stressAtBase, 0))
-                return true;
-
-            CreateLang.translate("gui.goggles.kinetic_stats")
-                    .forGoggles(tooltip);
-
-            addStressImpactStats(tooltip, stressAtBase);
-        } else {
-            //generator
-
-            if (!IRotate.StressImpact.isEnabled())
-                return true;
-
-            float stressBase = calculateAddedStressCapacity();
-            if (Mth.equal(stressBase, 0))
-                return true;
-
-            CreateLang.translate("gui.goggles.generator_stats")
-                    .forGoggles(tooltip);
-            CreateLang.translate("tooltip.capacityProvided")
-                    .style(ChatFormatting.GRAY)
-                    .forGoggles(tooltip);
-
-            float speed = getTheoreticalSpeed();
-            if (speed != getGeneratedSpeed() && speed != 0)
-                stressBase *= getGeneratedSpeed() / speed;
-
-            float stressTotal = Math.abs(stressBase * speed);
-
-            CreateLang.number(stressTotal)
-                    .translate("generic.unit.stress")
-                    .style(ChatFormatting.AQUA)
-                    .space()
-                    .add(CreateLang.translate("gui.goggles.at_current_speed")
-                            .style(ChatFormatting.DARK_GRAY))
-                    .forGoggles(tooltip, 1);
-        }
-
-        return true;
+        return false;
     }
 
     private void notifyContraptions() {

@@ -18,8 +18,10 @@ public class DashPSEPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        ServerPlayer player = context.getSender();
-        PortativeSteamEngineItem.steamDash(player, context.getSender().serverLevel());
+        context.enqueueWork( () -> {
+            ServerPlayer player = context.getSender();
+            PortativeSteamEngineItem.steamDash(player, context.getSender().serverLevel());
+        });
         return false;
     }
 }

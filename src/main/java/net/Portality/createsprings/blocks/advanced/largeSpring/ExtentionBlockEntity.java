@@ -2,10 +2,12 @@ package net.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
+import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.blocks.advanced.Spring.ISpringBE;
@@ -13,6 +15,7 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,8 +30,9 @@ import static net.Portality.createsprings.blocks.advanced.Spring.SpringBlockEnti
 import static net.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, ISpringBE {
+public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, ISpringBE, ThresholdSwitchObservable {
     public ScrollValueBehaviour targetHardness;
+    BlockPos be = null;
 
     public ExtentionBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -106,6 +110,27 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
         return null;
     }
 
+    public LargeSpringBlockEntity getOrFindBe(){
+        if(be == null){
+            be = getBePos(worldPosition, getBlockState().getValue(FACING), level);
+            if(be == null){
+                be = new BlockPos(Integer.MAX_VALUE, 0, 0);
+            } else {
+                if(level.getBlockEntity(be) instanceof LargeSpringBlockEntity largeSpringBlockEntity){
+                    return largeSpringBlockEntity;
+                }
+            }
+        }
+        if(be.equals(new BlockPos(Integer.MAX_VALUE, 0, 0))){
+            return null;
+        }
+
+        if(level.getBlockEntity(be) instanceof LargeSpringBlockEntity largeSpringBlockEntity){
+            return largeSpringBlockEntity;
+        }
+        return null;
+    }
+
     private class ExtentionValueBoxTransform extends ValueBoxTransform.Sided {
 
         @Override
@@ -122,5 +147,34 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
         public float getScale() {
             return 0.5f;
         }
+    }
+
+    //ThresholdSwitchObservable
+
+    @Override
+    public int getMaxValue() {
+        LargeSpringBlockEntity b = getOrFindBe();
+        if(b == null){return 0;}
+        return (int) (b.capacity / 1e6f);
+    }
+
+    @Override
+    public int getMinValue() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentValue() {
+        LargeSpringBlockEntity b = getOrFindBe();
+        if(b == null){return 0;}
+        return (int) (b.progress * b.capacity / 1e6);
+    }
+
+    @Override
+    public MutableComponent format(int value) {
+        return CreateLang.number(value)
+                .add(Component.literal(" "))
+                .add(CreateLang.translate("large_spring.switch.su"))
+                .component();
     }
 }

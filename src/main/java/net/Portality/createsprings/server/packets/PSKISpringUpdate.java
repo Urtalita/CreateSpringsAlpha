@@ -39,15 +39,17 @@ public class PSKISpringUpdate extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(ModBlocks.SPRING.get());
-        if(behaviour instanceof SpringMovement springMovement){
-            springMovement.setProgress(contraption, localPos, updatedEntity);
-        }
+        context.enqueueWork( () -> {
+            MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(ModBlocks.SPRING.get());
+            if(behaviour instanceof SpringMovement springMovement){
+                springMovement.setProgress(contraption, localPos, updatedEntity);
+            }
 
-        behaviour = MovementBehaviour.REGISTRY.get(ModBlocks.LARGE_SPRING.get());
-        if(behaviour instanceof LargeSpringMovement springMovement){
-            springMovement.setProgress(contraption, localPos, updatedEntity);
-        }
+            behaviour = MovementBehaviour.REGISTRY.get(ModBlocks.LARGE_SPRING.get());
+            if(behaviour instanceof LargeSpringMovement springMovement){
+                springMovement.setProgress(contraption, localPos, updatedEntity);
+            }
+        });
         return true;
     }
 }

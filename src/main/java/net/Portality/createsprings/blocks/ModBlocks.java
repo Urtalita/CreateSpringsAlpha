@@ -145,9 +145,9 @@ public class ModBlocks {
             .initialProperties(SharedProperties::copperMetal)
             .properties(p -> p.noOcclusion())
             .transform(pickaxeOnly())
-            .simpleItem() // Убрать
             .onRegister(movementBehaviour(new LargeSpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+            .transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
             .register();
 
     public static final BlockEntry<CSpringsDierectionalBlock> ANDESITE_MOLD = CSPRINGS_REGISTRATE
@@ -165,6 +165,7 @@ public class ModBlocks {
             .properties(p -> p.noOcclusion())
             .tag(AllTags.AllBlockTags.COPYCAT_DENY.tag)
             .tag(AllTags.AllBlockTags.NON_HARVESTABLE.tag)
+            .transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
             .register();
 
     public static final BlockEntry<SpringCoilBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE

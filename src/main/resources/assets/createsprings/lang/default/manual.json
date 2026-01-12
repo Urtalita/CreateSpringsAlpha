@@ -19,6 +19,7 @@
   "create.spring.su": "su-sec",
   "createsprings.charge": "Charge",
   "create.spring.switch.su": "000 su",
+  "create.large_spring.switch.su": "000 000 su",
   "spring.hardness": "select spring stiffness",
 
   "create.createsprings.splash_mode": "Splash mode:",
@@ -29,8 +30,8 @@
   "createsprings.punchcard.name": "Name:",
   "createsprings.punchcard.action.title": "Instructions for current executor:",
 
-  "createsprings.punchcard.waitForSpeedIncreased": "Wait until the speed increases to",
-  "createsprings.punchcard.waitForSpeedDecreased": "Wait until the speed decreases to",
+  "createsprings.punchcard.waitForSpeedIncreased": "Wait until the speed decreases to",
+  "createsprings.punchcard.waitForSpeedDecreased": "Wait until the speed increases to",
   "createsprings.punchcard.use": "Use item",
   "createsprings.punchcard.end": "End",
   "createsprings.punchcard.detachSpring": "Detach spring",
@@ -72,5 +73,22 @@
   "createsprings.pse.furnace": " furnaces",
 
   "key.categories.createsprings": "Create Springs",
-  "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside"
+  "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside",
+
+  "createsprings.display_source.spring.progress_bar": "Progress Bar",
+  "createsprings.display_source.spring.precent": "Percent",
+  "createsprings.display_source.spring.stored": "Charge",
+  "createsprings.display_source.spring.capacity": "Capacity",
+  "createsprings.display_source.spring.len": "Lenght",
+  "createsprings.display_source.spring.max_len": "Max lenght",
+  "createsprings.display_source.spring.stress": "Stress impact",
+  "createsprings.display_source.spring.gen": "Stress capacity",
+
+  "createsprings.display_source.spring": "Spring",
+  "createsprings.display_source.spring.display": "Displayed info:",
+  "createsprings.display_source.large_spring": "Large Spring",
+
+  "createsprings.spring_catapult.target_set": "target set",
+  "createsprings.spring_catapult.target2_set": "second target set",
+  "createsprings.spring_catapult.target_cleared": "targets cleared"
 }
