@@ -1,6 +1,6 @@
 package net.Portality.createsprings.server.packets;
 
-
+import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.Portality.createsprings.sounds.CSpringsSounds;
@@ -10,36 +10,35 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
-public class PunchcardUpdatePacket {
+public class PunchcardUpdatePacket extends SimplePacketBase {
     private final CompoundTag updatedTag;
 
-    public PunchcardUpdatePacket(CompoundTag updatedTag) {
-        this.updatedTag = updatedTag;
+    public PunchcardUpdatePacket(FriendlyByteBuf buffer) {
+        updatedTag = buffer.readNbt();
     }
 
-    public PunchcardUpdatePacket(FriendlyByteBuf buf) {
-        this.updatedTag = buf.readNbt();
+    public PunchcardUpdatePacket(CompoundTag tag) {
+        updatedTag = tag;
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        for (int i = 0; i < 5; i++) {
-            buf.writeNbt(updatedTag);
-        }
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeNbt(updatedTag);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    @Override
+    public boolean handle(NetworkEvent.Context ctx) {
+        ctx.enqueueWork(() -> {
+            ServerPlayer player = ctx.getSender();
             if (player != null) {
                 InteractionHand hand = player.getUsedItemHand();
                 ItemStack stack = player.getItemInHand(hand);
                 if(stack.getItem() instanceof PunchcardItem){
                     if(stack.getOrCreateTag().getBoolean("Programmed") != updatedTag.getBoolean("Programmed")){
-                        ctx.get().getSender().level().playSound(null, ctx.get().getSender().getOnPos(),
+                        ctx.getSender().level().playSound(null, ctx.getSender().getOnPos(),
                                 CSpringsSounds.PUNCHCARD.get(),
                                 SoundSource.NEUTRAL, 1, 1F);
                         CSpringsAdvancements.PROGRAMMER.awardTo(player);
@@ -52,7 +51,7 @@ public class PunchcardUpdatePacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        return true;
     }
 
     public boolean CheckForAchievement(CompoundTag tag){

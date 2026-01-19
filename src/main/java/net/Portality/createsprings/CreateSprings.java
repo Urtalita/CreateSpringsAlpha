@@ -37,7 +37,6 @@ import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtAwareShapelessRecipe;
 import net.Portality.createsprings.recipe.NbtShapelessRecipe.NbtHatShapelessRecipe;
 import net.Portality.createsprings.server.CSpringsPackets;
-import net.Portality.createsprings.server.NetworkHandler;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.Portality.createsprings.sounds.CSpringsSounds;
 import net.createmod.catnip.lang.FontHelper;
@@ -205,7 +204,6 @@ public class CreateSprings {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event){
             event.enqueueWork(() -> {
-               NetworkHandler.register();
                PunchcardInterpritator.registerActions();
                CSpringsAdvancements.register();
             });

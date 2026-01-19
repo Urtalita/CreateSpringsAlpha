@@ -130,7 +130,7 @@ public class HatItem extends Item {
             if(!stack.getOrCreateTag().getBoolean("animation")){
                 CompoundTag tag = stack.getOrCreateTag();
                 tag.putBoolean("animation", true);
-                tag.putInt("animation_tick", (int) (AnimationTickHolder.getTicks() % HatRenderer.duration));
+                tag.putInt("animation_tick", (int) (level.getGameTime() % HatRenderer.duration));
             }
         }
     }

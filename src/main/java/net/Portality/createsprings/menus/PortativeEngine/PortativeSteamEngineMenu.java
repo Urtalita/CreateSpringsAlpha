@@ -5,8 +5,14 @@ import com.simibubi.create.foundation.gui.menu.MenuBase;
 import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
 import net.Portality.createsprings.client.CSpringsMenus;
+import net.Portality.createsprings.server.CSpringsPackets;
+import net.Portality.createsprings.server.packets.PSEClientUpdate;
+import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
+import net.Portality.createsprings.server.packets.PushOffPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.network.PacketDistributor;
 
 public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
 
@@ -31,7 +38,7 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
     }
 
     public static PortativeSteamEngineMenu create(int id, Inventory inv, ItemStack stack) {
-        return new PortativeSteamEngineMenu((MenuType) CSpringsMenus.PSE.get(), id, inv, stack);
+        return new PortativeSteamEngineMenu(CSpringsMenus.PSE.get(), id, inv, stack);
     }
 
     public void shrink(){
@@ -44,15 +51,7 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
 
     @Override
     protected ItemStack createOnClient(FriendlyByteBuf friendlyByteBuf) {
-        Player player = Minecraft.getInstance().player;
-        InteractionHand hand = player.getUsedItemHand();
-        ItemStack stack = player.getItemInHand(hand);
-        if (stack.getItem() instanceof PortativeSteamEngineItem) {
-            return stack;
-        } else {
-            ItemStack stack1 = player.getItemBySlot(EquipmentSlot.CHEST);
-            return stack1;
-        }
+        return friendlyByteBuf.readItem();
     }
 
     @Override
@@ -125,7 +124,29 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
     }
 
     private void updateBurnStack(ItemStack stack){
-        player.getItemBySlot(EquipmentSlot.CHEST).getOrCreateTag().put("burnStack", stack.serializeNBT());
+        if (player instanceof ServerPlayer serverPlayer) {
+            // Сохраняем в engineStack
+            ItemStack burnStack = stack;
+            CompoundTag tag = player.getItemBySlot(EquipmentSlot.CHEST).getOrCreateTag();
+
+            if (!burnStack.isEmpty()) {
+                tag.put("burnStack", burnStack.save(new CompoundTag()));
+            } else {
+                tag.remove("burnStack");
+            }
+
+            // Отправляем обновление на клиент
+            CSpringsPackets.getChannel().send(
+                    PacketDistributor.PLAYER.with(() -> serverPlayer),
+                    new PSEClientUpdate(tag)
+            );
+        }
+    }
+
+    @Override
+    public void removed(Player playerIn) {
+        super.removed(playerIn);
+        updateBurnStack(slot.getItem());
     }
 
     @Override

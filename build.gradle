@@ -107,7 +107,6 @@ minecraft {
             property "mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg"
 
             property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
         }
 
         // This run config launches GameTestServer and runs all registered gametests, then exits.
@@ -221,15 +220,15 @@ dependencies {
     // at runtime, use the full JEI jar for Forge
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
 
-    compileOnly("curse.maven:embeddium-908741:5681725")
+    //compileOnly("curse.maven:embeddium-908741:5681725")
     //implementation(fg.deobf("curse.maven:sodiumdynamiclights-551736:6044481"))
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     //compileOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
     //runtimeOnly fg.deobf("curse.maven:carpet-reforged-1284716:7156876")
-    implementation fg.deobf("curse.maven:embed-dium-908741:5681725")
-    runtimeOnly fg.deobf("curse.maven:oculus-581495:6020952") // shaders test
+    //implementation fg.deobf("curse.maven:embed-dium-908741:5681725")
+    //runtimeOnly fg.deobf("curse.maven:oculus-581495:6020952") // shaders test
     //implementation fg.deobf("curse.maven:sodium-dynamicLight-551736:6044481")
 
     implementation fg.deobf("curse.maven:cold-sweat-506194:6503192") //cold-sweet compatibility

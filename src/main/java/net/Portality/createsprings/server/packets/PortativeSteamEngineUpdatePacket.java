@@ -1,5 +1,6 @@
 package net.Portality.createsprings.server.packets;
 
+import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
 import net.minecraft.nbt.CompoundTag;
@@ -9,9 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
-public class PortativeSteamEngineUpdatePacket {
+public class PortativeSteamEngineUpdatePacket extends SimplePacketBase {
     private final CompoundTag updatedTag;
 
     public PortativeSteamEngineUpdatePacket(CompoundTag updatedTag) {
@@ -22,15 +21,15 @@ public class PortativeSteamEngineUpdatePacket {
         this.updatedTag = buf.readNbt();
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        for (int i = 0; i < 5; i++) {
-            buf.writeNbt(updatedTag);
-        }
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeNbt(updatedTag);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    @Override
+    public boolean handle(NetworkEvent.Context ctx) {
+        ctx.enqueueWork(() -> {
+            ServerPlayer player = ctx.getSender();
             if (player != null) {
                 InteractionHand hand = player.getUsedItemHand();
                 ItemStack stack = player.getItemInHand(hand);
@@ -50,6 +49,6 @@ public class PortativeSteamEngineUpdatePacket {
                 }
             }
         });
-        ctx.get().setPacketHandled(true);
+        return true;
     }
 }

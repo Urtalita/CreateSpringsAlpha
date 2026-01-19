@@ -73,7 +73,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ModBlocks {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CreateSprings.MODID);
+    private static final CreateRegistrate REGISTRATE = CreateSprings.registrate();
 
     public static final BlockEntry<Block> SPRING_ALLOY_BLOCK = CSPRINGS_REGISTRATE
             .block("spring_alloy_block", Block::new)
@@ -89,6 +89,7 @@ public class ModBlocks {
             .build()
             .lang("Block of Spring Alloy")
             .register();
+
 
     public static final BlockEntry<CSpringsDierectionalBlock> UNFINISHED_SPRING = CSPRINGS_REGISTRATE
             .block("unfinished_spring", CSpringsDierectionalBlock::new)
@@ -245,130 +246,9 @@ public class ModBlocks {
             .transform(BuilderTransformers.casing(() -> CSpringsSpriteShifts.SPRING_ALLOY_CASING))
             .register();
 
+
+
     //public static final BlockEntry<SpringAlloyEncasedShaftBlock> SPRING_ALLOY_ENCASED_SHAFT = createShaft("spring_alloy",ModBlocks.SPRING_ALLOY_CASING::get,CSpringsSpriteShifts.SPRING_ALLOY_CASING);
 
     public static void register() {}
-
-    //stolen code from create connected
-
-    private static BlockEntry<SpringAlloyEncasedShaftBlock> createShaft(String name, Supplier<Block> casing, CTSpriteShiftEntry sprite){
-        return createShaft(AllBlocks.SHAFT,name,casing,sprite,SpringAlloyEncasedShaftBlock::new);
-    }
-
-    private static <E extends Block & EncasableBlock, T extends EncasedShaftBlock> BlockEntry<T> createShaft(BlockEntry<E> shaft, String name, Supplier<Block> casing, CTSpriteShiftEntry sprite, NonNullBiFunction<BlockBehaviour.Properties,Supplier<Block>, T> factory){
-        String s = shaft.getId().getPath().replace("_shaft","");
-        return CreateSprings.CSPRINGS_REGISTRATE.block(name+"_encased"+(shaft.equals(AllBlocks.SHAFT) ? "" : "_"+ s)+"_shaft", p -> factory.apply(p,casing))
-                .properties(p -> p.mapColor(MapColor.PODZOL))
-                .transform(encasedShaft(shaft,name, () -> sprite))
-                .transform(EncasingRegistry.addVariantTo(shaft))
-                .transform(axeOrPickaxe())
-                .onRegisterAfter(Registries.ITEM, CreateSprings::hideItem)
-                .register();
-    }
-
-    public static <B extends EncasedShaftBlock, P,E extends Block & EncasableBlock> NonNullUnaryOperator<BlockBuilder<B, P>> encasedShaft(BlockEntry<E> shaft, String casing, Supplier<CTSpriteShiftEntry> casingShift) {
-        String sId = shaft.getId().getPath().replace("_shaft","");
-        if (shaft.equals(AllBlocks.SHAFT)) sId = "normal";
-        String finalSId = sId;
-        return builder -> {
-            BlockBuilder<B,P> b = encasedBase(builder, shaft::get)
-                    .blockstate(encasedShaft( finalSId, casing))
-                    .item()
-                    .model((ctx, prov) -> prov.getBuilder(ctx.getName()).parent(Objects.requireNonNull(encasedShaftModel(prov, finalSId, casing, true))))
-                    .build();
-            if (casingShift.get() != null){
-                b=b.onRegister(CreateSprings.CSPRINGS_REGISTRATE.connectedTextures(() -> new EncasedCTBehaviour(casingShift.get())))
-                        .onRegister(CreateSprings.CSPRINGS_REGISTRATE.casingConnectivity((block, cc) -> cc.make(block, casingShift.get(),
-                                (s, f) -> f.getAxis() != s.getValue(EncasedShaftBlock.AXIS))));
-            }
-            return b;
-        };
-    }
-
-    private static <B extends RotatedPillarKineticBlock, P> BlockBuilder<B, P> encasedBase(BlockBuilder<B, P> b,
-                                                                                           Supplier<ItemLike> drop) {
-        return b.initialProperties(SharedProperties::stone)
-                .properties(BlockBehaviour.Properties::noOcclusion)
-                .transform(CSStress.setNoImpact())
-                .loot((p, lb) -> p.dropOther(lb, drop.get()));
-    }
-
-    public static <T extends Block> NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> encasedShaft(String shaft, String casing){
-        return (ctx,prov)->axisBlock(ctx,prov, encasedShaftModel(prov,shaft,casing,false));
-    }
-
-    public static <T extends Block> void axisBlock(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov,ModelFile model){
-        axisBlock(ctx,prov,model,true);
-    }
-
-    public static <T extends Block> void axisBlock(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov,ModelFile model, boolean uvLock){
-        axisBlock(ctx,prov,bs->model,uvLock);
-    }
-    public static <T extends Block> void axisBlock(DataGenContext<Block, T> ctx, RegistrateBlockstateProvider prov, Function<BlockState,ModelFile> model, boolean uvLock){
-        if (model == null) {
-            prov.simpleBlock(ctx.get(),new ModelFile.UncheckedModelFile("block/dirt"));
-            return;
-        }
-        prov.getVariantBuilder(ctx.getEntry())
-                .forAllStatesExcept(state -> {
-                    Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
-                    return ConfiguredModel.builder()
-                            .modelFile(model.apply(state))
-                            .uvLock(uvLock)
-                            .rotationX(axis == Direction.Axis.Y ? 0 : 90)
-                            .rotationY(axis == Direction.Axis.X ? 90 : axis == Direction.Axis.Z ? 180 : 0)
-                            .build();
-                }, BlockStateProperties.WATERLOGGED);
-    }
-
-    public static <T> ModelFile encasedShaftModel(RegistrateProvider p, String shaft, String casing, boolean item){
-        if (!item)
-            return Objects.requireNonNull(createModelInBlock(p, "encased_shaft/" + casing))
-                    .parent(new ModelFile.UncheckedModelFile("create:block/encased_shaft/block"))
-                    .texture("casing",getCasingTexture(casing))
-                    .texture("opening",getGearboxTexture(casing))
-                    .texture("particle",getCasingTexture(casing));
-        else
-            return Objects.requireNonNull(createModelInBlock(p, "encased_shaft/items/" + shaft + "/" + casing))
-                    .parent(new ModelFile.UncheckedModelFile("create:block/encased_shaft/item"))
-                    .texture("casing",getCasingTexture(casing))
-                    .texture("opening",getGearboxTexture(casing))
-                    .texture("1_0",getShaftTexture(shaft))
-                    .texture("1_1", getShaftTexture(shaft) + (!shaft.equals("mldeg") ? "_top": ""))
-                    .texture("particle",getCasingTexture(casing));
-    }
-
-    public static ModelBuilder<? extends ModelBuilder<?>> createModelInBlock(RegistrateProvider p, String path){
-        if (p instanceof RegistrateBlockstateProvider provider)
-            return provider.models()
-                    .getBuilder("block/"+path);
-        else if (p instanceof RegistrateItemModelProvider provider)
-            return provider.getBuilder("block/"+path);
-        return null;
-    }
-
-    public static String getCasingTexture(String casing){
-        if (casing.equals("normal")) return Create.ID+":block/andesite_casing";
-        String modid = getModForCasing(casing);
-        if (casing.equals("industrial_iron") || casing.equals("weathered_iron")) return modid + ":block/"+casing+"_block";
-        return modid + ":block/"+casing+"_casing";
-    }
-
-    public static String getModForCasing(String casing){
-        if (casing.equals("brass") || casing.equals("andesite") || casing.equals("copper") || casing.equals("railway") || casing.equals("industrial_iron") || casing.equals("creative") || casing.equals("weathered_iron") || casing.equals("shadow_steel") || casing.equals("refined_radiance")) return Create.ID;
-        return CreateSprings.MODID;
-    }
-
-    public static String getGearboxTexture(String casing){
-        if (casing.equals("andesite") || casing.equals("normal")) return Create.ID+":block/gearbox";
-        if (casing.equals("brass")) return Create.ID + ":block/"+casing+"_gearbox";
-        return CreateSprings.MODID + ":block/gearboxes/"+casing;
-    }
-
-    public static String getShaftTexture(String shaft){
-        if (shaft.equals("normal")) return Create.ID + ":block/axis";
-        if (shaft.equals("bamboo")) return "minecraft:block/stripped_bamboo_block";
-        return CreateSprings.MODID + ":block/shafts/"+shaft;
-    }
-
 }

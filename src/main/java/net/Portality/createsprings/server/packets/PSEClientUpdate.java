@@ -1,33 +1,33 @@
 package net.Portality.createsprings.server.packets;
 
-import com.simibubi.create.content.kinetics.RotationPropagator;
-import com.simibubi.create.content.schematics.client.tools.RotateTool;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
+import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-public class RotatePlayerPacket extends SimplePacketBase {
-    private final float xRot;
+public class PSEClientUpdate extends SimplePacketBase {
+    private final CompoundTag updatedTag;
 
-    public RotatePlayerPacket(FriendlyByteBuf buffer) {
-        xRot = buffer.readFloat();
+    public PSEClientUpdate(CompoundTag updatedTag) {
+        this.updatedTag = updatedTag;
     }
 
-    public RotatePlayerPacket(float xRot) {
-        this.xRot = xRot;
+    public PSEClientUpdate(FriendlyByteBuf buf) {
+        this.updatedTag = buf.readNbt();
     }
 
     @Override
-    public void write(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeFloat(xRot);
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeNbt(updatedTag);
     }
 
     @Override
@@ -36,9 +36,9 @@ public class RotatePlayerPacket extends SimplePacketBase {
             ClientLevel level = Minecraft.getInstance().level;
             if (level != null) {
                 Entity entity = Minecraft.getInstance().player;
-                if (entity instanceof Player player) {
-                    if (player == Minecraft.getInstance().player) {
-                        player.setXRot(xRot);
+                if(entity instanceof Player player){
+                    if(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
+                        player.getItemBySlot(EquipmentSlot.CHEST).setTag(updatedTag);
                     }
                 }
             }

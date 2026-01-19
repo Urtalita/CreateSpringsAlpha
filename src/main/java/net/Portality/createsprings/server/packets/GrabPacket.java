@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import org.joml.Vector3f;
 
@@ -26,10 +28,10 @@ public class GrabPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        context.enqueueWork( () -> {
+        context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
             Minecraft.getInstance().player.addDeltaMovement(new Vec3(speed.x, speed.y, speed.z));
-        });
+        }));
         return true;
     }
 }

@@ -5,7 +5,10 @@ import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.CTSpriteShifter;
 import com.simibubi.create.foundation.block.connected.CTType;
 import net.Portality.createsprings.CreateSprings;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class CSpringsSpriteShifts {
     public static final CTSpriteShiftEntry SPRING_ALLOY_CASING = omni("spring_alloy_casing");
     public static final CTSpriteShiftEntry WEATHERED_IRON = omni("weathered_iron"), WEATHERED_IRON_SIDE = omni("weathered_iron_side");

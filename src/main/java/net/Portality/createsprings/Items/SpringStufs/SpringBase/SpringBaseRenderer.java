@@ -6,10 +6,12 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.Portality.createsprings.Items.SpringStufs.ClientSpringAnimation;
 import net.Portality.createsprings.Items.SpringStufs.SpringSpeedSys;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -77,11 +79,8 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
             , int springLen, PartialModel plate, PartialModel piece){
         float progress = 1 - (stored / ModConfigs.common().SPRING_CAPACITY.get() / 2f);
 
-        if(tag.getBoolean("splash")){
-            int phase = (AnimationTickHolder.getTicks() - tag.getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
-            progress = springAnimation(phase);
-            float prevProgress = springAnimation(phase-1);
-            progress = 1 - Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, progress);
+        if(ClientSpringAnimation.isActive()){
+            progress = 1 - ClientSpringAnimation.getAnimation();
         }
 
         renderer.render(plate.get(), light);
@@ -100,12 +99,12 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
     }
 
     public static double getSpeed(CompoundTag tag){
-        return Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1)
+        return Mth.lerp((Minecraft.getInstance().level.getGameTime() + AnimationTickHolder.getPartialTicks() - 1)
                 % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("Speed") / 100);
     }
 
     public static double isTooFast(CompoundTag tag, double speed){
-        double actualSpeed = Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("LastSpeed") / 100);;
+        double actualSpeed = Mth.lerp((Minecraft.getInstance().level.getGameTime() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("LastSpeed") / 100);;
         if(speed > actualSpeed){
             return actualSpeed;
         }

@@ -148,7 +148,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
                     tag.putInt("Springs_rn", 1);
                     putAllStored(new float[]{0f, 0f}, tag);
                     tag.putBoolean("splash", true);
-                    tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
+                    tag.putInt("shiftTick", (int) (level.getGameTime() % ModConfigs.common().SPRING_SPLASH_DURATION.get()));
                 }
             }
 
@@ -253,7 +253,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
             PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_LAUNCHER, this));
         }
         if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
+            long phase = (level.getGameTime() - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
             if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
                 stack.getOrCreateTag().putBoolean("splash", false);
             }

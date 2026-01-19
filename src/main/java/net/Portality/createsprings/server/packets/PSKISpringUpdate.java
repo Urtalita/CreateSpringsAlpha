@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
@@ -39,7 +41,7 @@ public class PSKISpringUpdate extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        context.enqueueWork( () -> {
+        context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             MovementBehaviour behaviour = MovementBehaviour.REGISTRY.get(ModBlocks.SPRING.get());
             if(behaviour instanceof SpringMovement springMovement){
                 springMovement.setProgress(contraption, localPos, updatedEntity);
@@ -49,7 +51,7 @@ public class PSKISpringUpdate extends SimplePacketBase {
             if(behaviour instanceof LargeSpringMovement springMovement){
                 springMovement.setProgress(contraption, localPos, updatedEntity);
             }
-        });
+        }));
         return true;
     }
 }

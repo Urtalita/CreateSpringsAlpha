@@ -76,15 +76,16 @@ public class SpringSpeedSys {
             if(speed > MAX_OVERCLOCKED_SPEED){
                 speed = MAX_OVERCLOCKED_SPEED;
                 tag.putBoolean("splash", true);
-                tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
+                tag.putInt("shiftTick", (int) (level.getGameTime() % ModConfigs.common().SPRING_SPLASH_DURATION.get()));
                 placeLava(level, player, stack, hand);
                 tag.put("contains", new CompoundTag());
             }
 
             CSpringsSounds.playBweum(level, player.getOnPos());
 
-            tag.putBoolean("splash", true);
-            tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
+            if(level.isClientSide()){
+                ClientSpringAnimation.start();
+            }
 
             player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
         } else {
@@ -121,7 +122,7 @@ public class SpringSpeedSys {
         double speed = tag.getDouble("Speed");
 
         if(speed > 0) {
-            if(AnimationTickHolder.getTicks(level) % 40 == 0) {
+            if(level.getGameTime() % 40 == 0) {
                 ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
                 if(chestStack.getItem() instanceof PortativeSteamEngineItem){
                     if (speed < 7500){
@@ -136,13 +137,6 @@ public class SpringSpeedSys {
                     }
                 } else {
                     changeSpeed(tag, -40);
-                }
-            }
-
-            if(tag.getBoolean("splash")){
-                long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
-                if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
-                    stack.getOrCreateTag().putBoolean("splash", false);
                 }
             }
         }

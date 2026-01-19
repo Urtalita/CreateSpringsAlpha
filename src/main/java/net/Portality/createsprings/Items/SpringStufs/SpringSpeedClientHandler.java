@@ -17,7 +17,7 @@ public class SpringSpeedClientHandler {
     }
 
     public static float interpolateSpeed(){
-        return Mth.lerp((AnimationTickHolder.getTicks() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,LastSpeed / 100, speed / 100);
+        return Mth.lerp((Minecraft.getInstance().level.getGameTime() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,LastSpeed / 100, speed / 100);
     }
 
     public static void onTick(){

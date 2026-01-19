@@ -3,6 +3,7 @@ package net.Portality.createsprings.server;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.server.packets.*;
+import net.Portality.createsprings.server.packets.PunchcardUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -26,13 +27,16 @@ public enum CSpringsPackets {
     OPEN_PSE(OpenPSEPacket.class, OpenPSEPacket::new, PLAY_TO_SERVER),
     BOOST_PSE(BoostPSEPacket.class, BoostPSEPacket::new, PLAY_TO_SERVER),
     PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard::new, PLAY_TO_SERVER),
+    DASH_PSE(DashPSEPacket.class, DashPSEPacket::new, PLAY_TO_SERVER),
+    PUNCHCARD_UPDATE(PunchcardUpdatePacket.class, PunchcardUpdatePacket::new, PLAY_TO_SERVER),
+    UPDATE_PSE(PortativeSteamEngineUpdatePacket.class, PortativeSteamEngineUpdatePacket::new, PLAY_TO_SERVER),
 
     ROTATE(RotatePlayerPacket.class, RotatePlayerPacket::new, PLAY_TO_CLIENT),
     AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket::new, PLAY_TO_CLIENT),
     GRAB(GrabPacket.class, GrabPacket::new, PLAY_TO_CLIENT),
     PUSH_OFF(PushOffPacket.class, PushOffPacket::new, PLAY_TO_CLIENT),
-    UPDATE_CONTRAPTION_SPRINGS(PSKISpringUpdate.class, PSKISpringUpdate::new, PLAY_TO_CLIENT),
-    DASH_PSE(DashPSEPacket.class, DashPSEPacket::new, PLAY_TO_SERVER);
+    CLIENT_UPDATE_PSE(PSEClientUpdate.class, PSEClientUpdate::new, PLAY_TO_CLIENT),
+    UPDATE_CONTRAPTION_SPRINGS(PSKISpringUpdate.class, PSKISpringUpdate::new, PLAY_TO_CLIENT);
 
     public static final ResourceLocation CHANNEL_NAME = CreateSprings.asResource("main");
     public static final int NETWORK_VERSION = 3;

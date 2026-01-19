@@ -5,9 +5,9 @@ import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.menus.TooltipDescription;
-import net.Portality.createsprings.server.NetworkHandler;
-import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
+import net.Portality.createsprings.server.CSpringsPackets;
 import net.Portality.createsprings.client.CSpringsGuiTextures;
+import net.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
 import net.createmod.catnip.platform.ForgeCatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 
@@ -209,7 +210,7 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         stack.getOrCreateTag().putBoolean("boost", background == CSpringsGuiTextures.PORTATIVE_STEAM_BG_POWERED);
 
         stack.getOrCreateTag().putInt("boosted", boosted);
-        NetworkHandler.CHANNEL.sendToServer(new PortativeSteamEngineUpdatePacket(stack.getOrCreateTag()));
+        CSpringsPackets.getChannel().send(PacketDistributor.SERVER.noArg(), new PortativeSteamEngineUpdatePacket(stack.getOrCreateTag()));
     }
 
     private ArrayList<Component> updateMainDescTooltip(){

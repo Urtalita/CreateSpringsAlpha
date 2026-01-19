@@ -3,6 +3,7 @@ package net.Portality.createsprings.Items.advanced.Spring;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import net.Portality.createsprings.Items.SpringStufs.ClientSpringAnimation;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.Packages.HatPackageEntity;
 import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
@@ -65,13 +66,6 @@ public class SpringItem extends BlockItem {
     @Override
     public void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
         super.onInventoryTick(stack, level, player, slotIndex, selectedIndex);
-
-        if(stack.getOrCreateTag().getBoolean("splash")){
-            long phase = (AnimationTickHolder.getTicks(level) - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
-            if(ModConfigs.common().SPRING_SPLASH_DURATION.get() == phase){
-                stack.getOrCreateTag().putBoolean("splash", false);
-            }
-        }
     }
 
     @Override
@@ -112,15 +106,19 @@ public class SpringItem extends BlockItem {
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeCharged) {
-        if (!(entity instanceof Player player) || level.isClientSide())
+        if (!(entity instanceof Player player))
             return;
 
         int time_pass = getUseDuration(stack) - timeCharged;
         if(time_pass > TimeNeed){
-            CSpringsSounds.playBweum(level, player.getOnPos());
-            if(LaunchItemInHand(player, level)){return;}
+            if(level.isClientSide()){
+                ClientSpringAnimation.start();
+            } else {
+                CSpringsSounds.playBweum(level, player.getOnPos());
+                if(LaunchItemInHand(player, level)){return;}
 
-            LaunchPlayerOrEntity(player, level, stack, entity);
+                LaunchPlayerOrEntity(player, level, stack, entity);
+            }
         }
     }
 
@@ -271,10 +269,6 @@ public class SpringItem extends BlockItem {
         if (!player.isCreative()){
             SetSu(stack, 0);
         }
-
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putBoolean("splash", true);
-        tag.putInt("shiftTick", AnimationTickHolder.getTicks() % ModConfigs.common().SPRING_SPLASH_DURATION.get());
     }
 
     public static void SetSu(ItemStack stack, float su){

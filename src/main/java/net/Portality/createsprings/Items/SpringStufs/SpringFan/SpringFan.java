@@ -82,8 +82,7 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
         if(player.isShiftKeyDown()){launchVelocity *= -1;}
         // Находим сущность в направлении взгляда
 
-        if (level.random.nextFloat() < AllConfigs.client().fanParticleDensity.get())
-            level.addParticle(new AirFlowParticleData(player.getOnPos()), 1, 0, 0, 0, 0, 0);
+        level.addParticle(new AirFlowParticleData(player.getOnPos()), 1, 0, 0, 0, 0, 0);
 
         ArrayList<EntityHitResult> entityHit = getEntityLookAtInLine(player, distance);
 

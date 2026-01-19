@@ -81,6 +81,6 @@ public class HatRenderer extends CustomRenderedItemModelRenderer {
     }
 
     private float getTime(CompoundTag tag){
-        return ((AnimationTickHolder.getTicks() - tag.getInt("animation_tick")) % duration + AnimationTickHolder.getPartialTicks() - 1) * -1 * 2;
+        return ((Minecraft.getInstance().level.getGameTime() - tag.getInt("animation_tick")) % duration + AnimationTickHolder.getPartialTicks() - 1) * -1 * 2;
     }
 }

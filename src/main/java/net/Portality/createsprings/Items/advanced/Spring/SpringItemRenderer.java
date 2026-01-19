@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.Portality.createsprings.Items.SpringStufs.ClientSpringAnimation;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.client.CSpringsPartalModels;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -32,11 +33,8 @@ public class SpringItemRenderer extends CustomRenderedItemModelRenderer {
         float su = GetStoredSu(stack);
         float progress = su/ ModConfigs.common().SPRING_CAPACITY.get();
 
-        if(stack.getOrCreateTag().getBoolean("splash")){
-            int phase = (AnimationTickHolder.getTicks() - stack.getOrCreateTag().getInt("shiftTick")) % ModConfigs.common().SPRING_SPLASH_DURATION.get() + 1;
-            float nextprogress = springAnimation(phase);
-            float prevProgress = springAnimation(phase-1);
-            progress = Mth.lerp(AnimationTickHolder.getPartialTicks(), prevProgress, nextprogress);
+        if(ClientSpringAnimation.isActive()){
+            progress = ClientSpringAnimation.getAnimation();
         }
 
         ms.rotateAround(Axis.XP.rotationDegrees(180), 0,0,0);

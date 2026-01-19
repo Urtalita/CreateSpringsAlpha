@@ -4,6 +4,8 @@ import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 public class PushOffPacket extends SimplePacketBase {
@@ -16,10 +18,10 @@ public class PushOffPacket extends SimplePacketBase {
 
     @Override
     public boolean handle(NetworkEvent.Context context) {
-        context.enqueueWork( () -> {
+        context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             Minecraft.getInstance().player.swing(InteractionHand.MAIN_HAND);
             Minecraft.getInstance().player.addDeltaMovement(Minecraft.getInstance().player.getViewVector(1f).scale(-1));
-        });
+        }));
         return true;
     }
 }

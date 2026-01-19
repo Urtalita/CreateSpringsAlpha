@@ -1,5 +1,6 @@
 package net.Portality.createsprings.client;
 
+import net.Portality.createsprings.Items.SpringStufs.ClientSpringAnimation;
 import net.Portality.createsprings.Items.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
 import net.Portality.createsprings.Items.SpringStufs.SpringSpeedClientHandler;
 import net.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
@@ -35,5 +36,9 @@ public class CSpringsClientEvents {
 
         CatapultTargetHandler.tick();
         SpringSpeedClientHandler.onTick();
+
+        if(event.phase == TickEvent.Phase.END){
+            ClientSpringAnimation.onTick();
+        }
     }
 }

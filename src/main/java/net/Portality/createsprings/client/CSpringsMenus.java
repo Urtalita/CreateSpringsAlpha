@@ -14,9 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class CSpringsMenus {
 
-    public static final MenuEntry<PortativeSteamEngineMenu> PSE = register("portative_steam_engine", PortativeSteamEngineMenu::new, () -> {
-        return PortativeEngineScreen::new;
-    });
+    public static final MenuEntry<PortativeSteamEngineMenu> PSE = register("portative_steam_engine", PortativeSteamEngineMenu::new, () -> PortativeEngineScreen::new);
 
     private static <C extends AbstractContainerMenu, S extends Screen & MenuAccess<C>> MenuEntry<C>
             register(String name, MenuBuilder.ForgeMenuFactory<C> factory, NonNullSupplier<MenuBuilder.ScreenFactory<C, S>> screenFactory) {
