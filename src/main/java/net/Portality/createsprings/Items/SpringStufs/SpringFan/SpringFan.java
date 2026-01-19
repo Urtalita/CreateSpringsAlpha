@@ -97,7 +97,6 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
                 if(distToSource > distance / 2){
                     motion.scale((distance - distToSource) / (distance / 2));
                 }
-
                 target.setDeltaMovement(previousMotion.add(motion));
             }
         }
