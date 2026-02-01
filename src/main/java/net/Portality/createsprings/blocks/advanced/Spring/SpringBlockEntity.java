@@ -66,10 +66,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         capacity = ModConfigs.common().SPRING_CAPACITY.get();
     }
 
-    public void setHardness(int hardness){
-        targetHardness.setValue(hardness);
-        updateHardness(hardness);
-    }
 
     private void updateHardness(int i) {
         if (level == null || level.isClientSide) return;

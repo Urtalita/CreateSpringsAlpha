@@ -578,7 +578,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                     );
 
                     if(level.getBlockEntity(breakBlock) instanceof ExtentionBlockEntity extentionBlockEntity){
-                        extentionBlockEntity.targetHardness.setValue((int) hardness);
+                        extentionBlockEntity.targetHardness.setValue((int) hardness / 2);
                     }
                 }
             }

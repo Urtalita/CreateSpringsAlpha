@@ -227,8 +227,8 @@ dependencies {
 
     //compileOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
     //runtimeOnly fg.deobf("curse.maven:carpet-reforged-1284716:7156876")
-    //implementation fg.deobf("curse.maven:embed-dium-908741:5681725")
-    //runtimeOnly fg.deobf("curse.maven:oculus-581495:6020952") // shaders test
+    implementation fg.deobf("curse.maven:embed-dium-908741:5681725")
+    runtimeOnly fg.deobf("curse.maven:oculus-581495:6020952") // shaders test
     //implementation fg.deobf("curse.maven:sodium-dynamicLight-551736:6044481")
 
     implementation fg.deobf("curse.maven:cold-sweat-506194:6503192") //cold-sweet compatibility
