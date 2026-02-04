@@ -22,7 +22,7 @@ import org.joml.Quaternionf;
 
 import java.util.function.Consumer;
 
-public class WelderVisual<B extends WelderBlockEntity & IBearingBlockEntity> extends OrientedRotatingVisual<B> implements SimpleDynamicVisual {
+public class WelderVisual<B extends WelderBlockEntity> extends OrientedRotatingVisual<B> implements SimpleDynamicVisual {
     final OrientedInstance topInstance;
 
     final Axis rotationAxis;

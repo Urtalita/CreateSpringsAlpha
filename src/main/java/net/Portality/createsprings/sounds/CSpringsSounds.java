@@ -1,32 +1,23 @@
 package net.Portality.createsprings.sounds;
 
-import com.google.gson.JsonObject;
-import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.Create;
 import net.Portality.createsprings.CreateSprings;
+import net.Portality.createsprings.client.ClientForgeHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.world.level.*;
 
-import static net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS;
+import java.util.List;
 
 public class CSpringsSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
@@ -35,6 +26,7 @@ public class CSpringsSounds {
     public static final RegistryObject<SoundEvent>
             BWEUM = registerSoundEvent("standart_bweum"),
             BWEUM_SHOOT1 = registerSoundEvent("shooting_bweum1"),
+            LARGE_BWEUM = registerSoundEvent("large_bweum"),
             PUNCHCARD = registerSoundEvent("punchcard");
     ;
 
@@ -49,8 +41,29 @@ public class CSpringsSounds {
                 SoundSource.NEUTRAL, volume, 1F);
     }
 
-    public static void playBweum(Level level, BlockPos pos, float volume){
+    public static void playLargeBweum(Level level, BlockPos pos, float volume){
+        level.playSound(null, pos,
+                CSpringsSounds.LARGE_BWEUM.get(),
+                SoundSource.NEUTRAL, volume, 1F);
 
+        if(level.isClientSide()){
+            ClientForgeHandler.start((int) (40 * volume));
+        } else {
+            List<? extends Player> players = level.players();
+            for(Player player : players){
+                BlockPos playerPos = player.getOnPos();
+
+                double distance = playerPos.getCenter().distanceTo(pos.getCenter());
+                if(distance > 16 && distance < 1000){
+                    level.playSound(null, playerPos,
+                            CSpringsSounds.LARGE_BWEUM.get(),
+                            SoundSource.NEUTRAL, volume / 10f, 1F);
+                }
+            }
+        }
+    }
+
+    public static void playBweum(Level level, BlockPos pos, float volume){
         level.playSound(null, pos,
                 CSpringsSounds.BWEUM_SHOOT1.get(),
                 SoundSource.NEUTRAL, volume, 1F);

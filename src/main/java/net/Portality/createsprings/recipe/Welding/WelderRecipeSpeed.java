@@ -1,9 +1,9 @@
 package net.Portality.createsprings.recipe.Welding;
 
 public enum WelderRecipeSpeed {
-    FAST(3),
-    NORMAL(2),
-    SLOW(1);
+    FAST(4),
+    NORMAL(3),
+    SLOW(2);
 
     private final int speedValue;
 

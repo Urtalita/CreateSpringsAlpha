@@ -5,6 +5,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.bearing.MechanicalBearingBlockEntity;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 import com.simibubi.create.content.kinetics.KineticNetwork;
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
@@ -12,6 +13,7 @@ import com.simibubi.create.content.kinetics.drill.CobbleGenOptimisation;
 import com.simibubi.create.content.kinetics.drill.DrillBlock;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import net.Portality.createsprings.blocks.ModBlocks;
 import net.Portality.createsprings.recipe.ModRecipes;
 import net.Portality.createsprings.recipe.Welding.WelderRecipe;
@@ -51,18 +53,22 @@ import java.util.Optional;
 
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class WelderBlockEntity extends MechanicalBearingBlockEntity implements IHaveGoggleInformation {
+public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
     public float HeadMove = 0;
     private float prevHeadMove = 0;
-    private final Vec3i movementDirection;
+    public final Vec3i movementDirection;
     private boolean velding = false;
     private int cooldown = 0;
     private WelderRecipeSpeed recipeSpeed = WelderRecipeSpeed.NORMAL;
     public boolean stopped = false;
+    public boolean running = false;
 
     private BlockState CraftState1;
     private BlockState CraftState2;
     private ItemStack CraftResult;
+
+    protected float angle;
+    private float prevAngle;
 
 
     public WelderBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -70,19 +76,29 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         movementDirection = getBlockState().getValue(FACING).getOpposite().getNormal();
     }
 
-    @Override
-    public void onSpeedChanged(float prevSpeed) {
-        super.onSpeedChanged(prevSpeed);
-        assembleNextTick = false;
+    public BlockState getCraftState(){
+        return CraftState1;
     }
 
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        super.addBehaviours(behaviours);
-        behaviours.remove(movementMode);
+    public float getInterpolatedAngle(float partialTicks) {
+        if (isVirtual())
+            return Mth.lerp(partialTicks + .5f, prevAngle, angle);
+        if (!running)
+            return 0f;
+        float angularSpeed = getAngularSpeed();
+        return Mth.lerp(partialTicks, angle, angle + angularSpeed);
     }
 
-    @Override
+    public float getAngularSpeed() {
+        float speed = convertToAngular(getSpeed());
+        if (getSpeed() == 0)
+            speed = 0;
+        if (level.isClientSide) {
+            speed *= ServerSpeedProvider.get();
+        }
+        return speed;
+    }
+
     public void assemble() {
         if(cooldown != 0){return;}
 
@@ -93,8 +109,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
 
         CraftState1 = level.getBlockState(block1Pos);
         CraftState2 = level.getBlockState(block2Pos);
-
-        super.assemble();
 
         if (CraftState1 == null || CraftState2 == null) return;
         // Поиск подходящего рецепта
@@ -114,17 +128,25 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                 OweldBe.get().recipeSpeed = this.recipeSpeed;
                 OweldBe.get().CraftResult = CraftResult.copy();
             }
-        }
+        } else {return;}
+
+        level.setBlock(worldPosition.relative(getBlockState().getValue(FACING)), Blocks.AIR.defaultBlockState(), 3);
+        AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(level, worldPosition);
+
+        running = true;
+        stopped = false;
+        angle = 0;
+        sendData();
     }
 
     @Override
     public void tick() {
         super.tick();
 
+        prevAngle = angle;
         prevHeadMove = HeadMove;
 
         if(!running && !stopped && getSpeed() != 0){
-            if(!level.isClientSide){
                 BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING));
                 BlockPos pos2 = pos.relative(getBlockState().getValue(FACING));
                 BlockState state = level.getBlockState(pos);
@@ -150,7 +172,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                         }
                     }
                 }
-            }
         }
 
         if (level.getGameTime() % 5 == 0) {
@@ -166,8 +187,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
             if(HeadMove < 0){
                 HeadMove = 0;
                 prevHeadMove = 0;
-            } else if (movedContraption != null){
-                movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove(0)));
             }
         }
 
@@ -176,6 +195,12 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
 
         if(cooldown > 0){cooldown--;}
+
+        if(running){
+            float angularSpeed = getAngularSpeed();
+            float newAngle = angle + angularSpeed;
+            angle = (float) (newAngle % 360);
+        }
     }
 
     private void Welding(){
@@ -183,14 +208,10 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
 
         if(HeadMove < 500){
             prevHeadMove = HeadMove;
-            HeadMove += combinedSpeed;;
+            HeadMove += combinedSpeed;
             renderParticles();
 
-            if (movedContraption != null){
-                movedContraption.moveTo(MoveWithoutVectors(1 + getHeadMove(0)));
-            }
-
-            if(HeadMove > 450){
+            if(getHeadMove(1) >= 1f){
                 velding = false;
                 ActivateResipe();
             }
@@ -204,11 +225,9 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         ItemParticleOption data;
         int amout = (int) ((Math.abs(this.speed) / 256f) * 5f);
 
-        if (movedContraption == null){return;}
-        for (StructureTemplate.StructureBlockInfo block : movedContraption.getContraption().getBlocks().values()) {
-            stackInSlot = block.state().getBlock().asItem().getDefaultInstance();
+        if (CraftState1 != null && CraftState2 != null) {
+            stackInSlot = CraftState1.getBlock().asItem().getDefaultInstance();
             data = new ItemParticleOption(ParticleTypes.ITEM, stackInSlot);
-
             ParticleHelper.spawnParticles(PartPos, data, amout, level);
         }
 
@@ -220,7 +239,7 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
         }
     }
 
-    private Vec3 MoveWithoutVectors(float Moving){
+    public Vec3 MoveWithoutVectors(float Moving){
         float offset = 1 - Moving - 0.5f;
         BlockPos pos = worldPosition;
         return new Vec3(
@@ -235,10 +254,10 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
 
         if(OweldBe.isPresent()) {
             WelderBlockEntity SecondBe = OweldBe.get();
-            if (this.movedContraption == null){
+            if (!running){
                 return false;
             }
-            if (SecondBe.movedContraption == null){
+            if (!SecondBe.running){
                 return false;
             }
             if(this.speed + SecondBe.speed == 0){
@@ -251,17 +270,15 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
     public float getHeadMove(float pt){
         return (Mth.lerp(pt, prevHeadMove, HeadMove) / 1000f * (recipeSpeed.getSpeedValue() / 2f) + 0.5f);
     }
-
-    @Override
     public void disassemble() {
-        super.disassemble();
-
         this.running = false;
-        this.angle = 0;
-
         velding = false;
         CraftResult = null;
         cooldown = 5;
+        angle = 0;
+
+        CraftState1 = null;
+        CraftState2 = null;
     }
 
     private Optional<WelderBlockEntity> FindWelderWelding(){
@@ -276,10 +293,6 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
                 return Optional.of((WelderBlockEntity) welderBE);
             }
         return Optional.empty();
-    }
-
-    public void SetAssemble(){
-        this.assembleNextTick = true;
     }
 
     public boolean getRunning(){
@@ -306,9 +319,7 @@ public class WelderBlockEntity extends MechanicalBearingBlockEntity implements I
             Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
 
             if(OweldBe.isPresent()){
-                this.movedContraption.kill();
                 this.disassemble();
-                OweldBe.get().movedContraption.kill();
                 OweldBe.get().disassemble();
             }
 

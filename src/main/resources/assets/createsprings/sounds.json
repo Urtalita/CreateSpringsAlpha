@@ -30,5 +30,15 @@
       }
     ],
     "subtitle": "createsprings.subtitle.punchcard"
+  },
+
+  "large_bweum": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "createsprings:large_bweum"
+      }
+    ],
+    "subtitle": "createsprings.subtitle.large_bweum"
   }
 }

@@ -40,5 +40,10 @@ public class CSpringsClientEvents {
         if(event.phase == TickEvent.Phase.END){
             ClientSpringAnimation.onTick();
         }
+
+        if(ClientForgeHandler.shakingTicks > 0){
+            ClientForgeHandler.shakingTicks--;
+            ClientForgeHandler.strength = ClientForgeHandler.DECAY * ClientForgeHandler.strength;
+        }
     }
 }

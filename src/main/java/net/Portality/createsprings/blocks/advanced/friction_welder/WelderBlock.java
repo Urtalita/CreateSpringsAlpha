@@ -55,7 +55,7 @@ public class WelderBlock extends BearingBlock implements IBE<WelderBlockEntity> 
                     be.stopped = true;
                     return;
                 }
-                be.SetAssemble();
+                be.running = true;
             });
 
             return InteractionResult.SUCCESS;
