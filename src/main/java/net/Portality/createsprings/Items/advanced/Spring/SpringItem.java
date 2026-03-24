@@ -10,13 +10,11 @@ import net.Portality.createsprings.Entities.Packages.SusPackageEntity;
 import net.Portality.createsprings.Items.ModItems;
 import net.Portality.createsprings.Items.advanced.SusPackage.SusPackageItem;
 import net.Portality.createsprings.Items.advanced.hat.HatItem;
-import net.Portality.createsprings.sounds.CSpringsSounds;
-import net.createmod.catnip.animation.AnimationTickHolder;
+import net.Portality.createsprings.client.sounds.CSpringsSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -312,6 +310,7 @@ public class SpringItem extends BlockItem {
                 .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
                .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));
+        super.appendHoverText(stack, level, tooltip, flag);
     }
 
     @Override

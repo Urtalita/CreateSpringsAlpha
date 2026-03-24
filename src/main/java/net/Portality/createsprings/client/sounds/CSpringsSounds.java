@@ -1,12 +1,9 @@
-package net.Portality.createsprings.sounds;
+package net.Portality.createsprings.client.sounds;
 
 import net.Portality.createsprings.CreateSprings;
 import net.Portality.createsprings.client.ClientForgeHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;

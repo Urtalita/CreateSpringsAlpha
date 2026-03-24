@@ -235,7 +235,7 @@ dependencies {
     //vs compatibility
 
 
-    /*
+
     implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
         exclude group: 'com.simibubi'
         exclude group: 'dev.engine-room'
@@ -251,8 +251,6 @@ dependencies {
         exclude group: 'org.joml'
     }
     implementation "thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"
-
-     */
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

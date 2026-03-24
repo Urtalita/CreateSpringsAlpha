@@ -1,7 +1,6 @@
 package net.Portality.createsprings;
 
-import com.simibubi.create.AllParticleTypes;
-import net.Portality.createsprings.particles.CSpringsParticles;
+import net.Portality.createsprings.client.particles.CSpringsParticles;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 public class CSpringsClient {

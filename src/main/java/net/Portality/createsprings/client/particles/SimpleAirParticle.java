@@ -1,17 +1,12 @@
-package net.Portality.createsprings.particles;
+package net.Portality.createsprings.client.particles;
 
 import com.simibubi.create.AllTags;
-import com.simibubi.create.content.kinetics.fan.AirFlowParticle;
-import com.simibubi.create.content.kinetics.fan.AirFlowParticleData;
-import com.simibubi.create.content.kinetics.fan.IAirCurrentSource;
-import com.simibubi.create.foundation.particle.AirParticle;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 

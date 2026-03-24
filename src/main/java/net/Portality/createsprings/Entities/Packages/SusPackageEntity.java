@@ -1,12 +1,11 @@
 package net.Portality.createsprings.Entities.Packages;
 
 import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.content.logistics.chute.ChuteBlock;
 import net.Portality.createsprings.config.ModConfigs;
 import net.Portality.createsprings.Entities.ModEntities;
 import net.Portality.createsprings.Entities.Projectile.SpringProjectile;
-import net.Portality.createsprings.sounds.CSpringsSounds;
+import net.Portality.createsprings.client.sounds.CSpringsSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -25,8 +24,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PlayMessages;
-
-import java.util.UUID;
 
 public class SusPackageEntity extends PackageEntity {
 

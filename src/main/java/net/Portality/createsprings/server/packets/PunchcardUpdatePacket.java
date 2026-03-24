@@ -3,14 +3,13 @@ package net.Portality.createsprings.server.packets;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.Portality.createsprings.Items.advanced.Punchcard.PunchcardItem;
 import net.Portality.createsprings.datagen.CSpringsAdvancements;
-import net.Portality.createsprings.sounds.CSpringsSounds;
+import net.Portality.createsprings.client.sounds.CSpringsSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
 public class PunchcardUpdatePacket extends SimplePacketBase {

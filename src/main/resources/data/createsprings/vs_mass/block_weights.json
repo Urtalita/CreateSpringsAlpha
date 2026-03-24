@@ -1,0 +1,72 @@
+[
+  {
+    "block": "createsprings:spring",
+    "mass": 675.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:spring_alloy_block",
+    "mass": 2250.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:unfinished_spring",
+    "mass": 450.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:obsidian_plate",
+    "mass": 50.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:connectable_weathered_iron",
+    "mass": 100.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:obsidian_slab",
+    "mass": 250.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:large_spring",
+    "mass": 10000.0,
+    "priority": 101
+  },
+  {
+    "block": "createsprings:large_spring_extention",
+    "mass": 0.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:large_spring_coil",
+    "mass": 500.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:spring_catapult",
+    "mass": 1200.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:kinetic_interface",
+    "mass": 800.0,
+    "priority": 101
+  },
+
+  {
+    "block": "createsprings:spring_alloy_casing",
+    "mass": 1100.0,
+    "priority": 101
+  }
+]

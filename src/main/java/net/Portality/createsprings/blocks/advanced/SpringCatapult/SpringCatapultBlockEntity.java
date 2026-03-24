@@ -4,11 +4,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.Portality.createsprings.config.ModConfigs;
-import net.Portality.createsprings.sounds.CSpringsSounds;
-import net.createmod.catnip.math.VecHelper;
+import net.Portality.createsprings.client.sounds.CSpringsSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,7 +23,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -570,10 +566,6 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
 
     public void dropContent(BlockPos pos){
         if (heldStack.isEmpty()) return;
-
-        ItemEntity entityIn = new ItemEntity(level, pos.getX(), pos.above(2).getY(), pos.getZ(), heldStack);
-        heldStack = ItemStack.EMPTY;
-        level.addFreshEntity(entityIn);
     }
 
     @Override

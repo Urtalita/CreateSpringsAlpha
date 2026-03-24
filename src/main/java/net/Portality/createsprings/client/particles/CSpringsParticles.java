@@ -1,16 +1,5 @@
-package net.Portality.createsprings.particles;
+package net.Portality.createsprings.client.particles;
 
-import com.simibubi.create.AllParticleTypes;
-import com.simibubi.create.Create;
-import com.simibubi.create.content.equipment.bell.SoulBaseParticle;
-import com.simibubi.create.content.equipment.bell.SoulParticle;
-import com.simibubi.create.content.fluids.particle.FluidParticleData;
-import com.simibubi.create.content.kinetics.base.RotationIndicatorParticleData;
-import com.simibubi.create.content.kinetics.fan.AirFlowParticleData;
-import com.simibubi.create.content.kinetics.steamEngine.SteamJetParticleData;
-import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
-import com.simibubi.create.content.trains.CubeParticleData;
-import com.simibubi.create.foundation.particle.AirParticleData;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
 import net.Portality.createsprings.CreateSprings;
 import net.createmod.catnip.lang.Lang;

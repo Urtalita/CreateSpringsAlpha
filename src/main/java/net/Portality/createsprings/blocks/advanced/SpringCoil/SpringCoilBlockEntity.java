@@ -95,6 +95,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
             direction = getBlockState().getValue(FACING);
         }
 
+        if(len <= 0){return;}
         level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
 
         BlockPos min = worldPosition.above(5).east(5).north(5);
