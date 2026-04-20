@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "createsprings:block/weathered_iron",
-    "side": "createsprings:block/weathered_iron_side"
-  }
-}
