@@ -1,0 +1,13 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy"
+    }
+  ],
+  "results": [
+    {
+      "id": "createsprings:spring_alloy"
+    }
+  ]
+}

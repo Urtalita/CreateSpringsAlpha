@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:smooth_stone"
+  },
+  "second_block": {
+    "item": "minecraft:granite"
+  },
+  "result": {
+    "item": "create:copper_nugget",
+    "count": 2
+  },
+  "speed": "FAST"
+}

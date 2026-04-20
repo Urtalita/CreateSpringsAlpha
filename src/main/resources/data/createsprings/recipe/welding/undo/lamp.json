@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:rose_quartz_lamp"
+  },
+  "second_block": {
+    "item": "create:rose_quartz_lamp"
+  },
+  "result": {
+    "item": "create:rose_quartz_block",
+    "count": 2
+  },
+  "speed": "FAST"
+}

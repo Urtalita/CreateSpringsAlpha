@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "minecraft:lightning_rod"
+  },
+  "second_block": {
+    "item": "minecraft:lightning_rod"
+  },
+  "result": {
+    "item": "create:copper_nugget",
+    "count": 21
+  },
+  "speed": "FAST"
+}

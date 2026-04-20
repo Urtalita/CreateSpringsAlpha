@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:zinc_block"
+  },
+  "second_block": {
+    "item": "minecraft:copper_block"
+  },
+  "result": {
+    "item": "create:brass_block",
+    "count": 2
+  },
+  "speed": "SLOW"
+}

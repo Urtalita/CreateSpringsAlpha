@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_spring": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "createsprings:spring"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  },
+  "display": {
+    "icon": {
+      "item": "createsprings:spring"
+    },
+    "title": {
+      "translate": "advancement.createsprings.create_spring.title"
+    },
+    "description": {
+      "translate": "advancement.createsprings.create_spring.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  }
+}

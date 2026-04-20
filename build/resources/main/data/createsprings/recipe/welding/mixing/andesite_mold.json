@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:andesite_casing"
+  },
+  "second_block": {
+    "item": "create:shaft"
+  },
+  "result": {
+    "item": "createsprings:andesite_mold",
+    "count": 1
+  },
+  "speed": "NORMAL"
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "createsprings:block/obsidian_slab/obsidian_slab"
+    },
+    "type=double": {
+      "model": "createsprings:block/obsidian_slab/obsidian_slab_double"
+    },
+    "type=top": {
+      "model": "createsprings:block/obsidian_slab/obsidian_slab_up"
+    }
+  }
+}

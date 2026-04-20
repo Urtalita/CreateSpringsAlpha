@@ -1,0 +1,94 @@
+{
+  "creativetab.create_springs_main_tab": "Create springs",
+
+  "createsprings.recipe.casting": "Casting",
+
+  "createsprings.recipe.welding": "Welding",
+  "createsprings.recipe.speed": "Recipe speed: %s",
+  "createsprings.speed.fast": "Fast",
+  "createsprings.speed.normal": "Normal",
+  "createsprings.speed.slow": "Slow",
+
+  "tooltip.springstuf.needsprings1": "can accept up to ",
+  "tooltip.springstuf.needsprings2": " springs",
+  "tooltip.springstuf.modifiers": "Contains:",
+  "tooltip.springstuf.speed": "Speed: ",
+  "create.spring.saved": "Stored:",
+  "tooltip.springstuf.saved": "Stored:",
+  "create.spring.len": "Length:",
+  "create.spring.su": "su-sec",
+  "createsprings.charge": "Charge",
+  "create.spring.switch.su": "000 su",
+  "create.large_spring.switch.su": "000 000 su",
+  "spring.hardness": "select spring stiffness",
+
+  "create.createsprings.splash_mode": "Splash mode:",
+  "createsprings.on": "On",
+  "createsprings.off": "Off",
+
+  "createsprings.punchcard.executor.title": "Executors:",
+  "createsprings.punchcard.name": "Name:",
+  "createsprings.punchcard.action.title": "Instructions for current executor:",
+
+  "createsprings.punchcard.waitForSpeedIncreased": "Wait until the speed decreases to",
+  "createsprings.punchcard.waitForSpeedDecreased": "Wait until the speed increases to",
+  "createsprings.punchcard.use": "Use item",
+  "createsprings.punchcard.end": "End",
+  "createsprings.punchcard.detachSpring": "Detach spring",
+  "createsprings.punchcard.sendMessage": "Display message above hotbar",
+  "createsprings.punchcard.wait": "Wait ticks",
+  "createsprings.punchcard.potatoCannonShoot": "Shoot",
+  "createsprings.punchcard.waitForSelected": "Wait until selected",
+  "createsprings.punchcard.waitForActivation": "Wait until Activation",
+  "createsprings.punchcard.replace": "Find and replace spring",
+  "createsprings.punchcard.shootFromSpringLauncher": "Shoot",
+  "createsprings.punchcard.explodeChamber": "explode gunpowder in chamber",
+  "createsprings.punchcard.toggleBoost": "Toggle Boost",
+  "createsprings.punchcard.steamDash": "Do Steam Dash",
+  "createsprings.punchcard.potatoCannonTripleShoot": "Triple Shoot",
+  "createsprings.punchcard.airDash": "Air Dash",
+  "createsprings.punchcard.grab": "Grab Block",
+  "createsprings.punchcard.push_off": "Push off block",
+  "createsprings.punchcard.slim": "End",
+
+  "create.spring.stopped": "it looks like the spring can't move further because of non breakable blocks",
+
+  "death.attack.createsprings.spring": "%1$s encountered a spring-powered surprise",
+  "death.attack.createsprings.spring.player": "%1$s encountered a spring-powered surprise",
+
+  "death.attack.createsprings.pse": "%1$s died from a boiler explosion",
+  "death.attack.createsprings.spring.pse": "%1$s died from a boiler explosion",
+
+  "death.attack.createsprings.spring_box": "%1$s should have read the label",
+  "death.attack.createsprings.spring_box.player": "%1$s should have read the label",
+
+  "key.createsprings.activate_punchcard": "activate punchcard",
+  "key.createsprings.pse_boost": "toggle PSE boost",
+  "key.createsprings.pse_dash": "Do Steam Dash",
+  "key.createsprings.pse_open": "open PSE interface",
+
+  "createsprings.pse.boost": "Overdrive: ",
+  "createsprings.pse.dash": "Steam Dash: ",
+  "createsprings.pse.fuel_usage": "uses as much fuel as: ",
+  "createsprings.pse.furnace": " furnaces",
+
+  "key.categories.createsprings": "Create Springs",
+  "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside",
+
+  "createsprings.display_source.spring.progress_bar": "Progress Bar",
+  "createsprings.display_source.spring.precent": "Percent",
+  "createsprings.display_source.spring.stored": "Charge",
+  "createsprings.display_source.spring.capacity": "Capacity",
+  "createsprings.display_source.spring.len": "Lenght",
+  "createsprings.display_source.spring.max_len": "Max lenght",
+  "createsprings.display_source.spring.stress": "Stress impact",
+  "createsprings.display_source.spring.gen": "Stress capacity",
+
+  "createsprings.display_source.spring": "Spring",
+  "createsprings.display_source.spring.display": "Displayed info:",
+  "createsprings.display_source.large_spring": "Large Spring",
+
+  "createsprings.spring_catapult.target_set": "target set",
+  "createsprings.spring_catapult.target2_set": "second target set",
+  "createsprings.spring_catapult.target_cleared": "targets cleared"
+}

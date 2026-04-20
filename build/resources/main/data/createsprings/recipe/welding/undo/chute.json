@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:chute"
+  },
+  "second_block": {
+    "item": "create:chute"
+  },
+  "result": {
+    "item": "minecraft:iron_nugget",
+    "count": 24
+  },
+  "speed": "FAST"
+}

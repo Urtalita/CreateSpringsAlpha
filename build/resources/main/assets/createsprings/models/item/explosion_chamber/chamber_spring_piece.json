@@ -1,0 +1,52 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"1": "createsprings:item/spring_drill",
+		"particle": "createsprings:item/explosion_chamber"
+	},
+	"elements": [
+		{
+			"from": [6.25, 7.85, 3.4],
+			"to": [7.25, 9.85, 4.4],
+			"rotation": {"angle": -45, "axis": "z", "origin": [7, 8.6, 3.4]},
+			"faces": {
+				"north": {"uv": [5.5, 3, 6, 4], "texture": "#1"},
+				"east": {"uv": [5.5, 3, 6, 4], "texture": "#1"},
+				"south": {"uv": [5.5, 3, 6, 4], "texture": "#1"},
+				"west": {"uv": [6.5, 12.5, 7, 13.5], "texture": "#1"},
+				"up": {"uv": [5, 3.5, 5.5, 4], "texture": "#1"},
+				"down": {"uv": [5, 3, 5.5, 3.5], "texture": "#1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [44, 0, 0],
+			"translation": [0, 2.75, -3]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [46, 0, 0],
+			"translation": [0.25, 2.5, -2.75]
+		},
+		"firstperson_righthand": {
+			"translation": [-8.5, 0, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [-9, 0, 0]
+		},
+		"gui": {
+			"rotation": [45, -34, 0],
+			"translation": [-0.75, -1, 0],
+			"scale": [0.75, 0.75, 0.75]
+		},
+		"head": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 11.5, 0]
+		},
+		"fixed": {
+			"rotation": [-90, 180, 0],
+			"translation": [0, -2.75, 0]
+		}
+	}
+}

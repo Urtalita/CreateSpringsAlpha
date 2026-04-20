@@ -1,0 +1,78 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"15": "createsprings:item/spring_launcher",
+		"spyglass": "createsprings:item/spyglass_model",
+		"particle": "createsprings:item/spring_launcher"
+	},
+	"elements": [
+		{
+			"from": [7, 18.25, 7.25],
+			"to": [9, 20.25, 12.25],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 19.25, 7]},
+			"faces": {
+				"east": {"uv": [0, 2, 2, 7], "rotation": 270, "texture": "#spyglass"},
+				"south": {"uv": [0, 0, 2, 2], "texture": "#spyglass"},
+				"west": {"uv": [0, 2, 2, 7], "rotation": 90, "texture": "#spyglass"},
+				"up": {"uv": [0, 2, 2, 7], "rotation": 180, "texture": "#spyglass"},
+				"down": {"uv": [0, 2, 2, 7], "texture": "#spyglass"}
+			}
+		},
+		{
+			"from": [6.9, 18.15, 1.15],
+			"to": [9.1, 20.35, 7.35],
+			"rotation": {"angle": 0, "axis": "x", "origin": [8, 19.25, 7]},
+			"faces": {
+				"north": {"uv": [0, 13, 2, 15], "rotation": 180, "texture": "#spyglass"},
+				"east": {"uv": [0, 7, 2, 13], "rotation": 270, "texture": "#spyglass"},
+				"south": {"uv": [0, 5, 2, 7], "texture": "#spyglass"},
+				"west": {"uv": [0, 7, 2, 13], "rotation": 90, "texture": "#spyglass"},
+				"up": {"uv": [0, 7, 2, 13], "rotation": 180, "texture": "#spyglass"},
+				"down": {"uv": [0, 7, 2, 13], "texture": "#spyglass"}
+			}
+		},
+		{
+			"from": [7, 15, 5],
+			"to": [9, 18.2, 7],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 15, 5]},
+			"faces": {
+				"north": {"uv": [5, 9.75, 5.5, 10.45], "texture": "#15"},
+				"east": {"uv": [5, 9.75, 5.5, 10.45], "texture": "#15"},
+				"south": {"uv": [5, 9.75, 5.5, 10.45], "texture": "#15"},
+				"west": {"uv": [5, 9.75, 5.5, 10.45], "texture": "#15"},
+				"up": {"uv": [5, 9.75, 5.5, 10.25], "texture": "#15"},
+				"down": {"uv": [5, 9.75, 5.5, 10.25], "texture": "#15"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [0, -2, 0]
+		},
+		"ground": {
+			"rotation": [90, 0, 0]
+		},
+		"gui": {
+			"rotation": [-67.5, 0, 45],
+			"scale": [1.5, 1.5, 1.5]
+		},
+		"head": {
+			"rotation": [90, 0, 0],
+			"translation": [0, 0, -16],
+			"scale": [1.6, 1.6, 1.6]
+		},
+		"fixed": {
+			"translation": [0, 0, -1.5],
+			"scale": [1.5, 1.5, 1.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "spyglass",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

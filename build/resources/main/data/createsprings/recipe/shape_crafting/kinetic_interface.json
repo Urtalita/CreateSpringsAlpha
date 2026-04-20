@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " s ",
+    "hih",
+    "aca"
+  ],
+  "key": {
+    "s": {
+      "item": "create:shaft"
+    },
+    "i": {
+      "item": "create:industrial_iron_block"
+    },
+    "c": {
+      "item": "create:brass_casing"
+    },
+    "h": {
+      "tag": "forge:plates/iron"
+    },
+    "a": {
+      "item": "createsprings:spring_alloy"
+    }
+  },
+  "result": {
+    "item": "createsprings:kinetic_interface"
+  }
+}

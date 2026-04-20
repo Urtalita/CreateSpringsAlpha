@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "createsprings:block/obsidian_plate",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "createsprings:block/obsidian_plate",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "createsprings:block/obsidian_plate",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "createsprings:block/obsidian_plate",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "createsprings:block/obsidian_plate"
+    },
+    "facing=west": {
+      "model": "createsprings:block/obsidian_plate",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "second_block": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "result": {
+    "item": "minecraft:charcoal",
+    "count": 2
+  },
+  "speed": "FAST"
+}

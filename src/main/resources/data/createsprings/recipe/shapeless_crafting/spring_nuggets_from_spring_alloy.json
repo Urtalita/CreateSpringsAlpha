@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "createsprings:spring_alloy_nugget"
+  }
+}

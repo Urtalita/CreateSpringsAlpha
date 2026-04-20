@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "createsprings:block/spring_alloy_block"
+    }
+  }
+}

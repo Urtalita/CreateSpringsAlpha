@@ -1,0 +1,20 @@
+/give Dev createsprings:spring_alloy
+/locate structure minecraft:trial_chambers
+/tp @s 192 ~ -336
+/give Dev createsprings:spring_alloy_block
+/give Dev createsprings:spring_alloy_nugget
+/give Dev createsprings:spring_alloy_sheet
+/setblock ~ ~ ~ createsprings:spring
+/setblock 206 -26 -345 createsprings:spring
+/setblock 206 -25 -345 createsprings:spring
+/data get entity Dev SelectedItem
+/time set day
+/data get entity Dev SelectedItem
+/time set day
+/summon createsprings:spring_alloy_block_projectile
+/summon createsprings:spring_projectile
+/locate structure minecraft:trial_chambers
+/time set day
+/gamerule doDaylightCycle false
+/gamerule doWeatherCycle false
+/data get entity Dev SelectedItem

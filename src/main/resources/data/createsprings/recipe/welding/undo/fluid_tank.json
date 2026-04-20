@@ -1,0 +1,14 @@
+{
+  "type": "createsprings:welding",
+  "first_block": {
+    "item": "create:fluid_tank"
+  },
+  "second_block": {
+    "item": "create:fluid_tank"
+  },
+  "result": {
+    "item": "create:copper_nugget",
+    "count": 27
+  },
+  "speed": "FAST"
+}

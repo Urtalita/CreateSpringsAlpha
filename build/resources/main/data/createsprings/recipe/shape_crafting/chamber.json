@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "aha",
+    "pgp",
+    "apa"
+  ],
+  "key": {
+    "a": {
+      "item": "create:andesite_alloy"
+    },
+    "p": {
+      "item": "createsprings:obsidian_plate"
+    },
+    "h": {
+      "item": "create:item_hatch"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    }
+  },
+  "result": {
+    "item": "createsprings:explosion_chamber"
+  }
+}

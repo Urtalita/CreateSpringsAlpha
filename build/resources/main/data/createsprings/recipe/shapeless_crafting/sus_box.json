@@ -1,0 +1,17 @@
+{
+  "type": "createsprings:nbt_aware_shapeless",
+  "ingredients": [
+    {
+      "item": "createsprings:spring"
+    },
+    {
+      "item": "create:cardboard"
+    },
+    {
+      "item": "minecraft:tripwire_hook"
+    }
+  ],
+  "result": {
+    "item": "createsprings:sus_package"
+  }
+}

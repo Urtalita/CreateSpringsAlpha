@@ -1,0 +1,29 @@
+--------------------------------------------------------------------------------
+
+Command-Line:
+ - C:\Program Files\Eclipse Adoptium\jdk-21.0.4.7-hotspot\bin\java.exe
+ - -jar
+ - C:\Users\roman\.gradle\caches\modules-2\files-2.1\io.codechicken\DiffPatch\2.0.0.36\5b32f9baa0c0371c0dc80a3b88794960af0c6b44\DiffPatch-2.0.0.36-all.jar
+ - C:\Users\roman\.gradle\caches\neoformruntime\intermediate_results\inject_6352ddf90e28d0fb7914ec37ef297d9961d37609_output.jar
+ - C:\Users\roman\.gradle\caches\modules-2\files-2.1\net.neoforged\neoform\1.21.1-20240808.144430\811e2bd86fa2cda2812e5e8e51d718ea8bd6d3f4\neoform-1.21.1-20240808.144430.zip
+ - --prefix
+ - patches/joined/
+ - --patch
+ - --archive
+ - ZIP
+ - --output
+ - ./output.zip
+ - --log-level
+ - WARN
+ - --mode
+ - OFFSET
+ - --archive-rejects
+ - ZIP
+ - --reject
+ - ./outputRejects.zip
+ - --base-path-prefix
+ - a/
+ - --modified-path-prefix
+ - b/
+--------------------------------------------------------------------------------
+
