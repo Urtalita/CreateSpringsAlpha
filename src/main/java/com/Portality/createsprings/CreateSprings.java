@@ -14,6 +14,7 @@ import com.Portality.createsprings.items.ModItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
+import com.Portality.createsprings.recipe.ModRecipes;
 import com.Portality.createsprings.utill.CSpringsDataComponents;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllEntityTypes;
@@ -107,6 +108,7 @@ public class CreateSprings {
         CSpringsSounds.register(modEventBus);
         CSpringsParticles.register(modEventBus);
         ModEntities.register(modEventBus);
+        ModRecipes.register(modEventBus);
 
         ModConfigs.register(modLoadingContext, modContainer);
         modEventBus.addListener(ModEntities::registerEntityAttributes);

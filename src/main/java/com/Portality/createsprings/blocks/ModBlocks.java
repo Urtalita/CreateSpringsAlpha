@@ -4,6 +4,7 @@ import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
 import com.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
+import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.client.CSpringsAssetLookup;
 import com.Portality.createsprings.client.CSpringsSpriteShifts;
@@ -172,8 +173,6 @@ public class ModBlocks {
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
-    /*
-
     public static final BlockEntry<WelderBlock> FRICTION_WELDER = CSPRINGS_REGISTRATE
             .block("friction_welder", WelderBlock::new)
             .initialProperties(SharedProperties::copperMetal)
@@ -185,7 +184,7 @@ public class ModBlocks {
             .item()
             .transform(customItemModel())
             .register();
-    */
+
 
     public static final BlockEntry<SpringBlock> SPRING = CSPRINGS_REGISTRATE
             .block("spring", SpringBlock::new)

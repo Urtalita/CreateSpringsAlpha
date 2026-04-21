@@ -7,8 +7,8 @@
     "item": "minecraft:ancient_debris"
   },
   "result": {
-    "item": "minecraft:netherite_scrap",
-    "count": 2
+    "count": 2,
+    "id": "minecraft:netherite_scrap"
   },
-  "speed": "SLOW"
+  "speed": "slow"
 }
