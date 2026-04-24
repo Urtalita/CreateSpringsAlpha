@@ -1,6 +1,8 @@
 {
   "values": [
+    "createsprings:filled_andesite_mold",
     "createsprings:large_spring_coil",
+    "createsprings:friction_welder",
     "createsprings:spring"
   ]
 }

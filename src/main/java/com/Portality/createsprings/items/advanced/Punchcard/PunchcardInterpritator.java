@@ -1,10 +1,9 @@
 package com.Portality.createsprings.items.advanced.Punchcard;
 
 import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.items.ModItems;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;

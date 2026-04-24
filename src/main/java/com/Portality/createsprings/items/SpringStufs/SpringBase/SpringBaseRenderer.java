@@ -5,7 +5,7 @@ import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
@@ -20,8 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-
-import java.awt.*;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringInstance.SPRING_LEN;
 import static com.Portality.createsprings.items.SpringStufs.SpringSpeedSys.getSpeed;

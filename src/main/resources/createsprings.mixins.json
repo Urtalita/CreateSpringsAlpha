@@ -1,11 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.Portality.createsprings.mixin",
+  "package": "com.Portality.createsprings.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "banner.CreativeTabMixin"
   ],
   "client": [
+    "banner.MixinCreativeModeInventoryScreen"
   ],
   "injectors": {
     "defaultRequire": 1

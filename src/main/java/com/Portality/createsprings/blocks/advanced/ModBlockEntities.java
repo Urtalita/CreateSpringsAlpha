@@ -2,15 +2,21 @@ package com.Portality.createsprings.blocks.advanced;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.advanced.AndesiteMold.MoldBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilRenderer;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
+import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
+import com.Portality.createsprings.blocks.advanced.friction_welder.WelderRenderer;
+import com.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.blocks.advanced.spring.SpringRenderer;
 import com.Portality.createsprings.blocks.advanced.spring.SpringVisual;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+
+import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
 public class ModBlockEntities {
 
@@ -24,11 +30,6 @@ public class ModBlockEntities {
             .validBlocks(ModBlocks.KINETIC_INTERFACE)
             .register();
 
-    public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
-            .blockEntity("mold", MoldBlockEntity::new)
-            .validBlocks(ModBlocks.FILLED_ANDESITE_MOLD)
-            .register();
-
     public static final BlockEntityEntry<LargeSpringBlockEntity> LARGE_SPRING = CSPRINGS_REGISTRATE
             .blockEntity("large_spring", LargeSpringBlockEntity::new)
             .visual(() -> LargeSpringVisual::new)
@@ -37,6 +38,11 @@ public class ModBlockEntities {
             .register();
 
      */
+
+    public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
+            .blockEntity("mold", MoldBlockEntity::new)
+            .validBlocks(ModBlocks.FILLED_ANDESITE_MOLD)
+            .register();
 
     public static final BlockEntityEntry<SpringBlockEntity> SPRING = REGISTRATE
             .blockEntity("spring", SpringBlockEntity::new)
@@ -55,14 +61,15 @@ public class ModBlockEntities {
             .renderer(() -> SpringCatapultRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<WelderBlockEntity> FRICTION_WELDER = CSPRINGS_REGISTRATE
+     */
+
+    public static final BlockEntityEntry<WelderBlockEntity> FRICTION_WELDER = REGISTRATE
             .blockEntity("friction_welder", WelderBlockEntity::new)
             .visual(() -> WelderVisual::new)
             .validBlocks(ModBlocks.FRICTION_WELDER)
             .renderer(() -> WelderRenderer::new)
             .register();
 
-    */
 
     public static final BlockEntityEntry<SpringCoilBlockEntity> LARGE_SPRING_COIL = REGISTRATE
             .blockEntity("large_spring_coil", SpringCoilBlockEntity::new)

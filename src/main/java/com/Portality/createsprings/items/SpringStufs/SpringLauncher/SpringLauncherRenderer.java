@@ -3,7 +3,7 @@ package com.Portality.createsprings.items.SpringStufs.SpringLauncher;
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBaseRenderer;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;

@@ -25,7 +25,7 @@ public enum PunchcardFunction {
     DETACH_SPRING(PunchcardInterpritator.detachSpring(), false, false, "detachSpring", new PunchcardExecutor[]{
             PunchcardExecutor.SPRING_BASE,
             //PunchcardExecutor.EXPLOSION_CHAMBER,
-            //PunchcardExecutor.SPRING_LAUNCHER
+            PunchcardExecutor.SPRING_LAUNCHER
     }),
 
     SEND_MESSAGE(PunchcardInterpritator.sendMessage(), true, false,"sendMessage", PunchcardExecutor.values()),
@@ -37,7 +37,7 @@ public enum PunchcardFunction {
     WAIT_FOR_SLOT_SELECTED(PunchcardInterpritator.waitForSlotSelected(), false, false,"waitForSelected", PunchcardExecutor.values()),
 
     SHOOT_FROM_SPRING_LAUNCHER(PunchcardInterpritator.shootFromSpringLauncher(), false, false, "shootFromSpringLauncher", new PunchcardExecutor[]{
-            //PunchcardExecutor.SPRING_LAUNCHER
+            PunchcardExecutor.SPRING_LAUNCHER
     }),
 
     EXPLODE_CHAMBER(PunchcardInterpritator.explodeChamber(), false, false, "explodeChamber", new PunchcardExecutor[]{

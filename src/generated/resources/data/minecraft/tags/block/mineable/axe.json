@@ -1,6 +1,8 @@
 {
   "values": [
     "createsprings:connectable_weathered_iron",
+    "createsprings:filled_andesite_mold",
+    "createsprings:andesite_mold",
     "createsprings:spring_alloy_casing"
   ]
 }

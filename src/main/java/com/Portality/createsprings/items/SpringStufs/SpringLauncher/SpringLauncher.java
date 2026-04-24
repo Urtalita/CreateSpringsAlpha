@@ -1,6 +1,5 @@
 package com.Portality.createsprings.items.SpringStufs.SpringLauncher;
 
-import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.entities.Projectile.SpringAlloyBlockProjectile;
@@ -12,7 +11,7 @@ import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.advanced.Punchcard.ExecutorInfo;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.model.HumanoidModel;

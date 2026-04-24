@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.advanced.Punchcard;
 
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;

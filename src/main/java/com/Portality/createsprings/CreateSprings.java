@@ -2,23 +2,22 @@ package com.Portality.createsprings;
 
 import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
-import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.client.particles.CSpringsParticles;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.datagen.CSpringsDatagen;
 import com.Portality.createsprings.entities.ModEntities;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
+import com.Portality.createsprings.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.ModItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.recipe.ModRecipes;
-import com.Portality.createsprings.utill.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.AllEntityTypes;
-import com.simibubi.create.AllParticleTypes;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -28,7 +27,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -47,6 +46,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -109,10 +110,15 @@ public class CreateSprings {
         CSpringsParticles.register(modEventBus);
         ModEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
+        CSpringsFluids.register();
+
+        CSpringsDatagen.addExtraRegistrateData();
 
         ModConfigs.register(modLoadingContext, modContainer);
         modEventBus.addListener(ModEntities::registerEntityAttributes);
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
+        modEventBus.addListener(this::registerCapabilities);
 
         if (FMLEnvironment.dist.isClient()) {
             forgeBus.addListener(OverlayHandler::onRenderOverlay);
@@ -134,21 +140,28 @@ public class CreateSprings {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        //CSpringsFluids.registerFluidInteractions();
+        CSpringsFluids.registerFluidInteractions();
         event.enqueueWork(() -> {
             SPRING_TOOLS = new Item[]{
-            /*        ModItems.SPRING_BASE.get(),
+                    ModItems.SPRING_BASE.get(),
                     ModItems.SPRING_LAUNCHER.get(),
                     ModItems.SPRING_SAW.get(),
                     ModItems.SPRING_DRILL.get(),
                     ModItems.SPRING_SHOVE.get(),
-                    ModItems.EXPLOSION_CHAMBER.get(),
-                    ModItems.PORTATIVE_STEAM_ENGINE.get(),
+                    //ModItems.EXPLOSION_CHAMBER.get(),
+                    //ModItems.PORTATIVE_STEAM_ENGINE.get(),
                     ModItems.SPRING_FAN.get()
-
-             */
             };
         });
+    }
+
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        // Регистрируем обработчик предметов для нашего Block Entity
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK, // Тип капсулы (инвентарь)
+                ModBlockEntities.MOLD.get(), // Ваш BlockEntityType
+                (be, side) -> be.getItemHandler() // Лямбда, вызывающая метод из BE
+        );
     }
 
 

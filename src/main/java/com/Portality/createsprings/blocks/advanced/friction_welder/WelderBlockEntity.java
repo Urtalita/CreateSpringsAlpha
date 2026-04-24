@@ -86,6 +86,11 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
         return speed;
     }
 
+    @Override
+    public boolean isSpeedRequirementFulfilled() {
+        return Mth.abs(getSpeed()) >= 64;
+    }
+
     public void assemble() {
         if(cooldown != 0){return;}
 
@@ -99,11 +104,11 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
 
         if (CraftState1 == null || CraftState2 == null) return;
         // Поиск подходящего рецепта
+
+        WelderRecipeWrapper input = WelderRecipeWrapper.fromStates(CraftState1, CraftState2);
+
         Optional<RecipeHolder<WelderRecipe>> recipe = level.getRecipeManager()
-                .getAllRecipesFor(ModRecipes.WELDER_TYPE.get())
-                .stream()
-                .filter(r -> r.value().matches(new WelderRecipeWrapper(new ItemStack(CraftState1.getBlock()), new ItemStack(CraftState2.getBlock())), level))
-                .findFirst();
+                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
 
         if (recipe.isPresent()) {
             recipeSpeed = recipe.get().value().getSpeed();
@@ -126,6 +131,26 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
         sendData();
     }
 
+    public void assembleNoCheck() {
+        if(cooldown != 0){return;}
+
+        Direction facing = getBlockState().getValue(FACING);
+
+        BlockPos block1Pos = worldPosition.relative(facing, 1);
+        BlockPos block2Pos = worldPosition.relative(facing, 2);
+
+        CraftState1 = level.getBlockState(block1Pos);
+        CraftState2 = level.getBlockState(block2Pos);
+
+        level.setBlock(worldPosition.relative(getBlockState().getValue(FACING)), Blocks.AIR.defaultBlockState(), 3);
+        AllSoundEvents.CONTRAPTION_ASSEMBLE.playOnServer(level, worldPosition);
+
+        running = true;
+        stopped = false;
+        angle = 0;
+        sendData();
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -133,7 +158,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
         prevAngle = angle;
         prevHeadMove = HeadMove;
 
-        if(!running && !stopped && getSpeed() != 0){
+        if(!running && !stopped && getSpeed() > 0){
                 BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING));
                 BlockPos pos2 = pos.relative(getBlockState().getValue(FACING));
                 BlockState state = level.getBlockState(pos);
@@ -145,7 +170,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
                             if(!OweldBe.get().running){
                                 OweldBe.get().assemble();
                                 if(OweldBe.get().running){
-                                    assemble();
+                                    assembleNoCheck();
                                 }
                             }
                         }
@@ -191,6 +216,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
     }
 
     private void Welding(){
+        if(!isSpeedRequirementFulfilled()){return;}
         float combinedSpeed = (Math.abs(this.speed) / 256f) * recipeSpeed.getSpeedValue();
 
         if(HeadMove < 500){
@@ -289,17 +315,14 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
     public void ActivateResipe() {
         if (CraftState1 == null || CraftState2 == null) return;
         // Поиск подходящего рецепта
+        WelderRecipeWrapper input = WelderRecipeWrapper.fromStates(CraftState1, CraftState2);
+        WelderRecipeWrapper input2 = WelderRecipeWrapper.fromStates(CraftState2, CraftState1);
+
         Optional<RecipeHolder<WelderRecipe>> recipe = level.getRecipeManager()
-                .getAllRecipesFor(ModRecipes.WELDER_TYPE.get())
-                .stream()
-                .filter(r -> r.value().matches(new WelderRecipeWrapper(new ItemStack(CraftState1.getBlock()), new ItemStack(CraftState2.getBlock())), level))
-                .findFirst();
+                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
 
         Optional<RecipeHolder<WelderRecipe>> recipe2 = level.getRecipeManager()
-                .getAllRecipesFor(ModRecipes.WELDER_TYPE.get())
-                .stream()
-                .filter(r -> r.value().matches(new WelderRecipeWrapper(new ItemStack(CraftState2.getBlock()), new ItemStack(CraftState1.getBlock())), level))
-                .findFirst();
+                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
 
         if (recipe.isPresent() || recipe2.isPresent()) {
 
@@ -310,7 +333,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
                 OweldBe.get().disassemble();
             }
 
-            ItemStack result = recipe.get().value().getResultItem(level.registryAccess());
+            ItemStack result = recipe.get().value().getResult().copy();
             CraftResult = null;
 
             if(optimiseWelding(result, worldPosition.relative(getBlockState().getValue(FACING)))) return;

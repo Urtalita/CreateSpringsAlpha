@@ -1,6 +1,7 @@
 package com.Portality.createsprings.blocks;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.blocks.advanced.AndesiteMold.AndesiteMoldBlock;
 import com.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
 import com.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
@@ -121,8 +122,6 @@ public class ModBlocks {
             .build()
             .register();
 
-    /*
-
     public static final BlockEntry<AndesiteMoldBlock> FILLED_ANDESITE_MOLD = CSPRINGS_REGISTRATE
             .block("filled_andesite_mold", AndesiteMoldBlock::new)
             .initialProperties(SharedProperties::wooden)
@@ -133,6 +132,17 @@ public class ModBlocks {
             .simpleItem()
             .register();
 
+    public static final BlockEntry<CSpringsDierectionalBlock> ANDESITE_MOLD = CSPRINGS_REGISTRATE
+            .block("andesite_mold", CSpringsDierectionalBlock::new)
+            .initialProperties(SharedProperties::wooden)
+            .properties(p -> p.noOcclusion())
+            .transform(axeOrPickaxe())
+            .blockstate(BlockStateGen.directionalBlockProvider(false))
+            .simpleItem()
+            .register();
+
+    /*
+
     public static final BlockEntry<LargeSpringBlock> LARGE_SPRING = CSPRINGS_REGISTRATE
             .block("large_spring", LargeSpringBlock::new)
             .initialProperties(SharedProperties::copperMetal)
@@ -141,15 +151,6 @@ public class ModBlocks {
             .onRegister(movementBehaviour(new LargeSpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
-            .register();
-
-    public static final BlockEntry<CSpringsDierectionalBlock> ANDESITE_MOLD = CSPRINGS_REGISTRATE
-            .block("andesite_mold", CSpringsDierectionalBlock::new)
-            .initialProperties(SharedProperties::wooden)
-            .properties(p -> p.noOcclusion())
-            .transform(axeOrPickaxe())
-            .blockstate(BlockStateGen.directionalBlockProvider(false))
-            .simpleItem()
             .register();
 
     public static final BlockEntry<LargeSpringBlockExstentionBlock> LARGE_SPRING_EXTENTION = CSPRINGS_REGISTRATE
