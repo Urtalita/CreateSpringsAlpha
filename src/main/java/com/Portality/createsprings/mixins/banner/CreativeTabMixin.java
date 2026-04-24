@@ -37,27 +37,19 @@ public class CreativeTabMixin {
 
     @Unique
     private static void create_Springs_1_21_1$processItems(final Consumer<ItemStack> displayItems, final Consumer<ItemStack> searchItems) {
-        // 1. Собираем предметы вашего мода.
-        // Предположим, ваш регистратор называется CreateSprings.ITEMS
         List<ItemStack> itemsToAdd = new ArrayList<>();
 
-        // ВАЖНО: Если вы используете DeferredRegister, достаем предметы так:
         CreateSprings.registrate().getAll(net.minecraft.core.registries.Registries.ITEM).forEach(entry -> {
             Item item = entry.get();
-            // Проверяем, что предмет должен быть именно в этой вкладке
-            // В Registrate 1.21.1 это обычно проверяется через параметры регистрации
             itemsToAdd.add(new ItemStack(item));
         });
 
-        // 2. СДВИГ: Добавляем 9 пустых ячеек (первый ряд)
         for (int i = 0; i < 9; i++) {
             displayItems.accept(ItemStack.EMPTY);
         }
 
-        // 3. ДОБАВЛЕНИЕ: Добавляем ваши предметы во вкладку и в поиск
         int count = 0;
         for (ItemStack stack : itemsToAdd) {
-            // Мы используем копию, чтобы не испортить оригинал
             ItemStack finalStack = create_Springs_1_21_1$applyTransform(stack);
 
             displayItems.accept(finalStack);
@@ -65,7 +57,6 @@ public class CreativeTabMixin {
             count++;
         }
 
-        // 4. ЗАВЕРШЕНИЕ: Добиваем последний ряд до конца, чтобы полоса прокрутки не дергалась
         int padding = 9 - (count % 9);
         if (padding < 9) {
             for (int i = 0; i < padding; i++) {
@@ -76,7 +67,7 @@ public class CreativeTabMixin {
 
     @Unique
     private static ItemStack create_Springs_1_21_1$applyTransform(final ItemStack item) {
-        // for now to itemTransforms needed
+        // for now no itemTransforms needed
         return item;
     }
 }

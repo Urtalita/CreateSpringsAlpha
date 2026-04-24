@@ -29,21 +29,20 @@ public class MixinCreativeModeInventoryScreen {
             int x = gui.getGuiLeft() + 8;
             int y = gui.getGuiTop() + 17;
 
-            int width = CSpringsGuiTextures.BANNER.getWidth();   // 162
-            int height = CSpringsGuiTextures.BANNER.getHeight(); // 19 (одного кадра)
+            int width = CSpringsGuiTextures.BANNER.getWidth();
+            int height = CSpringsGuiTextures.BANNER.getHeight();
             int frameCount = 10;
 
             int frame = ((int) Minecraft.getInstance().level.getGameTime() / 3) % frameCount;
             float vOffset = (float) (frame * height);
 
-            // Эта перегрузка сама вызовет innerBlit с правильными пропорциями
             guiGraphics.blit(
-                    CSpringsGuiTextures.BANNER.location, // Атлас
-                    x, y,                                // Куда рисуем (верхний левый угол)
-                    width, height,                       // Размер "окна" отрисовки
-                    0, vOffset,                          // U, V координаты начала кадра
-                    width, height,                       // Ширина и высота куска в текстуре
-                    width, height * frameCount           // Полный размер файла (256x256 или 162x190)
+                    CSpringsGuiTextures.BANNER.location,
+                    x, y,
+                    width, height,
+                    0, vOffset,
+                    width, height,
+                    width, height * frameCount
             );
         }
     }
