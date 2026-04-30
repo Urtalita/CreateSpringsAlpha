@@ -9,6 +9,7 @@
     "createsprings:large_spring_coil",
     "createsprings:friction_welder",
     "createsprings:spring",
+    "createsprings:spring_catapult",
     "createsprings:spring_alloy_casing"
   ]
 }

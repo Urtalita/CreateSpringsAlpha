@@ -98,12 +98,4 @@ public class SpringBaseRenderer extends CustomRenderedItemModelRenderer {
 
         ms.translate(0, 0, -(springLen)/16f * progress * 0.5f);
     }
-
-    public static double isTooFast(CompoundTag tag, double speed){
-        double actualSpeed = Mth.lerp((Minecraft.getInstance().level.getGameTime() + AnimationTickHolder.getPartialTicks() - 1) % 40 / 40f ,tag.getFloat("LastSpeed") / 100, tag.getFloat("LastSpeed") / 100);;
-        if(speed > actualSpeed){
-            return actualSpeed;
-        }
-        return speed;
-    }
 }

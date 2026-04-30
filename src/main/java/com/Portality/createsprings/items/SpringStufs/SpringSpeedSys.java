@@ -2,6 +2,10 @@ package com.Portality.createsprings.items.SpringStufs;
 
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.advanced.Punchcard.ExecutorInfo;
+import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
+import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.ChatFormatting;
@@ -145,7 +149,9 @@ public class SpringSpeedSys {
         }
 
         if(level.getGameTime() % 10 == 0){
-            //PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, selectedIndex, PunchcardExecutor.SPRING_BASE, ModItems.SPRING_BASE.get()));
+            if(entity instanceof Player player){
+                PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, isSelected, PunchcardExecutor.SPRING_BASE, ModItems.SPRING_BASE.get()));
+            }
         }
     }
 

@@ -7,6 +7,8 @@ import com.Portality.createsprings.client.particles.CSpringsParticles;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.CSpringsDatagen;
+import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
+import com.Portality.createsprings.datagen.advancement.CSpringsTriggers;
 import com.Portality.createsprings.entities.ModEntities;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
@@ -15,9 +17,13 @@ import com.Portality.createsprings.items.ModItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
+import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
 import com.Portality.createsprings.recipe.ModRecipes;
 import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsPackets;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.advancement.AllTriggers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -26,6 +32,7 @@ import net.createmod.catnip.lang.FontHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -53,6 +60,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -81,17 +89,6 @@ public class CreateSprings {
             .title(Component.translatable("creativetab.create_springs_main_tab"))
             .displayItems((itemDisplayParameters, output) -> CSPRINGS_REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
                 output.accept(item.get());
-                if(item.get() == ModBlocks.SPRING.asItem()){
-                    ItemStack stack = new ItemStack(ModBlocks.SPRING.asItem());
-                    stack.set(DataComponents.BLOCK_ENTITY_DATA,
-                            CustomData.EMPTY.update(tag -> {
-                                tag.putFloat("Stored", ModConfigs.common().SPRING_CAPACITY.get());
-                                tag.putLong("Id", -99999999999999L);
-                                tag.putString("id", "createsprings:spring");
-                            }
-                            ));
-                    output.accept(stack);
-                }
             })))
             .build());
 
@@ -111,6 +108,7 @@ public class CreateSprings {
         ModEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
         CSpringsFluids.register();
+        CSpringsPackets.register();
 
         CSpringsDatagen.addExtraRegistrateData();
 
@@ -119,6 +117,7 @@ public class CreateSprings {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
         modEventBus.addListener(this::registerCapabilities);
+        modEventBus.addListener(this::onRegister);
 
         if (FMLEnvironment.dist.isClient()) {
             forgeBus.addListener(OverlayHandler::onRenderOverlay);
@@ -155,6 +154,13 @@ public class CreateSprings {
         });
     }
 
+    private void onRegister(final RegisterEvent event) {
+        if (event.getRegistry() == BuiltInRegistries.TRIGGER_TYPES) {
+            CSpringsAdvancements.register();
+            CSpringsTriggers.register();
+        }
+    }
+
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         // Регистрируем обработчик предметов для нашего Block Entity
         event.registerBlockEntity(
@@ -182,6 +188,11 @@ public class CreateSprings {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+        @SubscribeEvent
+        public static void commonSetup(FMLCommonSetupEvent event){
+            event.enqueueWork(PunchcardInterpritator::registerActions);
         }
 
         @SubscribeEvent

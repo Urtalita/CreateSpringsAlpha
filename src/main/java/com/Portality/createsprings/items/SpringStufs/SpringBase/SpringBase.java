@@ -115,7 +115,6 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
         if (core.overrideOtherStackedOnMe(stack1, stack2, slot, action, player, access)){
             return true;
         }
-        /*
         if (core.addStackedLogic(AllBlocks.MECHANICAL_DRILL.asItem(), stack1, stack2, action, player)){
             core.switchTagInHand(player, slot, ModItems.SPRING_DRILL.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
@@ -136,8 +135,6 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
-
-         */
         return false;
     }
 
@@ -152,12 +149,9 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
 
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        /*
         if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
-
-         */
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

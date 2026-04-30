@@ -4,6 +4,8 @@ import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.advanced.AndesiteMold.AndesiteMoldBlock;
 import com.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
 import com.Portality.createsprings.blocks.advanced.ObsidianPlateBlock;
+import com.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultItem;
+import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlock;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
@@ -41,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
@@ -199,7 +202,7 @@ public class ModBlocks {
             //.onRegister(movementBehaviour(new SpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
-    /*
+
 
     public static final BlockEntry<SpringCatapultBlock> SPRING_CATAPULT = CSPRINGS_REGISTRATE
             .block("spring_catapult", SpringCatapultBlock::new)
@@ -216,6 +219,7 @@ public class ModBlocks {
                             .build()))
             .addLayer(() -> RenderType::cutoutMipped)
             .register();
+    /*
 
     public static final BlockEntry<TestBlock> TEST = CSPRINGS_REGISTRATE
             .block("test", TestBlock::new)

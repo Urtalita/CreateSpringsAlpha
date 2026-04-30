@@ -272,8 +272,13 @@ public class SpringItem extends BlockItem {
 
     public static void SetSu(ItemStack stack, float su){
         if(stack.has(DataComponents.BLOCK_ENTITY_DATA)){
-            CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-            data.update(tag1 -> tag1.putFloat("Stored", su));
+            stack.set(DataComponents.BLOCK_ENTITY_DATA,
+                    CustomData.EMPTY.update(tag -> {
+                                tag.putFloat("Stored", su);
+                                tag.putLong("Id", -99999999999999L);
+                                tag.putString("id", "createsprings:spring");
+                            }
+                    ));
         }
     }
 

@@ -26,6 +26,13 @@
   "createsprings.on": "On",
   "createsprings.off": "Off",
 
+  "createsprings.boiler.pressure": "Pressure",
+  "createsprings.boiler.colorant": "Cooling",
+  "createsprings.boiler.over_heat": "Overheat",
+  "createsprings.boiler.owerdrive": "Overdrive",
+  "createsprings.boiler.owerdrive_su": "using overdrive",
+  "createsprings.boiler.status": "Boiler status:",
+
   "createsprings.punchcard.executor.title": "Executors:",
   "createsprings.punchcard.name": "Name:",
   "createsprings.punchcard.action.title": "Instructions for current executor:",

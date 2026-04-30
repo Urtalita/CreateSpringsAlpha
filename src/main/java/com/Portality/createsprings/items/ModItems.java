@@ -1,5 +1,6 @@
 package com.Portality.createsprings.items;
 
+import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ChamberItem;
 import com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBase;
 import com.Portality.createsprings.items.SpringStufs.SpringDrill.SpringDrill;
 import com.Portality.createsprings.items.SpringStufs.SpringFan.SpringFan;
@@ -75,6 +76,13 @@ public class ModItems {
             .properties(p -> p.stacksTo(1))
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
+
+    public static final ItemEntry<ChamberItem> EXPLOSION_CHAMBER = CreateSprings.CSPRINGS_REGISTRATE
+            .item("explosion_chamber", ChamberItem::new)
+            .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
+            .register();  // add to spring tools list
+
 
 
     public static void register(IEventBus eventBus) {

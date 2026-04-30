@@ -1,6 +1,7 @@
 package com.Portality.createsprings.datagen;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.simibubi.create.foundation.utility.FilesHelper;
@@ -24,7 +25,7 @@ public class CSpringsDatagen {
         generator.addProvider(event.includeServer(), new WeldingRecipesGen(output, registries));
         generator.addProvider(event.includeServer(), new MixingRecipeGen(output, registries));
 
-        //generator.addProvider(event.includeServer(), new CSpringsAdvancements(output));
+        generator.addProvider(event.includeServer(), new CSpringsAdvancements(output, registries));
     }
 
     private static void provideDefaultLang(String fileName, BiConsumer<String, String> consumer) {
@@ -48,7 +49,7 @@ public class CSpringsDatagen {
             provideDefaultLang("tooltips", langConsumer);
             provideDefaultLang("manual", langConsumer);
 
-            //CSpringsAdvancements.provideLang(langConsumer);
+            CSpringsAdvancements.provideLang(langConsumer);
             providePonderLang(langConsumer);
         });
     }

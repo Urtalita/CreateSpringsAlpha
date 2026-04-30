@@ -122,9 +122,9 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem, ISpri
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         core.checkAndAddModifier(stack, AllBlocks.MECHANICAL_DRILL.asItem());
-        //if(core.overrideStackedOnOther(stack, slot, action, player)){
-          //  return true;
-        //}
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
+            return true;
+        }
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

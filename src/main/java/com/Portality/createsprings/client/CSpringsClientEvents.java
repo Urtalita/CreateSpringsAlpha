@@ -1,5 +1,6 @@
 package com.Portality.createsprings.client;
 
+import com.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedClientHandler;
 import net.minecraft.client.Minecraft;
@@ -30,7 +31,7 @@ public class CSpringsClientEvents {
         if (!isGameActive())
             return;
 
-        //CatapultTargetHandler.tick();
+        CatapultTargetHandler.tick();
         SpringSpeedClientHandler.onTick();
         ClientSpringAnimation.onTick();
 

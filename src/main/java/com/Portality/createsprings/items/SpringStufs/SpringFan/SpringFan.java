@@ -238,12 +238,11 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         core.checkAndAddModifier(stack, AllItems.PROPELLER.asItem());
-        /*
+
         if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
 
-         */
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

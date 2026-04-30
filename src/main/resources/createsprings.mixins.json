@@ -4,7 +4,9 @@
   "package": "com.Portality.createsprings.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "banner.CreativeTabMixin"
+    "banner.CreativeTabMixin",
+    "owerdrive_controller.BoilerDataAcsessor",
+    "owerdrive_controller.BoilerDataMixin"
   ],
   "client": [
     "banner.MixinCreativeModeInventoryScreen"

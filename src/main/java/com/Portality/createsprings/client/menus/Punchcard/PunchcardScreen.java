@@ -7,12 +7,16 @@ import com.Portality.createsprings.items.advanced.Punchcard.PunchcardAction;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardFunction;
 import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.Portality.createsprings.server.CSpringsPackets;
+import com.Portality.createsprings.server.packets.PunchcardUpdatePacket;
+import com.simibubi.create.content.schematics.cannon.ConfigureSchematicannonPacket;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.resources.language.I18n;
@@ -79,12 +83,13 @@ public class PunchcardScreen extends AbstractSimiScreen {
         int x = guiLeft;
         int y = guiTop;
 
+        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
+
         if(!canConfigure){
             initParamsEditBoxesString(x, y, graphics);
         }
 
         background.render(graphics, x, y);
-        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
 
         graphics.drawString(this.font, Component.translatable(CreateSprings.MODID + ".punchcard.name"), x + 47, y + 184 + 4, 0x505050, false);
         if(!canConfigure){graphics.drawString(font, itemName, x + 47, y + 199 + 4, 0xFFFFFF);}
@@ -285,7 +290,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
     }
 
     public void sendPacket() {
-        //CSpringsPackets.getChannel().send(PacketDistributor.SERVER.noArg(), new PunchcardUpdatePacket(tag));
+        CatnipServices.NETWORK.sendToServer(new PunchcardUpdatePacket(tag));
     }
 
     @Override
@@ -306,9 +311,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
         tag.put("Enchantments", enchantments);
         tag.putInt("HideFlags", 1);
 
-        CompoundTag display = new CompoundTag();
-        display.putString("Name", itemName);
-        tag.put("display" ,display);
+        tag.putString("name", itemName);
 
         tag.putInt("maxActions", maxActions);
         tag.putInt("curAction", 0);

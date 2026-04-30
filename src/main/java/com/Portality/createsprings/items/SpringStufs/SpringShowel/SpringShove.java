@@ -145,9 +145,9 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
-        //if(core.overrideStackedOnOther(stack, slot, action, player)){
-        //    return true;
-        //}
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
+            return true;
+        }
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

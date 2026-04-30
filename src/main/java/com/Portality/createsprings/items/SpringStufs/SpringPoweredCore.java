@@ -3,15 +3,19 @@ package com.Portality.createsprings.items.SpringStufs;
 import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
+import com.Portality.createsprings.items.advanced.Punchcard.PunchcardItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static com.Portality.createsprings.CreateSprings.SPRING_TOOLS;
 import static com.Portality.createsprings.items.advanced.Spring.SpringItem.getStoredSu;
 
 public class SpringPoweredCore {
@@ -324,27 +329,12 @@ public class SpringPoweredCore {
     }
 
     public boolean overrideOtherStackedOnMe(ItemStack stack1, ItemStack stack2, Slot slot, ClickAction action, Player player, SlotAccess slotaccess) {
-        int Springs_rn = getSprings(stack1);
-
         float[] all = getAllStored(stack1);
         ArrayList<Float> allSu = new ArrayList<>();
         for (float f : all){allSu.add(f);}
 
         if (stack2.getItem() == ModBlocks.SPRING.asItem()){
-            if (springsMaxCount != Springs_rn){
-                allSu.add(getStoredSu(stack2));
-                Springs_rn++;
-
-                stack1.set(CSpringsDataComponents.SPRING_AMOUNT, Springs_rn);
-
-                float[] newAll = new float[allSu.size()];
-                for(int i = 0; i < newAll.length; i++){newAll[i] = allSu.get(i);}
-
-                putAllStored(newAll, stack1);
-                stack2.shrink(1);
-                return true;
-            }
-            return false;
+            return attachSpring(stack1, stack2);
         }
 
         if (stack2.isEmpty()){
@@ -354,47 +344,78 @@ public class SpringPoweredCore {
         }
 
         for(int i = 0; i < allowedModifficators.length; i++){
-            //if(allowedModifficators[i] instanceof PunchcardItem punchcardItem){
-                //if(punchcardInOut(punchcardItem, stack1, stack2, action, player)){return true;}}
+            Object entry = allowedModifficators[i].get();
+            if (entry instanceof ItemEntry<?> itemEntry) {
+                Item item = itemEntry.get(); // Извлекаем реальный Minecraft Item
 
-            if(addStackedLogic(allowedModifficators[i].get(), stack1, stack2, action, player)){return true;}
-        }
-        return false;
-    }
+                if (item instanceof PunchcardItem punchcardItem) {
+                    if (punchcardInOut(punchcardItem, stack1, stack2, action, player)) {
+                        return true;
+                    }
+                }
 
-    /*
-    private static boolean punchcardInOut(PunchcardItem item, ItemStack stack, ItemStack stackedOn, ClickAction action, Player player){
-        CompoundTag tag = stack.getOrCreateTag();
-
-        if(addItem(item, stack, stackedOn)){
-            tag.put("punchcard", stackedOn.getOrCreateTag());
-            return true;
-        }
-
-        if (stackedOn.isEmpty()) {
-            CompoundTag contains = tag.getCompound("contains");
-            String itemid = ForgeRegistries.ITEMS.getKey(item).toString();
-
-            if (action == ClickAction.SECONDARY) {
-                if (contains.getBoolean(itemid)){
-                    ItemStack addstack = new ItemStack(item);
-                    addstack.setTag(tag.getCompound("punchcard"));
-
-                    player.getInventory().add(addstack);
-
-                    contains.putBoolean(itemid, false);
-                    tag.put("contains", contains);
-
-                    contains.remove(itemid);
-                    tag.remove("punchcard");
+                if (addStackedLogic(item, stack1, stack2, action, player)) {
                     return true;
                 }
-                tag.remove("punchcard");
+            } else {
+                if(allowedModifficators[i].get() instanceof PunchcardItem punchcardItem){
+                    if(punchcardInOut(punchcardItem, stack1, stack2, action, player)){return true;}}
+
+                if(addStackedLogic(allowedModifficators[i].get(), stack1, stack2, action, player)){return true;}
             }
         }
         return false;
     }
-     */
+
+    public boolean attachSpring(ItemStack stack, ItemStack spring){
+        float[] all = getAllStored(stack);
+        ArrayList<Float> allSu = new ArrayList<>();
+        for (float f : all){allSu.add(f);}
+
+        int Springs_rn = getSprings(stack);
+        if (springsMaxCount != Springs_rn){
+            allSu.add(getStoredSu(spring));
+            Springs_rn++;
+
+            stack.set(CSpringsDataComponents.SPRING_AMOUNT, Springs_rn);
+
+            float[] newAll = new float[allSu.size()];
+            for(int i = 0; i < newAll.length; i++){newAll[i] = allSu.get(i);}
+
+            putAllStored(newAll, stack);
+            spring.shrink(1);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean punchcardInOut(PunchcardItem item, ItemStack stackedOn, ItemStack stack, ClickAction action, Player player){
+        CompoundTag tag = stack.getOrDefault(CSpringsDataComponents.PUNCHCARD, new CompoundTag());
+        if(addItem(item, stackedOn, stack)){
+            stackedOn.set(CSpringsDataComponents.PUNCHCARD, tag);
+            return true;
+        }
+
+        if (stack.isEmpty()) {
+            CompoundTag contains = getContent(stackedOn);
+            String itemid = BuiltInRegistries.ITEM.getKey(item).toString();
+
+            if (action == ClickAction.SECONDARY) {
+                if (contains.getBoolean(itemid)){
+                    ItemStack addstack = CSpringsDataComponents.punchcardFromTag(stackedOn.getOrDefault(CSpringsDataComponents.PUNCHCARD, new CompoundTag()), player.level());
+
+                    player.getInventory().add(addstack);
+
+                    contains.putBoolean(itemid, false);
+                    contains.remove(itemid);
+                    stackedOn.set(CSpringsDataComponents.MODIFIERS, contains);
+                    stackedOn.remove(CSpringsDataComponents.PUNCHCARD);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public static float[] getAllStored(ItemStack stack){
         int springs = getSprings(stack);
@@ -533,22 +554,18 @@ public class SpringPoweredCore {
         return spring;
     }
 
-    /*
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         ItemStack slotStack = slot.getItem();
-        CompoundTag tag1 = stack.getOrCreateTag();
-        CompoundTag tag2 = slotStack.getOrCreateTag();
-
         if(action == ClickAction.PRIMARY){
             for (Item tool : SPRING_TOOLS) {
                 if (slotStack.getItem() == tool) {
-                    return switchSu(tag1, tag2);
+                    return switchSu(stack, slotStack);
                 }
             }
         } else {
             for (Item tool : SPRING_TOOLS) {
                 if (slotStack.getItem() == tool) {
-                    return switchSu(tag2, tag1);
+                    return switchSu(stack, slotStack);
                 }
             }
         }
@@ -556,28 +573,39 @@ public class SpringPoweredCore {
         return false;
     }
 
-    private boolean switchSu(CompoundTag tag1, CompoundTag tag2){
-        if(tag1.getInt("Springs_rn") == 0){return false;}
+    private boolean switchSu(ItemStack stack1, ItemStack stack2) {
+        /*
+        int s1Count = stack1.getOrDefault(CSpringsDataComponents.SPRING_AMOUNT, 0);
+        int s2Count = stack2.getOrDefault(CSpringsDataComponents.SPRING_AMOUNT, 0);
 
-        if(tag2.getInt("Springs_rn") == springsMaxCount){return false;}
-
-        tag2.putInt("Springs_rn", tag2.getInt("Springs_rn") + 1);
-        tag1.putInt("Springs_rn", tag1.getInt("Springs_rn") - 1);
-
-        if(tag1.getFloat("Stored") >= ModConfigs.common().SPRING_CAPACITY.get()){
-            tag1.putFloat("Stored", tag1.getInt("Stored") - ModConfigs.common().SPRING_CAPACITY.get());
-            tag2.putFloat("Stored", tag2.getInt("Stored") + ModConfigs.common().SPRING_CAPACITY.get());
-            return true;
+        // Проверяем: есть ли что переносить и влезет ли это во второй предмет
+        if (s1Count <= 0 || (s1Count + s2Count) > springsMaxCount) {
+            return false;
         }
 
-        putAllStored(getAllStored(tag1), tag2);
-        putAllStored(cleanStored(getAllStored(tag1)), tag1);
+        // 1. Сначала извлекаем данные, пока stack1 еще "цел"
+        var dataFrom1 = getAllStored(stack1);
+
+        // 2. ВАЖНО: Сначала расширяем "емкость" stack2,
+        // чтобы putAllStored не упал при попытке записи во второй слот
+        stack2.set(CSpringsDataComponents.SPRING_AMOUNT, s1Count + s2Count);
+
+        // 3. Теперь переносим заряд в расширенный стек
+        putAllStored(dataFrom1, stack2);
+
+        // 4. Очищаем исходный стек: сначала заряд, потом количество
+        putAllStored(cleanStored(dataFrom1), stack1);
+        stack1.set(CSpringsDataComponents.SPRING_AMOUNT, 0);
+
         return true;
+
+         */
+        return false;
     }
 
-     */
 
-    /*
+
+
     public void switchTagInHand(Player player, Slot slot, Item item, ItemStack stack){
         ItemStack paste = switchTagInHand(player, item, stack, springsMaxCount);
         player.getInventory().setItem(slot.getSlotIndex(), paste);
@@ -588,21 +616,23 @@ public class SpringPoweredCore {
         player.setItemInHand(hand, paste);
     }
 
-    public static ItemStack switchTagInHand(Player player, Item item, ItemStack stack, int springs){
+
+    public static ItemStack switchTagInHand(Player player, Item item, ItemStack stack, int springs) {
         if (stack.isEmpty() || item == null) return ItemStack.EMPTY;
-
         ItemStack paste = new ItemStack(item);
-        CompoundTag sourceTag = stack.getTag();
 
-        // Проверяем существование тега "contains"
-        if (sourceTag != null && sourceTag.contains("contains", Tag.TAG_COMPOUND)) {
-            paste.setTag(sourceTag);
-        }
+        copyComponent(stack, paste, CSpringsDataComponents.MODIFIERS);
+        copyComponent(stack, paste, CSpringsDataComponents.PUNCHCARD);
 
         return paste;
     }
 
-     */
+    public static void copyComponent(ItemStack stack, ItemStack paste, DataComponentType component){
+        if (stack.has(component)) {
+            var data = stack.get(component);
+            paste.set(component, data);
+        }
+    }
 
     public static boolean checkItemInContains(CompoundTag tag, Item item){
         return tag.getCompound("contains").getBoolean(BuiltInRegistries.ITEM.getKey(item).toString());

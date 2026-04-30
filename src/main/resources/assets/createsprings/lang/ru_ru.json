@@ -100,6 +100,13 @@
   "item.createsprings.incomplete_punchcard": "Незаконченная перфокарта",
   "item.createsprings.molten_spring_alloy_bucket": "Расплавленный пружинный сплав",
 
+  "createsprings.boiler.pressure": "Давление",
+  "createsprings.boiler.colorant": "Охлаждение",
+  "createsprings.boiler.over_heat": "Перегрев",
+  "createsprings.boiler.owerdrive": "Форсаж",
+  "createsprings.boiler.owerdrive_su": "с помощью разгона",
+  "createsprings.boiler.status": "Статус котла:",
+
   "item.createsprings.portative_steam_engine": "Портативный паровой двигатель",
   "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Открывает интерфейс двигателя где можно _Выбрать режим работы_, переключить _Форсаж_ или добавить _Топливо_",
   "item.createsprings.portative_steam_engine.tooltip.behaviour2": "Переключает _Форсаж_ на лету",

@@ -65,7 +65,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
     public SpringLauncher(Properties p_43009_) {
         super(p_43009_);
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                ModItems.PUNCHCARD,
+                () -> ModItems.PUNCHCARD,
                 () -> Items.SPYGLASS,
                 Blocks.TNT::asItem
         };
@@ -268,11 +268,10 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
 
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        /*if(core.overrideStackedOnOther(stack, slot, action, player)){
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
             return true;
         }
 
-         */
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

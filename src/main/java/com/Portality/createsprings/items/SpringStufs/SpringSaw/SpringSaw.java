@@ -142,9 +142,9 @@ public class SpringSaw extends AxeItem implements CustomArmPoseItem, ISpringPowe
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
         core.checkAndAddModifier(stack, AllBlocks.MECHANICAL_SAW.asItem());
-        //if(core.overrideStackedOnOther(stack, slot, action, player)){
-        //    return true;
-        //}
+        if(core.overrideStackedOnOther(stack, slot, action, player)){
+            return true;
+        }
         return super.overrideStackedOnOther(stack, slot, action, player);
     }
 

@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 public enum PunchcardExecutor {
     SPRING_BASE(ModItems.SPRING_BASE.get()),
     SPRING_LAUNCHER(ModItems.SPRING_LAUNCHER.get()),
-    //EXPLOSION_CHAMBER(ModItems.EXPLOSION_CHAMBER.get()),
+    EXPLOSION_CHAMBER(ModItems.EXPLOSION_CHAMBER.get()),
     //PSE(ModItems.PORTATIVE_STEAM_ENGINE.get()),
     POTATO_CANON(AllItems.POTATO_CANNON.get()),
     BACKTANK(AllItems.COPPER_BACKTANK.get()),

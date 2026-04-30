@@ -5,23 +5,29 @@ import com.Portality.createsprings.client.CSpringsGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CreativeModeInventoryScreen.class)
 public class MixinCreativeModeInventoryScreen {
     @Shadow
     private static CreativeModeTab selectedTab;
 
+    @Unique
+    private float csprings$bannerTicks = 0;
+
     @Inject(
-            method = "renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V",
+            method = "render",
             at = @At("TAIL")
     )
-    private void drawCustomBanner(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY, CallbackInfo ci) {
+    private void drawCustomBanner(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         CreativeModeInventoryScreen gui = (CreativeModeInventoryScreen) (Object) this;
 
         if (selectedTab == CreateSprings.MAIN_TAB.get()) {
@@ -33,7 +39,15 @@ public class MixinCreativeModeInventoryScreen {
             int height = CSpringsGuiTextures.BANNER.getHeight();
             int frameCount = 10;
 
-            int frame = ((int) Minecraft.getInstance().level.getGameTime() / 3) % frameCount;
+            boolean isHovering = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+
+            if (isHovering) {
+                csprings$bannerTicks += partialTick * 0.3f;
+            }
+
+            // 3. Вычисляем текущий кадр на основе накопленных тиков
+            int frame = (int) (csprings$bannerTicks) % frameCount;
+
             float vOffset = (float) (frame * height);
 
             guiGraphics.blit(
