@@ -30,6 +30,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     final Direction facing;
     final Axis rotationAxis;
     final Quaternionf blockOrientation;
+    float epsilon = 1/1024f;
 
     public SpringVisual(VisualizationContext context, SpringBlockEntity blockEntity, float pt) {
         super(context, blockEntity, pt);
@@ -62,7 +63,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {
-        Quaternionf rot = rotationAxis.rotationDegrees(45 + index * 90);
+        Quaternionf rot = rotationAxis.rotationDegrees(index * 90);
         instance.rotation(rot).setChanged();
     }
 
@@ -74,7 +75,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
 
         float progress = blockEntity.getProgress(partialTick);
 
-        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, getVisualPosition());
+        MoveToPos(1/16f + epsilon * 2, 8/16f + epsilon * 2, plate, progress, movementDirection, getVisualPosition());
 
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(progress, rings.get(i), i);
@@ -82,7 +83,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     }
 
     private void updateRingPosition(float progress, OrientedInstance ring, int ringIndex) {
-        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, getVisualPosition());
+        MoveToPos( 1/16f + ringPos.get(ringIndex) - epsilon, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f - epsilon , ring, progress, movementDirection, getVisualPosition());
     }
 
     @Override

@@ -38,14 +38,13 @@ public class SpringItemRenderer extends CustomRenderedItemModelRenderer {
         ms.translate(0, 0,  1/16f - 0.5);
         renderer.render(PLATE.get(), light);
         ms.translate(0, 0,  1/16f);
-        ms.rotateAround(Axis.ZP.rotationDegrees(45), 0,0,0);
 
         for (int i = 0; i < SPRING_LEN; i++){
             ms.rotateAround(Axis.ZP.rotationDegrees(90), 0,0,0);
             ms.translate(0, 0,  (1-(progress/2f))/16f);
             renderer.render(PIECE.get(), light);
         }
-        ms.rotateAround(Axis.ZP.rotationDegrees(-45), 0,0,0);
+
         ms.translate(0, 0,  1/16f);
         renderer.render(PLATE.get(), light);
     }
