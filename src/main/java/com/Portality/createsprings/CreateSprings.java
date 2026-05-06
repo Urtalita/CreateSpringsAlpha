@@ -4,7 +4,9 @@ import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.client.particles.CSpringsParticles;
+import com.Portality.createsprings.client.ponders.CSpringsPonderPlugin;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
+import com.Portality.createsprings.compat.SableCompatHandler;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.CSpringsDatagen;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
@@ -12,7 +14,7 @@ import com.Portality.createsprings.datagen.advancement.CSpringsTriggers;
 import com.Portality.createsprings.entities.ModEntities;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
-import com.Portality.createsprings.fluid.CSpringsFluids;
+import com.Portality.createsprings.server.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.ModItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
@@ -22,16 +24,14 @@ import com.Portality.createsprings.recipe.ModRecipes;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.Portality.createsprings.server.CSpringsPackets;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.foundation.advancement.AllAdvancements;
-import com.simibubi.create.foundation.advancement.AllTriggers;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import net.createmod.catnip.lang.FontHelper;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -40,8 +40,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -109,6 +107,7 @@ public class CreateSprings {
         ModRecipes.register(modEventBus);
         CSpringsFluids.register();
         CSpringsPackets.register();
+        SableCompatHandler.register();
 
         CSpringsDatagen.addExtraRegistrateData();
 
@@ -147,7 +146,7 @@ public class CreateSprings {
                     ModItems.SPRING_SAW.get(),
                     ModItems.SPRING_DRILL.get(),
                     ModItems.SPRING_SHOVE.get(),
-                    //ModItems.EXPLOSION_CHAMBER.get(),
+                    ModItems.EXPLOSION_CHAMBER.get(),
                     //ModItems.PORTATIVE_STEAM_ENGINE.get(),
                     ModItems.SPRING_FAN.get()
             };
@@ -183,11 +182,11 @@ public class CreateSprings {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            //ModItemColors.register();
             EntityRenderers.register(ModEntities.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
             EntityRenderers.register(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+
+            PonderIndex.addPlugin(new CSpringsPonderPlugin());
         }
 
         @SubscribeEvent

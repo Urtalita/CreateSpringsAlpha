@@ -103,7 +103,7 @@ public class SpringInstance {
 
         for(int i = 0; i< rings.size(); i++){
             setRotation(rings.get(i), yAngle, xAngle);
-            rings.get(i).rotateZDegrees(45 + i * 90);
+            rings.get(i).rotateZDegrees(i * 90);
         }
     }
 

@@ -8,6 +8,11 @@ import com.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultItem;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlock;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlock;
+import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlock;
+import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceMovement;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockExstentionBlock;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMovement;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.client.CSpringsAssetLookup;
 import com.Portality.createsprings.client.CSpringsSpriteShifts;
@@ -144,8 +149,6 @@ public class ModBlocks {
             .simpleItem()
             .register();
 
-    /*
-
     public static final BlockEntry<LargeSpringBlock> LARGE_SPRING = CSPRINGS_REGISTRATE
             .block("large_spring", LargeSpringBlock::new)
             .initialProperties(SharedProperties::copperMetal)
@@ -153,7 +156,7 @@ public class ModBlocks {
             .transform(pickaxeOnly())
             .onRegister(movementBehaviour(new LargeSpringMovement()))
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
+            //.transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
             .register();
 
     public static final BlockEntry<LargeSpringBlockExstentionBlock> LARGE_SPRING_EXTENTION = CSPRINGS_REGISTRATE
@@ -162,9 +165,8 @@ public class ModBlocks {
             .properties(p -> p.noOcclusion())
             .tag(AllTags.AllBlockTags.COPYCAT_DENY.tag)
             .tag(AllTags.AllBlockTags.NON_HARVESTABLE.tag)
-            .transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
+            //.transform(displaySource(CSpringsDisplaySources.LARGE_CHARGE))
             .register();
-    */
 
     public static final BlockEntry<SpringCoilBlock> LARGE_SPRING_COIL = CSPRINGS_REGISTRATE
             .block("large_spring_coil", SpringCoilBlock::new)
@@ -229,6 +231,8 @@ public class ModBlocks {
             .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
             .register();
 
+     */
+
     public static final BlockEntry<KineticInterfaceBlock> KINETIC_INTERFACE = CSPRINGS_REGISTRATE
             .block("kinetic_interface", KineticInterfaceBlock::new)
             .initialProperties(SharedProperties::wooden)
@@ -240,7 +244,6 @@ public class ModBlocks {
             .item().transform(customItemModel())
             .register();
 
-     */
 
     public static final BlockEntry<CasingBlock> SPRING_ALLOY_CASING = CSPRINGS_REGISTRATE.block("spring_alloy_casing", CasingBlock::new)
             .properties(p -> p.mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)

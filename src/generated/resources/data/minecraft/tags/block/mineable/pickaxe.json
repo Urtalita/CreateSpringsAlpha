@@ -6,10 +6,12 @@
     "createsprings:connectable_weathered_iron",
     "createsprings:obsidian_slab",
     "createsprings:andesite_mold",
+    "createsprings:large_spring",
     "createsprings:large_spring_coil",
     "createsprings:friction_welder",
     "createsprings:spring",
     "createsprings:spring_catapult",
+    "createsprings:kinetic_interface",
     "createsprings:spring_alloy_casing"
   ]
 }

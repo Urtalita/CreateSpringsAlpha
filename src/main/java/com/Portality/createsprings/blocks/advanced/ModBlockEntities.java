@@ -12,6 +12,13 @@ import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilVisual;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderRenderer;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderVisual;
+import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlockEntity;
+import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceRenderer;
+import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceVisual;
+import com.Portality.createsprings.blocks.advanced.largeSpring.ExtentionBlockEntity;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringRenderer;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringVisual;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.blocks.advanced.spring.SpringRenderer;
 import com.Portality.createsprings.blocks.advanced.spring.SpringVisual;
@@ -25,7 +32,6 @@ public class ModBlockEntities {
 
     private static final CreateRegistrate REGISTRATE = CreateSprings.registrate();
 
-    /*
     public static final BlockEntityEntry<KineticInterfaceBlockEntity> KINETIC_INTERFACE = CSPRINGS_REGISTRATE
             .blockEntity("kinetic_interface", KineticInterfaceBlockEntity::new)
             .visual(() -> KineticInterfaceVisual::new)
@@ -39,8 +45,6 @@ public class ModBlockEntities {
             .renderer(() -> LargeSpringRenderer::new)
             .validBlocks(ModBlocks.LARGE_SPRING)
             .register();
-
-     */
 
     public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
             .blockEntity("mold", MoldBlockEntity::new)
@@ -85,12 +89,12 @@ public class ModBlockEntities {
             .validBlocks(ModBlocks.TEST)
             .register();
 
+      */
+
     public static final BlockEntityEntry<ExtentionBlockEntity> EXTENTION_BLOCK_ENTITY = CSPRINGS_REGISTRATE
             .blockEntity("extention_block_entity", ExtentionBlockEntity::new)
             .validBlocks(ModBlocks.LARGE_SPRING_EXTENTION)
             .register();
-
-     */
 
 
     public static void register() {}

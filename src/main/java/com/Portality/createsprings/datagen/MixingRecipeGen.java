@@ -1,26 +1,19 @@
 package com.Portality.createsprings.datagen;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.fluid.CSpringsFluids;
+import com.Portality.createsprings.server.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.ModItems;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.concurrent.CompletableFuture;
 
 import static com.Portality.createsprings.items.ModItems.*;
 import static com.Portality.createsprings.blocks.ModBlocks.*;
-import static com.Portality.createsprings.fluid.CSpringsFluids.*;
 
 
 public class MixingRecipeGen extends com.simibubi.create.api.data.recipe.MixingRecipeGen {

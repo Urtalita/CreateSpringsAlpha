@@ -1,5 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.SpringCoil;
 
+import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class SpringCoilBlockEntity extends KineticBlockEntity {
@@ -94,7 +96,7 @@ public class SpringCoilBlockEntity extends KineticBlockEntity {
         }
 
         if(len <= 0){return;}
-        //level.setBlock(pos ,ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
+        level.setBlock(pos , ModBlocks.LARGE_SPRING.get().defaultBlockState().setValue(FACING, direction).setValue(LEN, len), 3);
 
         BlockPos min = worldPosition.above(5).east(5).north(5);
         BlockPos max = worldPosition.below(5).west(5).south(5);

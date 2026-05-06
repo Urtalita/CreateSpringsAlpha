@@ -1,6 +1,5 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
-import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
@@ -17,29 +16,48 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
+import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.companion.math.Pose3d;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
+import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
+import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
+import org.joml.Vector3dc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.getSpringChargeCoefficient;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
@@ -58,6 +76,8 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     public static final float DEFAULT_HARDNESS = 16;
     public ScrollValueBehaviour targetHardness;
     // public SpringPressingBehaviour pressingBehaviour;
+    private boolean disableBreakingBlocks = false;
+    private UUID createdSubLevel = null;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -155,6 +175,127 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         return 0;
     }
 
+    public Direction getFacing(){
+        return getBlockState().getValue(FACING).getOpposite();
+    }
+
+    public BlockPos getFront(){
+        return worldPosition.relative(getFacing());
+    }
+
+    public void pushSubLevels(){
+        if(level.isClientSide()) return;
+
+        final AABB area = new AABB(getFront().getCenter().add(-1, -1, -1), getFront().above().getCenter().add(1, 1, 1));
+        final BoundingBox3d aabb = new BoundingBox3d(area);
+        final Vec3i normal = getFacing().getNormal();
+        final float scale = 100f;
+
+        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(level, aabb)) {
+            if (subLevel instanceof ServerSubLevel serverSubLevel) {
+                Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
+                applyImpulseToSubLevel(serverSubLevel, impulse, serverSubLevel.logicalPose().transformPositionInverse(getFront().getCenter()));
+            }
+        }
+
+        SubLevel subLevelOn = Sable.HELPER.getContaining(this);
+        if (!(subLevelOn instanceof ServerSubLevel serverSubLevel)) return;
+
+        Pose3d pose = subLevelOn.logicalPose();
+        Vec3 position = pose.transformPosition(getFront().getCenter());
+
+        if (!hasSublevelOrBlock(BlockPos.containing(position), scale, normal, serverSubLevel)){
+            if (!splitAndShootBlock(scale, normal, serverSubLevel)){return;}
+        }
+
+        Vec3 positionSpring = pose.transformPosition(worldPosition.getCenter());
+        Vec3 moveVector = positionSpring.subtract(position);
+        Vector3d springImpulse = new Vector3d(scale, scale, scale).mul(moveVector.toVector3f());
+
+        applyImpulseToSubLevel(serverSubLevel, springImpulse, worldPosition.getCenter());
+    }
+
+    public void pushCreatedSubLevels(){
+        if(createdSubLevel == null){return;}
+        final Vec3i normal = getFacing().getNormal();
+        final float scale = 100f;
+
+        if(!(level instanceof ServerLevel serverLevel)){
+            createdSubLevel = null;
+            return;
+        }
+        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
+        if(container == null) {
+            createdSubLevel = null;
+            return;
+        }
+
+        @Nullable SubLevel addedServerSubLevel = container.getSubLevel(createdSubLevel);
+        if((addedServerSubLevel instanceof ServerSubLevel serverSubLevel)){
+            Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
+            SubLevel subLevelOn = Sable.HELPER.getContaining(this);
+
+            if (subLevelOn != null) {
+                Vec3 pos;
+                pos = serverSubLevel.logicalPose().transformPositionInverse(subLevelOn.logicalPose().transformPosition(worldPosition.getCenter()));
+                if(subLevelOn instanceof ServerSubLevel){
+                    applyImpulseToSubLevel(serverSubLevel, impulse, pos);
+                }
+            }
+        }
+        createdSubLevel = null;
+    }
+
+    private boolean splitAndShootBlock(float scale, Vec3i normal, ServerSubLevel serverSubLevelOn){
+        BlockPos pos = getFront();
+        if(!canBreakBySpring(pos, level, stored)){return false;}
+
+        if(!(level instanceof ServerLevel serverLevel)){return false;}
+        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
+        if(container == null) return false;
+
+        ArrayList<BlockPos> assemblyPos = new ArrayList<>();
+        assemblyPos.add(pos);
+
+        final AABB area = new AABB(getFront().getCenter().add(-1, -1, -1), getFront().above().getCenter().add(1, 1, 1));
+        final BoundingBox3d aabb = new BoundingBox3d(area);
+        ServerSubLevel addedServerSubLevel = SubLevelAssemblyHelper.assembleBlocks(serverLevel, pos, assemblyPos, aabb.chunkBoundsFrom());
+        addedServerSubLevel.logicalPose().orientation().set(serverSubLevelOn.logicalPose().orientation());
+
+        //Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+
+        //applyImpulseToSubLevel(addedServerSubLevel, impulse);
+        disableBreakingBlocks = true;
+        createdSubLevel = addedServerSubLevel.getUniqueId();
+        return true;
+    }
+
+    private boolean hasSublevelOrBlock(BlockPos pos, float scale, Vec3i normal, ServerSubLevel serverSubLevelOn){
+        if (!level.getBlockState(pos).isAir()) return true;
+
+        final AABB area = new AABB(pos.getCenter().add(-0.5, -0.5, -0.5), pos.getCenter().add(0.5, 0.5, 0.5));
+        final BoundingBox3d aabb = new BoundingBox3d(area);
+
+        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(level, aabb)) {
+            if(subLevel == serverSubLevelOn) continue;
+            if (subLevel instanceof ServerSubLevel serverSubLevel) {
+                Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
+                Vec3  affectedPos = serverSubLevel.logicalPose().transformPositionInverse(serverSubLevelOn.logicalPose().transformPosition(worldPosition.getCenter()));
+                applyImpulseToSubLevel(serverSubLevel, impulse, affectedPos);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vec3 affected) {
+        RigidBodyHandle handle = RigidBodyHandle.of(level);
+        handle.applyLinearImpulse(impulse);
+        handle.applyImpulseAtPoint(new Vector3d(affected.toVector3f()), impulse.div(10));
+        level.applyQueuedForces(SubLevelPhysicsSystem.get(this.level), handle, 10);
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -164,9 +305,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             progress = springAnimation(phase) * (stored / capacity);
 
             if(phase == 1){
+                pushSubLevels();
                 launchEntitiesInFront();
                 breakBlocksInFront();
                 CSpringsSounds.playBweum(level, worldPosition);
+            }
+
+            if(phase == 2){
+                pushCreatedSubLevels();
             }
 
             phase++;
@@ -367,6 +513,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     }
 
     private void breakBlocksInFront(){
+        if(disableBreakingBlocks){
+            disableBreakingBlocks = false;
+            return;
+        }
+
         BlockPos pos = worldPosition.relative(getBlockState().getValue(FACING).getOpposite());
         BlockState breakState = level.getBlockState(pos);
 

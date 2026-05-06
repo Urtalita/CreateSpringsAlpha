@@ -103,10 +103,48 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
+
+    maven {
+        url "https://cursemaven.com"
+    }
+
+    maven {
+        url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+
+    maven { url = "https://maven.ftb.dev/releases" }
+    maven { url = "https://api.modrinth.com/maven"}
+
+        exclusiveContent { // Sable
+        forRepository {
+            maven {
+                url = "https://maven.ryanhcode.dev/releases"
+                name = "RyanHCode Maven"
+            }
+        }
+        filter {
+            includeGroup("dev.ryanhcode.sable")
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
+    }
+
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
+    maven {
+        url = "https://jm.gserv.me/repository/maven-public" // JourneyMap
+        content {
+            includeGroup "info.journeymap"
+            includeGroup "mysticdrew"
+        }
+    }
+    maven { url "https://chocolateminecraft.com/maven" } // Xaero
+    maven { url = "https://maven.squiddev.cc" }
+    maven { url = "https://maven.architectury.dev" }
 }
 
 dependencies {
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("dev.ryanhcode.sable:sable-neoforge-${project.minecraft_version}:${project.sable_version}")
+
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim")
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
@@ -114,6 +152,24 @@ dependencies {
 
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
+
+    compileOnly "curse.maven:irisshaders-455508:6661598"
+    compileOnly "curse.maven:sodium-394468:6382651"
+
+    compileOnly("maven.modrinth:journeymap:1.21.1-6.0.0-beta.54+neoforge")
+    implementation("info.journeymap:journeymap-api-neoforge:2.0.0-1.21.1-20260205.200232-15") {
+        exclude(group: "curse.maven") // Pulls in a old version of journey map which is for forge
+    }
+
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
+        version {
+            prefer project.sable_companion_version
+        }
+    }
+
+    compileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
+    compileOnly("curse.maven:xaeros-world-map-317780:7401095")
+    implementation("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1") // Пример версии
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

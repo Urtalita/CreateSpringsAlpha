@@ -1,4 +1,4 @@
-package com.Portality.createsprings.fluid;
+package com.Portality.createsprings.server.fluid;
 
 import com.Portality.createsprings.CreateSprings;
 import com.simibubi.create.AllFluids;

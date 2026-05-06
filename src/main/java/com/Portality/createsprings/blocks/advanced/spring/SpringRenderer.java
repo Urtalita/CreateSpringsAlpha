@@ -43,6 +43,8 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
     protected void renderSafe(SpringBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
+        float epsilon = 1/1024f;
+
         if (VisualizationManager.supportsVisualization(be.getLevel()))
             return;
 
@@ -52,18 +54,18 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
         Axis rotationAxis = getRotationAxis(facing);
 
         SuperByteBuffer plateRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PLATE, blockState, facing);
-        plateRender.translate(MoveToPos(1/16f, 8/16f, progress, facing))
+        plateRender.translate(MoveToPos(1/16f - epsilon * 6, 8/16f, progress, facing))
                 .light(light)
                 .renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
         for (int ringIndex = 0; ringIndex < SPRING_LEN; ringIndex++) {
-            float end = (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f;
-            float start = (2f+ringIndex)/16f + 1/16f;
+            float end = (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f - epsilon;
+            float start = (1f+ringIndex)/16f + 1/16f;
 
             SuperByteBuffer pieceRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PIECE, blockState, facing);
             pieceRender.translate(MoveToPos(start, end, progress, facing))
                     .light(light)
-                    .rotateCenteredDegrees(45 + ringIndex * 90, rotationAxis)
+                    .rotateCenteredDegrees(ringIndex * 90, rotationAxis)
                     .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
     }
@@ -106,7 +108,7 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
                     .light(light)
                     .rotateCenteredDegrees(yRot, Direction.Axis.Y)
                     .rotateCenteredDegrees(-xRot , Direction.Axis.X)
-                    .rotateCenteredDegrees(45 + ringIndex * 90, Direction.Axis.Z)
+                    .rotateCenteredDegrees( ringIndex * 90, Direction.Axis.Z)
                     .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         }
     }
@@ -138,7 +140,7 @@ public class SpringRenderer extends KineticBlockEntityRenderer<SpringBlockEntity
 
             SuperByteBuffer pieceRender = CachedBuffers.partialFacing(CSpringsPartalModels.SPRING_PIECE, state, facing);
             pieceRender.transform(m).translate(MoveToPos(start, end, progress, facing))
-                    .rotateCenteredDegrees(45 + ringIndex * 90, rotationAxis);
+                    .rotateCenteredDegrees(ringIndex * 90, rotationAxis);
 
             pieceRender.light(LevelRenderer.getLightColor(renderWorld, context.localPos))
                     .useLevelLight(context.world, matrices.getWorld())

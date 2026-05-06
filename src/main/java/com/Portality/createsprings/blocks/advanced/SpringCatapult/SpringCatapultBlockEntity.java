@@ -18,6 +18,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -231,6 +233,23 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         }
     }
 
+    public void shootEntitiesAbove(){
+        BlockPos offset = (!isUpsideDown()) ?
+                worldPosition.offset(0, 1, 0) :
+                worldPosition.offset(0, -1, 0);
+
+        List<Entity> entities = this.level.getEntitiesOfClass(Entity.class,
+                (new AABB(offset)).inflate((double)-0.0625F, (double)0.0F, (double)-0.0625F));
+
+        Vec3 speed = launcher.getSpeedForEntity(normalizeAngle(yAngle));
+        for(Entity entity : entities) {
+            if(entity instanceof LivingEntity livingEntity){
+                livingEntity.setDeltaMovement(speed);
+                mode = CatapultMode.SHOOTING;
+            }
+        }
+    }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -257,9 +276,10 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
     public void waiting(){
         processEntitiesAbove();
 
-        if(normalizeAngle(xAngle) == normalizeAngle(targetXAngle) &&
-                normalizeAngle(yAngle) == normalizeAngle(targetYAngle) &&
+        if(isEqualAngles(xAngle, targetXAngle) &&
+                isEqualAngles(yAngle, targetYAngle) &&
                 progress == 1 && !heldStack.isEmpty() && getSelectedTarget() != null){
+            shootEntitiesAbove();
 
             if(level.getBlockEntity(getSelectedTarget()) instanceof SpringCatapultBlockEntity catapult){
                 if(catapult.mode == CatapultMode.WAITING || catapult.mode == CatapultMode.CANSHOOT || catapult.mode == CatapultMode.INPUTTING){
@@ -298,6 +318,14 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
                     nextTarget();
                 }
             }
+            return;
+        }
+
+        if(isEqualAngles(xAngle, targetXAngle) &&
+                isEqualAngles(yAngle, targetYAngle) &&
+                progress == 1 && getSelectedTarget() != null){
+            shootEntitiesAbove();
+            return;
         }
     }
 
@@ -500,6 +528,11 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         return Math.abs(angle + (angle < 0 ? 360 : 0));
     }
 
+    private static boolean isEqualAngles(float angle1, float angle2){
+        float diff = normalizeAngle(angle1) - normalizeAngle(angle2);
+        return Mth.abs(diff) < 1;
+    }
+
     public static float getYawAngle(BlockPos targetPos, BlockPos sourcePos) {
         double dX = targetPos.getX() - sourcePos.getX();
         double dZ = targetPos.getZ() - sourcePos.getZ();
@@ -602,7 +635,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
         recalculateAngles(true);
     }
 
-    private void encodeTarget(String prefix, CompoundTag compoundTag, BlockPos pos){
+    public static void encodeTarget(String prefix, CompoundTag compoundTag, BlockPos pos){
         if(pos == null){return;}
 
         compoundTag.putInt(prefix + "x", pos.getX());

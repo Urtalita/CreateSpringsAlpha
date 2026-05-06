@@ -2,6 +2,7 @@ package com.Portality.createsprings.items.SpringStufs;
 
 import com.Portality.createsprings.blocks.ModBlocks;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
@@ -275,30 +276,26 @@ public class SpringPoweredCore {
     }
 
     public static boolean removeOne(ItemStack stack1){
-        /*
-        CompoundTag tag = stack1.getOrCreateTag();
-        CompoundTag contains = tag.getCompound("contains");
+        CompoundTag contains = getContent(stack1);
 
         for(ExplosionChamberFuel fuel : ExplosionChamberFuel.values()){
-            String itemid = ForgeRegistries.ITEMS.getKey(fuel.item).toString();
+            String itemid = BuiltInRegistries.ITEM.getKey(fuel.item).toString();
             if (contains.getBoolean(itemid)){
                 int itemCount = contains.getInt(itemid + "_count");
                 if(itemCount < 2){
                     contains.putBoolean(itemid, false);
                     contains.putInt(itemid + "_count", 0);
-                    tag.put("contains", contains);
+                    stack1.set(CSpringsDataComponents.MODIFIERS, contains);
 
                     contains.remove(itemid);
                     return false;
                 }
 
                 contains.putInt(itemid + "_count", contains.getInt(itemid + "_count") - 1);
-                tag.put("contains", contains);
+                stack1.set(CSpringsDataComponents.MODIFIERS, contains);
                 return true;
             }
         }
-
-         */
         return false;
     }
 

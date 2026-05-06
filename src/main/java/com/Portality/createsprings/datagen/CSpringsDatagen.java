@@ -1,6 +1,7 @@
 package com.Portality.createsprings.datagen;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.client.ponders.CSpringsPonderPlugin;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -55,8 +56,7 @@ public class CSpringsDatagen {
     }
 
     private static void providePonderLang(BiConsumer<String, String> consumer) {
-        // Register this since FMLClientSetupEvent does not run during datagen
-        //PonderIndex.addPlugin(new CSpringsPonderPlugin());
+        PonderIndex.addPlugin(new CSpringsPonderPlugin());
 
         PonderIndex.getLangAccess().provideLang(CreateSprings.MODID, consumer);
     }

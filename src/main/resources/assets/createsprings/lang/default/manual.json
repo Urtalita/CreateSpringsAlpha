@@ -1,5 +1,5 @@
 {
-  "creativetab.create_springs_main_tab": "Create springs",
+  "creativetab.create_springs_main_tab": "Create: Springs",
 
   "createsprings.recipe.casting": "Casting",
 
@@ -79,7 +79,7 @@
   "createsprings.pse.fuel_usage": "uses as much fuel as: ",
   "createsprings.pse.furnace": " furnaces",
 
-  "key.categories.createsprings": "Create Springs",
+  "key.categories.createsprings": "Create: Springs",
   "tooltip.springstuf.createsprings.no_modifires": "Put spring or modifier inside",
 
   "createsprings.display_source.spring.progress_bar": "Progress Bar",

@@ -33,6 +33,7 @@ public class CSpringsGameBusHandler {
 
     private static void chargeFromLanding(LivingFallEvent event, Player player, ItemStack stack){
         float distance = event.getDistance();
+        if(distance < 4){return;}
         float added = distance * 2000;
         float su = SpringItem.getStoredSu(stack);
         if(su + added <= ModConfigs.common().SPRING_CAPACITY.get()){

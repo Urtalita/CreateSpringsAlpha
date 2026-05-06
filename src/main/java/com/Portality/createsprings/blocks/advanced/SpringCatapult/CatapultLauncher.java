@@ -5,6 +5,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2d;
 
 public class CatapultLauncher {
@@ -19,7 +20,7 @@ public class CatapultLauncher {
 
     Vector2d[] trajectory;
 
-    private static final double g = -0.08;
+    private static final double g = -0.08d;
 
     public CatapultLauncher(BlockPos targetPos, BlockPos sourcePos, int totalFlightTicks){
         recalculateTrajectory(targetPos, sourcePos, totalFlightTicks);
@@ -35,6 +36,16 @@ public class CatapultLauncher {
 
     public float getShootingAngle(){
         return (float) Math.toDegrees(Math.atan2(Vy0, Vx0));
+    }
+
+    public Vec3 getSpeedForEntity(float yAngle){
+        float sin = Mth.sin(yAngle);
+        float cos = Mth.cos(yAngle);
+
+        float finalVx = (float) (Vx0 * sin);
+        float finalVz = (float) (Vx0 * cos);
+
+        return new Vec3(finalVx, Vy0, finalVz);
     }
 
     public BlockPos parseTrajectory(Level level, int phase, float yAngle, BlockPos worldPosition){
@@ -72,8 +83,8 @@ public class CatapultLauncher {
         horizontalDistance = Math.sqrt(dX * dX + dZ * dZ);
         verticalDistance = dY;
 
-        Vx0 = horizontalDistance / totalFlightTicks;
-        Vy0 = (verticalDistance - (g * totalFlightTicks * totalFlightTicks / 2d)) / totalFlightTicks;
+        Vx0 = getVx0();
+        Vy0 = getVy0();
 
         for(int t = 0; t < totalFlightTicks; t++){
             double x = xEquation(Vx0, t);
@@ -81,6 +92,14 @@ public class CatapultLauncher {
             Vector2d vector = new Vector2d(x, y);
             trajectory[t] = vector;
         }
+    }
+
+    private double getVx0(){
+        return horizontalDistance / totalFlightTicks;
+    }
+
+    private double getVy0(){
+        return (verticalDistance - (g * totalFlightTicks * totalFlightTicks / 2d)) / totalFlightTicks;
     }
 
     private double xEquation(double Vx0, int t){
