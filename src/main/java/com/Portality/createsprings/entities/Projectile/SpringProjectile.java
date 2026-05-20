@@ -1,13 +1,12 @@
 package com.Portality.createsprings.entities.Projectile;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.entities.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,7 +36,7 @@ public class SpringProjectile extends AbstractArrow {
 
     public SpringProjectile(Level level, LivingEntity shooter) {
         // В 1.21.1 используем этот super, чтобы сразу задать владельца и предмет
-        super(ModEntities.SPRING_PROJECTILE.get(), shooter, level, new ItemStack(ModBlocks.SPRING.asItem()), null);
+        super(ModEntities.SPRING_PROJECTILE.get(), shooter, level, new ItemStack(CSpringsBlocks.SPRING.asItem()), null);
     }
 
     public SpringProjectile(EntityType<SpringProjectile> springProjectileEntityType, Level level) {
@@ -53,7 +52,7 @@ public class SpringProjectile extends AbstractArrow {
     protected boolean tryPickup(Player player) {
         if (!player.isCreative()) {
             if (!level().isClientSide) {
-                ItemStack spring = new ItemStack(ModBlocks.SPRING.asItem());
+                ItemStack spring = new ItemStack(CSpringsBlocks.SPRING.asItem());
                 if (!player.getInventory().add(spring)) {
                     player.drop(spring, false);
                 }
@@ -359,12 +358,12 @@ public class SpringProjectile extends AbstractArrow {
 
     @Override
     protected ItemStack getPickupItem() {
-        return new ItemStack(ModBlocks.SPRING.get().asItem());
+        return new ItemStack(CSpringsBlocks.SPRING.get().asItem());
     }
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return new ItemStack(ModBlocks.SPRING.asItem());
+        return new ItemStack(CSpringsBlocks.SPRING.asItem());
     }
 
     private Vec3 getEntityCenter(Entity entity) {

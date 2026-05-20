@@ -51,6 +51,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -60,6 +61,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.getSpringChargeCoefficient;
+import static com.Portality.createsprings.compat.SableCompatHandler.pushCreatedSubLevels;
+import static com.Portality.createsprings.compat.SableCompatHandler.pushSubLevels;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI, ISpringBE {
@@ -76,8 +79,8 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     public static final float DEFAULT_HARDNESS = 16;
     public ScrollValueBehaviour targetHardness;
     // public SpringPressingBehaviour pressingBehaviour;
-    private boolean disableBreakingBlocks = false;
-    private UUID createdSubLevel = null;
+    public boolean disableBreakingBlocks = false;
+    public UUID createdSubLevel = null;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -94,6 +97,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             setChanged();
             updateNetwork();
         }
+    }
+
+
+    public int getPhase() {
+        return phase;
     }
 
     @Override
@@ -183,119 +191,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         return worldPosition.relative(getFacing());
     }
 
-    public void pushSubLevels(){
-        if(level.isClientSide()) return;
-
-        final AABB area = new AABB(getFront().getCenter().add(-1, -1, -1), getFront().above().getCenter().add(1, 1, 1));
-        final BoundingBox3d aabb = new BoundingBox3d(area);
-        final Vec3i normal = getFacing().getNormal();
-        final float scale = 100f;
-
-        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(level, aabb)) {
-            if (subLevel instanceof ServerSubLevel serverSubLevel) {
-                Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
-                applyImpulseToSubLevel(serverSubLevel, impulse, serverSubLevel.logicalPose().transformPositionInverse(getFront().getCenter()));
-            }
-        }
-
-        SubLevel subLevelOn = Sable.HELPER.getContaining(this);
-        if (!(subLevelOn instanceof ServerSubLevel serverSubLevel)) return;
-
-        Pose3d pose = subLevelOn.logicalPose();
-        Vec3 position = pose.transformPosition(getFront().getCenter());
-
-        if (!hasSublevelOrBlock(BlockPos.containing(position), scale, normal, serverSubLevel)){
-            if (!splitAndShootBlock(scale, normal, serverSubLevel)){return;}
-        }
-
-        Vec3 positionSpring = pose.transformPosition(worldPosition.getCenter());
-        Vec3 moveVector = positionSpring.subtract(position);
-        Vector3d springImpulse = new Vector3d(scale, scale, scale).mul(moveVector.toVector3f());
-
-        applyImpulseToSubLevel(serverSubLevel, springImpulse, worldPosition.getCenter());
-    }
-
-    public void pushCreatedSubLevels(){
-        if(createdSubLevel == null){return;}
-        final Vec3i normal = getFacing().getNormal();
-        final float scale = 100f;
-
-        if(!(level instanceof ServerLevel serverLevel)){
-            createdSubLevel = null;
-            return;
-        }
-        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
-        if(container == null) {
-            createdSubLevel = null;
-            return;
-        }
-
-        @Nullable SubLevel addedServerSubLevel = container.getSubLevel(createdSubLevel);
-        if((addedServerSubLevel instanceof ServerSubLevel serverSubLevel)){
-            Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
-            SubLevel subLevelOn = Sable.HELPER.getContaining(this);
-
-            if (subLevelOn != null) {
-                Vec3 pos;
-                pos = serverSubLevel.logicalPose().transformPositionInverse(subLevelOn.logicalPose().transformPosition(worldPosition.getCenter()));
-                if(subLevelOn instanceof ServerSubLevel){
-                    applyImpulseToSubLevel(serverSubLevel, impulse, pos);
-                }
-            }
-        }
-        createdSubLevel = null;
-    }
-
-    private boolean splitAndShootBlock(float scale, Vec3i normal, ServerSubLevel serverSubLevelOn){
-        BlockPos pos = getFront();
-        if(!canBreakBySpring(pos, level, stored)){return false;}
-
-        if(!(level instanceof ServerLevel serverLevel)){return false;}
-        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
-        if(container == null) return false;
-
-        ArrayList<BlockPos> assemblyPos = new ArrayList<>();
-        assemblyPos.add(pos);
-
-        final AABB area = new AABB(getFront().getCenter().add(-1, -1, -1), getFront().above().getCenter().add(1, 1, 1));
-        final BoundingBox3d aabb = new BoundingBox3d(area);
-        ServerSubLevel addedServerSubLevel = SubLevelAssemblyHelper.assembleBlocks(serverLevel, pos, assemblyPos, aabb.chunkBoundsFrom());
-        addedServerSubLevel.logicalPose().orientation().set(serverSubLevelOn.logicalPose().orientation());
-
-        //Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-
-        //applyImpulseToSubLevel(addedServerSubLevel, impulse);
-        disableBreakingBlocks = true;
-        createdSubLevel = addedServerSubLevel.getUniqueId();
-        return true;
-    }
-
-    private boolean hasSublevelOrBlock(BlockPos pos, float scale, Vec3i normal, ServerSubLevel serverSubLevelOn){
-        if (!level.getBlockState(pos).isAir()) return true;
-
-        final AABB area = new AABB(pos.getCenter().add(-0.5, -0.5, -0.5), pos.getCenter().add(0.5, 0.5, 0.5));
-        final BoundingBox3d aabb = new BoundingBox3d(area);
-
-        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(level, aabb)) {
-            if(subLevel == serverSubLevelOn) continue;
-            if (subLevel instanceof ServerSubLevel serverSubLevel) {
-                Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
-                Vec3  affectedPos = serverSubLevel.logicalPose().transformPositionInverse(serverSubLevelOn.logicalPose().transformPosition(worldPosition.getCenter()));
-                applyImpulseToSubLevel(serverSubLevel, impulse, affectedPos);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vec3 affected) {
-        RigidBodyHandle handle = RigidBodyHandle.of(level);
-        handle.applyLinearImpulse(impulse);
-        handle.applyImpulseAtPoint(new Vector3d(affected.toVector3f()), impulse.div(10));
-        level.applyQueuedForces(SubLevelPhysicsSystem.get(this.level), handle, 10);
-    }
-
     @Override
     public void tick() {
         super.tick();
@@ -305,14 +200,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             progress = springAnimation(phase) * (stored / capacity);
 
             if(phase == 1){
-                pushSubLevels();
+                pushSubLevels(this);
                 launchEntitiesInFront();
                 breakBlocksInFront();
                 CSpringsSounds.playBweum(level, worldPosition);
             }
 
             if(phase == 2){
-                pushCreatedSubLevels();
+                pushCreatedSubLevels(this);
             }
 
             phase++;
@@ -500,14 +395,17 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         AABB searchArea = new AABB(targetPos);
         List<Entity> entities = level.getEntitiesOfClass(Entity.class, searchArea);
 
-        for (Entity entity : entities) {
-            Vec3 direction = new Vec3(
-                    facing.getStepX(),
-                    facing.getStepY(),
-                    facing.getStepZ()
-            ).scale(1.0);
+        Vec3 vector = getSpeedForLaunch();
 
-            entity.addDeltaMovement(direction.scale(ModConfigs.common().KNOCKBACK_COEF.get()).scale(stored / ModConfigs.common().SPRING_CAPACITY.get()));
+        if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel serverSubLevel){
+            vector = new Vec3(1, 1, 1).scale(vector.length());
+            Vec3 vectorFrom = serverSubLevel.logicalPose().transformPosition(worldPosition.getCenter());
+            Vec3 vectorTo = serverSubLevel.logicalPose().transformPosition(getFront().getCenter());
+            vector = vectorTo.subtract(vectorFrom).multiply(vector);
+        }
+
+        for (Entity entity : entities) {
+            entity.addDeltaMovement(vector);
             entity.hurtMarked = true;
         }
     }
@@ -572,6 +470,21 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             itementity.setDeltaMovement(Vec3.ZERO);
             level.addFreshEntity(itementity);
         });
+    }
+
+    public Vec3 getSpeedForLaunch() {
+        Direction facing = getBlockState().getValue(FACING).getOpposite();
+
+        Vec3 direction = new Vec3(
+                facing.getStepX(),
+                facing.getStepY(),
+                facing.getStepZ()
+        );
+
+        double energyRatio = (double) stored / ModConfigs.common().SPRING_CAPACITY.get();
+        double speedModifier = Math.sqrt(Math.max(0, energyRatio));
+        return direction.scale(ModConfigs.common().KNOCKBACK_COEF.get())
+                .scale(speedModifier);
     }
 
     public int getComparatorOutput() {

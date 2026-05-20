@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.SpringCoil;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.utill.Helpers.HitboxHelper;
 import com.google.common.base.Predicates;
@@ -14,7 +14,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -88,7 +87,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             BlockPos newPos = offset.getBlockPos();
             //correct facing of placed coil
             for(Direction direction : Direction.values()){
-                if(level.getBlockState(newPos.relative(direction)).getBlock() == ModBlocks.LARGE_SPRING_COIL.get()){
+                if(level.getBlockState(newPos.relative(direction)).getBlock() == CSpringsBlocks.LARGE_SPRING_COIL.get()){
                     Direction facing = level.getBlockState(newPos.relative(direction)).getValue(FACING);
                     state.setValue(FACING, facing);
                     level.setBlock(newPos, state, 3);
@@ -97,7 +96,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             return result1;
         }
 
-        if (player.getItemInHand(hand).getItem() != ModBlocks.OBSIDIAN_PLATE.get().asItem()){
+        if (player.getItemInHand(hand).getItem() != CSpringsBlocks.OBSIDIAN_PLATE.get().asItem()){
             return super.useItemOn(stack, state, level, pos, player, hand, result);
         }
 
@@ -140,7 +139,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
 
         @Override
         public Predicate<BlockState> getStatePredicate() {
-            return Predicates.or(ModBlocks.LARGE_SPRING_COIL::has);
+            return Predicates.or(CSpringsBlocks.LARGE_SPRING_COIL::has);
         }
 
         @Override
@@ -149,7 +148,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
             PlacementOffset offset = super.getOffset(player, world, state, pos, ray);
             if (offset.isSuccessful())
                 offset.withTransform(offset.getTransform()
-                        .andThen(s -> world.isClientSide() ? s : ModBlocks.LARGE_SPRING_COIL.getDefaultState()));
+                        .andThen(s -> world.isClientSide() ? s : CSpringsBlocks.LARGE_SPRING_COIL.getDefaultState()));
             return offset;
         }
     }

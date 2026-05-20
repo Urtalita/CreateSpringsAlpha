@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.SpringStufs.SpringBase;
 
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
@@ -10,7 +10,6 @@ import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -43,7 +42,7 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
     public SpringBase(Properties properties) {
         super(properties.rarity(Rarity.UNCOMMON));
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 
@@ -116,22 +115,22 @@ public class SpringBase extends Item implements CustomArmPoseItem, ISpringPowere
             return true;
         }
         if (core.addStackedLogic(AllBlocks.MECHANICAL_DRILL.asItem(), stack1, stack2, action, player)){
-            core.switchTagInHand(player, slot, ModItems.SPRING_DRILL.get(), stack1);
+            core.switchTagInHand(player, slot, CSpringsItems.SPRING_DRILL.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
         if (core.addStackedLogic(AllBlocks.MECHANICAL_SAW.asItem(), stack1, stack2, action, player)){
-            core.switchTagInHand(player, slot, ModItems.SPRING_SAW.get(), stack1);
+            core.switchTagInHand(player, slot, CSpringsItems.SPRING_SAW.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
         if (core.addStackedLogic(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
-            core.switchTagInHand(player, slot, ModItems.SPRING_SHOVE.get(), stack1);
+            core.switchTagInHand(player, slot, CSpringsItems.SPRING_SHOVE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }
         if (core.addStackedLogic(AllItems.PROPELLER.asItem(), stack1, stack2, action, player)){
-            core.switchTagInHand(player, slot, ModItems.SPRING_FAN.get(), stack1);
+            core.switchTagInHand(player, slot, CSpringsItems.SPRING_FAN.get(), stack1);
             player.playSound(SoundEvents.ANVIL_PLACE, 0.5F, 1.0F);
             return true;
         }

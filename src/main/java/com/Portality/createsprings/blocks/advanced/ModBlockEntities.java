@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.AndesiteMold.MoldBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultRenderer;
@@ -22,7 +22,6 @@ import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringVisual
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.blocks.advanced.spring.SpringRenderer;
 import com.Portality.createsprings.blocks.advanced.spring.SpringVisual;
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
@@ -36,32 +35,32 @@ public class ModBlockEntities {
             .blockEntity("kinetic_interface", KineticInterfaceBlockEntity::new)
             .visual(() -> KineticInterfaceVisual::new)
             .renderer(() -> KineticInterfaceRenderer::new)
-            .validBlocks(ModBlocks.KINETIC_INTERFACE)
+            .validBlocks(CSpringsBlocks.KINETIC_INTERFACE)
             .register();
 
     public static final BlockEntityEntry<LargeSpringBlockEntity> LARGE_SPRING = CSPRINGS_REGISTRATE
             .blockEntity("large_spring", LargeSpringBlockEntity::new)
             .visual(() -> LargeSpringVisual::new)
             .renderer(() -> LargeSpringRenderer::new)
-            .validBlocks(ModBlocks.LARGE_SPRING)
+            .validBlocks(CSpringsBlocks.LARGE_SPRING)
             .register();
 
     public static final BlockEntityEntry<MoldBlockEntity> MOLD = CSPRINGS_REGISTRATE
             .blockEntity("mold", MoldBlockEntity::new)
-            .validBlocks(ModBlocks.FILLED_ANDESITE_MOLD)
+            .validBlocks(CSpringsBlocks.FILLED_ANDESITE_MOLD)
             .register();
 
     public static final BlockEntityEntry<SpringBlockEntity> SPRING = REGISTRATE
             .blockEntity("spring", SpringBlockEntity::new)
             .visual(() -> SpringVisual::new, false)
-            .validBlocks(ModBlocks.SPRING)
+            .validBlocks(CSpringsBlocks.SPRING)
             .renderer(() -> SpringRenderer::new)
             .register();
 
     public static final BlockEntityEntry<SpringCatapultBlockEntity> SPRING_CATAPULT = CSPRINGS_REGISTRATE
             .blockEntity("spring_catapult", SpringCatapultBlockEntity::new)
             .visual(() -> SpringCatapultVisual::new)
-            .validBlocks(ModBlocks.SPRING_CATAPULT)
+            .validBlocks(CSpringsBlocks.SPRING_CATAPULT)
             .renderer(() -> SpringCatapultRenderer::new)
             .register();
 
@@ -69,7 +68,7 @@ public class ModBlockEntities {
     public static final BlockEntityEntry<WelderBlockEntity> FRICTION_WELDER = REGISTRATE
             .blockEntity("friction_welder", WelderBlockEntity::new)
             .visual(() -> WelderVisual::new)
-            .validBlocks(ModBlocks.FRICTION_WELDER)
+            .validBlocks(CSpringsBlocks.FRICTION_WELDER)
             .renderer(() -> WelderRenderer::new)
             .register();
 
@@ -78,7 +77,7 @@ public class ModBlockEntities {
             .blockEntity("large_spring_coil", SpringCoilBlockEntity::new)
             .visual(() -> SpringCoilVisual::new, false)
             .renderer(() -> SpringCoilRenderer::new)
-            .validBlocks(ModBlocks.LARGE_SPRING_COIL)
+            .validBlocks(CSpringsBlocks.LARGE_SPRING_COIL)
             .register();
 
      /*
@@ -93,7 +92,7 @@ public class ModBlockEntities {
 
     public static final BlockEntityEntry<ExtentionBlockEntity> EXTENTION_BLOCK_ENTITY = CSPRINGS_REGISTRATE
             .blockEntity("extention_block_entity", ExtentionBlockEntity::new)
-            .validBlocks(ModBlocks.LARGE_SPRING_EXTENTION)
+            .validBlocks(CSpringsBlocks.LARGE_SPRING_EXTENTION)
             .register();
 
 

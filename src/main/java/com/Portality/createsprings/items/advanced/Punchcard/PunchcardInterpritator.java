@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.advanced.Punchcard;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
 import com.Portality.createsprings.server.CSpringsDataComponents;
@@ -345,7 +345,7 @@ public class PunchcardInterpritator {
                 Player player = info.getPlayer();
                 ItemStack found = null;
                 for(ItemStack slot : player.getInventory().items){
-                    if(slot.getItem() != ModBlocks.SPRING.asItem()){continue;}
+                    if(slot.getItem() != CSpringsBlocks.SPRING.asItem()){continue;}
                     float stored = getStoredSu(slot);
                     if(stored < 5000){continue;}
                     found = slot;

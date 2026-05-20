@@ -1,8 +1,7 @@
 package com.Portality.createsprings.items.SpringStufs.ExplosionСhamber;
 
-import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.advanced.Punchcard.ExecutorInfo;
@@ -11,8 +10,6 @@ import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritat
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.Portality.createsprings.utill.Helpers.ParticleHelper;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,7 +31,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +46,7 @@ public class ChamberItem extends Item implements ISpringPoweredTool {
     public ChamberItem(Properties p_41383_) {
         super(p_41383_);
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 

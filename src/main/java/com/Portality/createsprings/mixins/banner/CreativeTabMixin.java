@@ -1,19 +1,14 @@
 package com.Portality.createsprings.mixins.banner;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.config.ModConfigs;
-import com.Portality.createsprings.items.ModItems;
-import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -74,8 +69,8 @@ public class CreativeTabMixin {
 
     @Unique
     private static ItemStack create_Springs_1_21_1$applyTransform(final ItemStack item, Consumer<ItemStack> displayItems, Consumer<ItemStack> searchItems) {
-        if(item.getItem() == ModBlocks.SPRING.asItem()){
-            if(item.getItem() == ModBlocks.SPRING.asItem()){
+        if(item.getItem() == CSpringsBlocks.SPRING.asItem()){
+            if(item.getItem() == CSpringsBlocks.SPRING.asItem()){
                 ItemStack stack = CSpringsDataComponents.getChargedSpring();
                 displayItems.accept(stack);
                 searchItems.accept(stack);

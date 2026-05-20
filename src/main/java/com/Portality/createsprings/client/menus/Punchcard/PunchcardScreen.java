@@ -2,14 +2,12 @@ package com.Portality.createsprings.client.menus.Punchcard;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.client.CSpringsGuiTextures;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardAction;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardFunction;
 import com.Portality.createsprings.server.CSpringsDataComponents;
-import com.Portality.createsprings.server.CSpringsPackets;
 import com.Portality.createsprings.server.packets.PunchcardUpdatePacket;
-import com.simibubi.create.content.schematics.cannon.ConfigureSchematicannonPacket;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
@@ -34,7 +32,7 @@ import static com.Portality.createsprings.items.advanced.Punchcard.PunchcardFunc
 
 public class PunchcardScreen extends AbstractSimiScreen {
 
-    private final ItemStack renderedBigPunchcard = ModItems.PUNCHCARD.asStack();
+    private final ItemStack renderedBigPunchcard = CSpringsItems.PUNCHCARD.asStack();
     private ItemStack renderedExecutor;
 
     private final CSpringsGuiTextures background = CSpringsGuiTextures.PUNCHCARD_BG;
@@ -63,7 +61,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
         if(tag.contains("display")){
              itemName = stack.getHoverName().getString();
         } else {
-             itemName = I18n.get(ModItems.PUNCHCARD.get().getDescriptionId());
+             itemName = I18n.get(CSpringsItems.PUNCHCARD.get().getDescriptionId());
         }
 
         for(int i = 0; i < actions.length; i++){

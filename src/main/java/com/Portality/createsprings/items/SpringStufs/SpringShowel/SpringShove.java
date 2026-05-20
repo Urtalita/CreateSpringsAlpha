@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.SpringStufs.SpringShowel;
 
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
@@ -10,7 +10,6 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -48,7 +47,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
         SpeedSys = new SpringSpeedSys();
 
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 

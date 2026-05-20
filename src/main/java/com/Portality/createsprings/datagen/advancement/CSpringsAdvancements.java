@@ -1,7 +1,7 @@
 package com.Portality.createsprings.datagen.advancement;
 
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.google.common.collect.Sets;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -10,6 +10,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,43 +28,43 @@ public class CSpringsAdvancements implements DataProvider {
     public static final List<CreateSpringsAdvancement> ENTRIES = new ArrayList<>();
     public static final CreateSpringsAdvancement START = null,
 
-    ROOT = create("root", b -> b.icon(ModBlocks.SPRING)
+    ROOT = create("root", b -> b.icon(CSpringsBlocks.SPRING)
             .title("Welcome to Create Springs")
             .description("springs")
             .awardedForFree()
             .special(SILENT)
     ),
 
-    SPRING_ALLOY = create("spring_alloy", b -> b.icon(ModItems.SPRING_ALLOY)
+    SPRING_ALLOY = create("spring_alloy", b -> b.icon(CSpringsItems.SPRING_ALLOY)
             .title("Butter")
             .description("forge butter")
             .whenIconCollected()
             .after(ROOT)
     ),
 
-    OBSIDIAN_PLATE = create("obsidian_plate", b -> b.icon(ModBlocks.OBSIDIAN_PLATE)
+    OBSIDIAN_PLATE = create("obsidian_plate", b -> b.icon(CSpringsBlocks.OBSIDIAN_PLATE)
             .title("The Sturdiest plate")
             .description("make an obsidian plate")
             .whenIconCollected()
             .after(ROOT)
     ),
 
-    SPRING = create("spring", b -> b.icon(ModBlocks.SPRING)
+    SPRING = create("spring", b -> b.icon(CSpringsBlocks.SPRING)
             .title("The Bweum")
             .description("finish spring")
             .whenIconCollected()
             .after(SPRING_ALLOY)
     ),
 
-    SPRING_AGE = create("spring_age", b -> b.icon(ModBlocks.SPRING_ALLOY_CASING)
+    SPRING_AGE = create("spring_age", b -> b.icon(CSpringsBlocks.SPRING_ALLOY_CASING)
             .title("The Spring Age")
             .description("Use Spring Alloy to create a casing for 1 recipe and decoration")
             .whenIconCollected()
             .after(SPRING_ALLOY)
     ),
 
-    /*
-    PSE = create("pse", b -> b.icon(ModItems.PORTATIVE_STEAM_ENGINE)
+
+    PSE = create("pse", b -> b.icon(CSpringsItems.PORTATIVE_STEAM_ENGINE)
             .title("Steam to Go")
             .description("Create a PSE")
             .whenIconCollected()
@@ -85,28 +86,26 @@ public class CSpringsAdvancements implements DataProvider {
             .special(SECRET)
     ),
 
-    DASH = create("pse_dash", b -> b.icon(ModItems.PORTATIVE_STEAM_ENGINE)
+    DASH = create("pse_dash", b -> b.icon(CSpringsItems.PORTATIVE_STEAM_ENGINE)
             .title("Double jump")
             .description("use steam dash while using steam dash")
             .after(PSE)
             .special(SECRET)
     ),
 
-     */
-
-    LARGE_SPRING = create("large_spring", b -> b.icon(ModBlocks.LARGE_SPRING_COIL)
+    LARGE_SPRING = create("large_spring", b -> b.icon(CSpringsBlocks.LARGE_SPRING_COIL)
             .title("large spring")
             .description("assemble large spring")
             .after(SPRING)
     ),
 
-    PROGRAMMER = create("programmer", b -> b.icon(ModItems.PUNCHCARD)
+    PROGRAMMER = create("programmer", b -> b.icon(CSpringsItems.PUNCHCARD)
             .title("Programmer")
             .description("program your first punchcard")
             .after(SPRING_ALLOY)
     ),
 
-    PEA_SHOOTER = create("pea_shooter", b -> b.icon(ModItems.PUNCHCARD)
+    PEA_SHOOTER = create("pea_shooter", b -> b.icon(CSpringsItems.PUNCHCARD)
             .title("Pea shooter!")
             .description("automate potato cannon")
             .after(PROGRAMMER)

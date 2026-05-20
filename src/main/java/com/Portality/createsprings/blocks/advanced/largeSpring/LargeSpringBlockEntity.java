@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
@@ -14,7 +14,6 @@ import com.simibubi.create.content.contraptions.IControlContraption;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -156,7 +155,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
                         level.setBlock(calcPos(i, y, j, pos, facing),
-                                ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState()
+                                CSpringsBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState()
                                         .setValue(FACING, facing),
                                 Block.UPDATE_ALL);
                     }
@@ -180,7 +179,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 for (int j = -1; j < 2; j++){
                     if(!(i == 0 && j == 0)){
                         BlockPos pos1 = calcPos(i, y, j, pos, facing);
-                        level.setBlock(pos1, ModBlocks.LARGE_SPRING_COIL.getDefaultState().setValue(FACING, facing), Block.UPDATE_ALL);
+                        level.setBlock(pos1, CSpringsBlocks.LARGE_SPRING_COIL.getDefaultState().setValue(FACING, facing), Block.UPDATE_ALL);
                     }
                 }
             }
@@ -589,7 +588,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                     BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
                     level.setBlock(
                             breakBlock,
-                            ModBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState().setValue(FACING, facing),
+                            CSpringsBlocks.LARGE_SPRING_EXTENTION.get().defaultBlockState().setValue(FACING, facing),
                             Block.UPDATE_ALL
                     );
 

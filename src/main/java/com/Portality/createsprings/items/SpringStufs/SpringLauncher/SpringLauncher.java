@@ -1,10 +1,10 @@
 package com.Portality.createsprings.items.SpringStufs.SpringLauncher;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.entities.Projectile.SpringAlloyBlockProjectile;
 import com.Portality.createsprings.entities.Projectile.SpringProjectile;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
@@ -65,7 +65,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
     public SpringLauncher(Properties p_43009_) {
         super(p_43009_);
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD,
+                () -> CSpringsItems.PUNCHCARD,
                 () -> Items.SPYGLASS,
                 Blocks.TNT::asItem
         };
@@ -171,7 +171,7 @@ public class SpringLauncher extends ProjectileWeaponItem implements CustomArmPos
 
     @Override
     public Predicate<ItemStack> getAllSupportedProjectiles() {
-        return stack -> stack.getItem() == ModBlocks.SPRING.asItem();
+        return stack -> stack.getItem() == CSpringsBlocks.SPRING.asItem();
     }
 
     @Override

@@ -1,20 +1,18 @@
 package com.Portality.createsprings.datagen;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.recipe.Welding.WelderRecipe;
 import com.Portality.createsprings.recipe.Welding.WelderRecipeParams;
 import com.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.content.decoration.palettes.AllPaletteBlocks;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
-import com.simibubi.create.foundation.data.recipe.CreateRecipeProvider;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -22,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -131,7 +128,7 @@ public class WeldingRecipesGen extends ProcessingRecipeGen<WelderRecipeParams, W
     GeneratedRecipe ANDESITE_MOLD = create("andesite_mold", b -> b
             .require(AllBlocks.SHAFT)
             .require(AllBlocks.ANDESITE_CASING)
-            .output(ModBlocks.ANDESITE_MOLD, 1)
+            .output(CSpringsBlocks.ANDESITE_MOLD, 1)
             .speed(WelderRecipeSpeed.SLOW)
     );
 
@@ -151,14 +148,14 @@ public class WeldingRecipesGen extends ProcessingRecipeGen<WelderRecipeParams, W
     GeneratedRecipe SPRING_ALLOY = create("spring_alloy", b -> b
             .require(CommonMetal.BRASS.storageBlocks.items())
             .require(Blocks.SLIME_BLOCK)
-            .output(ModItems.SPRING_ALLOY, 8)
+            .output(CSpringsItems.SPRING_ALLOY, 8)
             .speed(WelderRecipeSpeed.FAST)
     );
 
     GeneratedRecipe SPRING_ALLOY2 = create("spring_alloy2", b -> b
             .require(CommonMetal.BRASS.storageBlocks.items())
             .require(Blocks.HONEY_BLOCK)
-            .output(ModItems.SPRING_ALLOY, 4)
+            .output(CSpringsItems.SPRING_ALLOY, 4)
             .speed(WelderRecipeSpeed.NORMAL)
     );
 
@@ -212,7 +209,7 @@ public class WeldingRecipesGen extends ProcessingRecipeGen<WelderRecipeParams, W
     );
 
     GeneratedRecipe INDUSTRIAL_IRON4 = create("industrial_iron4", b -> b
-            .doubleIngredient(ModBlocks.WEATHERED_IRON)
+            .doubleIngredient(CSpringsBlocks.WEATHERED_IRON)
             .output(Items.IRON_INGOT)
             .speed(WelderRecipeSpeed.FAST)
     );
@@ -236,8 +233,8 @@ public class WeldingRecipesGen extends ProcessingRecipeGen<WelderRecipeParams, W
     );
 
     GeneratedRecipe OBSIDIAN_PLATE = create("obsidian_plate", b -> b
-            .doubleIngredient(ModBlocks.OBSIDIAN_SLAB)
-            .output(ModBlocks.OBSIDIAN_PLATE, 2)
+            .doubleIngredient(CSpringsBlocks.OBSIDIAN_SLAB)
+            .output(CSpringsBlocks.OBSIDIAN_PLATE, 2)
             .speed(WelderRecipeSpeed.FAST)
     );
 

@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.SpringStufs.SpringDrill;
 
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
@@ -9,7 +9,6 @@ import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -27,7 +26,6 @@ import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -44,7 +42,7 @@ public class SpringDrill extends PickaxeItem implements CustomArmPoseItem, ISpri
     public SpringDrill(Properties properties) {
         super(IRON_TIER, properties.rarity(Rarity.UNCOMMON).component(DataComponents.UNBREAKABLE, new Unbreakable(true)));
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 

@@ -1,10 +1,9 @@
 package com.Portality.createsprings.server;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.config.ModConfigs;
-import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -69,6 +68,36 @@ public class CSpringsDataComponents {
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
     );
 
+    public static final DataComponentType<Boolean> OVERDRIVE = register(
+            "overdrive",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
+
+    public static final DataComponentType<Integer> OVERDRIVE_PROGRESS = register(
+            "overdrive_progress",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Integer> PSE_WATER = register(
+            "pse_water",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Integer> PSE_FUEL = register(
+            "pse_fuel",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Integer> DASH_TICKS = register(
+            "dash_ticks",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Integer> ENGINE_SPEED = register(
+            "engine_speed",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
     private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
         DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
         DATA_COMPONENTS.register(name, () -> type);
@@ -81,7 +110,7 @@ public class CSpringsDataComponents {
     }
 
     public static ItemStack getChargedSpring(){
-        ItemStack stack = new ItemStack(ModBlocks.SPRING.asItem());
+        ItemStack stack = new ItemStack(CSpringsBlocks.SPRING.asItem());
         stack.set(DataComponents.BLOCK_ENTITY_DATA,
                 CustomData.EMPTY.update(tag -> {
                             tag.putFloat("Stored", ModConfigs.common().SPRING_CAPACITY.get());
@@ -93,7 +122,7 @@ public class CSpringsDataComponents {
     }
 
     public static ItemStack punchcardFromTag(CompoundTag updatedTag, Level level){
-        ItemStack stack = new ItemStack(ModItems.PUNCHCARD.get());
+        ItemStack stack = new ItemStack(CSpringsItems.PUNCHCARD.get());
 
         String name = updatedTag.getString("name");
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));

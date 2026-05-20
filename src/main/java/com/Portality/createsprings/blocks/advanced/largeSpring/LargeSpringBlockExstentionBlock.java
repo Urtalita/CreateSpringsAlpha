@@ -1,7 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBlock;
 import com.Portality.createsprings.config.ModConfigs;
@@ -83,8 +82,8 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
         }
 
         if(pNewState != Blocks.COBBLESTONE.defaultBlockState()){
-            if(pNewState.getBlock() != ModBlocks.LARGE_SPRING_EXTENTION.get()){
-                if(pNewState.getBlock() != ModBlocks.LARGE_SPRING_COIL.get()){
+            if(pNewState.getBlock() != CSpringsBlocks.LARGE_SPRING_EXTENTION.get()){
+                if(pNewState.getBlock() != CSpringsBlocks.LARGE_SPRING_COIL.get()){
                     goDeeper(pPos, pState.getValue(FACING).getOpposite(), pLevel);
                 }
             }
@@ -102,7 +101,7 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
                         if(be instanceof LargeSpringBlockEntity largeSpringBlockEntity){
                             if(!largeSpringBlockEntity.canDisassemble(largeSpringBlockEntity.getFacing())){
                                 level.setBlock(pos,
-                                        ModBlocks.LARGE_SPRING_EXTENTION.getDefaultState().setValue(FACING, largeSpringBlockEntity.getFacing()),
+                                        CSpringsBlocks.LARGE_SPRING_EXTENTION.getDefaultState().setValue(FACING, largeSpringBlockEntity.getFacing()),
                                         3);
 
                                 return;
@@ -192,8 +191,8 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
     public boolean canStickTo(BlockState state, BlockState other) {
         if (other.getBlock() == Blocks.SLIME_BLOCK) return true;
         if (other.getBlock() == Blocks.HONEY_BLOCK) return true;
-        if (other.getBlock() == ModBlocks.LARGE_SPRING.get()) return true;
-        if (other.getBlock() == ModBlocks.LARGE_SPRING_EXTENTION.get()) return true;
+        if (other.getBlock() == CSpringsBlocks.LARGE_SPRING.get()) return true;
+        if (other.getBlock() == CSpringsBlocks.LARGE_SPRING_EXTENTION.get()) return true;
         return false;
     }
 

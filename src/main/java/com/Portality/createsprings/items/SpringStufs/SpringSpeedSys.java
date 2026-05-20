@@ -2,7 +2,7 @@ package com.Portality.createsprings.items.SpringStufs;
 
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.advanced.Punchcard.ExecutorInfo;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
@@ -150,7 +150,7 @@ public class SpringSpeedSys {
 
         if(level.getGameTime() % 10 == 0){
             if(entity instanceof Player player){
-                PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, isSelected, PunchcardExecutor.SPRING_BASE, ModItems.SPRING_BASE.get()));
+                PunchcardInterpritator.DoPunchcardLogic(new ExecutorInfo(stack, level, player, slotIndex, isSelected, PunchcardExecutor.SPRING_BASE, CSpringsItems.SPRING_BASE.get()));
             }
         }
     }

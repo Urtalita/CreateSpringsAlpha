@@ -161,11 +161,14 @@ dependencies {
         exclude(group: "curse.maven") // Pulls in a old version of journey map which is for forge
     }
 
+    /*
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
         version {
             prefer project.sable_companion_version
         }
     }
+
+     */
 
     compileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
     compileOnly("curse.maven:xaeros-world-map-317780:7401095")

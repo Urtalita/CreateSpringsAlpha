@@ -1,9 +1,8 @@
 package com.Portality.createsprings.blocks.advanced.SpringCatapult;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.server.packets.CatapultPlacementPacket;
-import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.platform.CatnipServices;
@@ -153,7 +152,7 @@ public class CatapultTargetHandler {
             return;
 
         ItemStack heldItemMainhand = player.getMainHandItem();
-        if (!ModBlocks.SPRING_CATAPULT.isIn(heldItemMainhand)) {
+        if (!CSpringsBlocks.SPRING_CATAPULT.isIn(heldItemMainhand)) {
             currentItem = null;
         } else {
             if (heldItemMainhand != currentItem) {

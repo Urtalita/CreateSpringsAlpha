@@ -1,12 +1,11 @@
 package com.Portality.createsprings;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.client.particles.CSpringsParticles;
 import com.Portality.createsprings.client.ponders.CSpringsPonderPlugin;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
-import com.Portality.createsprings.compat.SableCompatHandler;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.CSpringsDatagen;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
@@ -14,8 +13,9 @@ import com.Portality.createsprings.datagen.advancement.CSpringsTriggers;
 import com.Portality.createsprings.entities.ModEntities;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
+import com.Portality.createsprings.items.CSpringsArmorMaterials;
 import com.Portality.createsprings.server.fluid.CSpringsFluids;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
@@ -30,7 +30,6 @@ import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -83,7 +82,7 @@ public class CreateSprings {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register(MODID, () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-            .icon(ModBlocks.SPRING::asStack)
+            .icon(CSpringsBlocks.SPRING::asStack)
             .title(Component.translatable("creativetab.create_springs_main_tab"))
             .displayItems((itemDisplayParameters, output) -> CSPRINGS_REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
                 output.accept(item.get());
@@ -96,18 +95,18 @@ public class CreateSprings {
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
 
-        ModItems.register(modEventBus);
-        ModBlocks.register();
+        CSpringsItems.register(modEventBus);
+        CSpringsBlocks.register();
         CSpringsPartalModels.register();
         CSpringsDataComponents.registerAllComponents(modEventBus);
         ModBlockEntities.register();
         CSpringsSounds.register(modEventBus);
         CSpringsParticles.register(modEventBus);
+        CSpringsArmorMaterials.register(modEventBus);
         ModEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
         CSpringsFluids.register();
         CSpringsPackets.register();
-        SableCompatHandler.register();
 
         CSpringsDatagen.addExtraRegistrateData();
 
@@ -141,14 +140,14 @@ public class CreateSprings {
         CSpringsFluids.registerFluidInteractions();
         event.enqueueWork(() -> {
             SPRING_TOOLS = new Item[]{
-                    ModItems.SPRING_BASE.get(),
-                    ModItems.SPRING_LAUNCHER.get(),
-                    ModItems.SPRING_SAW.get(),
-                    ModItems.SPRING_DRILL.get(),
-                    ModItems.SPRING_SHOVE.get(),
-                    ModItems.EXPLOSION_CHAMBER.get(),
+                    CSpringsItems.SPRING_BASE.get(),
+                    CSpringsItems.SPRING_LAUNCHER.get(),
+                    CSpringsItems.SPRING_SAW.get(),
+                    CSpringsItems.SPRING_DRILL.get(),
+                    CSpringsItems.SPRING_SHOVE.get(),
+                    CSpringsItems.EXPLOSION_CHAMBER.get(),
                     //ModItems.PORTATIVE_STEAM_ENGINE.get(),
-                    ModItems.SPRING_FAN.get()
+                    CSpringsItems.SPRING_FAN.get()
             };
         });
     }
@@ -173,9 +172,9 @@ public class CreateSprings {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        LOGGER.info("create springs loaded");
     }
+
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

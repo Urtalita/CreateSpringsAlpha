@@ -1,6 +1,6 @@
 package com.Portality.createsprings.compat.Welding;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -25,7 +25,7 @@ public class AnimatedWelder extends AnimatedKinetics {
                 .scale(scale)
                 .render(graphics);
 
-        blockElement(ModBlocks.FRICTION_WELDER.getDefaultState())
+        blockElement(CSpringsBlocks.FRICTION_WELDER.getDefaultState())
                 .rotateBlock(0, -90, 0)
                 .atLocal(-1.5, 1, 0)
                 .scale(scale)
@@ -45,7 +45,7 @@ public class AnimatedWelder extends AnimatedKinetics {
                 .scale(scale)
                 .render(graphics);
 
-        blockElement(ModBlocks.FRICTION_WELDER.getDefaultState())
+        blockElement(CSpringsBlocks.FRICTION_WELDER.getDefaultState())
                 .rotateBlock(0, 90, 0)
                 .atLocal(1.5, 1, 0)
                 .scale(scale)

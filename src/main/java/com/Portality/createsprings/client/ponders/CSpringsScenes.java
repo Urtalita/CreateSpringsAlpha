@@ -1,7 +1,6 @@
 package com.Portality.createsprings.client.ponders;
 
-import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
@@ -19,7 +18,6 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -29,8 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
-
-import java.util.logging.Level;
 
 public class CSpringsScenes {
 
@@ -609,7 +605,7 @@ public class CSpringsScenes {
 
             scene.idle(80);
 
-            scene.world().setBlock(missingCoil, ModBlocks.LARGE_SPRING_COIL.getDefaultState().setValue(SpringCoilBlock.FACING, Direction.WEST), true);
+            scene.world().setBlock(missingCoil, CSpringsBlocks.LARGE_SPRING_COIL.getDefaultState().setValue(SpringCoilBlock.FACING, Direction.WEST), true);
             scene.world().showSection(util.select().position(missingCoil), Direction.SOUTH);
 
             scene.idle(5);
@@ -618,7 +614,7 @@ public class CSpringsScenes {
             scene.world().replaceBlocks(util.select().layer(2), Blocks.AIR.defaultBlockState(), false);
             scene.world().replaceBlocks(util.select().layer(3), Blocks.AIR.defaultBlockState(), false);
 
-            BlockState spring = ModBlocks.LARGE_SPRING.getDefaultState().setValue(LargeSpringBlock.FACING, Direction.WEST).setValue(LargeSpringBlock.LEN, 5);
+            BlockState spring = CSpringsBlocks.LARGE_SPRING.getDefaultState().setValue(LargeSpringBlock.FACING, Direction.WEST).setValue(LargeSpringBlock.LEN, 5);
             scene.world().setBlock(center, spring, true);
 
             scene.idle(20);

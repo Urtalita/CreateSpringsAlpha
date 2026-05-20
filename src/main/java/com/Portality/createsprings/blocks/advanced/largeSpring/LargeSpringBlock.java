@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.AllSoundEvents;
@@ -203,8 +203,8 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
     public boolean canStickTo(BlockState state, BlockState other) {
         if (other.getBlock() == Blocks.SLIME_BLOCK) return true;
         if (other.getBlock() == Blocks.HONEY_BLOCK) return true;
-        if (other.getBlock() == ModBlocks.LARGE_SPRING.get()) return true;
-        if (other.getBlock() == ModBlocks.LARGE_SPRING_EXTENTION.get()) return true;
+        if (other.getBlock() == CSpringsBlocks.LARGE_SPRING.get()) return true;
+        if (other.getBlock() == CSpringsBlocks.LARGE_SPRING_EXTENTION.get()) return true;
         return false;
     }
 }

@@ -1,5 +1,5 @@
 package com.Portality.createsprings.entities.Projectile;
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.entities.ModEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
@@ -33,7 +33,7 @@ public class SpringAlloyBlockProjectile extends AbstractArrow {
     protected boolean tryPickup(Player player) {
         if (!player.isCreative()) {
             if (!level().isClientSide) {
-                ItemStack spring = new ItemStack(ModBlocks.SPRING_ALLOY_BLOCK.get());
+                ItemStack spring = new ItemStack(CSpringsBlocks.SPRING_ALLOY_BLOCK.get());
                 if (!player.getInventory().add(spring)) {
                     player.drop(spring, false);
                 }
@@ -105,11 +105,11 @@ public class SpringAlloyBlockProjectile extends AbstractArrow {
 
     @Override
     protected ItemStack getPickupItem() {
-        return new ItemStack(ModBlocks.SPRING_ALLOY_BLOCK.get().asItem());
+        return new ItemStack(CSpringsBlocks.SPRING_ALLOY_BLOCK.get().asItem());
     }
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return ModBlocks.SPRING_ALLOY_BLOCK.asStack();
+        return CSpringsBlocks.SPRING_ALLOY_BLOCK.asStack();
     }
 }

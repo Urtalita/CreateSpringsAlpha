@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.SpringStufs.SpringSaw;
 
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
@@ -25,9 +25,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -45,7 +42,7 @@ public class SpringSaw extends AxeItem implements CustomArmPoseItem, ISpringPowe
                 .durability(-1).component(DataComponents.UNBREAKABLE, new Unbreakable(true))
                 .rarity(Rarity.UNCOMMON));
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 

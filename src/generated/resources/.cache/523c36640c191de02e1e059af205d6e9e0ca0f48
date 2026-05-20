@@ -1,9 +1,12 @@
-// 1.21.1	2026-04-30T12:16:31.5937564	Registrate Provider for createsprings [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-05-04T13:45:05.8585243	Registrate Provider for createsprings [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 17fdf5e50bd85a504bf2f58f077b127d65b1e39d assets/createsprings/blockstates/andesite_mold.json
 669a07180484c055a319bfb28a1b3e37a61d73fc assets/createsprings/blockstates/connectable_weathered_iron.json
 0d40a6a1fe568e1dbeeccad2dfa3a61ce057d575 assets/createsprings/blockstates/filled_andesite_mold.json
 493866cb9ad1ce5080d93f5b3839f148bf4bd43c assets/createsprings/blockstates/friction_welder.json
+7df4ff137ef67306f2868fee44d72988f34ccd65 assets/createsprings/blockstates/kinetic_interface.json
+cf0b02476639163035a57e38a17782305d16d79a assets/createsprings/blockstates/large_spring.json
 29063ba609f9cc5a3f7428173955a00acc3408e6 assets/createsprings/blockstates/large_spring_coil.json
+724937dbff872163c1467d8e98f9a8a65bee57bb assets/createsprings/blockstates/large_spring_extention.json
 d8258ac34df30392c23769fe8a3e4fd299f10279 assets/createsprings/blockstates/molten_spring_alloy.json
 9a7ef69c02e85a8a8914b19a59b557c31f3b8db6 assets/createsprings/blockstates/obsidian_plate.json
 fb3d1e5368b5532c6c0ff84034f26c7393ab5772 assets/createsprings/blockstates/obsidian_slab.json
@@ -12,9 +15,11 @@ b12698e7a98ac9595a865bb65118a313bdeff053 assets/createsprings/blockstates/spring
 e166f84108648bf3066919380625951d74e7d773 assets/createsprings/blockstates/spring_alloy_casing.json
 63af041fef2f4449d5cd05093fb41bce5ed6fef4 assets/createsprings/blockstates/spring_catapult.json
 e167794610ad617dce85ec75f60fc2b61cdda7a4 assets/createsprings/blockstates/unfinished_spring.json
-e5162bb3491204645efc2e72aa46a835bf7102ed assets/createsprings/lang/en_ud.json
-2b4afa5677ee7286ae11bdcf9895e0cc31a4201a assets/createsprings/lang/en_us.json
+f06eb51a9d8c3307c32d605b84768b1e6cc14121 assets/createsprings/lang/en_ud.json
+9dc49baa60ae7848d6105546f7cdd072796ad3e5 assets/createsprings/lang/en_us.json
 75db74c1af7e22d9463649540267e9ebe0f1b707 assets/createsprings/models/block/connectable_weathered_iron.json
+74745fbf1a10831002a6d1860cdb5e6e2b3774a3 assets/createsprings/models/block/large_spring.json
+af95d84b261a0f3625ba9e4b6217649f7cda1ce7 assets/createsprings/models/block/large_spring_extention.json
 c0a6799f377077a913e12a45e2df4eae64f54d5f assets/createsprings/models/block/molten_spring_alloy.json
 84be4a9b426331e86bc3e9feebbe9e4f4e79b723 assets/createsprings/models/block/spring_alloy_block.json
 708511238d70e9860d3791d7bf98beb14e5254dd assets/createsprings/models/block/spring_alloy_casing.json
@@ -23,6 +28,7 @@ da0eb9387dc364befa64a7f4035f9d767ecbd634 assets/createsprings/models/item/connec
 67a78fe1e5a43666b3a1027fca720422de1ba0ed assets/createsprings/models/item/explosion_chamber.json
 ad8d9cb344d0f9bef06460a2e567304605c06521 assets/createsprings/models/item/filled_andesite_mold.json
 3af9e38b32f701f371b06cc6d432c1c6f0a908dd assets/createsprings/models/item/friction_welder.json
+f132f8b923a5949a564df77c5218f1b9c8940d2c assets/createsprings/models/item/kinetic_interface.json
 743167fef48b2b4f4de13e744ed3b1660e9be375 assets/createsprings/models/item/large_spring_coil.json
 da755d1f6401e1ad7b9c6479f319c9bb2a47bab6 assets/createsprings/models/item/molten_spring_alloy_bucket.json
 466cff53c74ef1b7e9efc63db2de30a6249ff94f assets/createsprings/models/item/obsidian_plate.json
@@ -46,7 +52,10 @@ a82cbbfa88c5dcce4a14b140d0e13f1def7fb544 assets/createsprings/models/item/spring
 6616758437cbf3873c1d01d28ca7eba0512a5bf9 data/createsprings/loot_table/blocks/connectable_weathered_iron.json
 5457d67b1d5e1d142ddca48049a90eaa37516955 data/createsprings/loot_table/blocks/filled_andesite_mold.json
 0119375131ef5bb1c26306da255d92f1b3b72653 data/createsprings/loot_table/blocks/friction_welder.json
+97ab4693118c4eb417b49bc810e13f0bd2e46323 data/createsprings/loot_table/blocks/kinetic_interface.json
+27e2af5f85664370168d6fae9c1cddee4eea75ae data/createsprings/loot_table/blocks/large_spring.json
 4348e01b72b97705d6e3b0bc6644aa3e8ecd1e35 data/createsprings/loot_table/blocks/large_spring_coil.json
+8843d8ce985ebe55bb863b02368b398e3bab99e3 data/createsprings/loot_table/blocks/large_spring_extention.json
 69edd70d185cb3c0fe451a476db5f35d335a093d data/createsprings/loot_table/blocks/obsidian_plate.json
 729cc4dc782fe79a3fd88fd720e6449c436ed936 data/createsprings/loot_table/blocks/obsidian_slab.json
 fb80aee1729255a081bc0bb900a264299bb9d8f4 data/createsprings/loot_table/blocks/spring.json
@@ -55,9 +64,11 @@ c8aab0f60df79648f267ee884b84004b6c2153b5 data/createsprings/loot_table/blocks/sp
 096393547469fdc1703ba5a414217ab5b32c6474 data/createsprings/loot_table/blocks/spring_catapult.json
 c479a552415214f47efa0ea73edda8a9e357d337 data/createsprings/loot_table/blocks/unfinished_spring.json
 9109878b85eb14efedc8179bb1327ae8d096dc36 data/create/tags/block/casing.json
-11841f658e53137a704f31c31bdc46af4a84f39c data/create/tags/block/safe_nbt.json
+4b80434c9a02b351c8d20e78f33507a1b3a62db0 data/create/tags/block/copycat_deny.json
+4b80434c9a02b351c8d20e78f33507a1b3a62db0 data/create/tags/block/non_harvestable.json
+f43272e2bfdc4ce36262c2cd5c00ce6582bde064 data/create/tags/block/safe_nbt.json
 9109878b85eb14efedc8179bb1327ae8d096dc36 data/create/tags/item/casing.json
 32eb9ea03436fe08f7f018138a4e51f49a2d3b9d data/minecraft/tags/block/beacon_base_blocks.json
-19a2ee75537db6092c051f8474debec52a3a7a9a data/minecraft/tags/block/mineable/axe.json
-731a10832d5c759707e301cb717794a414eaf901 data/minecraft/tags/block/mineable/pickaxe.json
+307495283f83d2da7a74170df28144c099c05b38 data/minecraft/tags/block/mineable/axe.json
+08ee9b4faa21487e7071cc6199d494ee41eabc3a data/minecraft/tags/block/mineable/pickaxe.json
 f05585d54d428592815810cc4442ac3a68c55f12 data/minecraft/tags/block/needs_iron_tool.json

@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.SpringStufs;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
@@ -137,7 +137,7 @@ public class SpringPoweredCore {
 
             for(int i = 0; i < component.Springs; i++){
                 moving += getWidth(Font)+2;
-                ItemStack SpringStack = new ItemStack(ModBlocks.SPRING.asItem());
+                ItemStack SpringStack = new ItemStack(CSpringsBlocks.SPRING.asItem());
                 int finalI = i;
 
                 SpringStack.set(DataComponents.BLOCK_ENTITY_DATA,
@@ -302,7 +302,7 @@ public class SpringPoweredCore {
     public static boolean addStackedLogic(Item item, ItemStack stack1, ItemStack stack2, ClickAction action, Player player){
         int Springs_rn = getSprings(stack1);
 
-        if(Springs_rn == 2 && item == ModBlocks.SPRING_ALLOY_BLOCK.get().asItem()){
+        if(Springs_rn == 2 && item == CSpringsBlocks.SPRING_ALLOY_BLOCK.get().asItem()){
             return false;
         }
         if(addItem(item, stack1, stack2)){
@@ -330,7 +330,7 @@ public class SpringPoweredCore {
         ArrayList<Float> allSu = new ArrayList<>();
         for (float f : all){allSu.add(f);}
 
-        if (stack2.getItem() == ModBlocks.SPRING.asItem()){
+        if (stack2.getItem() == CSpringsBlocks.SPRING.asItem()){
             return attachSpring(stack1, stack2);
         }
 
@@ -541,7 +541,7 @@ public class SpringPoweredCore {
     }
 
     public static ItemStack putSuInSpring(float su){
-        ItemStack spring = ModBlocks.SPRING.asStack();
+        ItemStack spring = CSpringsBlocks.SPRING.asStack();
         spring.set(DataComponents.BLOCK_ENTITY_DATA,
                 CustomData.EMPTY.update(tag -> {
                             tag.putFloat("Stored", su);

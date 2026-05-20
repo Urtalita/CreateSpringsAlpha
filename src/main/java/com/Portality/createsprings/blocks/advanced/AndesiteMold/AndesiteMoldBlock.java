@@ -1,14 +1,12 @@
 package com.Portality.createsprings.blocks.advanced.AndesiteMold;
 
-import com.Portality.createsprings.blocks.ModBlocks;
-import com.Portality.createsprings.blocks.advanced.CSpringsDierectionalBlock;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -53,9 +51,9 @@ public class AndesiteMoldBlock extends DirectionalBlock implements IBE<MoldBlock
                 result.set(super.useItemOn(stack, state, level, pos, player, hand, hitResult));}
             if(player.getInventory().getFreeSlot() == -1){result.set(super.useItemOn(stack, state, level, pos, player, hand, hitResult));}
 
-            player.getInventory().add(ModBlocks.LARGE_SPRING_COIL.asStack());
+            player.getInventory().add(CSpringsBlocks.LARGE_SPRING_COIL.asStack());
             level.setBlock(pos,
-                    ModBlocks.ANDESITE_MOLD.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
+                    CSpringsBlocks.ANDESITE_MOLD.get().defaultBlockState().setValue(FACING, Direction.UP), 3);
         });
         return result.get();
     }

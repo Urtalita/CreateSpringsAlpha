@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.kinetic_interface;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -85,10 +85,10 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
     public void getContraptionSprings(Contraption contraption) {
         connectedSprings = new ArrayList<>();
         for (StructureTemplate.StructureBlockInfo blockInfo : contraption.getBlocks().values()) {
-            if (blockInfo.state().getBlock() == ModBlocks.LARGE_SPRING.get()) {
+            if (blockInfo.state().getBlock() == CSpringsBlocks.LARGE_SPRING.get()) {
                 // 1. Создаём BE через наш зарегистрированный тип
                 addSpring(blockInfo, true);
-            } else if (blockInfo.state().getBlock() == ModBlocks.SPRING.get()) {
+            } else if (blockInfo.state().getBlock() == CSpringsBlocks.SPRING.get()) {
                 // 1. Создаём BE через наш зарегистрированный тип
                 addSpring(blockInfo, false);
             }
@@ -348,12 +348,12 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
             if(compound.getBoolean(key + "isLarge")){
                 be = ModBlockEntities.LARGE_SPRING.get().create(
                         BlockPos.ZERO,
-                        ModBlocks.LARGE_SPRING.get().defaultBlockState()
+                        CSpringsBlocks.LARGE_SPRING.get().defaultBlockState()
                 );
             } else {
                 be = ModBlockEntities.SPRING.get().create(
                         BlockPos.ZERO,
-                        ModBlocks.LARGE_SPRING.get().defaultBlockState()
+                        CSpringsBlocks.LARGE_SPRING.get().defaultBlockState()
                 );
             }
 

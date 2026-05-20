@@ -1,7 +1,7 @@
 package com.Portality.createsprings.items.SpringStufs.SpringFan;
 
 import com.Portality.createsprings.client.particles.SimpleAirParticleData;
-import com.Portality.createsprings.items.ModItems;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
@@ -51,7 +51,7 @@ public class SpringFan extends Item implements CustomArmPoseItem, ISpringPowered
         super(properties.rarity(Rarity.UNCOMMON));
         SpeedSys = new SpringSpeedSys();
         Supplier<Item>[] allowedModifficators = new Supplier[]{
-                () -> ModItems.PUNCHCARD.get(),
+                () -> CSpringsItems.PUNCHCARD.get(),
                 () -> Items.TRIPWIRE_HOOK,
         };
 

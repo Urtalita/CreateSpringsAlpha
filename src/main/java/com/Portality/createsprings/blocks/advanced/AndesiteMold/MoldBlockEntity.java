@@ -1,10 +1,9 @@
 package com.Portality.createsprings.blocks.advanced.AndesiteMold;
 
-import com.Portality.createsprings.blocks.ModBlocks;
+import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -29,7 +28,7 @@ public class MoldBlockEntity extends SmartBlockEntity {
 
     public MoldBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        heldStack = new ItemStack(ModBlocks.LARGE_SPRING_COIL.get().asItem());
+        heldStack = new ItemStack(CSpringsBlocks.LARGE_SPRING_COIL.get().asItem());
     }
 
     public float getDelay(float pt){
@@ -51,7 +50,7 @@ public class MoldBlockEntity extends SmartBlockEntity {
             lastdelay = delay;
             if(delay == -1){
                 level.setBlock(worldPosition,
-                        ModBlocks.ANDESITE_MOLD.get().defaultBlockState().setValue(FACING, getBlockState().getValue(FACING)), 3);
+                        CSpringsBlocks.ANDESITE_MOLD.get().defaultBlockState().setValue(FACING, getBlockState().getValue(FACING)), 3);
             }
         }
     }

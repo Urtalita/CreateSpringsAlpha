@@ -1,6 +1,7 @@
 package com.Portality.createsprings.items;
 
 import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ChamberItem;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBase;
 import com.Portality.createsprings.items.SpringStufs.SpringDrill.SpringDrill;
 import com.Portality.createsprings.items.SpringStufs.SpringFan.SpringFan;
@@ -10,13 +11,14 @@ import com.Portality.createsprings.items.SpringStufs.SpringShowel.SpringShove;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import com.Portality.createsprings.CreateSprings;
 import net.neoforged.bus.api.IEventBus;
 
 import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
-public class ModItems {
+public class CSpringsItems {
     static {
         CSPRINGS_REGISTRATE.setCreativeTab(CreateSprings.MAIN_TAB);
     }
@@ -82,6 +84,20 @@ public class ModItems {
             .properties(p -> p.stacksTo(1))
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
+
+    public static final ItemEntry<PortativeSteamEngineItem> PORTATIVE_STEAM_ENGINE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("portative_steam_engine", PortativeSteamEngineItem::new)
+            .model(AssetLookup.customGenericItemModel("_", "item"))
+            .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModelWithPartials())
+            .register();  // add to spring tools list
+
+    public static final ItemEntry<ArmorItem> BROKEN_PSE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("broken_portative_steam_engine", p -> new ArmorItem(CSpringsArmorMaterials.GEAR, ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)))
+            .properties(p -> p.stacksTo(1))
+            .model(AssetLookup.itemModel("broken_portative_steam_engine"))
+            .register();
+
 
 
 
