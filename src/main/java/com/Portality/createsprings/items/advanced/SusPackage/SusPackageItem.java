@@ -1,0 +1,145 @@
+package com.Portality.createsprings.items.advanced.SusPackage;
+
+import com.Portality.createsprings.client.menus.TooltipDescription;
+import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
+import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.Packages.SusPackageEntity;
+import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.simibubi.create.AllKeys;
+import com.simibubi.create.content.logistics.box.PackageItem;
+import com.simibubi.create.content.logistics.box.PackageStyles;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+
+public class SusPackageItem extends PackageItem {
+    public SusPackageItem(Properties properties) {
+        super(properties.stacksTo(1), PackageStyles.STYLES.get(0));
+        PackageStyles.STANDARD_BOXES.remove(this);
+        PackageStyles.ALL_BOXES.remove(this);
+    }
+
+    @Override
+    public Entity createEntity(Level world, Entity location, ItemStack itemstack) {
+        return SusPackageEntity.fromDroppedItem(world, location, itemstack);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> open(Level worldIn, Player playerIn, InteractionHand handIn) {
+        SusPackageEntity.spawnSpring(playerIn, worldIn, getStoredInBox(playerIn.getItemInHand(handIn)));
+        return super.open(worldIn, playerIn, handIn);
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int ticks) {
+        if (!(entity instanceof Player player))
+            return;
+        int i = this.getUseDuration(stack, entity) - ticks;
+        if (i < 0)
+            return;
+
+        float f = getPackageVelocity(i);
+        if (f < 0.1D)
+            return;
+        if (world.isClientSide)
+            return;
+
+        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
+                SoundSource.NEUTRAL, 0.5F, 0.5F);
+
+        ItemStack copy = stack.copy();
+        if (!player.getAbilities().instabuild)
+            stack.shrink(1);
+
+        Vec3 vec = new Vec3(entity.getX(), entity.getY() + entity.getBoundingBox()
+                .getYsize() / 2f, entity.getZ());
+        Vec3 motion = entity.getLookAngle()
+                .scale(f * 2);
+        vec = vec.add(motion);
+
+        SusPackageEntity packageEntity = new SusPackageEntity(world, vec.x, vec.y, vec.z);
+        packageEntity.setBox(copy);
+        packageEntity.power = getStoredInBox(stack);
+        packageEntity.setDeltaMovement(motion);
+        packageEntity.tossedBy = new WeakReference<>(player);
+        world.addFreshEntity(packageEntity);
+    }
+
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+
+        Vec3 point = context.getClickLocation();
+        float h = style.height() / 16f;
+        float r = style.width() / 2f / 16f;
+
+        if (context.getClickedFace() == Direction.DOWN)
+            point = point.subtract(0, h + .25f, 0);
+        else if (context.getClickedFace()
+                .getAxis()
+                .isHorizontal())
+            point = point.add(Vec3.atLowerCornerOf(context.getClickedFace()
+                            .getNormal())
+                    .scale(r));
+
+        AABB scanBB = new AABB(point, point).inflate(r, 0, r)
+                .expandTowards(0, h, 0);
+        Level world = context.getLevel();
+        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
+                .isEmpty())
+            return super.useOn(context);
+
+        SusPackageEntity packageEntity = new SusPackageEntity(world, point.x, point.y, point.z);
+        ItemStack itemInHand = context.getItemInHand();
+        packageEntity.power = getStoredInBox(itemInHand);
+        packageEntity.setBox(itemInHand.copy());
+        packageEntity.owner = context.getPlayer();
+        world.addFreshEntity(packageEntity);
+        itemInHand.shrink(1);
+
+        CSpringsAdvancements.SPRING_TRAP.awardTo(context.getPlayer());
+
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> pTooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, tooltipContext, pTooltipComponents, tooltipFlag);
+        float capacity = ModConfigs.common().SPRING_CAPACITY.get();
+        pTooltipComponents.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
+                .append(Component.literal(String.valueOf(getStoredInBox(stack)))).withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.GRAY));
+
+        pTooltipComponents.addAll(TooltipDescription.addShiftThing());
+        if(AllKeys.shiftDown()){
+            pTooltipComponents.addAll(TooltipDescription.splitAndFormat(Component.translatable("item.createsprings.sus_package.tooltip.summary")));
+        }
+    }
+
+    public static float getStoredInBox(ItemStack stack){
+        if(stack.has(CSpringsDataComponents.STORED_SINGLE)){
+            return stack.get(CSpringsDataComponents.STORED_SINGLE);
+        }
+        return 0;
+    }
+}

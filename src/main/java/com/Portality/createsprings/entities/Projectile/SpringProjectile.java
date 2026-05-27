@@ -1,12 +1,15 @@
 package com.Portality.createsprings.entities.Projectile;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
 import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.damage.CSpringsDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +23,7 @@ import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class SpringProjectile extends AbstractArrow {
     private int bounceCount = 0;
@@ -198,20 +202,21 @@ public class SpringProjectile extends AbstractArrow {
 
             if (target instanceof LivingEntity livingTarget) {
                 if(box){
-                    //DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
-                    //livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                    DamageSource damageSource = CSpringsDamageSources.springBox(this.level());
+                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
 
-                    /*
-                    if(livingTarget instanceof Player player){
+
+                    /*if(livingTarget instanceof Player player){
                         if(player.getUUID().equals(Objects.requireNonNull(getOwner()).getUUID())){
                             CSpringsAdvancements.CASH_BACK.awardTo(player);
                         }
                     }
-
+                    
                      */
+
                 } else {
-                    //DamageSource damageSource = CSpringsDamageSources.spring(this.level());
-                    //livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
+                    DamageSource damageSource = CSpringsDamageSources.spring(this.level());
+                    livingTarget.hurt(damageSource, (float) (this.getBaseDamage() * this.getDeltaMovement().length() * 2));
                 }
             }
 

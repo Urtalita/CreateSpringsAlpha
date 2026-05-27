@@ -1,9 +1,12 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.compat.SplashCallback;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
+import dev.ryanhcode.sable.api.block.BlockWithSubLevelCollisionCallback;
+import dev.ryanhcode.sable.api.physics.callback.BlockSubLevelCollisionCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -31,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock {
+public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock , BlockWithSubLevelCollisionCallback {
     public SpringBlock(Properties properties) {
         super(properties);
     }
@@ -228,4 +231,8 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         return 0;
     }
 
+    @Override
+    public BlockSubLevelCollisionCallback sable$getCallback() {
+        return SplashCallback.INSTANCE;
+    }
 }

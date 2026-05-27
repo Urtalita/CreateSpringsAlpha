@@ -22,6 +22,7 @@ import java.util.List;
 
 @Mixin(BoilerData.class)
 public class BoilerDataMixin {
+    /*
     @Shadow public int activeHeat;
 
     @Inject(
@@ -156,4 +157,6 @@ public class BoilerDataMixin {
         return Component.literal(Strings.repeat('|', level))
                 .withStyle(format);
     }
+
+     */
 }

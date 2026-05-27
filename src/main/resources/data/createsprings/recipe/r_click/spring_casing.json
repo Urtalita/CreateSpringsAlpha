@@ -2,7 +2,7 @@
   "type": "create:item_application",
   "ingredients": [
     {
-      "tag": "forge:stripped_logs"
+      "tag": "c:stripped_logs"
     },
     {
       "item": "createsprings:spring_alloy"
@@ -10,7 +10,7 @@
   ],
   "results": [
     {
-      "item": "createsprings:spring_alloy_casing"
+      "id": "createsprings:spring_alloy_casing"
     }
   ]
 }

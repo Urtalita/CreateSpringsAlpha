@@ -1,6 +1,7 @@
 package com.Portality.createsprings.client.sounds;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.client.ClientForgeHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +23,8 @@ public class CSpringsSounds {
             BWEUM = registerSoundEvent("standart_bweum"),
             BWEUM_SHOOT1 = registerSoundEvent("shooting_bweum1"),
             LARGE_BWEUM = registerSoundEvent("large_bweum"),
-            PUNCHCARD = registerSoundEvent("punchcard");
+            PUNCHCARD = registerSoundEvent("punchcard"),
+            BROKEN_PSE = registerSoundEvent("broken_pse");
     ;
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
@@ -42,7 +44,7 @@ public class CSpringsSounds {
                 SoundSource.NEUTRAL, volume, 1F);
 
         if(level.isClientSide()){
-            //ClientForgeHandler.start((int) (40 * volume));
+            ClientForgeHandler.start((int) (40 * volume));
         } else {
             List<? extends Player> players = level.players();
             for(Player player : players){

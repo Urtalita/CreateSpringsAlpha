@@ -1,7 +1,6 @@
 package com.Portality.createsprings.server;
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.server.packets.CatapultPlacementPacket;
-import com.Portality.createsprings.server.packets.PunchcardUpdatePacket;
+import com.Portality.createsprings.server.packets.*;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.Create;
 import com.simibubi.create.CreateBuildInfo;
@@ -23,8 +22,16 @@ import java.util.function.Supplier;
 public enum CSpringsPackets implements BasePacketPayload.PacketTypeProvider {
 
     PUNCHCARD_UPDATE(PunchcardUpdatePacket.class, PunchcardUpdatePacket.STREAM_CODEC),
+    PSE_BOOST(BoostPSEPacket.class, BoostPSEPacket.STREAM_CODEC),
+    PSE_DASH(DashPSEPacket.class, DashPSEPacket.STREAM_CODEC),
+    PSE_OPEN(OpenPSEPacket.class, OpenPSEPacket.STREAM_CODEC),
+
+    ACTIVATE_PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard.STREAM_CODEC),
     CATAPULT_TARGET(CatapultPlacementPacket.class, CatapultPlacementPacket.STREAM_CODEC),
-    CATAPULT_TARGET_CLIENT(CatapultPlacementPacket.ClientBoundRequest.class, CatapultPlacementPacket.ClientBoundRequest.STREAM_CODEC)
+    CATAPULT_TARGET_CLIENT(CatapultPlacementPacket.ClientBoundRequest.class, CatapultPlacementPacket.ClientBoundRequest.STREAM_CODEC),
+    PSE_SERVER_UPDATE(PortativeSteamEngineUpdatePacket.class, PortativeSteamEngineUpdatePacket.STREAM_CODEC),
+
+    PSE_CLIENT_UPDATE(PSEClientUpdate.class, PSEClientUpdate.STREAM_CODEC)
     ;
 
     private final CatnipPacketRegistry.PacketType<?> type;

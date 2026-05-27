@@ -2,8 +2,11 @@ package com.Portality.createsprings.client;
 
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.CatapultTargetHandler;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.EngineBrokenArmorLayer;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedClientHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,7 +23,10 @@ public class CSpringsClientEvents {
 
         @SubscribeEvent
         public static void addEntityRendererLayers(EntityRenderersEvent.AddLayers event) {
-            //EngineArmorLayer.registerOnAll(event);
+            EntityRenderDispatcher dispatcher = Minecraft.getInstance()
+                    .getEntityRenderDispatcher();
+            EngineArmorLayer.registerOnAll(dispatcher);
+            EngineBrokenArmorLayer.registerOnAll(dispatcher);
         }
     }
 
@@ -35,12 +41,10 @@ public class CSpringsClientEvents {
         SpringSpeedClientHandler.onTick();
         ClientSpringAnimation.onTick();
 
-        /*
+
         if(ClientForgeHandler.shakingTicks > 0){
             ClientForgeHandler.shakingTicks--;
             ClientForgeHandler.strength = ClientForgeHandler.DECAY * ClientForgeHandler.strength;
         }
-
-         */
     }
 }

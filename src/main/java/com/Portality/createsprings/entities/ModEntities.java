@@ -1,8 +1,14 @@
 package com.Portality.createsprings.entities;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.entities.Packages.HatPackageEntity;
+import com.Portality.createsprings.entities.Packages.SusPackageEntity;
 import com.Portality.createsprings.entities.Projectile.SpringAlloyBlockProjectile;
 import com.Portality.createsprings.entities.Projectile.SpringProjectile;
+import com.Portality.createsprings.entities.Visual.HatPackageVisual;
+import com.Portality.createsprings.entities.Visual.SusPackageVisual;
+import com.Portality.createsprings.entities.renderer.HatPackageRenderer;
+import com.Portality.createsprings.entities.renderer.SusPackageRenderer;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.foundation.data.CreateEntityBuilder;
 import com.tterrag.registrate.util.entry.EntityEntry;
@@ -33,7 +39,6 @@ public class ModEntities {
             ENTITY_TYPES.register("spring_alloy_block_projectile", () -> EntityType.Builder.<SpringAlloyBlockProjectile>of(SpringAlloyBlockProjectile::new,
                             MobCategory.MISC).sized(0.5f, 0.5f).setShouldReceiveVelocityUpdates(true).build("spring_alloy_block_projectile"));
 
-    /*
     public static final EntityEntry<SusPackageEntity> SUS_PACKAGE = register("sus_package", SusPackageEntity::new, () -> SusPackageRenderer::new,
                     MobCategory.MISC, 10, 3, true, false, SusPackageEntity::build)
             .visual(() -> SusPackageVisual::new, true)
@@ -44,7 +49,6 @@ public class ModEntities {
             .visual(() -> HatPackageVisual::new, true)
             .register();
 
-     */
 
 
 
@@ -71,12 +75,11 @@ public class ModEntities {
     }
 
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-        /*
+
         event.put(SUS_PACKAGE.get(), PackageEntity.createPackageAttributes()
                 .build());
+
         event.put(HAT_PACKAGE.get(), PackageEntity.createPackageAttributes()
                 .build());
-
-         */
     }
 }

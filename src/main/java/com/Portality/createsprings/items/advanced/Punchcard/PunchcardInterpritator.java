@@ -1,6 +1,7 @@
 package com.Portality.createsprings.items.advanced.Punchcard;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
 import com.Portality.createsprings.server.CSpringsDataComponents;
@@ -200,7 +201,8 @@ public class PunchcardInterpritator {
 
     public static Function<ExecutorInfo, Void> toggleBoost(){
         return (info) -> {
-            /*if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
+            /*
+            if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
                 ItemStack stack = info.getStack();
                 int boosted = stack.getOrCreateTag().getInt("boosted");
                 if(boosted < 99){
@@ -212,6 +214,7 @@ public class PunchcardInterpritator {
             }
 
              */
+
             info.nextAction();
             return null;
         };

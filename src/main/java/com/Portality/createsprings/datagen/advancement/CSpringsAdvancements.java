@@ -63,7 +63,6 @@ public class CSpringsAdvancements implements DataProvider {
             .after(SPRING_ALLOY)
     ),
 
-
     PSE = create("pse", b -> b.icon(CSpringsItems.PORTATIVE_STEAM_ENGINE)
             .title("Steam to Go")
             .description("Create a PSE")
@@ -112,13 +111,15 @@ public class CSpringsAdvancements implements DataProvider {
             .special(SECRET)
     ),
 
-    /*
-    SPRING_TRAP = create("spring_trap", b -> b.icon(ModItems.SUS_PACKAGE.get())
+
+
+    SPRING_TRAP = create("spring_trap", b -> b.icon(CSpringsItems.SUS_PACKAGE.get())
             .title("Spring trap")
             .description("place sus package")
             .after(SPRING)
     ),
 
+    /*
 
 
     CASH_BACK = create("cash_back", b -> b.icon(ModBlocks.SPRING.asItem())

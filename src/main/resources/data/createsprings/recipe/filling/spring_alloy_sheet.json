@@ -5,6 +5,7 @@
       "item": "create:sail_frame"
     },
     {
+      "type": "neoforge:single",
       "amount": 100,
       "fluid": "createsprings:molten_spring_alloy"
     }

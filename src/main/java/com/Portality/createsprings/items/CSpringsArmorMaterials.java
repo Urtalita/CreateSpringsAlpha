@@ -1,6 +1,7 @@
 package com.Portality.createsprings.items;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.Create;
 import net.minecraft.core.Holder;
@@ -23,7 +24,7 @@ public class CSpringsArmorMaterials {
 
     public static final Holder<ArmorMaterial> GEAR = register(
             "hat",
-            new int[] { 11, 16, 16, 13 },
+            new int[] { 6, 6, 6, 6, 6 },
             7,
             AllSoundEvents.COPPER_ARMOR_EQUIP.getMainEventHolder(),
             0.0F,
@@ -31,6 +32,15 @@ public class CSpringsArmorMaterials {
             () -> Ingredient.of(Items.COPPER_INGOT)
     );
 
+    public static final Holder<ArmorMaterial> BROKEN_PSE = register(
+            "pse",
+            new int[] { 4, 4, 4, 4, 4 },
+            4,
+            CSpringsSounds.BROKEN_PSE,
+            0.0F,
+            0.0F,
+            () -> Ingredient.of(Items.COPPER_INGOT)
+    );
 
     private static Holder<ArmorMaterial> register(
             String name,
@@ -41,7 +51,7 @@ public class CSpringsArmorMaterials {
             float knockbackResistance,
             Supplier<Ingredient> repairIngredient
     ) {
-        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(Create.asResource(name)));
+        List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(CreateSprings.asResource(name)));
         return register(name, defense, enchantmentValue, equipSound, toughness, knockbackResistance, repairIngredient, list);
     }
 

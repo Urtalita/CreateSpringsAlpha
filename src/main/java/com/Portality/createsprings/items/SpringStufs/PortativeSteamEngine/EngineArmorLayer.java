@@ -4,6 +4,8 @@ import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.CSpringsItems;
+import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
+import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -58,10 +60,9 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
         }
 
         ItemStack engineStack = getEngineStack(entity.getArmorSlots());
-        CompoundTag tag = engineStack.getOrCreateTag();
 
-        int engineSpeed = tag.getInt("engineSpeed");
-        boolean boost = tag.getBoolean("boost");
+        int engineSpeed = PortativeSteamEngineItem.getSpeed(engineStack);
+        boolean boost = PortativeSteamEngineItem.getOverdrive(engineStack);
 
         BlockState renderedState = CSpringsBlocks.SPRING.get().defaultBlockState();
         VertexConsumer vc = buffer.getBuffer(Sheets.cutoutBlockSheet());
@@ -112,18 +113,21 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
                 .light(light)
                 .renderInto(ms, vc);
 
-        int springs = tag.getInt("Springs_rn");
+        int springs = SpringPoweredCore.getSprings(engineStack);
+        var list = engineStack.get(CSpringsDataComponents.STORED_LIST);
 
-        if(springs > 0){
-            ms.translate(0, 0, 2/16f);
-            ms.rotateAround(Axis.YP.rotationDegrees(-90f), 0,0,0);
-            ms.translate(-1/16f, 6/16f, -8/16f);
-            renderSpring(light, ms, tag.getFloat("Stored0"), SPRING_LEN, CSpringsPartalModels.CHAMBER_SPRING_PLATE, CSpringsPartalModels.CHAMBER_SPRING_PIECE, renderedState, vc);
+        if(list != null){
+            if(springs > 0 && !list.isEmpty()){
+                ms.translate(0, 0, 2/16f);
+                ms.rotateAround(Axis.YP.rotationDegrees(-90f), 0,0,0);
+                ms.translate(-1/16f, 6/16f, -8/16f);
+                renderSpring(light, ms, list.getFirst(), SPRING_LEN, CSpringsPartalModels.CHAMBER_SPRING_PLATE, CSpringsPartalModels.CHAMBER_SPRING_PIECE, renderedState, vc);
 
-            if(springs == 2){
-                ms.rotateAround(Axis.YP.rotationDegrees(180f), 0,0,0);
-                ms.translate(-16/16f, 0, 0);
-                renderSpring(light, ms, tag.getFloat("Stored1"), SPRING_LEN, CSpringsPartalModels.CHAMBER_SPRING_PLATE, CSpringsPartalModels.CHAMBER_SPRING_PIECE, renderedState, vc);
+                if(springs == 2 && list.size() <= 2){
+                    ms.rotateAround(Axis.YP.rotationDegrees(180f), 0,0,0);
+                    ms.translate(-16/16f, 0, 0);
+                    renderSpring(light, ms, list.get(1), SPRING_LEN, CSpringsPartalModels.CHAMBER_SPRING_PLATE, CSpringsPartalModels.CHAMBER_SPRING_PIECE, renderedState, vc);
+                }
             }
         }
 
@@ -173,8 +177,8 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
     public static void registerOnAll(EntityRenderDispatcher renderManager) {
         for (EntityRenderer<? extends Player> renderer : renderManager.getSkinMap().values())
             registerOn(renderer);
-        for (EntityRenderer<?> renderer : renderManager.renderers.values())
-            registerOn(renderer);
+        //for (EntityRenderer<?> renderer : renderManager.renderers.values())
+        //    registerOn(renderer);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -2,6 +2,8 @@ package com.Portality.createsprings.mixins.banner;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.items.CSpringsItems;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.BrokenPSEItem;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -80,6 +82,16 @@ public class CreativeTabMixin {
         if(item.getItem() instanceof SpringLauncher tool){
             tool.getCore().attachSpring(item, CSpringsDataComponents.getChargedSpring());
             tool.getCore().attachSpring(item, CSpringsDataComponents.getChargedSpring());
+        }
+
+        if (item.getItem() instanceof BrokenPSEItem){
+            ItemStack stack = CSpringsDataComponents.getChargedSusPackage();
+            displayItems.accept(stack);
+            searchItems.accept(stack);
+
+            ItemStack hat = new ItemStack(CSpringsItems.HAT.get());
+            displayItems.accept(hat);
+            searchItems.accept(hat);
         }
 
         return item;

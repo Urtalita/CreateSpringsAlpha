@@ -17,13 +17,13 @@
       "item": "create:brass_casing"
     },
     "h": {
-      "tag": "forge:plates/iron"
+      "tag": "c:plates/iron"
     },
     "a": {
       "item": "createsprings:spring_alloy"
     }
   },
   "result": {
-    "item": "createsprings:kinetic_interface"
+    "id": "createsprings:kinetic_interface"
   }
 }

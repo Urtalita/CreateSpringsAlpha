@@ -5,11 +5,13 @@ import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
+import dev.ryanhcode.sable.api.block.BlockWithSubLevelCollisionCallback;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3d;
+import dev.ryanhcode.sable.physics.callback.ExplosiveBlockCallback;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
@@ -17,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -91,7 +94,42 @@ public class SableCompatHandler {
         applyImpulseToSubLevel(serverSubLevel, springImpulse, be.getBlockPos().getCenter(), be);
     }
 
-    public static void pushCreatedSubLevels(SpringBlockEntity be){
+    private static boolean splitAndShootBlock(ServerSubLevel serverSubLevelOn, SpringBlockEntity be){
+        BlockPos pos = be.getFront();
+        if(!canBreakBySpring(pos, be.getLevel(), be.stored)){return false;}
+
+        if(!(be.getLevel() instanceof ServerLevel serverLevel)){return false;}
+        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
+        if(container == null) return false;
+
+        SubLevelSpringAssemblyHelper helper = new SubLevelSpringAssemblyHelper(be);
+        SubLevelAssemblyHelper.@NotNull GatherResult result = SubLevelAssemblyHelper.gatherConnectedBlocks(pos, serverLevel, 256_000, helper);
+        if(result.blocks() == null){return false;}
+        ArrayList<BlockPos> assemblyBlocks = new ArrayList<>(result.blocks());
+
+        BlockState state = serverSubLevelOn.getLevel().getBlockState(be.getFront());
+
+        final BoundingBox3d aabb = getAreaForDetection(be);
+        ServerSubLevel addedServerSubLevel = SubLevelAssemblyHelper.assembleBlocks(serverLevel, be.getFront(), assemblyBlocks, aabb.expand(8).chunkBoundsFrom());
+        RigidBodyHandle handle = RigidBodyHandle.of(addedServerSubLevel);
+
+        if(state.getBlock() instanceof BlockWithSubLevelCollisionCallback collisionCallback){
+            if(collisionCallback.sable$getCallback() instanceof ExplosiveBlockCallback){
+                Vec3i facing = be.getFacing().getNormal();
+                Vector3d facing3d = new Vector3d(facing.getX(), facing.getY(), facing.getZ());
+                Vector3d pointDirection = serverSubLevelOn.logicalPose().orientation().transform(facing3d);
+                handle.teleport(addedServerSubLevel.logicalPose().position().add(pointDirection.mul(0.1)), serverSubLevelOn.logicalPose().orientation());
+            }
+        }
+        
+        movePassengersOnSeats(helper, serverSubLevelOn, addedServerSubLevel, be);
+        be.disableBreakingBlocks = true;
+        be.createdSubLevel = addedServerSubLevel.getUniqueId();
+        be.sendData();
+        return true;
+    }
+
+    public static void pushCreatedSubLevels(SpringBlockEntity be){ //happends after 1 tick
         if(be.createdSubLevel == null){return;}
 
         final Vec3i normal = be.getFacing().getNormal();
@@ -114,36 +152,12 @@ public class SableCompatHandler {
             SubLevel subLevelOn = Sable.HELPER.getContaining(be);
 
             if (subLevelOn != null) {
-                if(subLevelOn instanceof ServerSubLevel serverSubLevelOn){
+                if(subLevelOn instanceof ServerSubLevel){
                     applyLinerImpulseToSubLevel(serverSubLevel, impulse, be);
                 }
             }
         }
         be.createdSubLevel = null;
-    }
-
-    private static boolean splitAndShootBlock(ServerSubLevel serverSubLevelOn, SpringBlockEntity be){
-        BlockPos pos = be.getFront();
-        if(!canBreakBySpring(pos, be.getLevel(), be.stored)){return false;}
-
-        if(!(be.getLevel() instanceof ServerLevel serverLevel)){return false;}
-        @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
-        if(container == null) return false;
-
-        SubLevelSpringAssemblyHelper helper = new SubLevelSpringAssemblyHelper(be);
-        SubLevelAssemblyHelper.@NotNull GatherResult result = SubLevelAssemblyHelper.gatherConnectedBlocks(pos, serverLevel, 256_000, helper);
-        if(result.blocks() == null){return false;}
-        ArrayList<BlockPos> assemblyBlocks = new ArrayList<>(result.blocks());
-
-        final BoundingBox3d aabb = getAreaForDetection(be);
-        ServerSubLevel addedServerSubLevel = SubLevelAssemblyHelper.assembleBlocks(serverLevel, be.getFront(), assemblyBlocks, aabb.expand(8).chunkBoundsFrom());
-        addedServerSubLevel.logicalPose().orientation().set(serverSubLevelOn.logicalPose().orientation());
-
-        movePassengersOnSeats(helper, serverSubLevelOn, addedServerSubLevel, be);
-        be.disableBreakingBlocks = true;
-        be.createdSubLevel = addedServerSubLevel.getUniqueId();
-        be.sendData();
-        return true;
     }
 
     public static void movePassengersOnSeats(SubLevelSpringAssemblyHelper helper, ServerSubLevel subLevelOn, ServerSubLevel SubLevelOther, SpringBlockEntity be){
@@ -160,17 +174,41 @@ public class SableCompatHandler {
     }
 
     private static boolean hasSublevelOrBlock(BlockPos pos, float scale, Vec3i normal, ServerSubLevel serverSubLevelOn, SpringBlockEntity be){
-        if (!be.getLevel().getBlockState(pos).isAir()) return true;
+        AABB detectionBox = getAreaForDetection(be).toMojang();
+        Pose3d pose = serverSubLevelOn.logicalPose();
+        boolean ret = false;
 
-        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(be.getLevel(), getAreaForDetection(be))) {
+        ArrayList<Vec3> pointsToCheck = new ArrayList<>();
+        pointsToCheck.add(detectionBox.getMinPosition());
+        pointsToCheck.add(detectionBox.getMinPosition().add(detectionBox.getXsize(), 0, 0));
+        pointsToCheck.add(detectionBox.getMinPosition().add(0, detectionBox.getYsize(), 0));
+        pointsToCheck.add(detectionBox.getMinPosition().add(0, 0, detectionBox.getXsize()));
+
+        pointsToCheck.add(detectionBox.getMaxPosition());
+        pointsToCheck.add(detectionBox.getMaxPosition().add(detectionBox.getXsize() * -1, 0, 0));
+        pointsToCheck.add(detectionBox.getMaxPosition().add(0, detectionBox.getYsize() * -1, 0));
+        pointsToCheck.add(detectionBox.getMaxPosition().add(0, 0, detectionBox.getXsize() * -1));
+
+        for(Vec3 point : pointsToCheck){
+            BlockPos inWorld = BlockPos.containing(pose.transformPosition(point));
+            if(!be.getLevel().getBlockState(inWorld).isAir()){
+                ret = true;
+            }
+        }
+
+        for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(be.getLevel(),
+                new BoundingBox3d(pose.transformPosition(detectionBox.getMinPosition()), pose.transformPosition(detectionBox.getMaxPosition())))) {
+
             if(subLevel == serverSubLevelOn) continue;
             if (subLevel instanceof ServerSubLevel serverSubLevel) {
                 Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
                 Vec3  affectedPos = transformFromOneShipToAnother(serverSubLevelOn, serverSubLevel, be);
                 applyImpulseToSubLevel(serverSubLevel, impulse, affectedPos, be);
+                ret = true;
             }
         }
-        return false;
+
+        return ret;
     }
 
     private static void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vec3 affected, SpringBlockEntity be) {

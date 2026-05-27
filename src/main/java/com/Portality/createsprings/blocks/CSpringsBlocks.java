@@ -171,7 +171,7 @@ public class CSpringsBlocks {
             .block("spring", SpringBlock::new)
             .initialProperties(SharedProperties::copperMetal)
             .transform(pickaxeOnly())
-            .properties(p -> p.noOcclusion())
+            .properties(p -> p.noOcclusion().isRedstoneConductor((s, l, pos) -> false))
             //.transform(displaySource(CSpringsDisplaySources.CHARGE))
             .item(SpringItem::new)
             .transform(customItemModel())

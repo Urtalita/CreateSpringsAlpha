@@ -1,6 +1,7 @@
 package com.Portality.createsprings.items;
 
 import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ChamberItem;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.BrokenPSEItem;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBase;
 import com.Portality.createsprings.items.SpringStufs.SpringDrill.SpringDrill;
@@ -9,12 +10,20 @@ import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLaunch
 import com.Portality.createsprings.items.SpringStufs.SpringSaw.SpringSaw;
 import com.Portality.createsprings.items.SpringStufs.SpringShowel.SpringShove;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardItem;
+import com.Portality.createsprings.items.advanced.SusPackage.SusPackageItem;
+import com.Portality.createsprings.items.advanced.hat.HatItem;
+import com.Portality.createsprings.items.advanced.hat.HatModel;
+import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import com.Portality.createsprings.CreateSprings;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
@@ -22,6 +31,9 @@ public class CSpringsItems {
     static {
         CSPRINGS_REGISTRATE.setCreativeTab(CreateSprings.MAIN_TAB);
     }
+
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(BuiltInRegistries.ITEM, CreateSprings.MODID);
 
     public static final ItemEntry<Item> SPRING_ALLOY = CreateSprings.CSPRINGS_REGISTRATE
             .item("spring_alloy", Item::new)
@@ -40,6 +52,11 @@ public class CSpringsItems {
 
     public static final ItemEntry<PunchcardItem> PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
             .item("punchcard", PunchcardItem::new)
+            .properties(p -> p.stacksTo(1))
+            .register();
+
+    public static final ItemEntry<SequencedAssemblyItem> INCOMPLETE_PUNCHCARD = CreateSprings.CSPRINGS_REGISTRATE
+            .item("incomplete_punchcard", SequencedAssemblyItem::new)
             .properties(p -> p.stacksTo(1))
             .register();
 
@@ -85,6 +102,7 @@ public class CSpringsItems {
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
+
     public static final ItemEntry<PortativeSteamEngineItem> PORTATIVE_STEAM_ENGINE = CreateSprings.CSPRINGS_REGISTRATE
             .item("portative_steam_engine", PortativeSteamEngineItem::new)
             .model(AssetLookup.customGenericItemModel("_", "item"))
@@ -92,16 +110,26 @@ public class CSpringsItems {
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
-    public static final ItemEntry<ArmorItem> BROKEN_PSE = CreateSprings.CSPRINGS_REGISTRATE
-            .item("broken_portative_steam_engine", p -> new ArmorItem(CSpringsArmorMaterials.GEAR, ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)))
+    public static final ItemEntry<BrokenPSEItem> BROKEN_PSE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("broken_portative_steam_engine", BrokenPSEItem::new)
             .properties(p -> p.stacksTo(1))
             .model(AssetLookup.itemModel("broken_portative_steam_engine"))
             .register();
 
+    public static final DeferredHolder<Item, SusPackageItem> SUS_PACKAGE = ITEMS.register("sus_package",
+            () -> new SusPackageItem(new Item.Properties()));
 
+    public static final ItemEntry<HatItem> HAT = CreateSprings.CSPRINGS_REGISTRATE
+            .item("hat", HatItem::new)
+            .properties(p -> p.stacksTo(1))
+            .onRegister(CreateRegistrate.itemModel(() -> HatModel::new))
+            .model(AssetLookup.itemModel("hat"))
+            .register();
 
+    public static final DeferredHolder<Item, HitboxPackageItem> HITBOX_HAT = ITEMS.register("hitbox_hat",
+            () -> new HitboxPackageItem(new Item.Properties(), new PackageStyles.PackageStyle("cardboard", 10, 7, 18f, false)));
 
     public static void register(IEventBus eventBus) {
-
+        ITEMS.register(eventBus);
     }
 }

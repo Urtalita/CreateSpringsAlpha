@@ -1,4 +1,4 @@
-package com.Portality.createsprings.datagen;
+package com.Portality.createsprings.datagen.recipes;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.server.fluid.CSpringsFluids;

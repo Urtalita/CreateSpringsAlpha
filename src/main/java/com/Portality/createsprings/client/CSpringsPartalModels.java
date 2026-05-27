@@ -59,6 +59,9 @@ public class CSpringsPartalModels {
     SPRING_CATAPULT_CONNECTION = block("spring_catapult/connections"),
     SPRING_CATAPULT_HOLDER = block("spring_catapult/second_connections"),
 
+    BROKEN_PSE_PARTAL = item("broken_portative_steam_engine_partal"),
+    BROKEN_PSE_MOVING_PART = item("broken_portative_steam_engine_mooving_part"),
+
     WelderHead = block("friction_welder/top"),
             LARGE_SPRING_COIL_ROTATED = block("large_spring_coil_partal_rotated"),
     LARGE_SPRING_COIL = block("large_spring_coil_partal"),

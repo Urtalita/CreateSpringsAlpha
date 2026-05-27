@@ -90,7 +90,6 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
         core.checkAndAddModifier(stack, AllItems.WHISK.asItem());
         SpeedSys.appendHoverText(stack, tooltipComponents, tooltipFlag);
         core.appendHoverText(stack, tooltipComponents, tooltipFlag);
-
     }
 
     @Override
@@ -125,7 +124,7 @@ public class SpringShove extends ShovelItem implements CustomArmPoseItem, ISprin
             return true;
         }
         if (core.addStackedLogic(AllItems.WHISK.asItem(), stack1, stack2, action, player)){
-            //core.switchTagInHand(player, slot, ModItems.SPRING_BASE.get(), stack1);
+            core.switchTagInHand(player, slot, CSpringsItems.SPRING_BASE.get(), stack1);
             player.playSound(SoundEvents.ANVIL_BREAK, 0.5F, 1.0F);
             return true;
         }

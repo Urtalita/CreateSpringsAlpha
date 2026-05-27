@@ -5,6 +5,7 @@
       "item": "minecraft:barrel"
     },
     {
+      "type": "neoforge:single",
       "amount": 1000,
       "fluid": "createsprings:molten_spring_alloy"
     }

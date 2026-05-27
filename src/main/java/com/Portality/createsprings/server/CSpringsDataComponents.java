@@ -4,6 +4,7 @@ import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.CSpringsItems;
+import com.Portality.createsprings.items.advanced.hat.ColorComponent;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -41,6 +42,11 @@ public class CSpringsDataComponents {
             builder -> builder
                     .persistent(Codec.FLOAT.listOf())
                     .networkSynchronized(ByteBufCodecs.FLOAT.apply(ByteBufCodecs.list()))
+    );
+
+    public static final DataComponentType<Float> STORED_SINGLE = register(
+            "stored_single_spring",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
     );
 
     public static final DataComponentType<Float> TOOL_SPEED = register(
@@ -98,6 +104,43 @@ public class CSpringsDataComponents {
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
 
+    public static final DataComponentType<Integer> TARGET_SPEED = register(
+            "target_speed",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Integer> ENGINE_MODE = register(
+            "engine_mode",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+
+
+    public static final DataComponentType<ColorComponent> COLOUR = register(
+            "color",
+            builder -> builder.persistent(ColorComponent.CODEC).networkSynchronized(ColorComponent.STREAM_CODEC)
+    );
+
+    public static final DataComponentType<Integer> HAT_ANIMATION_PROGRESS = register(
+            "animation_progress",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DataComponentType<Boolean> HAT_ANIMATION = register(
+            "animation",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
+
+    public static final DataComponentType<Boolean> HAS_GOGGLES = register(
+            "has_goggles",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
+
+    public static final DataComponentType<Boolean> PREVENT_HAT_PLACEMENT = register(
+            "prevent_hat_placement",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
+
     private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
         DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
         DATA_COMPONENTS.register(name, () -> type);
@@ -139,6 +182,12 @@ public class CSpringsDataComponents {
 
         stack.set(CSpringsDataComponents.PUNCHCARD ,updatedTag);
 
+        return stack;
+    }
+
+    public static ItemStack getChargedSusPackage(){
+        ItemStack stack = new ItemStack(CSpringsItems.SUS_PACKAGE.get());
+        stack.set(STORED_SINGLE, (float) ModConfigs.common().SPRING_CAPACITY.get());
         return stack;
     }
 }

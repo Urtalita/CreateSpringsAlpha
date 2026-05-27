@@ -1,11 +1,13 @@
 package com.Portality.createsprings.items.SpringStufs;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.simibubi.create.AllSoundEvents;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,6 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -331,12 +334,17 @@ public class SpringPoweredCore {
         for (float f : all){allSu.add(f);}
 
         if (stack2.getItem() == CSpringsBlocks.SPRING.asItem()){
-            return attachSpring(stack1, stack2);
+            boolean ret = attachSpring(stack1, stack2);
+            if (ret) player.playSound(CSpringsSounds.BROKEN_PSE.get(), 0.2f, 1);
+            return ret;
         }
 
         if (stack2.isEmpty()){
             if(action == ClickAction.SECONDARY){
-                if(detachSpring(stack1, player)){return true;}
+                if(detachSpring(stack1, player)){
+                    player.playSound(CSpringsSounds.BROKEN_PSE.get(), 0.2f, 1);
+                    return true;
+                }
             }
         }
 
@@ -390,6 +398,7 @@ public class SpringPoweredCore {
         CompoundTag tag = stack.getOrDefault(CSpringsDataComponents.PUNCHCARD, new CompoundTag());
         if(addItem(item, stackedOn, stack)){
             stackedOn.set(CSpringsDataComponents.PUNCHCARD, tag);
+            player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.125f, 1);
             return true;
         }
 
@@ -407,6 +416,8 @@ public class SpringPoweredCore {
                     contains.remove(itemid);
                     stackedOn.set(CSpringsDataComponents.MODIFIERS, contains);
                     stackedOn.remove(CSpringsDataComponents.PUNCHCARD);
+
+                    player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.125f, 1);
                     return true;
                 }
             }

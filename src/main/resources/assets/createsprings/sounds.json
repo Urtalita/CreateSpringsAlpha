@@ -22,6 +22,24 @@
     "subtitle": "createsprings.subtitle.shooting_bweum"
   },
 
+  "broken_pse": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "createsprings:broken_pse"
+      },
+      {
+        "type": "file",
+        "name": "createsprings:broken_pse1"
+      },
+      {
+        "type": "file",
+        "name": "createsprings:broken_pse2"
+      }
+    ],
+    "subtitle": "createsprings.subtitle.shooting_bweum"
+  },
+
   "punchcard": {
     "sounds": [
       {

@@ -2,7 +2,9 @@ package com.Portality.createsprings;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.client.CSpringsKeybindings;
 import com.Portality.createsprings.client.CSpringsPartalModels;
+import com.Portality.createsprings.client.menus.CSpringsMenus;
 import com.Portality.createsprings.client.particles.CSpringsParticles;
 import com.Portality.createsprings.client.ponders.CSpringsPonderPlugin;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
@@ -14,6 +16,7 @@ import com.Portality.createsprings.entities.ModEntities;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
 import com.Portality.createsprings.items.CSpringsArmorMaterials;
+import com.Portality.createsprings.items.advanced.hat.HatItem;
 import com.Portality.createsprings.server.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
@@ -53,6 +56,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -102,11 +106,12 @@ public class CreateSprings {
         ModBlockEntities.register();
         CSpringsSounds.register(modEventBus);
         CSpringsParticles.register(modEventBus);
-        CSpringsArmorMaterials.register(modEventBus);
         ModEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
         CSpringsFluids.register();
         CSpringsPackets.register();
+        CSpringsMenus.register();
+        CSpringsArmorMaterials.register(modEventBus);
 
         CSpringsDatagen.addExtraRegistrateData();
 
@@ -146,7 +151,7 @@ public class CreateSprings {
                     CSpringsItems.SPRING_DRILL.get(),
                     CSpringsItems.SPRING_SHOVE.get(),
                     CSpringsItems.EXPLOSION_CHAMBER.get(),
-                    //ModItems.PORTATIVE_STEAM_ENGINE.get(),
+                    CSpringsItems.PORTATIVE_STEAM_ENGINE.get(),
                     CSpringsItems.SPRING_FAN.get()
             };
         });
@@ -160,23 +165,20 @@ public class CreateSprings {
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        // Регистрируем обработчик предметов для нашего Block Entity
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK, // Тип капсулы (инвентарь)
-                ModBlockEntities.MOLD.get(), // Ваш BlockEntityType
-                (be, side) -> be.getItemHandler() // Лямбда, вызывающая метод из BE
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.MOLD.get(),
+                (be, side) -> be.getItemHandler()
         );
     }
 
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("create springs loaded");
     }
 
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
@@ -195,8 +197,16 @@ public class CreateSprings {
 
         @SubscribeEvent
         public static void registerClientTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
-            event.register(SpringPoweredCore.SpringSlotTooltipComponent.class,
-                    SpringPoweredCore.SpringSlotRenderer::new);
+            event.register(SpringPoweredCore.SpringSlotTooltipComponent.class, SpringPoweredCore.SpringSlotRenderer::new);
+            event.register(HatItem.HatSlotTooltipComponent.class, HatItem.HatSlotRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerKeys(RegisterKeyMappingsEvent event){
+            event.register(CSpringsKeybindings.INSTANCE.PSEOpenKey);
+            event.register(CSpringsKeybindings.INSTANCE.PSEBoostKey);
+            event.register(CSpringsKeybindings.INSTANCE.PSEDashKey);
+            event.register(CSpringsKeybindings.INSTANCE.ActivatePunchcard);
         }
     }
 }
