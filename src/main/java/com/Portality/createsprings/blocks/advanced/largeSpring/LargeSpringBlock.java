@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.contraptions.AssemblyException;
@@ -120,6 +120,11 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
 
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+        if(pIsMoving) {
+            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+            return;
+        }
+
         withBlockEntityDo(pLevel, pPos, be-> {
             be.onBreak(pPos, pState.getValue(FACING));
         });
@@ -190,7 +195,7 @@ public class LargeSpringBlock extends DirectionalKineticBlock implements IBE<Lar
 
     @Override
     public BlockEntityType<? extends LargeSpringBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.LARGE_SPRING.get();
+        return CSpringsBlockEntities.LARGE_SPRING.get();
     }
 
     @Override

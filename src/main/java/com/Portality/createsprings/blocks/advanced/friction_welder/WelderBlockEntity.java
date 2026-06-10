@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.friction_welder;
 
-import com.Portality.createsprings.recipe.ModRecipes;
+import com.Portality.createsprings.recipe.CSpringsRecipes;
 import com.Portality.createsprings.recipe.Welding.WelderRecipe;
 import com.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
 import com.Portality.createsprings.recipe.Welding.WelderRecipeWrapper;
@@ -108,7 +108,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
         WelderRecipeWrapper input = WelderRecipeWrapper.fromStates(CraftState1, CraftState2);
 
         Optional<RecipeHolder<WelderRecipe>> recipe = level.getRecipeManager()
-                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
+                .getRecipeFor(CSpringsRecipes.WELDER_TYPE.get(), input, level);
 
         if (recipe.isPresent()) {
             recipeSpeed = recipe.get().value().getSpeed();
@@ -319,10 +319,10 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
         WelderRecipeWrapper input2 = WelderRecipeWrapper.fromStates(CraftState2, CraftState1);
 
         Optional<RecipeHolder<WelderRecipe>> recipe = level.getRecipeManager()
-                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
+                .getRecipeFor(CSpringsRecipes.WELDER_TYPE.get(), input, level);
 
         Optional<RecipeHolder<WelderRecipe>> recipe2 = level.getRecipeManager()
-                .getRecipeFor(ModRecipes.WELDER_TYPE.get(), input, level);
+                .getRecipeFor(CSpringsRecipes.WELDER_TYPE.get(), input, level);
 
         if (recipe.isPresent() || recipe2.isPresent()) {
 

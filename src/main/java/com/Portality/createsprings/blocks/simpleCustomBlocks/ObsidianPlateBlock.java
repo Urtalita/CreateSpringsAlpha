@@ -1,4 +1,4 @@
-package com.Portality.createsprings.blocks.advanced;
+package com.Portality.createsprings.blocks.simpleCustomBlocks;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

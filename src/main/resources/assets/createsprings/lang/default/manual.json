@@ -14,6 +14,7 @@
   "tooltip.springstuf.modifiers": "Contains:",
   "tooltip.springstuf.speed": "Speed: ",
   "create.spring.saved": "Stored:",
+  "create.createsprings.time_left": "time Left: ",
   "tooltip.springstuf.saved": "Stored:",
   "create.spring.len": "Length:",
   "create.spring.su": "su-sec",

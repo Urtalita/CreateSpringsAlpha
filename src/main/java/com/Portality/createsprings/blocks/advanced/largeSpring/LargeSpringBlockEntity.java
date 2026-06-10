@@ -4,8 +4,11 @@ import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
+import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
+import com.Portality.createsprings.compat.SableCompatLargeSpring;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.server.contraption.SpringContraption;
 import com.Portality.createsprings.utill.Helpers.CspringsMath;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.AssemblyException;
@@ -14,6 +17,7 @@ import com.simibubi.create.content.contraptions.IControlContraption;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -38,6 +42,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock.LEN;
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.getSpringChargeCoefficient;
@@ -47,8 +52,8 @@ import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.
 public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements
         IControlContraption, IConnectableToPSKI, ISpringBE {
 
-    public float progress;
-    public float stored = 0;
+    public double progress;
+    public double stored = 0;
     private int len;
 
     private int curLen = len;
@@ -57,13 +62,16 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     private final Vec3i movementDirection;
     public boolean splashMode = false;
     private int phase = 0;
-    public float capacity;
+    public double capacity;
     private float hardness = DEFAULT_HARDNESS;
 
     private BlockPos stoppedPos = null;
-    public float prevProgress;
+    public double prevProgress;
     private HashMap<BlockPos, Integer> extensionsCount = new HashMap<>();
     int maxSignal = 0;
+
+    public boolean disableBreakingBlocks;
+    public UUID createdSubLevel;
 
     public LargeSpringBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -87,15 +95,15 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         if(prevProgress == 0){
             prevProgress = progress;
         }
-        return Mth.lerp(partalTicks, prevProgress, progress);
+        return (float) Mth.lerp(partalTicks, prevProgress, progress);
     }
 
     public float getPlatePos(){
-        return platePos(progress);
+        return platePos((float) progress);
     }
 
     private float platePos(float progress){
-        return calculateCurPos(this.progress) + 4/16f*(1-progress) - 6/16f;
+        return calculateCurPos((float) this.progress) + 4/16f*(1-progress) - 6/16f;
     }
 
     public int getLen() {
@@ -217,7 +225,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     }
 
     public void assemble() throws AssemblyException {
-        /*
         if (!(level.getBlockState(worldPosition)
                 .getBlock() instanceof LargeSpringBlock))
             return;
@@ -233,7 +240,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         movedContraption.setPos(
                 CspringsMath.MoveWithoutVectors(
-                        calculateCurPos(progress),
+                        calculateCurPos((float) progress),
                         worldPosition,
                         movementDirection));
 
@@ -243,8 +250,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             award(AllAdvancements.CONTRAPTION_ACTORS);
 
         sendData();
-
-         */
     }
 
     public static BlockPos calcPos(int x, int y, int z,BlockPos pos, Direction facing){
@@ -285,7 +290,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         if(stoppedPos != null && isGenerating){
             if(breakBySpring(stoppedPos, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
                 stoppedPos = null;
-                breakBlocksInLayer(Mth.floor(platePos(progress) + 1), getFacing());
+                breakBlocksInLayer(Mth.floor(platePos((float) progress) + 1), getFacing());
             }
             return;
         }
@@ -305,15 +310,15 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                     movedContraption.moveTo(Vec3.atLowerCornerOf(worldPosition));
                 }
 
-                float factor = 0.6f * (stored / capacity * len);
+                float factor = (float) (0.6f * (stored / capacity * len));
                 if(factor > 0.6) factor = 0.6f;
 
                 CSpringsSounds.playLargeBweum(level, worldPosition, factor);
             }
 
             if(phase < 5){
-                pushEntitiesInArea(worldPosition.north().east(),
-                        worldPosition.relative(getFacing(), len).west().south());
+                pushEntitiesInArea();
+                SableCompatLargeSpring.pushSubLevels(this);
             }
 
             phase++;
@@ -343,7 +348,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         if(movedContraption != null){
-            Vec3 move = getContraptionPos(progress);
+            Vec3 move = getContraptionPos((float) progress);
             movedContraption.moveTo(move);
         }
 
@@ -351,22 +356,22 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         progress = stored / capacity;
 
         Direction facing = getFacing();
-        float platePos = platePos(progress) + 0.5f;
+        float platePos = platePos((float) progress) + 0.5f;
 
         float CurSpeed = Math.abs(getSpeed());
         if (isGenerating && stored > 0) {
             stored = Math.max(stored - CurSpeed / 20 * hardness * 9 * 2, 0);
             if (platePos > (curLen+1)) {
                 curLen++;
-                breakBlocksInLayer(Mth.floor(platePos(progress) + 1), facing);
-                restoreLayer(Mth.floor(platePos(progress)), facing);
+                breakBlocksInLayer(Mth.floor(platePos((float) progress) + 1), facing);
+                restoreLayer(Mth.floor(platePos((float) progress)), facing);
             }
         }
         // Режим накопления, если не активировано
         else if (!isGenerating) {
             stored = Math.min(stored + CurSpeed / 20 * hardness * 9 * 2, capacity);
             if (platePos < (curLen+1)) {
-                removeLayer(Mth.floor(platePos(progress)), facing);
+                removeLayer(Mth.floor(platePos((float) progress)), facing);
                 curLen--;
             }
         }
@@ -407,10 +412,35 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 movementDirection);
     }
 
-    public void pushEntitiesInArea(BlockPos pos1, BlockPos pos2) {
+    public void pushEntitiesInArea() {
         if (level == null || level.isClientSide) return;
 
-        // Определяем границы области
+        AABB area = getAreaForDetection();
+
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, area)) {
+            Vec3 center = new Vec3(
+                    (area.minX + area.maxX) * 0.5,
+                    (area.minY + area.maxY) * 0.5,
+                    (area.minZ + area.maxZ) * 0.5
+            );
+
+            Vec3 direction = Vec3.atLowerCornerOf(getFacing().getNormal());
+            double strength = getPushStrength(); // Сила толчка
+
+            entity.setDeltaMovement(direction.scale(strength));
+            entity.hurtMarked = true;
+        }
+    }
+
+    public double getPushStrength(){
+        double energyRatio = ModConfigs.common().KNOCKBACK_COEF.get() * (stored / ModConfigs.common().SPRING_CAPACITY.get());
+        return energyRatio;
+    }
+
+    public AABB getAreaForDetection(){
+        BlockPos pos1 = worldPosition.north().east();
+        BlockPos pos2 = worldPosition.relative(getFacing(), len).west().south();
+
         BlockPos min = new BlockPos(
                 Math.min(pos1.getX(), pos2.getX()),
                 Math.min(pos1.getY(), pos2.getY()),
@@ -422,28 +452,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 Math.max(pos1.getZ(), pos2.getZ())
         );
 
-        // Создаём AABB, включая все блоки в области
         AABB area = new AABB(
                 min.getX(), min.getY(), min.getZ(),
                 max.getX() + 1.0, max.getY() + 1.0, max.getZ() + 1.0
         );
 
-        // Получаем все сущности в области
-
-        for (Entity entity : level.getEntitiesOfClass(Entity.class, area)) {
-            // Толкаем сущности от центра области
-            Vec3 center = new Vec3(
-                    (area.minX + area.maxX) * 0.5,
-                    (area.minY + area.maxY) * 0.5,
-                    (area.minZ + area.maxZ) * 0.5
-            );
-
-            Vec3 direction = Vec3.atLowerCornerOf(getFacing().getNormal());
-            double strength = ModConfigs.common().KNOCKBACK_COEF.get() * stored / capacity * len; // Сила толчка
-
-            entity.setDeltaMovement(direction.scale(strength));
-            entity.hurtMarked = true; // Обязательно для синхронизации движения на клиенте
-        }
+        return area;
     }
 
     private float calculateCurPos(float progres){
@@ -481,13 +495,13 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
 
         compound.putBoolean("Generating", isGenerating);
-        compound.putFloat("progres", progress);
-        compound.putFloat("stored", stored);
+        compound.putFloat("progres", (float) progress);
+        compound.putFloat("stored", (float) stored);
         compound.putInt("len", len);
         compound.putInt("curLen", curLen);
         compound.putInt("phase", phase);
         compound.putBoolean("splashMode", splashMode);
-        compound.putFloat("capacity", capacity);
+        compound.putFloat("capacity", (float) capacity);
         compound.putFloat("hardness", hardness);
 
         compound.putInt("maxSignal", maxSignal);
@@ -621,7 +635,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 for (int j = -1; j < 2; j++) {
                     if (!(i == 0 && j == 0)) {
                         BlockPos breakBlock = calcPos(i, yLevel, j, pos, facing);
-                        if(!canBreakBySpring(breakBlock, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
+                        if(!SpringBlockEntity.canBreakBySpring(breakBlock, level, (float) ModConfigs.common().SPRING_CAPACITY.get())){
                             return false;
                         }
                     }
@@ -655,6 +669,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                         .add(CreateLang.number(capacity).style(ChatFormatting.AQUA).space()
                                 .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
                 .forGoggles(tooltip);
+        addRemainingTime(tooltip, isPlayerSneaking);
 
         CreateLang.translate("spring.len").style(ChatFormatting.GRAY).forGoggles(tooltip);
         CreateLang.text(" ").add(
@@ -669,17 +684,44 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         CreateLang.translate("createsprings.splash_mode").style(ChatFormatting.GRAY)
                 .add(Component.literal(" ").append(state)).forGoggles(tooltip);
+
         return true;
+    }
+
+    public void addRemainingTime(List<Component> tooltip, boolean isPlayerSneaking) {
+        if(Mth.equal(getSpeed(), 0)) return;
+
+        double rate = Math.abs((progress - prevProgress) * capacity);
+        double left = isGenerating ? stored : capacity - stored;
+        double ticks = left / rate;
+
+        int totalSeconds = (int) Math.floor(ticks / 20);
+
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        if(totalSeconds != 0){
+            MutableComponent remainingTime = Component.literal("");
+
+            if(hours != 0) remainingTime.append(Component.literal(hours + "h ").withStyle(ChatFormatting.AQUA));
+            if(minutes != 0) remainingTime.append(Component.literal(minutes + "m ").withStyle(ChatFormatting.AQUA));
+            remainingTime.append(Component.literal(seconds + "s ").withStyle(ChatFormatting.AQUA));
+
+            CreateLang.text(" ").add(
+                            CreateLang.translate("createsprings.time_left").style(ChatFormatting.DARK_GRAY).add(remainingTime))
+                    .forGoggles(tooltip);
+        }
     }
 
     @Override
     public float getStored() {
-        return stored;
+        return (float) stored;
     }
 
     @Override
     public float getCapacity() {
-        return capacity;
+        return (float) capacity;
     }
 
     @Override
@@ -715,12 +757,12 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     }
 
     public void onExploded(float distance, float power, BlockPos sourcePos){
-        int oldLen = Mth.floor(platePos(progress));
+        int oldLen = Mth.floor(platePos((float) progress));
         stored += power / distance * 40000 / 8;
         if(stored > capacity){stored = capacity;}
         prevProgress = progress;
         progress = stored / capacity;
-        int newLen = Mth.floor(platePos(progress));
+        int newLen = Mth.floor(platePos((float) progress));
 
         sendData();
         notifyUpdate();

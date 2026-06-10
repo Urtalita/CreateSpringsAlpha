@@ -57,6 +57,24 @@
   "item.createsprings.explosion_chamber.tooltip.condition1": "R-click with a _spring_ and _fuel_ in the chamber",
   "item.createsprings.explosion_chamber.tooltip.behaviour1": "_Charges spring_",
 
+  "block.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
+  "block.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
+  "block.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
+  "block.createsprings.spring.tooltip.condition2": "При ПКМ на _сущности_",
+  "block.createsprings.spring.tooltip.behaviour2": "_Откинет_ сущность",
+  "block.createsprings.spring.tooltip.condition3": "При приземлении",
+  "block.createsprings.spring.tooltip.behaviour3": "если игрок _держит_ пружину то она _преобразовывает_ часть урона в _заряд_ тем самым _смягчая_ посадку",
+
+  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления",
+
+  "block.createsprings.industrial_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.industrial_spring_alloy.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.industrial_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+
+  "block.createsprings.cut_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.cut_spring_alloy.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.cut_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+
   "createsprings.pse.tooltip.cur_mode": "Current engine mode:",
   "createsprings.pse.tooltip.0": "Heating",
   "createsprings.pse.tooltip.1": "charging item in hand",

@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.AndesiteMold;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -65,6 +65,6 @@ public class AndesiteMoldBlock extends DirectionalBlock implements IBE<MoldBlock
 
     @Override
     public BlockEntityType<? extends MoldBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.MOLD.get();
+        return CSpringsBlockEntities.MOLD.get();
     }
 }

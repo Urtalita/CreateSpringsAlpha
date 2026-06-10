@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.kinetic_interface;
 
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.utill.Helpers.HitboxHelper;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
@@ -68,7 +68,7 @@ public class KineticInterfaceBlock extends DirectionalKineticBlock implements IB
 
     @Override
     public BlockEntityType<? extends KineticInterfaceBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.KINETIC_INTERFACE.get();
+        return CSpringsBlockEntities.KINETIC_INTERFACE.get();
     }
 
     @Override

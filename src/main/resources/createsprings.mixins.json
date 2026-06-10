@@ -4,6 +4,7 @@
   "package": "com.Portality.createsprings.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MixinSpoutBe",
     "banner.CreativeTabMixin",
     "owerdrive_controller.BoilerDataAcsessor",
     "owerdrive_controller.BoilerDataMixin"

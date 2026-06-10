@@ -29,24 +29,24 @@ import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
 public class CSpringsItems {
     static {
-        CSPRINGS_REGISTRATE.setCreativeTab(CreateSprings.MAIN_TAB);
+        //CSPRINGS_REGISTRATE.setCreativeTab(CreateSprings.MAIN_TAB);
     }
 
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(BuiltInRegistries.ITEM, CreateSprings.MODID);
 
-    public static final ItemEntry<Item> SPRING_ALLOY = CreateSprings.CSPRINGS_REGISTRATE
-            .item("spring_alloy", Item::new)
+    public static final ItemEntry<BouncyItem> SPRING_ALLOY = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy", BouncyItem::new)
             .properties(p -> p.fireResistant())
             .register();
 
-    public static final ItemEntry<Item> SPRING_ALLOY_NUGGET = CreateSprings.CSPRINGS_REGISTRATE
-            .item("spring_alloy_nugget", Item::new)
+    public static final ItemEntry<BouncyItem> SPRING_ALLOY_NUGGET = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy_nugget", BouncyItem::new)
             .properties(p -> p.fireResistant())
             .register();
 
-    public static final ItemEntry<Item> SPRING_ALLOY_SHEET = CreateSprings.CSPRINGS_REGISTRATE
-            .item("spring_alloy_sheet", Item::new)
+    public static final ItemEntry<BouncyItem> SPRING_ALLOY_SHEET = CreateSprings.CSPRINGS_REGISTRATE
+            .item("spring_alloy_sheet", BouncyItem::new)
             .properties(p -> p.fireResistant())
             .register();
 

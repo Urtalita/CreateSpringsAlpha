@@ -1,8 +1,7 @@
 package com.Portality.createsprings.entities.Projectile;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.damage.CSpringsDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,7 +22,6 @@ import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.Objects;
 
 public class SpringProjectile extends AbstractArrow {
     private int bounceCount = 0;
@@ -35,12 +33,12 @@ public class SpringProjectile extends AbstractArrow {
     private static int searchRadius = 10;
 
     public SpringProjectile(Level pLevl) {
-        super(ModEntities.SPRING_PROJECTILE.get(),pLevl);
+        super(CSpringsEntityes.SPRING_PROJECTILE.get(),pLevl);
     }
 
     public SpringProjectile(Level level, LivingEntity shooter) {
         // В 1.21.1 используем этот super, чтобы сразу задать владельца и предмет
-        super(ModEntities.SPRING_PROJECTILE.get(), shooter, level, new ItemStack(CSpringsBlocks.SPRING.asItem()), null);
+        super(CSpringsEntityes.SPRING_PROJECTILE.get(), shooter, level, new ItemStack(CSpringsBlocks.SPRING.asItem()), null);
     }
 
     public SpringProjectile(EntityType<SpringProjectile> springProjectileEntityType, Level level) {

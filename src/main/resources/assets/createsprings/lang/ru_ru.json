@@ -124,6 +124,14 @@
   "item.createsprings.punchcard.tooltip.condition2": "При нажатии TAB",
   "item.createsprings.punchcard.tooltip.summary": "Способна _программировать_ некоторые инструменты исполняя последовательно простые инструкции, может вмещать небольшое количество команд",
 
+  "item.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
+  "item.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
+  "item.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
+  "item.createsprings.spring.tooltip.condition2": "При ПКМ на _сущности_",
+  "item.createsprings.spring.tooltip.behaviour2": "_Откинет_ сущность",
+  "item.createsprings.spring.tooltip.condition3": "При приземлении",
+  "item.createsprings.spring.tooltip.behaviour3": "если игрок _держит_ пружину то она _преобразовывает_ часть урона в _заряд_ тем самым _смягчая_ посадку",
+
   "item.createsprings.spring_base.tooltip.behaviour1": "Кладёт внутрь _пружину_",
   "item.createsprings.spring_base.tooltip.condition1": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_base.tooltip.summary": "_База_ для пружинных инструментов, может держать до _2 пружин_. Чтобы _трансформировать в инструмент_ положите внутрь _модификатор_",
@@ -244,6 +252,8 @@
   "createsprings.ponder.spring.text_1": "Пружины способны накапливать кинетическую энергию при вращении",
   "createsprings.ponder.spring.text_2": "Направление вращения не имеет значения",
   "createsprings.ponder.spring.text_3": "При активации пружина будет отдавать накопленную кинетическую энергию",
+  "createsprings.ponder.spring.text_4": "Скорость пружины зависит от уровня сигнала",
+  "createsprings.ponder.spring.text_5": "Вы можете изменить скорость зарядки/разрядки ,настроив жёсткость пружины",
 
   "createsprings.ponder.springsplash.text_1": "Кликните крюком по пружине, чтобы перевести её в режим всплеска",
   "createsprings.ponder.springsplash.text_2": "Вы можете убрать крюк, кликнув пустой рукой",
@@ -252,11 +262,6 @@
   "createsprings.ponder.springsplash.text_5": "Также пружины способны ломать блоки",
   "createsprings.ponder.springsplash.text_6": "Некоторые блоки требую больше заряда",
   "createsprings.ponder.springsplash.text_7": "Пружины не ломают кинетические механизмы и нажимные плиты",
-
-  "createsprings.ponder.su_sec.header": "Стресс секунды",
-  "createsprings.ponder.su_sec.text_1": "Ен секунда - это единица измерения заряда",
-  "createsprings.ponder.su_sec.text_2": "Одна ен секунда - это насколько много заряда произведёт источник с генерацией в 1ен за одну секунду",
-  "createsprings.ponder.su_sec.text_3": "чтобы рассчитать сколько времени ваша пружина будет вращаться , нужно поделить количество ен секунд на необходимую нагрузку",
 
   "key.createsprings.activate_punchcard": "Активировать перфокарту",
   "key.createsprings.pse_boost": "Переключит форсаж",
@@ -287,6 +292,7 @@
   "createsprings.display_source.spring.progress_bar": "Полоса прогресса",
   "createsprings.display_source.spring.precent": "Процент заряда",
   "createsprings.display_source.spring.stored": "Заряд",
+  "create.createsprings.time_left": "осталось времени: ",
   "createsprings.display_source.spring.capacity": "Вместимость",
   "createsprings.display_source.spring.len": "Длинна",
   "createsprings.display_source.spring.max_len": "Максимальная длинна",
@@ -299,5 +305,38 @@
 
   "createsprings.spring_catapult.target_set": "Установленна первая цель",
   "createsprings.spring_catapult.target2_set": "Установленна вторая цель",
-  "createsprings.spring_catapult.target_cleared": "Цели очищены"
+  "createsprings.spring_catapult.target_cleared": "Цели очищены",
+
+  "block.createsprings.analog_toggle_latch": "Аналоговая защёлка",
+
+  "block.createsprings.cut_spring_alloy": "Резной пружинный сплав",
+  "block.createsprings.cut_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.cut_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+  "block.createsprings.cut_spring_alloy.tooltip.condition1": "При приземлении на блок",
+
+  "block.createsprings.industrial_spring_alloy": "Индустриальный пружинный сплав",
+  "block.createsprings.industrial_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.industrial_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+  "block.createsprings.industrial_spring_alloy.tooltip.condition1": "При приземлении на блок",
+
+  "block.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
+  "block.createsprings.spring.tooltip.behaviour2": "_Откинет_ сущность",
+  "block.createsprings.spring.tooltip.behaviour3": "если игрок _держит_ пружину то она _преобразовывает_ часть урона в _заряд_ тем самым _смягчая_ посадку",
+  "block.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
+  "block.createsprings.spring.tooltip.condition2": "При ПКМ на _сущности_",
+  "block.createsprings.spring.tooltip.condition3": "При приземлении",
+  "block.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
+
+  "createsprings.ponder.analog_latch.header": "Использование аналоговой защёлки",
+  "createsprings.ponder.analog_latch.text_1": "Аналоговая защёлка выдаёт выбранный сигнал при активации",
+  "createsprings.ponder.analog_latch.text_2": "Настройте сигнал используя панель на блоке",
+  "createsprings.ponder.analog_latch.text_3": "Сила сигнала: 15",
+  "createsprings.ponder.analog_latch.text_4": "Сила сигнала: 4",
+  "createsprings.ponder.analog_latch.text_5": "При клике на блок аналоговая защёлка переключается в обратный режим",
+  "createsprings.ponder.analog_latch.text_6": "Сила сигнала: 0",
+  "createsprings.ponder.analog_latch.text_7": "Сила сигнала: 4",
+
+  "createsprings.ponder.explosion.text_3": "пружина зарядится даже если взрыв произошёл в воде",
+  "entity.createsprings.bouncy_item": "Прыгучий предмет",
+  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления"
 }

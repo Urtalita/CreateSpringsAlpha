@@ -1,7 +1,10 @@
 package com.Portality.createsprings.items.advanced.Punchcard;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ChamberItem;
+import com.Portality.createsprings.items.SpringStufs.ISpringPoweredTool;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
+import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLauncher;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
 import com.Portality.createsprings.server.CSpringsDataComponents;
@@ -178,42 +181,40 @@ public class PunchcardInterpritator {
 
     public static Function<ExecutorInfo, Void> shootFromSpringLauncher() {
         return (info) -> {
-            if(info.isSelected()){
+            if(!info.isSelected()){
                 return null;
             }
-            //if(info.getItem() instanceof SpringLauncher launcher){
-            //    launcher.releaseUsing(info.getStack(), info.getLevel(), info.getPlayer(), 0);
-            //    info.nextAction();
-            //}
+            if(info.getItem() instanceof SpringLauncher launcher){
+                launcher.use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
+                info.nextAction();
+            }
             return null;
         };
     }
 
     public static Function<ExecutorInfo, Void> explodeChamber() {
         return (info) -> {
-            //if(info.getItem() instanceof ChamberItem chamberItem){
-            //    chamberItem.use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
-            //    info.nextAction();
-            //}
+            if(info.getItem() instanceof ChamberItem chamberItem){
+                chamberItem.use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
+                info.nextAction();
+            }
             return null;
         };
     }
 
     public static Function<ExecutorInfo, Void> toggleBoost(){
         return (info) -> {
-            /*
+
             if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
                 ItemStack stack = info.getStack();
-                int boosted = stack.getOrCreateTag().getInt("boosted");
+                int boosted = PortativeSteamEngineItem.getOverdriveProgress(stack);
                 if(boosted < 99){
-                    stack.getOrCreateTag().putBoolean("boost", !stack.getOrCreateTag().getBoolean("boost"));
+                    stack.set(CSpringsDataComponents.OVERDRIVE, PortativeSteamEngineItem.getOverdrive(stack));
                     if(boosted <= 0){
-                        stack.getOrCreateTag().putInt("boosted", 1);
+                        stack.set(CSpringsDataComponents.OVERDRIVE_PROGRESS, 1);
                     }
                 }
             }
-
-             */
 
             info.nextAction();
             return null;
@@ -222,11 +223,9 @@ public class PunchcardInterpritator {
 
     public static Function<ExecutorInfo, Void> steamDash(){
         return (info) -> {
-            /*if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
+            if(info.getPlayer().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof PortativeSteamEngineItem){
                 PortativeSteamEngineItem.steamDash(info.getPlayer(), info.getLevel());
             }
-
-             */
             info.nextAction();
             return null;
         };
@@ -355,24 +354,11 @@ public class PunchcardInterpritator {
                 }
 
                 if(found == null){return null;}
-                int Springs_rn = SpringPoweredCore.getSprings(info.getStack());
-                //int springsMaxCount = (info.getItem() == ModItems.EXPLOSION_CHAMBER.get()) ? 1 : 2;
-                int springsMaxCount = 2;
-                float[] allSu = getAllStored(info.getStack());
 
-                /*
-                if (springsMaxCount != Springs_rn && !tag.getBoolean("block") && exceptions(tag)){
-                    allSu[Springs_rn] = getStoredSu(found);
-
-                    Springs_rn++;
-
-                    tag.putInt("Springs_rn", Springs_rn);
-                    putAllStored(allSu, tag);
-
-                    found.shrink(1);
+                if(info.getItem() instanceof ISpringPoweredTool tool){
+                    SpringPoweredCore.detachSpring(info.getStack(), info.getPlayer());
+                    tool.getCore().attachSpring(info.getStack(), found);
                 }
-
-                 */
             }
             info.nextAction();
             return null;

@@ -1,9 +1,8 @@
 package com.Portality.createsprings.blocks.advanced.SpringCatapult;
 
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
-import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -67,7 +65,7 @@ public class SpringCatapultBlock extends KineticBlock implements IBE<SpringCatap
 
     @Override
     public BlockEntityType<? extends SpringCatapultBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.SPRING_CATAPULT.get();
+        return CSpringsBlockEntities.SPRING_CATAPULT.get();
     }
 
     @Override

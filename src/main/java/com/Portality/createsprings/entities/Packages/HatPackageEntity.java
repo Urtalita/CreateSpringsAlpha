@@ -1,6 +1,6 @@
 package com.Portality.createsprings.entities.Packages;
 
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.advanced.hat.HatItem;
@@ -34,13 +34,13 @@ public class HatPackageEntity extends PackageEntity {
     }
 
     public HatPackageEntity(Level worldIn, double x, double y, double z) {
-        this(ModEntities.HAT_PACKAGE.get(), worldIn);
+        this(CSpringsEntityes.HAT_PACKAGE.get(), worldIn);
         this.setPos(x, y, z);
         this.refreshDimensions();
     }
 
     public static PackageEntity fromItemStack(Level world, Vec3 position, ItemStack itemstack) {
-        HatPackageEntity packageEntity = ModEntities.HAT_PACKAGE
+        HatPackageEntity packageEntity = CSpringsEntityes.HAT_PACKAGE
                 .create(world);
         packageEntity.setPos(position);
         packageEntity.setBox(setPackageColor(new ItemStack(CSpringsItems.HITBOX_HAT.get()), itemstack));
@@ -56,7 +56,7 @@ public class HatPackageEntity extends PackageEntity {
     }
 
     public static HatPackageEntity fromDroppedItem(Level world, Entity originalEntity, ItemStack itemstack) {
-        HatPackageEntity packageEntity = ModEntities.HAT_PACKAGE.get()
+        HatPackageEntity packageEntity = CSpringsEntityes.HAT_PACKAGE.get()
                 .create(world);
 
         Vec3 position = originalEntity.position();

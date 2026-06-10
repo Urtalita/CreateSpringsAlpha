@@ -1,6 +1,6 @@
 package com.Portality.createsprings.entities.Projectile;
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,11 +17,11 @@ public class SpringAlloyBlockProjectile extends AbstractArrow {
     private boolean causesFire = false;
 
     public SpringAlloyBlockProjectile(Level pLevl) {
-        super(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(),pLevl);
+        super(CSpringsEntityes.SPRING_ALLOY_BLOCK_PROJECTILE.get(),pLevl);
     }
 
     public SpringAlloyBlockProjectile(Level pLevl, LivingEntity livingEntity) {
-        super(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), pLevl);
+        super(CSpringsEntityes.SPRING_ALLOY_BLOCK_PROJECTILE.get(), pLevl);
     }
 
     public SpringAlloyBlockProjectile(EntityType<SpringAlloyBlockProjectile> springProjectileEntityType, Level level) {

@@ -9,13 +9,10 @@ import com.simibubi.create.foundation.item.render.CustomRenderedItemModel;
 import com.simibubi.create.foundation.item.render.CustomRenderedItemModelRenderer;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringInstance.SPRING_LEN;
-import static com.Portality.createsprings.blocks.advanced.spring.SpringRenderer.renderSpring;
-import static com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBaseRenderer.renderSmallSpring;
 import static com.Portality.createsprings.items.SpringStufs.SpringBase.SpringBaseRenderer.renderTinySpring;
 
 

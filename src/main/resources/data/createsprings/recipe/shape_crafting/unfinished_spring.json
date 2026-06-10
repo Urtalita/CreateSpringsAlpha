@@ -13,9 +13,9 @@
     }
   },
   "pattern": [
-    "ioi",
-    "sis",
-    "ioi"
+    "oi ",
+    "isi",
+    " io"
   ],
   "result": {
     "count": 1,

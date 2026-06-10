@@ -1,7 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.SpringCatapult;
 
 import com.Portality.createsprings.server.packets.CatapultPlacementPacket;
-import com.simibubi.create.content.logistics.depot.EjectorPlacementPacket;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

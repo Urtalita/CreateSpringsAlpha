@@ -1,7 +1,8 @@
 package com.Portality.createsprings;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
+import com.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
 import com.Portality.createsprings.client.CSpringsKeybindings;
 import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.client.menus.CSpringsMenus;
@@ -12,18 +13,19 @@ import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.CSpringsDatagen;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
 import com.Portality.createsprings.datagen.advancement.CSpringsTriggers;
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
 import com.Portality.createsprings.items.CSpringsArmorMaterials;
 import com.Portality.createsprings.items.advanced.hat.HatItem;
+import com.Portality.createsprings.recipe.CSpringsRecipes;
+import com.Portality.createsprings.server.contraption.CspringsContraptionTypes;
 import com.Portality.createsprings.server.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.OverlayHandler;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
-import com.Portality.createsprings.recipe.ModRecipes;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.Portality.createsprings.server.CSpringsPackets;
 import com.mojang.logging.LogUtils;
@@ -39,6 +41,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -58,6 +63,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -84,14 +90,13 @@ public class CreateSprings {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register(MODID, () -> CreativeModeTab.builder()
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = CREATIVE_MODE_TABS.register("create_springs_main_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .icon(CSpringsBlocks.SPRING::asStack)
             .title(Component.translatable("creativetab.create_springs_main_tab"))
-            .displayItems((itemDisplayParameters, output) -> CSPRINGS_REGISTRATE.getAll(Registries.ITEM).forEach((item -> {
-                output.accept(item.get());
-            })))
+            .noScrollBar()
             .build());
+
 
     public CreateSprings(IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
@@ -99,28 +104,30 @@ public class CreateSprings {
 
         CSPRINGS_REGISTRATE.registerEventListeners(modEventBus);
 
+        CREATIVE_MODE_TABS.register(modEventBus);
         CSpringsItems.register(modEventBus);
         CSpringsBlocks.register();
-        CSpringsPartalModels.register();
+        CSpringsDisplaySources.register();
         CSpringsDataComponents.registerAllComponents(modEventBus);
-        ModBlockEntities.register();
-        CSpringsSounds.register(modEventBus);
+        CSpringsBlockEntities.register();
         CSpringsParticles.register(modEventBus);
-        ModEntities.register(modEventBus);
-        ModRecipes.register(modEventBus);
+        CSpringsEntityes.register(modEventBus);
+        CSpringsRecipes.register(modEventBus);
         CSpringsFluids.register();
         CSpringsPackets.register();
         CSpringsMenus.register();
         CSpringsArmorMaterials.register(modEventBus);
+        CSpringsSounds.register(modEventBus);
 
         CSpringsDatagen.addExtraRegistrateData();
 
         ModConfigs.register(modLoadingContext, modContainer);
-        modEventBus.addListener(ModEntities::registerEntityAttributes);
+        modEventBus.addListener(CSpringsEntityes::registerEntityAttributes);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(EventPriority.LOWEST, CSpringsDatagen::gatherData);
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::onRegister);
+        modEventBus.addListener(this::registerBuiltInPacks);
 
         if (FMLEnvironment.dist.isClient()) {
             forgeBus.addListener(OverlayHandler::onRenderOverlay);
@@ -130,7 +137,6 @@ public class CreateSprings {
         }
 
         NeoForge.EVENT_BUS.register(this);
-        CREATIVE_MODE_TABS.register(modEventBus);
     }
 
     public static CreateRegistrate registrate() {
@@ -162,14 +168,29 @@ public class CreateSprings {
             CSpringsAdvancements.register();
             CSpringsTriggers.register();
         }
+
+        CspringsContraptionTypes.init();
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
-                ModBlockEntities.MOLD.get(),
+                CSpringsBlockEntities.MOLD.get(),
                 (be, side) -> be.getItemHandler()
         );
+    }
+
+    private void registerBuiltInPacks(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+            event.addPackFinders(
+                    ResourceLocation.fromNamespaceAndPath(MODID, "resourcepacks/legacy_textures"),
+                    PackType.CLIENT_RESOURCES,
+                    Component.literal("Create: Springs legacy textures"),
+                    PackSource.BUILT_IN,
+                    false,
+                    Pack.Position.TOP
+            );
+        }
     }
 
 
@@ -184,8 +205,9 @@ public class CreateSprings {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             //ModItemColors.register();
-            EntityRenderers.register(ModEntities.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
-            EntityRenderers.register(ModEntities.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
+            EntityRenderers.register(CSpringsEntityes.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
+            EntityRenderers.register(CSpringsEntityes.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
+            CSpringsPartalModels.register();
 
             PonderIndex.addPlugin(new CSpringsPonderPlugin());
         }

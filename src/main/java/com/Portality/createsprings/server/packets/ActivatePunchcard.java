@@ -1,6 +1,7 @@
 package com.Portality.createsprings.server.packets;
 
 import com.Portality.createsprings.items.CSpringsItems;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.advanced.Punchcard.*;
 import com.Portality.createsprings.server.CSpringsDataComponents;
@@ -46,7 +47,8 @@ public enum ActivatePunchcard implements ServerboundPacketPayload {
                         PunchcardExecutor.getFromItem(player.getItemBySlot(EquipmentSlot.CHEST).getItem()),
                         player.getItemBySlot(EquipmentSlot.CHEST).getItem());
                 if(!checkItemInContains(SpringPoweredCore.getContent(info.getStack()), CSpringsItems.PUNCHCARD.get())){return;}
-            } else {return;}}
+            }
+        }
 
         CompoundTag punchcard = info.getStack().getOrDefault(CSpringsDataComponents.PUNCHCARD, new CompoundTag());
 
@@ -56,7 +58,7 @@ public enum ActivatePunchcard implements ServerboundPacketPayload {
                         String.valueOf(curAction))).getName();
 
         Function<ExecutorInfo, Void> action = allPunchcardActions.get(actionKey);
-        if(action != PunchcardInterpritator.empty()){return;}
+        if(action == PunchcardInterpritator.empty()){return;}
 
         info.nextAction();
         PunchcardInterpritator.DoPunchcardLogic(info);

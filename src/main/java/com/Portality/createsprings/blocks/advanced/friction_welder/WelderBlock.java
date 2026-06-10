@@ -1,12 +1,11 @@
 package com.Portality.createsprings.blocks.advanced.friction_welder;
 
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +29,7 @@ public class WelderBlock extends BearingBlock implements IBE<WelderBlockEntity> 
     }
 
     @Override
-    public BlockEntityType<? extends WelderBlockEntity> getBlockEntityType() { return ModBlockEntities.FRICTION_WELDER.get(); }
+    public BlockEntityType<? extends WelderBlockEntity> getBlockEntityType() { return CSpringsBlockEntities.FRICTION_WELDER.get(); }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {

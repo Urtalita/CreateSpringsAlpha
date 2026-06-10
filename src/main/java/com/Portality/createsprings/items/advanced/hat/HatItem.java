@@ -1,6 +1,6 @@
 package com.Portality.createsprings.items.advanced.hat;
 
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.Packages.HatPackageEntity;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
@@ -10,7 +10,6 @@ import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -234,7 +233,7 @@ public class HatItem extends Item {
         AABB scanBB = new AABB(point, point).inflate(r, 0, r)
                 .expandTowards(0, h, 0);
         Level world = context.getLevel();
-        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
+        if (!world.getEntities(CSpringsEntityes.SUS_PACKAGE.get(), scanBB, e -> true)
                 .isEmpty())
             return super.useOn(context);
         ItemStack itemInHand = context.getItemInHand();

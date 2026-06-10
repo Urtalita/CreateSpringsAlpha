@@ -172,7 +172,8 @@ dependencies {
 
     compileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
     compileOnly("curse.maven:xaeros-world-map-317780:7401095")
-    implementation("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1") // Пример версии
+    implementation("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1")
+    implementation "curse.maven:create-connected-947914:8221350"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

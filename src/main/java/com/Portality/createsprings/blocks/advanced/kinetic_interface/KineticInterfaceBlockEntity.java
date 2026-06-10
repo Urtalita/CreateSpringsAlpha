@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.kinetic_interface;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
@@ -98,12 +98,12 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
     private void addSpring(StructureTemplate.StructureBlockInfo blockInfo, boolean isLarge){
         KineticBlockEntity be;
         if(isLarge){
-            be = ModBlockEntities.LARGE_SPRING.get().create(
+            be = CSpringsBlockEntities.LARGE_SPRING.get().create(
                     BlockPos.ZERO,
                     blockInfo.state()
             );
         } else {
-            be = ModBlockEntities.SPRING.get().create(
+            be = CSpringsBlockEntities.SPRING.get().create(
                     BlockPos.ZERO,
                     blockInfo.state()
             );
@@ -346,12 +346,12 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
             String key = String.valueOf(i);
             KineticBlockEntity be;
             if(compound.getBoolean(key + "isLarge")){
-                be = ModBlockEntities.LARGE_SPRING.get().create(
+                be = CSpringsBlockEntities.LARGE_SPRING.get().create(
                         BlockPos.ZERO,
                         CSpringsBlocks.LARGE_SPRING.get().defaultBlockState()
                 );
             } else {
-                be = ModBlockEntities.SPRING.get().create(
+                be = CSpringsBlockEntities.SPRING.get().create(
                         BlockPos.ZERO,
                         CSpringsBlocks.LARGE_SPRING.get().defaultBlockState()
                 );

@@ -5,6 +5,7 @@
     "createsprings:andesite_mold",
     "createsprings:spring_catapult",
     "createsprings:kinetic_interface",
-    "createsprings:spring_alloy_casing"
+    "createsprings:spring_alloy_casing",
+    "createsprings:cut_spring_alloy"
   ]
 }

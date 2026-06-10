@@ -6,7 +6,7 @@ public class CSCommon extends ConfigBase {
 
     public final CSKinetics kinetics = nested(0, CSKinetics::new,Comments.kinetics);
     public final ConfigBool SPRINGS_CAN_SPLASH = new ConfigBool("spring_splash", true, Comments.SPRINGS_CAN_SPLASH);
-    public final ConfigInt SPRING_CAPACITY = new ConfigInt("spring_capacity", 160000, 1000, Integer.MAX_VALUE, Comments.SPRING_CAPACITY);
+    public final ConfigInt SPRING_CAPACITY = new ConfigInt("spring_capacity", 512 * 3600, 1000, Integer.MAX_VALUE, Comments.SPRING_CAPACITY);
     public final ConfigInt LARGE_SPRING_CAPACITY = new ConfigInt("large_spring_capacity", 4, 1, Integer.MAX_VALUE, Comments.LARGE_SPRING_CAPACITY);
     public final ConfigInt SPRING_SPLASH_DURATION = new ConfigInt("spring_splash_duration", 40, 5, Integer.MAX_VALUE, Comments.SPRING_SPLASH_DURATION);
     public final ConfigInt SPRING_LEN = new ConfigInt("spring_len", 32, 1, 384, Comments.SPRING_LEN);

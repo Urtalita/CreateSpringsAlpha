@@ -1,4 +1,5 @@
 {
+	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
@@ -9,7 +10,7 @@
 		{
 			"from": [9.5, 5.5, 3.375],
 			"to": [10.5, 9.5, 4.375],
-			"rotation": {"angle": -45, "axis": "z", "origin": [8, 8, -0.875]},
+			"rotation": {"angle": 0, "axis": "z", "origin": [8, 8, -0.875]},
 			"faces": {
 				"north": {"uv": [4, 3, 6, 3.5], "rotation": 270, "texture": "#8"},
 				"east": {"uv": [8.5, 11.5, 6.5, 11], "rotation": 90, "texture": "#8"},
@@ -45,7 +46,7 @@
 			"translation": [0, 11.5, 0]
 		},
 		"fixed": {
-			"rotation": [-90, 180, 0],
+			"rotation": [-90, -180, 0],
 			"translation": [0, -2.75, 0]
 		}
 	},
@@ -53,16 +54,19 @@
 		{
 			"name": "spring1",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				{
 					"name": "springrings",
 					"origin": [8, 8, 8],
+					"scope": 0,
 					"color": 0,
 					"children": [
 						{
 							"name": "ring6",
 							"origin": [8, 8, 8],
+							"scope": 0,
 							"color": 0,
 							"children": [0]
 						}

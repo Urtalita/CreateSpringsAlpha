@@ -1,25 +1,17 @@
 package com.Portality.createsprings.recipe.Welding;
 
-import com.Portality.createsprings.recipe.ModRecipes;
+import com.Portality.createsprings.recipe.CSpringsRecipes;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
-import org.jetbrains.annotations.NotNull;
 
 public class WelderRecipe extends ProcessingRecipe<WelderRecipeWrapper, WelderRecipeParams> {
     public static final IRecipeTypeInfo TYPE_INFO = new IRecipeTypeInfo() {
@@ -31,13 +23,13 @@ public class WelderRecipe extends ProcessingRecipe<WelderRecipeWrapper, WelderRe
         @Override
         public <T extends RecipeSerializer<?>> T getSerializer() {
             // Убедись, что берешь WELDING
-            return (T) ModRecipes.WELDING.get();
+            return (T) CSpringsRecipes.WELDING.get();
         }
 
         @Override
         public <I extends RecipeInput, R extends Recipe<I>> RecipeType<R> getType() {
             // Убедись, что берешь WELDER_TYPE
-            return (RecipeType<R>) ModRecipes.WELDER_TYPE.get();
+            return (RecipeType<R>) CSpringsRecipes.WELDER_TYPE.get();
         }
     };
 
@@ -58,12 +50,12 @@ public class WelderRecipe extends ProcessingRecipe<WelderRecipeWrapper, WelderRe
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.WELDER_TYPE.get();
+        return CSpringsRecipes.WELDER_TYPE.get();
     }
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.WELDING.get();
+        return CSpringsRecipes.WELDING.get();
     }
 
     @Override

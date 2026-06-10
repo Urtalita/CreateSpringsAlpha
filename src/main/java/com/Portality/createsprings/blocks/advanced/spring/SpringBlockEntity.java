@@ -1,8 +1,10 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
+import com.Portality.createsprings.blocks.advanced.AnalogToggleLatch.AnalogLatchBlock;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
@@ -15,62 +17,48 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
-import com.simibubi.create.infrastructure.config.AllConfigs;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
-import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
-import dev.ryanhcode.sable.companion.math.BoundingBox3d;
-import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
-import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
-import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
+import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.getSpringChargeCoefficient;
-import static com.Portality.createsprings.compat.SableCompatHandler.pushCreatedSubLevels;
-import static com.Portality.createsprings.compat.SableCompatHandler.pushSubLevels;
+import static com.Portality.createsprings.compat.SableCompatSpring.pushCreatedSubLevels;
+import static com.Portality.createsprings.compat.SableCompatSpring.pushSubLevels;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI, ISpringBE {
 
-    public final float capacity;
-    public float stored = 0;
-    private float progress;
-    private float prevProgress;
+    public final double capacity;
+    public double stored = 0;
+    private double progress;
+    private double prevProgress;
     private boolean isGenerating;
     public boolean splashMode;
     private int phase = 0;
@@ -82,6 +70,8 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     public boolean disableBreakingBlocks = false;
     public UUID createdSubLevel = null;
 
+    public boolean autoMode = false;
+
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         capacity = ModConfigs.common().SPRING_CAPACITY.get();
@@ -91,12 +81,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     private void updateHardness(int i) {
         if (level == null || level.isClientSide) return;
 
-        if (hardness != i) {
-            hardness = i;
-            sendData();
-            setChanged();
-            updateNetwork();
-        }
+        sendData();
+        setChanged();
+        updateNetwork();
+        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
+
+        updateHardnessSafe(i);
+        autoMode = (hardness == 0);
+        sendData();
     }
 
 
@@ -107,12 +99,13 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        Integer max = AllConfigs.server().kinetics.maxRotationSpeed.get();
+        int max = 256;
 
         targetHardness = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
                 this, new SpringValueBoxTransform());
-        targetHardness.between(1, max);
+        targetHardness.between(0, max);
         targetHardness.value = (int) DEFAULT_HARDNESS;
+        targetHardness.withFormatter(this::formatter);
         targetHardness.withCallback(this::updateHardness);
 
         behaviours.add(targetHardness);
@@ -122,15 +115,20 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         //behaviours.add(pressingBehaviour);
     }
 
+    private String formatter(Integer integer) {
+        if(integer == 0) return "AUTO";
+        return Integer.toString(integer);
+    }
+
     public void onBlockExploded(BlockPos pos, Explosion explosion) {
         Vec3 ExpPos = explosion.center();
         Vec3 BlPos = pos.getCenter();
 
         Vec3 distVector = BlPos.subtract(ExpPos);
-        float distance = (float) distVector.length();
-        float power = 4;
+        double distance = (double) distVector.length();
+        double power = 4;
         Direction facing = getBlockState().getValue(FACING);
-        float coef = getSpringChargeCoefficient(facing, pos, ExpPos);
+        double coef = getSpringChargeCoefficient(facing, pos, ExpPos);
 
         if(coef < 0.30f){
             return;
@@ -183,6 +181,15 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         return 0;
     }
 
+    private float calculateStressForHardness(float hardness) {
+        if (stored < capacity && !isGenerating) {
+            return 2f * hardness;
+        } else if (isGenerating && stored >= 2f * hardness) {
+            return -2f * hardness;
+        }
+        return 0;
+    }
+
     public Direction getFacing(){
         return getBlockState().getValue(FACING).getOpposite();
     }
@@ -221,7 +228,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             return;
         }
 
-        float CurSpeed = Math.abs(getSpeed());
+        double CurSpeed = Math.abs(getSpeed());
 
         if (isGenerating && stored >= 0) {
             stored = Math.max(stored - CurSpeed * hardness * 2 / 20f, 0);
@@ -238,10 +245,67 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         prevProgress = progress;
         progress = stored / capacity;
 
+        if(autoMode) calculateIdealHardness();
+
         if(level.isClientSide){return;}
 
         if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
             level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
+        }
+    }
+
+    public void calculateIdealHardness() {
+        if (getOrCreateNetwork() == null) return;
+
+        float networkCapacity = getOrCreateNetwork().calculateCapacity();
+        float networkStress = getOrCreateNetwork().calculateStress();
+
+        float speed = Math.abs(getTheoreticalSpeed());
+        if (Mth.equal(speed, 0)) {
+            this.hardness = 0;
+            return;
+        }
+
+        float myCurrentStressContribution = calcStress() * speed;
+
+        if (isGenerating) {
+            float netLeftInNetwork = (networkCapacity - Math.abs(myCurrentStressContribution)) - networkStress;
+            float neededCapacity = -netLeftInNetwork;
+
+            if (neededCapacity <= 0) {
+                updateHardnessSafe(0);
+            } else {
+                float idealHardness = neededCapacity / speed / 2f;
+                updateHardnessSafe(idealHardness);
+            }
+        } else {
+            float netLeftInNetwork = networkCapacity - (networkStress - myCurrentStressContribution);
+
+            if (netLeftInNetwork <= 0) {
+                updateHardnessSafe(0);
+
+            } else {
+                if(capacity - stored < hardness * speed * 2) {
+                    updateHardnessSafe(0);
+                    return;
+                }
+                float idealHardness = netLeftInNetwork / speed / 2f;
+                updateHardnessSafe(idealHardness);
+            }
+        }
+    }
+
+    public void updateHardnessSafe(float newHardness) {
+        newHardness = Math.max(0, newHardness);
+
+        if (!Mth.equal(this.hardness, newHardness)) {
+            this.hardness = newHardness;
+            if (getOrCreateNetwork() != null) {
+                getOrCreateNetwork().remove(this);
+                getOrCreateNetwork().add(this);
+                getOrCreateNetwork().updateNetwork();
+                sendData();
+            }
         }
     }
 
@@ -250,7 +314,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         if (!level.isClientSide && hasNetwork()) {
             KineticNetwork network = getOrCreateNetwork();
             network.remove(this);
-            network.updateStress(); // Явное обновление
+            network.updateStress();
         }
         super.remove();
     }
@@ -259,10 +323,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(tag, registries, clientPacket);
         tag.putBoolean("Generating", isGenerating);
-        tag.putFloat("Stored", stored);
+        tag.putFloat("Stored", (float) stored);
         tag.putInt("phase", phase);
         tag.putBoolean("splashMode", splashMode);
         tag.putFloat("hardness", hardness);
+        tag.putBoolean("auto", autoMode);
     }
 
     @Override
@@ -273,6 +338,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         phase = tag.getInt("phase");
         splashMode = tag.getBoolean("splashMode");
         hardness = tag.getFloat("hardness");
+        autoMode = tag.getBoolean("auto");
 
         if (!clientPacket) {
             updateNetwork();
@@ -306,6 +372,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         CreateLang.translate("createsprings.splash_mode").style(ChatFormatting.GRAY)
                 .add(Component.literal(" ").append(state)).forGoggles(tooltip);
 
+
         if(!isGenerating){
             if (!IRotate.StressImpact.isEnabled())
                 return true;
@@ -317,6 +384,8 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                     .forGoggles(tooltip);
 
             addStressImpactStats(tooltip, stressAtBase);
+            addRemainingTime(tooltip, isPlayerSneaking);
+
         } else {
             //generator
 
@@ -346,9 +415,37 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                     .add(CreateLang.translate("gui.goggles.at_current_speed")
                             .style(ChatFormatting.DARK_GRAY))
                     .forGoggles(tooltip, 1);
+
+            addRemainingTime(tooltip, isPlayerSneaking);
         }
 
         return true;
+    }
+
+    public void addRemainingTime(List<Component> tooltip, boolean isPlayerSneaking) {
+        if(Mth.equal(getSpeed(), 0)) return;
+
+        double rate = Math.abs((progress - prevProgress) * capacity);
+        double left = isGenerating ? stored : capacity - stored;
+        double ticks = left / rate;
+
+        int totalSeconds = (int) Math.floor(ticks / 20);
+
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        if(totalSeconds != 0){
+            MutableComponent remainingTime = Component.literal("");
+
+            if(hours != 0) remainingTime.append(Component.literal(hours + "h ").withStyle(ChatFormatting.AQUA));
+            if(minutes != 0) remainingTime.append(Component.literal(minutes + "m ").withStyle(ChatFormatting.AQUA));
+            remainingTime.append(Component.literal(seconds + "s ").withStyle(ChatFormatting.AQUA));
+
+            CreateLang.text(" ").add(
+                            CreateLang.translate("createsprings.time_left").style(ChatFormatting.DARK_GRAY).add(remainingTime))
+                    .forGoggles(tooltip);
+        }
     }
 
     public static float springAnimation(int phase) {
@@ -365,12 +462,18 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     }
 
     public float getProgress(float pt) {
-        return Mth.lerp(pt, prevProgress, progress);
+        return (float) Mth.lerp(pt, prevProgress, progress);
     }
 
     @Override
     public float getGeneratedSpeed() {
-        return isGenerating && !splashMode && stored > 0 ? 16.0f : 0.0f;
+        if (isGenerating && !splashMode && stored > 0){
+            if (level != null) {
+                int signal = level.getBestNeighborSignal(worldPosition);
+                return 8 + signal * 8;
+            }
+        }
+        return 0;
     }
 
     public void setGenerating(boolean generating) {
@@ -379,9 +482,10 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         boolean wasGenerating = isGenerating;
         isGenerating = generating;
 
+        updateGeneratedRotation();
+
         if (wasGenerating != isGenerating) {
             updateNetwork();
-            updateGeneratedRotation();
             sendData();
         }
     }
@@ -395,7 +499,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         AABB searchArea = new AABB(targetPos);
         List<Entity> entities = level.getEntitiesOfClass(Entity.class, searchArea);
 
-        Vec3 vector = getSpeedForLaunch();
+        Vec3 vector = getVectorSpeedForLaunch();
 
         if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel serverSubLevel){
             vector = new Vec3(1, 1, 1).scale(vector.length());
@@ -423,7 +527,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         if(breakState.getBlock() instanceof KineticBlock){return;}
         if(breakState.getBlock() == AllBlocks.DEPOT.get()){return;}
 
-        breakBySpring(pos, level, stored);
+        breakBySpring(pos, level, (float) stored);
     }
 
     public static boolean breakBySpring(BlockPos pos, Level level, Float stored){
@@ -472,21 +576,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         });
     }
 
-    public Vec3 getSpeedForLaunch() {
-        Direction facing = getBlockState().getValue(FACING).getOpposite();
-
-        Vec3 direction = new Vec3(
-                facing.getStepX(),
-                facing.getStepY(),
-                facing.getStepZ()
-        );
-
-        double energyRatio = (double) stored / ModConfigs.common().SPRING_CAPACITY.get();
-        double speedModifier = Math.sqrt(Math.max(0, energyRatio));
-        return direction.scale(ModConfigs.common().KNOCKBACK_COEF.get())
-                .scale(speedModifier);
-    }
-
     public int getComparatorOutput() {
         return Mth.floor(progress * 15);
     }
@@ -517,12 +606,12 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     //IConnectableToPKI
     @Override
     public float getStored() {
-        return stored;
+        return (float) stored;
     }
 
     @Override
     public float getCapacity() {
-        return capacity;
+        return (float) capacity;
     }
 
     @Override
@@ -544,7 +633,29 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         @Override
         protected Vec3 getSouthLocation() {
-            return VecHelper.voxelSpace(8, 8, 15.5f);
+            return VecHelper.voxelSpace(8, 4, 15.5f);
+        }
+
+        @Override
+        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
+            Vec3 location = getSouthLocation();
+
+            location = VecHelper.rotateCentered(location, AngleHelper.horizontalAngle(getSide()), Direction.Axis.Y);
+            location = VecHelper.rotateCentered(location, AngleHelper.verticalAngle(getSide()), Direction.Axis.X);
+
+            Direction springDirection = state.getValue(FACING);
+            Direction.Axis sideAxis = getSide().getAxis();
+            float angle = 180;
+            if(springDirection.getAxisDirection() == Direction.AxisDirection.NEGATIVE) angle += 180;
+            if(springDirection.getAxis() == Direction.Axis.X) angle -= 90;
+            if(springDirection.getAxis() == Direction.Axis.Z) angle += 90;
+
+            if(springDirection.getAxis() == Direction.Axis.Z && getSide() == Direction.UP) angle += 90;
+            if(springDirection.getAxis() == Direction.Axis.Z && getSide() == Direction.DOWN) angle -= 90;
+
+            location = VecHelper.rotateCentered(location, angle, sideAxis);
+
+            return location;
         }
 
         @Override
@@ -556,6 +667,22 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         public float getScale() {
             return 0.5f;
         }
+    }
 
+    //sable compat
+
+    public Vec3 getVectorSpeedForLaunch() {
+        Direction facing = getBlockState().getValue(FACING).getOpposite();
+
+        Vec3 direction = new Vec3(
+                facing.getStepX(),
+                facing.getStepY(),
+                facing.getStepZ()
+        );
+
+        double energyRatio = (double) stored / ModConfigs.common().SPRING_CAPACITY.get();
+        double speedModifier = Math.sqrt(Math.max(0, energyRatio));
+        return direction.scale(ModConfigs.common().KNOCKBACK_COEF.get())
+                .scale(speedModifier);
     }
 }

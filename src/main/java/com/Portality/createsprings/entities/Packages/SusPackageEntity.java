@@ -2,7 +2,7 @@ package com.Portality.createsprings.entities.Packages;
 
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.Projectile.SpringProjectile;
 import com.Portality.createsprings.items.advanced.SusPackage.SusPackageItem;
 import com.simibubi.create.content.logistics.box.PackageEntity;
@@ -36,7 +36,7 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public SusPackageEntity(Level worldIn, double x, double y, double z) {
-        this(ModEntities.SUS_PACKAGE.get(), worldIn);
+        this(CSpringsEntityes.SUS_PACKAGE.get(), worldIn);
         this.setPos(x, y, z);
         this.refreshDimensions();
     }
@@ -48,7 +48,7 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public static PackageEntity fromItemStack(Level world, Vec3 position, ItemStack itemstack) {
-        PackageEntity packageEntity = ModEntities.SUS_PACKAGE
+        PackageEntity packageEntity = CSpringsEntityes.SUS_PACKAGE
                 .create(world);
         packageEntity.setPos(position);
         packageEntity.setBox(itemstack);
@@ -70,7 +70,7 @@ public class SusPackageEntity extends PackageEntity {
     }
 
     public static SusPackageEntity fromDroppedItem(Level world, Entity originalEntity, ItemStack itemstack) {
-        SusPackageEntity packageEntity = ModEntities.SUS_PACKAGE.get()
+        SusPackageEntity packageEntity = CSpringsEntityes.SUS_PACKAGE.get()
                 .create(world);
 
         Vec3 position = originalEntity.position();

@@ -1,6 +1,6 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.compat.SplashCallback;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -98,7 +97,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
         // Получаем BlockEntity из параметров контекста
         BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 
-        drops.set(0, copyFromBe(drops.get(0), blockEntity));
+        if(!drops.isEmpty()) drops.set(0, copyFromBe(drops.get(0), blockEntity));
 
         return drops;
     }
@@ -205,7 +204,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     public Class<SpringBlockEntity> getBlockEntityClass() { return SpringBlockEntity.class; }
 
     @Override
-    public BlockEntityType<? extends SpringBlockEntity> getBlockEntityType() { return ModBlockEntities.SPRING.get(); }
+    public BlockEntityType<? extends SpringBlockEntity> getBlockEntityType() { return CSpringsBlockEntities.SPRING.get(); }
 
     @Override
     public Direction.Axis getRotationAxis(BlockState state) {

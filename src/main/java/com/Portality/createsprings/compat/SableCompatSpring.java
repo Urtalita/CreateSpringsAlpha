@@ -19,7 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -34,8 +34,9 @@ import java.util.Set;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity.canBreakBySpring;
 
-public class SableCompatHandler {
+public class SableCompatSpring {
     public static float PUSH_SCALE = 25f;
+    public static double STABILISATION_FACTOR = 0.25;
 
     public static class SubLevelSpringAssemblyHelper implements SubLevelAssemblyHelper.FrontierPredicate {
         private SpringBlockEntity be;
@@ -69,13 +70,24 @@ public class SableCompatHandler {
 
         final Vec3i normal = be.getFacing().getNormal();
         float scale = PUSH_SCALE;
-        scale = (float) (scale * be.getSpeedForLaunch().length());
+        scale = (float) (scale * be.getVectorSpeedForLaunch().length());
         SubLevel subLevelOn = Sable.HELPER.getContaining(be);
+
+        Vector3d worldImpulse = new Vector3d(
+                normal.getX() * scale,
+                normal.getY() * scale,
+                normal.getZ() * scale
+        );
 
         for (SubLevel subLevel : Sable.HELPER.getAllIntersecting(be.getLevel(), getAreaForDetection(be))) {
             if (subLevel instanceof ServerSubLevel serverSubLevel) {
-                Vector3d impulse = new Vector3d(scale, scale, scale).mul(normal.getX(), normal.getY(), normal.getZ());
-                applyImpulseToSubLevel(serverSubLevel, impulse, serverSubLevel.logicalPose().transformPositionInverse(be.getFront().getCenter()), be);
+
+                Vector3d localImpulse = new Vector3d(worldImpulse);
+                serverSubLevel.logicalPose().orientation().transformInverse(localImpulse);
+                Vector3d worldHitPos = new Vector3d(be.getFront().getCenter().toVector3f());
+                Vector3d localHitPos = serverSubLevel.logicalPose().transformPositionInverse(worldHitPos);
+
+                applyImpulseToSubLevel(serverSubLevel, localImpulse, stabilisePosition(localHitPos), be);
             }
         }
 
@@ -94,9 +106,33 @@ public class SableCompatHandler {
         applyImpulseToSubLevel(serverSubLevel, springImpulse, be.getBlockPos().getCenter(), be);
     }
 
+    public static Vec3 stabilisePosition(Vec3 localHitPos){
+        double stabilisationFactorTransformed = 1 / STABILISATION_FACTOR;
+
+        Vec3 stabilizedLocalHitPos = new Vec3(
+                Math.round(localHitPos.x * stabilisationFactorTransformed) / stabilisationFactorTransformed,
+                Math.round(localHitPos.y * stabilisationFactorTransformed) / stabilisationFactorTransformed,
+                Math.round(localHitPos.z * stabilisationFactorTransformed) / stabilisationFactorTransformed
+        );
+
+        return stabilizedLocalHitPos;
+    }
+
+    public static Vec3 stabilisePosition(Vector3d localHitPos){
+        double stabilisationFactorTransformed = 1 / STABILISATION_FACTOR;
+
+        Vec3 stabilizedLocalHitPos = new Vec3(
+                Math.round(localHitPos.x * stabilisationFactorTransformed) / stabilisationFactorTransformed,
+                Math.round(localHitPos.y * stabilisationFactorTransformed) / stabilisationFactorTransformed,
+                Math.round(localHitPos.z * stabilisationFactorTransformed) / stabilisationFactorTransformed
+        );
+
+        return stabilizedLocalHitPos;
+    }
+
     private static boolean splitAndShootBlock(ServerSubLevel serverSubLevelOn, SpringBlockEntity be){
         BlockPos pos = be.getFront();
-        if(!canBreakBySpring(pos, be.getLevel(), be.stored)){return false;}
+        if(!canBreakBySpring(pos, be.getLevel(), (float) be.stored)){return false;}
 
         if(!(be.getLevel() instanceof ServerLevel serverLevel)){return false;}
         @Nullable ServerSubLevelContainer container = ServerSubLevelContainer.getContainer(serverLevel);
@@ -134,7 +170,7 @@ public class SableCompatHandler {
 
         final Vec3i normal = be.getFacing().getNormal();
         double scale = PUSH_SCALE;
-        scale = scale * be.getSpeedForLaunch().length();
+        scale = scale * be.getVectorSpeedForLaunch().length();
 
         if(!(be.getLevel() instanceof ServerLevel serverLevel)){
             be.createdSubLevel = null;
@@ -211,14 +247,21 @@ public class SableCompatHandler {
         return ret;
     }
 
-    private static void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vec3 affected, SpringBlockEntity be) {
+    public static void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vec3 affected, BlockEntity be) {
         RigidBodyHandle handle = RigidBodyHandle.of(level);
         handle.applyImpulseAtPoint(JOMLConversion.toJOML(affected), impulse);
         //handle.applyLinearImpulse(impulse);
         level.applyQueuedForces(SubLevelPhysicsSystem.get(be.getLevel()), handle, 1);
     }
 
-    private static void applyLinerImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, SpringBlockEntity be) {
+    public static void applyImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, Vector3d affected, BlockEntity be) {
+        RigidBodyHandle handle = RigidBodyHandle.of(level);
+        handle.applyImpulseAtPoint(affected, impulse);
+        //handle.applyLinearImpulse(impulse);
+        level.applyQueuedForces(SubLevelPhysicsSystem.get(be.getLevel()), handle, 1);
+    }
+
+    public static void applyLinerImpulseToSubLevel(ServerSubLevel level, Vector3d impulse, BlockEntity be) {
         RigidBodyHandle handle = RigidBodyHandle.of(level);
         handle.applyLinearImpulse(impulse);
         level.applyQueuedForces(SubLevelPhysicsSystem.get(be.getLevel()), handle, 1);
@@ -240,7 +283,7 @@ public class SableCompatHandler {
         return aabb;
     }
 
-    private static Vec3 transformFromOneShipToAnother(ServerSubLevel on, ServerSubLevel to, SpringBlockEntity be){
+    public static Vec3 transformFromOneShipToAnother(ServerSubLevel on, ServerSubLevel to, SpringBlockEntity be){
         Vec3 position = be.getFront().getCenter();
         Vec3 globalPos = on.logicalPose().transformPosition(position);
         Vec3 finalPos = to.logicalPose().transformPositionInverse(globalPos);

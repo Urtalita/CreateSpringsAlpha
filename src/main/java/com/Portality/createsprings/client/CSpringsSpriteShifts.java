@@ -11,6 +11,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class CSpringsSpriteShifts {
     public static final CTSpriteShiftEntry SPRING_ALLOY_CASING = omni("spring_alloy_casing");
+    public static final CTSpriteShiftEntry CUT_SPRING_ALLOY = omni("cut_spring_alloy");
     public static final CTSpriteShiftEntry WEATHERED_IRON = omni("weathered_iron"), WEATHERED_IRON_SIDE = omni("weathered_iron_side");
 
     private static CTSpriteShiftEntry omni(String name) {

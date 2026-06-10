@@ -7,6 +7,7 @@ import com.simibubi.create.Create;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
@@ -26,7 +27,7 @@ public class CSpringsArmorMaterials {
             "hat",
             new int[] { 6, 6, 6, 6, 6 },
             7,
-            AllSoundEvents.COPPER_ARMOR_EQUIP.getMainEventHolder(),
+            SoundEvents.ARMOR_EQUIP_IRON,
             0.0F,
             0.0F,
             () -> Ingredient.of(Items.COPPER_INGOT)

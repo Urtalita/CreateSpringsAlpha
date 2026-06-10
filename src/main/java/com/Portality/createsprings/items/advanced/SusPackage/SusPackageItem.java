@@ -3,7 +3,7 @@ package com.Portality.createsprings.items.advanced.SusPackage;
 import com.Portality.createsprings.client.menus.TooltipDescription;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
-import com.Portality.createsprings.entities.ModEntities;
+import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.Packages.SusPackageEntity;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.simibubi.create.AllKeys;
@@ -11,7 +11,6 @@ import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -104,7 +103,7 @@ public class SusPackageItem extends PackageItem {
         AABB scanBB = new AABB(point, point).inflate(r, 0, r)
                 .expandTowards(0, h, 0);
         Level world = context.getLevel();
-        if (!world.getEntities(ModEntities.SUS_PACKAGE.get(), scanBB, e -> true)
+        if (!world.getEntities(CSpringsEntityes.SUS_PACKAGE.get(), scanBB, e -> true)
                 .isEmpty())
             return super.useOn(context);
 

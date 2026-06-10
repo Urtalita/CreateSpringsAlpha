@@ -256,6 +256,12 @@ public class WeldingRecipesGen extends ProcessingRecipeGen<WelderRecipeParams, W
             .speed(WelderRecipeSpeed.FAST)
     );
 
+    GeneratedRecipe INDUSTRIAL_SPRING_ALLOY = create("industrial_spring_alloy", b -> b
+            .doubleIngredient(CSpringsBlocks.INDUSTRIAL_SPRING_ALLOY)
+            .output(CSpringsItems.SPRING_ALLOY_NUGGET, 4)
+            .speed(WelderRecipeSpeed.FAST)
+    );
+
     @Override
     protected IRecipeTypeInfo getRecipeType() {
         // Возвращаем статический TYPE_INFO из вашего класса рецепта

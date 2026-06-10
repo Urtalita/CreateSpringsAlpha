@@ -2,6 +2,7 @@ package com.Portality.createsprings.items.advanced.Spring;
 
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.items.BouncyBlockItem;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
 import com.simibubi.create.content.equipment.wrench.WrenchItemRenderer;
 import com.simibubi.create.content.logistics.box.PackageEntity;
@@ -43,7 +44,7 @@ import java.util.function.Consumer;
 
 import static com.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
-public class SpringItem extends BlockItem {
+public class SpringItem extends BouncyBlockItem {
     private static final int TimeNeed = 2;
 
     public SpringItem(Block p_40565_, Properties p_40566_) {

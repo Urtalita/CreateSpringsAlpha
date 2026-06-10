@@ -18,16 +18,18 @@ import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import net.createmod.catnip.lang.Lang;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class ModEntities {
+public class CSpringsEntityes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, CreateSprings.MODID);
 
@@ -47,6 +49,10 @@ public class ModEntities {
     public static final EntityEntry<HatPackageEntity> HAT_PACKAGE = register("hat", HatPackageEntity::new, () -> HatPackageRenderer::new,
             MobCategory.MISC, 10, 3, true, false, HatPackageEntity::build)
             .visual(() -> HatPackageVisual::new, true)
+            .register();
+
+    public static final EntityEntry<ItemEntity> BOUNCY_ITEM = register("bouncy_item", BouncyItemEntity::new, () -> ItemEntityRenderer::new,
+            MobCategory.MISC, 6, 2, true, false, BouncyItemEntity::build)
             .register();
 
 

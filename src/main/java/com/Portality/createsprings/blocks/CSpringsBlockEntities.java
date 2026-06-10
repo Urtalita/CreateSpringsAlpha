@@ -1,7 +1,8 @@
-package com.Portality.createsprings.blocks.advanced;
+package com.Portality.createsprings.blocks;
 
 import com.Portality.createsprings.CreateSprings;
-import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.blocks.advanced.AnalogToggleLatch.AnalogLatchBe;
+import com.Portality.createsprings.blocks.advanced.AnalogToggleLatch.AnalogLatchRenderer;
 import com.Portality.createsprings.blocks.advanced.AndesiteMold.MoldBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultBlockEntity;
 import com.Portality.createsprings.blocks.advanced.SpringCatapult.SpringCatapultRenderer;
@@ -27,7 +28,7 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
 import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 
-public class ModBlockEntities {
+public class CSpringsBlockEntities {
 
     private static final CreateRegistrate REGISTRATE = CreateSprings.registrate();
 
@@ -78,6 +79,12 @@ public class ModBlockEntities {
             .visual(() -> SpringCoilVisual::new, false)
             .renderer(() -> SpringCoilRenderer::new)
             .validBlocks(CSpringsBlocks.LARGE_SPRING_COIL)
+            .register();
+
+    public static final BlockEntityEntry<AnalogLatchBe> ANALOG_TOGGLE_LATCH = REGISTRATE
+            .blockEntity("analog_toggle_latch", AnalogLatchBe::new)
+            .renderer(() -> AnalogLatchRenderer::new)
+            .validBlocks(CSpringsBlocks.ANALOG_TOGGLE_LATCH)
             .register();
 
      /*

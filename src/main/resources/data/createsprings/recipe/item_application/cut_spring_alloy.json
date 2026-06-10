@@ -1,0 +1,17 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy_casing"
+    },
+    {
+      "item": "create:sturdy_sheet"
+    }
+  ],
+  "results": [
+    {
+      "id": "createsprings:cut_spring_alloy",
+      "count": 8
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBlock;
 import com.Portality.createsprings.config.ModConfigs;
 import com.mojang.serialization.MapCodec;
@@ -178,12 +178,13 @@ public class LargeSpringBlockExstentionBlock extends DirectionalBlock implements
 
     @Override
     public BlockEntityType<? extends ExtentionBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.EXTENTION_BLOCK_ENTITY.get();
+        return CSpringsBlockEntities.EXTENTION_BLOCK_ENTITY.get();
     }
 
     @Override
     public BlockPos getInformationSource(Level level, BlockPos pos, BlockState state) {
         LargeSpringBlockEntity largeSpringBlockEntity = getBe(pos, state.getValue(FACING), level);
+        if(largeSpringBlockEntity == null) return BlockPos.ZERO;
         return largeSpringBlockEntity.getBlockPosition();
     }
 

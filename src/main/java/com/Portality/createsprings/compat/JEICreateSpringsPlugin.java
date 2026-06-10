@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.Portality.createsprings.blocks.CSpringsBlocks.FRICTION_WELDER;
-import static com.Portality.createsprings.recipe.ModRecipes.WELDER_TYPE;
+import static com.Portality.createsprings.recipe.CSpringsRecipes.WELDER_TYPE;
 
 @JeiPlugin
 public class JEICreateSpringsPlugin implements IModPlugin {

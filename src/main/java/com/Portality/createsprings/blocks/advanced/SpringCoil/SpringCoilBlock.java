@@ -1,7 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.SpringCoil;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
-import com.Portality.createsprings.blocks.advanced.ModBlockEntities;
+import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.utill.Helpers.HitboxHelper;
 import com.google.common.base.Predicates;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
@@ -52,7 +52,7 @@ public class SpringCoilBlock extends DirectionalKineticBlock implements IBE<Spri
 
     @Override
     public BlockEntityType<? extends SpringCoilBlockEntity> getBlockEntityType() {
-        return ModBlockEntities.LARGE_SPRING_COIL.get();
+        return CSpringsBlockEntities.LARGE_SPRING_COIL.get();
     }
 
     @Override

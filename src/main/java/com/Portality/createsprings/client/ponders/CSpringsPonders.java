@@ -12,13 +12,9 @@ public class CSpringsPonders {
 
         PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
-        HELPER.forComponents(CSpringsBlocks.UNFINISHED_SPRING)
-                        .addStoryBoard("su_sec", CSpringsScenes.SpringPonders::suSec, AllCreatePonderTags.KINETIC_SOURCES);
-
         HELPER.forComponents(CSpringsBlocks.SPRING)
                 .addStoryBoard("spring", CSpringsScenes.SpringPonders::spring, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("springsplash", CSpringsScenes.SpringPonders::springSplash, AllCreatePonderTags.KINETIC_RELAYS)
-                .addStoryBoard("hardness", CSpringsScenes.SpringPonders::hardness, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("explosion", CSpringsScenes.SpringPonders::explosions, AllCreatePonderTags.KINETIC_RELAYS)
         ;
 
@@ -33,10 +29,11 @@ public class CSpringsPonders {
                 .addStoryBoard("large_spring", CSpringsScenes.LargeSpringPonders::largeSpring, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("large_spring_speed", CSpringsScenes.LargeSpringPonders::largeSpringSpeed, AllCreatePonderTags.KINETIC_RELAYS);
 
-        /*
-        HELPER.forComponents(ModBlocks.KINETIC_INTERFACE)
+
+        HELPER.forComponents(CSpringsBlocks.KINETIC_INTERFACE)
                 .addStoryBoard("kinetic_interface", CSpringsScenes::PSKI, AllCreatePonderTags.CONTRAPTION_ASSEMBLY);
 
-         */
+        HELPER.forComponents(CSpringsBlocks.ANALOG_TOGGLE_LATCH)
+                .addStoryBoard("analog_latch", CSpringsScenes::AnalogLatch, AllCreatePonderTags.REDSTONE);
     }
 }
