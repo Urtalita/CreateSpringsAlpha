@@ -1,5 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.SpringCatapult;
 
+import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
+import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -32,8 +34,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import static com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity.springAnimation;
 
 public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
     public float xAngle = 0;
@@ -381,7 +381,7 @@ public class SpringCatapultBlockEntity extends KineticBlockEntity implements IHa
             CSpringsSounds.playBweum(level, worldPosition);
         }
 
-        progress = springAnimation(phase) * (stored / capacity);
+        progress = ISpringBE.springAnimation(phase) * (stored / capacity);
         phase++;
 
         if(phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){

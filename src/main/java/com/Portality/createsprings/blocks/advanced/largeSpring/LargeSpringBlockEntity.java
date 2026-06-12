@@ -2,11 +2,11 @@ package com.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlockEntity;
-import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
+import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
-import com.Portality.createsprings.compat.SableCompatLargeSpring;
+import com.Portality.createsprings.compat.SableCompatAbstractionLayer;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.server.contraption.SpringContraption;
 import com.Portality.createsprings.utill.Helpers.CspringsMath;
@@ -49,8 +49,7 @@ import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.get
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity.*;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
-public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements
-        IControlContraption, IConnectableToPSKI, ISpringBE {
+public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity implements IControlContraption, ISpringBE {
 
     public double progress;
     public double stored = 0;
@@ -69,6 +68,9 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public double prevProgress;
     private HashMap<BlockPos, Integer> extensionsCount = new HashMap<>();
     int maxSignal = 0;
+
+    public boolean autoMode = true;
+    public boolean reverseMode = true;
 
     public boolean disableBreakingBlocks;
     public UUID createdSubLevel;
@@ -113,12 +115,17 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
     public void setHardness(int value){
         if (level == null || level.isClientSide) return;
 
-        if (hardness != value) {
-            hardness = value;
-            sendData();
-            setChanged();
-            updateNetwork();
-        }
+        sendData();
+        setChanged();
+        updateNetwork();
+        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
+
+        reverseMode = value < 0;
+
+        updateHardnessSafe(Math.abs(value) - 1);
+        autoMode = (hardness < 2);
+        updateGeneratedRotation();
+        sendData();
     }
 
     @Override
@@ -303,7 +310,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
         if(isGenerating && splashMode && stored > 1){
             prevProgress = progress;
-            progress = springAnimation(phase) * (stored / capacity);
+            progress = ISpringBE.springAnimation(phase) * (stored / capacity);
 
             if(phase == 0){
                 if(movedContraption != null){
@@ -318,7 +325,7 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
 
             if(phase < 5){
                 pushEntitiesInArea();
-                SableCompatLargeSpring.pushSubLevels(this);
+                SableCompatAbstractionLayer.pushSubLevels(this);
             }
 
             phase++;
@@ -362,17 +369,24 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         if (isGenerating && stored > 0) {
             stored = Math.max(stored - CurSpeed / 20 * hardness * 9 * 2, 0);
             if (platePos > (curLen+1)) {
-                curLen++;
-                breakBlocksInLayer(Mth.floor(platePos((float) progress) + 1), facing);
-                restoreLayer(Mth.floor(platePos((float) progress)), facing);
+                int layer = Mth.floor(platePos((float) progress));
+
+                if(layer != 0){ //don't remove first layer(causes bugs)
+                    curLen++;
+                    breakBlocksInLayer(Mth.floor(platePos((float) progress) + 1), facing);
+                    restoreLayer(layer, facing);
+                }
             }
         }
-        // Режим накопления, если не активировано
+
         else if (!isGenerating) {
             stored = Math.min(stored + CurSpeed / 20 * hardness * 9 * 2, capacity);
             if (platePos < (curLen+1)) {
-                removeLayer(Mth.floor(platePos((float) progress)), facing);
-                curLen--;
+                int layer = Mth.floor(platePos((float) progress));
+                if(layer != 0){ //don't remove first layer(causes bugs)
+                    removeLayer(layer, facing);
+                    curLen--;
+                }
             }
         }
 
@@ -389,6 +403,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
             updateComparators();
         }
+
+        if(autoMode) calculateIdealHardness(isGenerating);
     }
 
     private void updateComparators(){
@@ -469,12 +485,19 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         int signal = getMaxSignal();
         if(signal == 0){return 0;}
         float speed = 16.0f * signal + 16;
+        if(reverseMode) speed = -speed;
+
         return isGenerating && stored > 0 ? speed : 0.0f;
     }
 
     public void setGenerating(boolean generating) {
         if(phase > 0){return;}
         phase = 0;
+
+        if(autoMode){
+            updateHardnessSafe(0);
+            calculateIdealHardness(isGenerating);
+        }
 
         isGenerating = generating;
         updateGeneratedRotation();
@@ -503,6 +526,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         compound.putBoolean("splashMode", splashMode);
         compound.putFloat("capacity", (float) capacity);
         compound.putFloat("hardness", hardness);
+        compound.putBoolean("auto", autoMode);
+        compound.putBoolean("reverseMode", reverseMode);
 
         compound.putInt("maxSignal", maxSignal);
     }
@@ -519,6 +544,8 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         splashMode =  compound.getBoolean("splashMode");
         capacity = compound.getFloat("capacity");
         hardness = compound.getFloat("hardness");
+        autoMode = compound.getBoolean("auto");
+        reverseMode = compound.getBoolean("reverseMode");
 
         if(compound.contains("stoppedX")){
             stoppedPos = new BlockPos(
@@ -662,14 +689,17 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             return true;
         }
 
-        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
-        CreateLang.text(" ").add(
-                        CreateLang.number(Math.round(stored)).style(ChatFormatting.AQUA).space()
-                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                        .add(CreateLang.number(capacity).style(ChatFormatting.AQUA).space()
-                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
-                .forGoggles(tooltip);
-        addRemainingTime(tooltip, isPlayerSneaking);
+        if(splashMode){
+            addChargeInSplashMode(tooltip, isPlayerSneaking, progress);
+        } else {
+            CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+            CreateLang.text(" ").add(
+                            CSpringsLang.transformTime(stored)
+                    ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                            .add(CSpringsLang.transformTime(capacity)))
+                    .forGoggles(tooltip);
+        }
+        addRemainingTime(tooltip, isPlayerSneaking, isGenerating, progress, prevProgress);
 
         CreateLang.translate("spring.len").style(ChatFormatting.GRAY).forGoggles(tooltip);
         CreateLang.text(" ").add(
@@ -686,32 +716,6 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
                 .add(Component.literal(" ").append(state)).forGoggles(tooltip);
 
         return true;
-    }
-
-    public void addRemainingTime(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(Mth.equal(getSpeed(), 0)) return;
-
-        double rate = Math.abs((progress - prevProgress) * capacity);
-        double left = isGenerating ? stored : capacity - stored;
-        double ticks = left / rate;
-
-        int totalSeconds = (int) Math.floor(ticks / 20);
-
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds % 3600) / 60;
-        long seconds = totalSeconds % 60;
-
-        if(totalSeconds != 0){
-            MutableComponent remainingTime = Component.literal("");
-
-            if(hours != 0) remainingTime.append(Component.literal(hours + "h ").withStyle(ChatFormatting.AQUA));
-            if(minutes != 0) remainingTime.append(Component.literal(minutes + "m ").withStyle(ChatFormatting.AQUA));
-            remainingTime.append(Component.literal(seconds + "s ").withStyle(ChatFormatting.AQUA));
-
-            CreateLang.text(" ").add(
-                            CreateLang.translate("createsprings.time_left").style(ChatFormatting.DARK_GRAY).add(remainingTime))
-                    .forGoggles(tooltip);
-        }
     }
 
     @Override
@@ -756,9 +760,24 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         onExploded(distance, 4, pos);
     }
 
+    @Override
+    public GeneratingKineticBlockEntity getBlockEntity() {
+        return this;
+    }
+
+    @Override
+    public void setHardness(double hardness) {
+        this.hardness = (float) hardness;
+    }
+
+    @Override
+    public boolean isGenerating() {
+        return isGenerating;
+    }
+
     public void onExploded(float distance, float power, BlockPos sourcePos){
         int oldLen = Mth.floor(platePos((float) progress));
-        stored += power / distance * 40000 / 8;
+        stored += power / distance * 200000 / 2;
         if(stored > capacity){stored = capacity;}
         prevProgress = progress;
         progress = stored / capacity;

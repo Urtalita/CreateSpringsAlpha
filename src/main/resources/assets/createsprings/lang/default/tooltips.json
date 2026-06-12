@@ -65,15 +65,25 @@
   "block.createsprings.spring.tooltip.condition3": "При приземлении",
   "block.createsprings.spring.tooltip.behaviour3": "если игрок _держит_ пружину то она _преобразовывает_ часть урона в _заряд_ тем самым _смягчая_ посадку",
 
+  "block.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
+  "block.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
+  "block.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
+
   "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления",
 
-  "block.createsprings.industrial_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.industrial_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
   "block.createsprings.industrial_spring_alloy.tooltip.condition1": "При приземлении на блок",
-  "block.createsprings.industrial_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+  "block.createsprings.industrial_spring_alloy.tooltip.behaviour1": "_Смягчает_ урон от падения",
 
-  "block.createsprings.cut_spring_alloy.summary": "Декоративный пружинный сплав",
+  "block.createsprings.cut_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
   "block.createsprings.cut_spring_alloy.tooltip.condition1": "При приземлении на блок",
-  "block.createsprings.cut_spring_alloy.tooltip.behaviour1": "Смягчает урон от падения",
+  "block.createsprings.cut_spring_alloy.tooltip.behaviour1": "_Смягчает_ урон от падения",
+
+  "block.minecraft.tripwire_hook.tooltip.summary": "_Переключает_ пружину или пружинный инструмент в _режим всплеска_",
+  "block.minecraft.tripwire_hook.tooltip.condition1": "ПКМ по пружине",
+  "block.minecraft.tripwire_hook.tooltip.behaviour1": "Переключает пружину в _режим всплеска_, смотри _второе размышление пружины_",
+  "block.minecraft.tripwire_hook.tooltip.condition2": "ПКМ по пружинному инструменту в инвенторе",
+  "block.minecraft.tripwire_hook.tooltip.behaviour2": "Переключает инструмент в _режим всплеска_, при использовании _преобразует_ оставшийся _заряд_ в запредельную _скорость_",
 
   "createsprings.pse.tooltip.cur_mode": "Current engine mode:",
   "createsprings.pse.tooltip.0": "Heating",

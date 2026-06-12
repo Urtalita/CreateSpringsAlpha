@@ -1,4 +1,4 @@
-// 1.21.1	2026-06-09T17:22:35.9706806	Registrate Provider for createsprings [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-06-10T19:20:07.6080957	Registrate Provider for createsprings [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 ae2682d68b23962e97ba4fbb39ef6663bc78cdb4 assets/createsprings/blockstates/analog_toggle_latch.json
 17fdf5e50bd85a504bf2f58f077b127d65b1e39d assets/createsprings/blockstates/andesite_mold.json
 669a07180484c055a319bfb28a1b3e37a61d73fc assets/createsprings/blockstates/connectable_weathered_iron.json
@@ -18,8 +18,8 @@ b12698e7a98ac9595a865bb65118a313bdeff053 assets/createsprings/blockstates/spring
 e166f84108648bf3066919380625951d74e7d773 assets/createsprings/blockstates/spring_alloy_casing.json
 63af041fef2f4449d5cd05093fb41bce5ed6fef4 assets/createsprings/blockstates/spring_catapult.json
 e167794610ad617dce85ec75f60fc2b61cdda7a4 assets/createsprings/blockstates/unfinished_spring.json
-d7cb124419435e0f78145e0c29b534e822fa2113 assets/createsprings/lang/en_ud.json
-183b7127619ab207e622f6e015a55b2f1486b007 assets/createsprings/lang/en_us.json
+c6a6c473bc5593c58ae2cd951cd932eccafeb897 assets/createsprings/lang/en_ud.json
+ec21d5205a06d690108c73f86f69ada79ae0075a assets/createsprings/lang/en_us.json
 f52fe830acb0d86c7a640d1bc9cc80bd20fe0144 assets/createsprings/models/block/analog_toggle_latch.json
 f52fe830acb0d86c7a640d1bc9cc80bd20fe0144 assets/createsprings/models/block/analog_toggle_latch_inverce.json
 f52fe830acb0d86c7a640d1bc9cc80bd20fe0144 assets/createsprings/models/block/analog_toggle_latch_powered.json

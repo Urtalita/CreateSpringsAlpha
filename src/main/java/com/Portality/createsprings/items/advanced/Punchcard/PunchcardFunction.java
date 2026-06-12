@@ -24,7 +24,7 @@ public enum PunchcardFunction {
 
     DETACH_SPRING(PunchcardInterpritator.detachSpring(), false, false, "detachSpring", new PunchcardExecutor[]{
             PunchcardExecutor.SPRING_BASE,
-            //PunchcardExecutor.EXPLOSION_CHAMBER,
+            PunchcardExecutor.EXPLOSION_CHAMBER,
             PunchcardExecutor.SPRING_LAUNCHER
     }),
 
@@ -41,15 +41,15 @@ public enum PunchcardFunction {
     }),
 
     EXPLODE_CHAMBER(PunchcardInterpritator.explodeChamber(), false, false, "explodeChamber", new PunchcardExecutor[]{
-        //PunchcardExecutor.EXPLOSION_CHAMBER
+        PunchcardExecutor.EXPLOSION_CHAMBER
     }),
 
     TOGGLE_BOOST(PunchcardInterpritator.toggleBoost(), false, false, "toggleBoost", new PunchcardExecutor[]{
-            //PunchcardExecutor.PSE
+            PunchcardExecutor.PSE
     }),
 
     STEAM_DASH(PunchcardInterpritator.steamDash(), false, false, "steamDash", new PunchcardExecutor[]{
-        //PunchcardExecutor.PSE
+        PunchcardExecutor.PSE
     }),
 
     SHOOTING(PunchcardInterpritator.shootFromCannon(), false, false, "potatoCannonShoot", new PunchcardExecutor[]{
@@ -75,8 +75,8 @@ public enum PunchcardFunction {
 
     REPLACE_SPRING(PunchcardInterpritator.findAndReplaceSpring(), false, false, "replace", new PunchcardExecutor[]{
             PunchcardExecutor.SPRING_BASE,
-            //PunchcardExecutor.EXPLOSION_CHAMBER,
-            //PunchcardExecutor.SPRING_LAUNCHER
+            PunchcardExecutor.EXPLOSION_CHAMBER,
+            PunchcardExecutor.SPRING_LAUNCHER
     })
     ;
 

@@ -3,6 +3,7 @@ package com.Portality.createsprings.items.SpringStufs;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.CSpringsItems;
+import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.items.advanced.Punchcard.ExecutorInfo;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritator;
@@ -71,7 +72,7 @@ public class SpringSpeedSys {
 
         Item hook = getItemFromContains(stack, Blocks.TRIPWIRE_HOOK.asItem());
         if(hook != null){
-            speed += stored / 8 / 2;
+            speed += stored / 64;
             stored = 0;
 
             if(speed > MAX_OVERCLOCKED_SPEED){
@@ -92,9 +93,9 @@ public class SpringSpeedSys {
 
             player.playSound(SoundEvents.ITEM_BREAK, 0.5F, 1.0F);
         } else {
-            if (stored > MAX_REGULAR_SPEED && speed < 5500){
+            if (stored > MAX_REGULAR_SPEED && (speed < MAX_REGULAR_SPEED + 500)){
                 speed += 250;
-                stored -= 2500;
+                stored -= 10000;
                 if(speed > MAX_REGULAR_SPEED) speed = MAX_REGULAR_SPEED;
             }
         }
@@ -127,23 +128,21 @@ public class SpringSpeedSys {
             if(level.getGameTime() % 40 == 0) {
                 if(entity instanceof LivingEntity livingEntity){
                     ItemStack chestStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-                    /*
+
                     if(chestStack.getItem() instanceof PortativeSteamEngineItem){
                         if (speed < 7500){
-                            if(chestStack.getOrCreateTag().getFloat("engineSpeed") < 30){
-                                changeSpeed(tag, -40);
+                            if(PortativeSteamEngineItem.getSpeed(stack) < 30){
+                                changeSpeed(stack, -40);
                             } else {
-                                tag.putDouble("LastSpeed", speed);
-                                tag.putDouble("Speed", speed);
+                                stack.set(CSpringsDataComponents.TOOL_LAST_SPEED, (float) speed);
+                                stack.set(CSpringsDataComponents.TOOL_SPEED, (float) speed);
                             }
                         } else {
-                            changeSpeed(tag, -40);
+                            changeSpeed(stack, -40);
                         }
                     } else {
-
+                        changeSpeed(stack, -40);
                     }
-                    */
-                    changeSpeed(stack, -40);
                 }
             }
         }

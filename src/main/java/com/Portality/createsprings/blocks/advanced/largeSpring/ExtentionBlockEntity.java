@@ -1,9 +1,12 @@
 package com.Portality.createsprings.blocks.advanced.largeSpring;
 
 import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
+import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
+import com.Portality.createsprings.blocks.advanced.spring.SpringValueBehavior;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -30,7 +33,7 @@ import static com.Portality.createsprings.utill.Helpers.CspringsMath.calcPosM;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, ISpringBE, ThresholdSwitchObservable {
-    public ScrollValueBehaviour targetHardness;
+    public SpringValueBehavior targetHardness;
     BlockPos be = null;
 
     public ExtentionBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -39,15 +42,21 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        Integer max = 256;
+        int max = 256 + 1;
 
-        targetHardness = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
+        targetHardness = new SpringValueBehavior(Component.translatable("spring.hardness"),
                 this, new ExtentionValueBoxTransform());
-        targetHardness.between(1, max);
+        targetHardness.between(-max, max);
         targetHardness.value = (int) DEFAULT_HARDNESS;
+        targetHardness.withFormatter(this::formatter2);
         targetHardness.withCallback(this::updateHardness);
 
         behaviours.add(targetHardness);
+    }
+
+    private String formatter2(Integer integer) {
+        if(Math.abs(integer) <= 1) return "AUTO";
+        return Integer.toString(Math.abs(integer) - 1);
     }
 
     private void updateHardness(int value){
@@ -128,6 +137,66 @@ public class ExtentionBlockEntity extends SmartBlockEntity implements IHaveGoggl
             return largeSpringBlockEntity;
         }
         return null;
+    }
+
+    @Override
+    public float getStored() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.getStored();
+        return 0;
+    }
+
+    @Override
+    public float getCapacity() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.getCapacity();
+        return 0;
+    }
+
+    @Override
+    public void setStored(float newStored) {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) be.setStored(newStored);
+    }
+
+    @Override
+    public float getHardness() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.getHardness();
+        return 0;
+    }
+
+    @Override
+    public float getImpactCof() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.getImpactCof();
+        return 0;
+    }
+
+    @Override
+    public GeneratingKineticBlockEntity getBlockEntity() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        return be;
+    }
+
+    @Override
+    public void setHardness(double hardness) {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) be.setHardness(hardness);
+    }
+
+    @Override
+    public float calcStress() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.calcStress();
+        return 0;
+    }
+
+    @Override
+    public boolean isGenerating() {
+        LargeSpringBlockEntity be = getOrFindBe();
+        if(be != null) return be.isGenerating();
+        return false;
     }
 
     private class ExtentionValueBoxTransform extends ValueBoxTransform.Sided {

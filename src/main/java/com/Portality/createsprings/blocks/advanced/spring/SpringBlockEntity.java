@@ -1,10 +1,10 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
-import com.Portality.createsprings.blocks.advanced.AnalogToggleLatch.AnalogLatchBlock;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.IConnectableToPSKI;
+import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
+import com.Portality.createsprings.compat.SableCompatAbstractionLayer;
 import com.Portality.createsprings.config.ModConfigs;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
@@ -14,12 +14,8 @@ import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
-import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
-import dev.engine_room.flywheel.lib.transform.TransformStack;
-import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
@@ -46,16 +42,13 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlock.getSpringChargeCoefficient;
-import static com.Portality.createsprings.compat.SableCompatSpring.pushCreatedSubLevels;
-import static com.Portality.createsprings.compat.SableCompatSpring.pushSubLevels;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class SpringBlockEntity extends GeneratingKineticBlockEntity implements ThresholdSwitchObservable, IConnectableToPSKI, ISpringBE {
 
-    public final double capacity;
+    public double capacity;
     public double stored = 0;
     private double progress;
     private double prevProgress;
@@ -64,19 +57,19 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     private int phase = 0;
     private float hardness = DEFAULT_HARDNESS;
 
-    public static final float DEFAULT_HARDNESS = 16;
-    public ScrollValueBehaviour targetHardness;
+    public static final float DEFAULT_HARDNESS = 0;
+    public SpringValueBehavior targetHardness;
     // public SpringPressingBehaviour pressingBehaviour;
     public boolean disableBreakingBlocks = false;
     public UUID createdSubLevel = null;
 
-    public boolean autoMode = false;
+    public boolean reverseRotation = false;
+    public boolean autoMode = true;
 
     public SpringBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         capacity = ModConfigs.common().SPRING_CAPACITY.get();
     }
-
 
     private void updateHardness(int i) {
         if (level == null || level.isClientSide) return;
@@ -86,8 +79,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         updateNetwork();
         this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
 
-        updateHardnessSafe(i);
-        autoMode = (hardness == 0);
+        reverseRotation = i < 0;
+
+        updateHardnessSafe(Math.abs(i) - 1);
+        autoMode = (hardness < 1);
+        updateGeneratedRotation();
         sendData();
     }
 
@@ -99,25 +95,16 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        int max = 256;
+        int max = 256 + 1;
 
-        targetHardness = new ScrollValueBehaviour(Component.translatable("spring.hardness"),
+        targetHardness = new SpringValueBehavior(Component.translatable("spring.hardness"),
                 this, new SpringValueBoxTransform());
-        targetHardness.between(0, max);
+        targetHardness.between(-max, max);
         targetHardness.value = (int) DEFAULT_HARDNESS;
         targetHardness.withFormatter(this::formatter);
         targetHardness.withCallback(this::updateHardness);
 
         behaviours.add(targetHardness);
-
-
-        //pressingBehaviour = new SpringPressingBehaviour(this);
-        //behaviours.add(pressingBehaviour);
-    }
-
-    private String formatter(Integer integer) {
-        if(integer == 0) return "AUTO";
-        return Integer.toString(integer);
     }
 
     public void onBlockExploded(BlockPos pos, Explosion explosion) {
@@ -134,9 +121,19 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             return;
         }
 
-        stored += power / distance * 20000 * coef;
+        stored += power / distance * 100000 * coef;
         if(stored > capacity) stored = capacity;
         updateGeneratedRotation();
+    }
+
+    @Override
+    public GeneratingKineticBlockEntity getBlockEntity() {
+        return this;
+    }
+
+    @Override
+    public void setHardness(double hardness) {
+        this.hardness = (float) hardness;
     }
 
     @Override
@@ -172,13 +169,18 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         return capacity;
     }
 
-    private float calcStress() {
+    public float calcStress() {
         if (stored < capacity && !isGenerating) {
             return 2f * hardness;
         } else if (isGenerating && stored >= 2f * hardness) {
             return -2f * hardness;
         }
         return 0;
+    }
+
+    @Override
+    public boolean isGenerating() {
+        return isGenerating;
     }
 
     private float calculateStressForHardness(float hardness) {
@@ -204,17 +206,17 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
-            progress = springAnimation(phase) * (stored / capacity);
+            progress = ISpringBE.springAnimation(phase) * (stored / capacity);
 
             if(phase == 1){
-                pushSubLevels(this);
+                SableCompatAbstractionLayer.pushSubLevels(this);
                 launchEntitiesInFront();
                 breakBlocksInFront();
                 CSpringsSounds.playBweum(level, worldPosition);
             }
 
             if(phase == 2){
-                pushCreatedSubLevels(this);
+                SableCompatAbstractionLayer.pushCreatedSubLevels(this);
             }
 
             phase++;
@@ -238,74 +240,23 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
             stored = Mth.clamp(stored + CurSpeed * hardness * 2 / 20f, 0, capacity);
         }
 
-        if(stored == 0 && prevProgress == progress){
+        if(stored == 0 && prevProgress != progress){
             updateGeneratedRotation();
+        }
+
+        if(stored == capacity && prevProgress != progress){
+            updateNetwork();
         }
 
         prevProgress = progress;
         progress = stored / capacity;
 
-        if(autoMode) calculateIdealHardness();
+        if(autoMode) calculateIdealHardness(isGenerating);
 
         if(level.isClientSide){return;}
 
         if(Mth.floor(progress * 15f) != Mth.floor(prevProgress * 15f)){
             level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
-        }
-    }
-
-    public void calculateIdealHardness() {
-        if (getOrCreateNetwork() == null) return;
-
-        float networkCapacity = getOrCreateNetwork().calculateCapacity();
-        float networkStress = getOrCreateNetwork().calculateStress();
-
-        float speed = Math.abs(getTheoreticalSpeed());
-        if (Mth.equal(speed, 0)) {
-            this.hardness = 0;
-            return;
-        }
-
-        float myCurrentStressContribution = calcStress() * speed;
-
-        if (isGenerating) {
-            float netLeftInNetwork = (networkCapacity - Math.abs(myCurrentStressContribution)) - networkStress;
-            float neededCapacity = -netLeftInNetwork;
-
-            if (neededCapacity <= 0) {
-                updateHardnessSafe(0);
-            } else {
-                float idealHardness = neededCapacity / speed / 2f;
-                updateHardnessSafe(idealHardness);
-            }
-        } else {
-            float netLeftInNetwork = networkCapacity - (networkStress - myCurrentStressContribution);
-
-            if (netLeftInNetwork <= 0) {
-                updateHardnessSafe(0);
-
-            } else {
-                if(capacity - stored < hardness * speed * 2) {
-                    updateHardnessSafe(0);
-                    return;
-                }
-                float idealHardness = netLeftInNetwork / speed / 2f;
-                updateHardnessSafe(idealHardness);
-            }
-        }
-    }
-
-    public void updateHardnessSafe(float newHardness) {
-        newHardness = Math.max(0, newHardness);
-
-        if (!Mth.equal(this.hardness, newHardness)) {
-            this.hardness = newHardness;
-            if (getOrCreateNetwork() != null) {
-                getOrCreateNetwork().remove(this);
-                getOrCreateNetwork().add(this);
-                getOrCreateNetwork().updateNetwork();
-                sendData();
-            }
         }
     }
 
@@ -328,6 +279,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         tag.putBoolean("splashMode", splashMode);
         tag.putFloat("hardness", hardness);
         tag.putBoolean("auto", autoMode);
+        tag.putBoolean("reverseRotation", reverseRotation);
     }
 
     @Override
@@ -339,6 +291,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         splashMode = tag.getBoolean("splashMode");
         hardness = tag.getFloat("hardness");
         autoMode = tag.getBoolean("auto");
+        reverseRotation = tag.getBoolean("reverseRotation");
 
         if (!clientPacket) {
             updateNetwork();
@@ -357,13 +310,16 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         //stored
 
-        CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
-        CreateLang.text(" ").add(
-                        CreateLang.number(Math.round(stored)).style(ChatFormatting.AQUA).space()
-                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                        .add(CreateLang.number(ModConfigs.common().SPRING_CAPACITY.get()).style(ChatFormatting.AQUA).space()
-                                .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
-                .forGoggles(tooltip);
+        if(splashMode){
+            addChargeInSplashMode(tooltip, isPlayerSneaking, progress);
+        } else {
+            CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
+            CreateLang.text(" ").add(
+                            CSpringsLang.transformTime(stored)
+                    ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                            .add(CSpringsLang.transformTime(capacity)))
+                    .forGoggles(tooltip);
+        }
 
         MutableComponent state = (splashMode) ?
                 Component.translatable("createsprings.on").withStyle(ChatFormatting.GREEN) :
@@ -384,7 +340,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                     .forGoggles(tooltip);
 
             addStressImpactStats(tooltip, stressAtBase);
-            addRemainingTime(tooltip, isPlayerSneaking);
+            addRemainingTime(tooltip, isPlayerSneaking, isGenerating, progress, prevProgress);
 
         } else {
             //generator
@@ -416,49 +372,10 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                             .style(ChatFormatting.DARK_GRAY))
                     .forGoggles(tooltip, 1);
 
-            addRemainingTime(tooltip, isPlayerSneaking);
+            addRemainingTime(tooltip, isPlayerSneaking, isGenerating, progress, prevProgress);
         }
 
         return true;
-    }
-
-    public void addRemainingTime(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(Mth.equal(getSpeed(), 0)) return;
-
-        double rate = Math.abs((progress - prevProgress) * capacity);
-        double left = isGenerating ? stored : capacity - stored;
-        double ticks = left / rate;
-
-        int totalSeconds = (int) Math.floor(ticks / 20);
-
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds % 3600) / 60;
-        long seconds = totalSeconds % 60;
-
-        if(totalSeconds != 0){
-            MutableComponent remainingTime = Component.literal("");
-
-            if(hours != 0) remainingTime.append(Component.literal(hours + "h ").withStyle(ChatFormatting.AQUA));
-            if(minutes != 0) remainingTime.append(Component.literal(minutes + "m ").withStyle(ChatFormatting.AQUA));
-            remainingTime.append(Component.literal(seconds + "s ").withStyle(ChatFormatting.AQUA));
-
-            CreateLang.text(" ").add(
-                            CreateLang.translate("createsprings.time_left").style(ChatFormatting.DARK_GRAY).add(remainingTime))
-                    .forGoggles(tooltip);
-        }
-    }
-
-    public static float springAnimation(int phase) {
-        if (phase == 0) {return 1.0f;}
-        if (phase == ModConfigs.common().SPRING_SPLASH_DURATION.get()){return 0f;}
-
-        float decay = (float) Math.exp(-0.15 * phase);
-
-        float frequency = (float) (Math.PI * 0.4);
-
-        float oscillation = (float) Math.cos((frequency * phase + Math.PI)/2);
-
-        return decay * oscillation * 2f;
     }
 
     public float getProgress(float pt) {
@@ -470,7 +387,9 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         if (isGenerating && !splashMode && stored > 0){
             if (level != null) {
                 int signal = level.getBestNeighborSignal(worldPosition);
-                return 8 + signal * 8;
+                int multiplayer = 1;
+                if(reverseRotation) multiplayer = -1;
+                return (8 + signal * 8) * multiplayer;
             }
         }
         return 0;
@@ -483,6 +402,11 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         isGenerating = generating;
 
         updateGeneratedRotation();
+
+        if(autoMode){
+            updateHardnessSafe(0);
+            calculateIdealHardness(isGenerating);
+        }
 
         if (wasGenerating != isGenerating) {
             updateNetwork();
@@ -501,12 +425,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         Vec3 vector = getVectorSpeedForLaunch();
 
-        if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel serverSubLevel){
-            vector = new Vec3(1, 1, 1).scale(vector.length());
-            Vec3 vectorFrom = serverSubLevel.logicalPose().transformPosition(worldPosition.getCenter());
-            Vec3 vectorTo = serverSubLevel.logicalPose().transformPosition(getFront().getCenter());
-            vector = vectorTo.subtract(vectorFrom).multiply(vector);
-        }
+        if(SableCompatAbstractionLayer.launchEntitiesInFront(this, vector)) return;
 
         for (Entity entity : entities) {
             entity.addDeltaMovement(vector);
@@ -680,7 +599,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                 facing.getStepZ()
         );
 
-        double energyRatio = (double) stored / ModConfigs.common().SPRING_CAPACITY.get();
+        double energyRatio = (double) (stored * 16) / ModConfigs.common().SPRING_CAPACITY.get();
         double speedModifier = Math.sqrt(Math.max(0, energyRatio));
         return direction.scale(ModConfigs.common().KNOCKBACK_COEF.get())
                 .scale(speedModifier);

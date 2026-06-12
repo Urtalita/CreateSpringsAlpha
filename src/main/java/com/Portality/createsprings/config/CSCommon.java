@@ -6,7 +6,8 @@ public class CSCommon extends ConfigBase {
 
     public final CSKinetics kinetics = nested(0, CSKinetics::new,Comments.kinetics);
     public final ConfigBool SPRINGS_CAN_SPLASH = new ConfigBool("spring_splash", true, Comments.SPRINGS_CAN_SPLASH);
-    public final ConfigInt SPRING_CAPACITY = new ConfigInt("spring_capacity", 512 * 3600, 1000, Integer.MAX_VALUE, Comments.SPRING_CAPACITY);
+    public final ConfigInt SPRING_CAPACITY = new ConfigInt("spring_capacity", 256 * 3600, 1000, Integer.MAX_VALUE, Comments.SPRING_CAPACITY);
+    public final ConfigInt SPLASH_REDUCTION = new ConfigInt("splash_reduction", 16, 1, Integer.MAX_VALUE, Comments.SPLASH_REDUCTION);
     public final ConfigInt LARGE_SPRING_CAPACITY = new ConfigInt("large_spring_capacity", 4, 1, Integer.MAX_VALUE, Comments.LARGE_SPRING_CAPACITY);
     public final ConfigInt SPRING_SPLASH_DURATION = new ConfigInt("spring_splash_duration", 40, 5, Integer.MAX_VALUE, Comments.SPRING_SPLASH_DURATION);
     public final ConfigInt SPRING_LEN = new ConfigInt("spring_len", 32, 1, 384, Comments.SPRING_LEN);
@@ -24,6 +25,7 @@ public class CSCommon extends ConfigBase {
         static String kinetics = "Modify Create Springs blocks comportements";
         static String SPRINGS_CAN_SPLASH = "Springs may or may not discharge instantly when in splash mode";
         static String SPRING_CAPACITY = "capacity of the spring";
+        static String SPLASH_REDUCTION = "by how much divide spring capacity in splash mode";
         static String LARGE_SPRING_CAPACITY = "capacity coefficent of the large spring";
         static String SPRING_SPLASH_DURATION = "spring splash duration in ticks";
         static String SPRING_LEN = "max large spring len";

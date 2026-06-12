@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.lang.LangNumberFormat;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +31,13 @@ public class CSpringsLang extends Lang {
         for (String key : keys)
             result.add(translate((prefix != null ? prefix + "." : "") + key).component());
         return result;
+    }
+
+    public static LangBuilder transformTime(double totalSeconds){
+        double hours = totalSeconds / 3600;
+
+        double roundedHours = Math.round(hours * 100) / 100d;
+        return CreateLang.number(roundedHours).style(ChatFormatting.AQUA).space().add(CreateLang.translate("spring.saved.hours").style(ChatFormatting.DARK_GRAY).space());
     }
 
     //

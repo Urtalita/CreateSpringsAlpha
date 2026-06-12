@@ -360,6 +360,129 @@ public class CSpringsScenes {
             scene.idle(110);
             scene.markAsFinished();
         }
+
+        public static void sable(SceneBuilder builder, SceneBuildingUtil util) {
+            CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+            scene.title("spring_sable", "Sable(Create Aeronautics) compatibility");
+            scene.configureBasePlate(0, 0, 7);
+            scene.showBasePlate();
+
+            BlockPos firstSpring = new BlockPos(5, 1, 1);
+            BlockPos secondSpring = new BlockPos(3, 1, 3);
+            BlockPos thirdSpring = new BlockPos(2, 1, 5);
+            BlockPos forthSpring = new BlockPos(1, 1, 3);
+            BlockPos fifthSpring = new BlockPos(2, 5, 1);
+
+            scene.overlay().showText(80)
+                    .placeNearTarget()
+                    .text("that content is available only if Sable(Create Aeronautics) is installed")
+                    .attachKeyFrame();
+            scene.idle(90);
+
+            scene.world().showSection(util.select().position(5, 1, 0), Direction.DOWN);
+            scene.idle(10);
+            scene.world().showSection(util.select().position(firstSpring), Direction.DOWN);
+            scene.idle(10);
+
+            scene.overlay().showText(70)
+                    .placeNearTarget()
+                    .text("in splash mode springs are able to push sub levels")
+                    .pointAt(firstSpring.getCenter())
+                    .attachKeyFrame();
+            scene.idle(80);
+
+            ItemStack dirt = new ItemStack(Blocks.TRIPWIRE_HOOK);
+            scene.overlay()
+                    .showControls(util.vector().topOf(firstSpring), Pointing.DOWN, 30).withItem(dirt);
+            scene.idle(30);
+
+            ElementLink<WorldSectionElement> firstSubLevel = scene.world().showIndependentSection(util.select().position(new BlockPos(4, 1, 1)), Direction.DOWN);
+            scene.idle(10);
+
+            scene.world().toggleRedstonePower(util.select().fromTo(firstSpring, firstSpring.north()));
+            scene.effects().indicateRedstone(firstSpring.north());
+            splashSpring(scene, util, firstSpring);
+            scene.idle(2);
+            scene.world().moveSection(firstSubLevel, new Vec3(-20, 0, 0), 10);
+
+            scene.idle(20);
+            ElementLink<WorldSectionElement> secondSubLevel = scene.world().showIndependentSection(util.select().position(secondSpring), Direction.DOWN);
+            scene.idle(10);
+
+            scene.overlay().showText(70)
+                    .placeNearTarget()
+                    .text("if spring is on sub level it pushes it")
+                    .pointAt(secondSpring.getCenter())
+                    .attachKeyFrame();
+            scene.idle(80);
+
+            scene.world().setBlock(secondSpring.relative(Direction.DOWN), Blocks.WHITE_CONCRETE.defaultBlockState(), false);
+
+            scene.world().toggleRedstonePower(util.select().position(secondSpring));
+            splashSpring(scene, util, secondSpring);
+            scene.idle(2);
+            scene.world().moveSection(secondSubLevel, new Vec3(0, 20, 0), 8);
+
+            scene.idle(20);
+            ElementLink<WorldSectionElement> thirdSubLevel = scene.world().showIndependentSection(util.select().position(thirdSpring), Direction.EAST);
+            scene.idle(10);
+            ElementLink<WorldSectionElement> thirdSubLevel2 = scene.world().showIndependentSection(util.select().position(thirdSpring.east()), Direction.WEST);
+            scene.idle(10);
+
+            scene.overlay().showText(70)
+                    .placeNearTarget()
+                    .text("equal impulses will be applied to both sub levels")
+                    .pointAt(thirdSpring.getCenter().add(0, 0.5, 0))
+                    .attachKeyFrame();
+            scene.idle(80);
+
+            scene.world().toggleRedstonePower(util.select().position(thirdSpring));
+            splashSpring(scene, util, thirdSpring);
+            scene.world().setBlock(secondSpring.relative(Direction.DOWN), Blocks.WHITE_CONCRETE.defaultBlockState(), false);
+            scene.idle(2);
+            scene.world().moveSection(thirdSubLevel, new Vec3(-20, 0, 0), 10);
+            scene.world().moveSection(thirdSubLevel2, new Vec3(20, 0, 0), 10);
+
+            scene.idle(20);
+            ElementLink<WorldSectionElement> forthSubLevel = scene.world().showIndependentSection(util.select().fromTo(forthSpring, forthSpring.above()), Direction.DOWN);
+            ElementLink<WorldSectionElement> forthSubLevel2 = scene.world().showIndependentSection(util.select().position(forthSpring.north()), Direction.DOWN);
+            scene.idle(10);
+
+            scene.overlay().showText(70)
+                    .placeNearTarget()
+                    .text("on sub levels spring can split and shoot blocks in front")
+                    .pointAt(forthSpring.getCenter())
+                    .attachKeyFrame();
+            scene.idle(80);
+
+            scene.world().toggleRedstonePower(util.select().fromTo(forthSpring, forthSpring.above()));
+            scene.effects().indicateRedstone(forthSpring.above());
+            splashSpring(scene, util, forthSpring);
+            scene.idle(2);
+            scene.world().moveSection(forthSubLevel2, new Vec3(0, 0, -20), 10);
+            scene.world().moveSection(forthSubLevel, new Vec3(0, 0, 4), 8);
+
+            scene.idle(20);
+            ElementLink<WorldSectionElement> fifthSubLevel = scene.world().showIndependentSection(util.select().position(fifthSpring), Direction.DOWN);
+            scene.idle(10);
+
+            scene.overlay().showText(70)
+                    .placeNearTarget()
+                    .text("if spring collides with enough speed it splashes")
+                    .pointAt(fifthSpring.getCenter())
+                    .attachKeyFrame();
+            scene.idle(80);
+
+            scene.world().moveSection(fifthSubLevel, new Vec3(0, -4, 0), 4);
+            scene.idle(4);
+
+            scene.world().toggleRedstonePower(util.select().position(fifthSpring));
+            splashSpring(scene, util, fifthSpring);
+        }
+
+        public static void splashSpring(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos firstSpring){
+            scene.world().modifyBlockEntityNBT(util.select().position(firstSpring), SpringBlockEntity.class, nbt -> nbt.putBoolean("Generating", true), false);
+        }
     }
 
     public static void explode(PonderSceneBuilder builder, Vec3 position){

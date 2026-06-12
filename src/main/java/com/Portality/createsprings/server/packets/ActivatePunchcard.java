@@ -58,7 +58,8 @@ public enum ActivatePunchcard implements ServerboundPacketPayload {
                         String.valueOf(curAction))).getName();
 
         Function<ExecutorInfo, Void> action = allPunchcardActions.get(actionKey);
-        if(action == PunchcardInterpritator.empty()){return;}
+
+        if(action != PunchcardFunction.WAIT_FOR_ACTIVATION.getFunc()){return;}
 
         info.nextAction();
         PunchcardInterpritator.DoPunchcardLogic(info);

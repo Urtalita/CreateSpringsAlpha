@@ -12,6 +12,8 @@ import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LevelAccessor;
@@ -29,6 +31,7 @@ public class AnalogLatchBe extends SmartBlockEntity {
 
     public AnalogLatchBe(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        clientState = LerpedFloat.linear();
     }
 
     @Override
@@ -43,23 +46,32 @@ public class AnalogLatchBe extends SmartBlockEntity {
     }
 
     private void updateValue(int value){
+        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
+        clientState.chase(getValue(), 0.2f, LerpedFloat.Chaser.EXP);
         sendData();
         setChanged();
-        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
     }
 
     public int getValue(){
         return analogValue.getValue();
     }
 
-    public float getInterpolatedValue(float pt){
-        return Mth.lerp(pt, lastChange, getValue());
+    @Override
+    public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(compound, registries, clientPacket);
+    }
+
+    @Override
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
+        clientState.chase(getValue(), 0.2f, LerpedFloat.Chaser.EXP);
     }
 
     @Override
     public void tick() {
         if(level.isClientSide()){
             lastChange = getValue();
+            clientState.tickChaser();
         }
         super.tick();
     }

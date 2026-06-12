@@ -2,6 +2,8 @@ package com.Portality.createsprings;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.CSpringsBlockEntities;
+import com.Portality.createsprings.blocks.advanced.spring.ISpringBE;
+import com.Portality.createsprings.blocks.advanced.spring.ISpringBlock;
 import com.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
 import com.Portality.createsprings.client.CSpringsKeybindings;
 import com.Portality.createsprings.client.CSpringsPartalModels;
@@ -36,6 +38,7 @@ import com.simibubi.create.foundation.item.TooltipModifier;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -47,6 +50,8 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -64,6 +69,7 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -229,6 +235,37 @@ public class CreateSprings {
             event.register(CSpringsKeybindings.INSTANCE.PSEBoostKey);
             event.register(CSpringsKeybindings.INSTANCE.PSEDashKey);
             event.register(CSpringsKeybindings.INSTANCE.ActivatePunchcard);
+        }
+    }
+
+    @SubscribeEvent
+    public void onExplosionStart(ExplosionEvent.Start event) {
+        Explosion explosion = event.getExplosion();
+        Level level = event.getLevel();
+        BlockPos pos = BlockPos.containing(explosion.center());
+
+        int radius = 3;
+        int radiusSquared = radius * radius;
+        int distanceSquared;
+
+        for(int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+
+                    distanceSquared = x * x + y * y + z * z;
+
+                    if (distanceSquared <= radiusSquared) {
+                        if(level.getBlockState(new BlockPos(x + pos.getX(), y + pos.getY(), z + pos.getZ())).getBlock() instanceof ISpringBlock){
+
+                            BlockPos foundedPos = new BlockPos(x + pos.getX(), y + pos.getY(), z + pos.getZ());
+
+                            if(level.getBlockEntity(foundedPos) instanceof ISpringBE springBE){
+                                springBE.onBlockExploded(foundedPos, explosion);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

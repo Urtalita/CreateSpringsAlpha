@@ -1,6 +1,7 @@
 package com.Portality.createsprings.recipe;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.recipe.Casting.CastingRecipe;
 import com.Portality.createsprings.recipe.Welding.WelderRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.Recipe;
@@ -27,6 +28,10 @@ public class CSpringsRecipes {
     public static final Supplier<RecipeType<WelderRecipe>> WELDER_TYPE = register("welding");
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<WelderRecipe>> WELDING =
             SERIALIZERS.register("welding", () -> new WelderRecipe.Serializer<>(WelderRecipe::new));
+
+    public static final Supplier<RecipeType<CastingRecipe>> CASTING_TYPE = register("casting");
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CastingRecipe>> CASTING =
+            SERIALIZERS.register("casting", () -> new CastingRecipe.Serializer<>(CastingRecipe::new));
 
     public static void register(IEventBus event) {
 

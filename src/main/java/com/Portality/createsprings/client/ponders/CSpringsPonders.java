@@ -1,11 +1,16 @@
 package com.Portality.createsprings.client.ponders;
 
+import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.item.*;
 
 public class CSpringsPonders {
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
@@ -16,6 +21,7 @@ public class CSpringsPonders {
                 .addStoryBoard("spring", CSpringsScenes.SpringPonders::spring, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("springsplash", CSpringsScenes.SpringPonders::springSplash, AllCreatePonderTags.KINETIC_RELAYS)
                 .addStoryBoard("explosion", CSpringsScenes.SpringPonders::explosions, AllCreatePonderTags.KINETIC_RELAYS)
+                .addStoryBoard("spring_sable", CSpringsScenes.SpringPonders::sable, AllCreatePonderTags.CONTRAPTION_ASSEMBLY)
         ;
 
         HELPER.forComponents(CSpringsBlocks.FRICTION_WELDER)
@@ -35,5 +41,15 @@ public class CSpringsPonders {
 
         HELPER.forComponents(CSpringsBlocks.ANALOG_TOGGLE_LATCH)
                 .addStoryBoard("analog_latch", CSpringsScenes::AnalogLatch, AllCreatePonderTags.REDSTONE);
+
+        HELPER.forComponents(vanillaItemProvider("tripwire_hook"))
+                .addStoryBoard("springsplash", CSpringsScenes.SpringPonders::springSplash, AllCreatePonderTags.KINETIC_RELAYS);
+    }
+
+    private static ItemProviderEntry<Item, Item> vanillaItemProvider(final String id) {
+        return new ItemProviderEntry<>(
+                CreateSprings.registrate(),
+                DeferredHolder.create(ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace(id)))
+        );
     }
 }

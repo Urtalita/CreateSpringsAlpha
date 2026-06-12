@@ -2,6 +2,8 @@ package com.Portality.createsprings.compat;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.compat.Welding.WelderCategory;
+import com.Portality.createsprings.compat.casting.CastingCategory;
+import com.Portality.createsprings.recipe.Casting.CastingRecipe;
 import com.Portality.createsprings.recipe.Welding.WelderRecipe;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import mezz.jei.api.IModPlugin;
@@ -17,7 +19,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.Portality.createsprings.blocks.CSpringsBlocks.ANDESITE_MOLD;
 import static com.Portality.createsprings.blocks.CSpringsBlocks.FRICTION_WELDER;
+import static com.Portality.createsprings.recipe.CSpringsRecipes.CASTING_TYPE;
 import static com.Portality.createsprings.recipe.CSpringsRecipes.WELDER_TYPE;
 
 @JeiPlugin
@@ -27,11 +31,9 @@ public class JEICreateSpringsPlugin implements IModPlugin {
     public static final mezz.jei.api.recipe.RecipeType<WelderRecipe> WELDER_JEI_TYPE =
             new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("welding"), WelderRecipe.class);
 
-    /*
+
     public static final mezz.jei.api.recipe.RecipeType<CastingRecipe> CASTING_JEI_TYPE =
             new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("casting"), CastingRecipe.class);
-
-     */
 
     @Override
     @Nonnull
@@ -53,14 +55,13 @@ public class JEICreateSpringsPlugin implements IModPlugin {
                 .emptyBackground(177, 77)
                 .build("welding", WelderCategory::new));
 
-        /*
+
         ALL.add(builder(CastingRecipe.class)
                 .addTypedRecipes(CASTING_TYPE::get)
                 .itemIcon(ANDESITE_MOLD.get())
                 .emptyBackground(177, 70)
                 .build("casting", CastingCategory::new));
 
-         */
 
         ALL.forEach(registration::addRecipeCategories);
     }

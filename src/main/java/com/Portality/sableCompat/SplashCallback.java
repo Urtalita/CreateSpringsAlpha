@@ -1,4 +1,4 @@
-package com.Portality.createsprings.compat;
+package com.Portality.sableCompat;
 
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;

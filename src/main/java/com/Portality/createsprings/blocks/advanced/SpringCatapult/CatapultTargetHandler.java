@@ -31,7 +31,7 @@ public class CatapultTargetHandler {
     static BlockPos currentSelection;
     static BlockPos secondSelection;
     static ItemStack currentItem;
-    private static final float MaxRadius = 100;
+    private static final float MaxRadius = 150;
 
     @SubscribeEvent
     public static void rightClickingBlocksSelectsThem(PlayerInteractEvent.RightClickBlock event) {

@@ -22,13 +22,11 @@ public class WelderRecipe extends ProcessingRecipe<WelderRecipeWrapper, WelderRe
 
         @Override
         public <T extends RecipeSerializer<?>> T getSerializer() {
-            // Убедись, что берешь WELDING
             return (T) CSpringsRecipes.WELDING.get();
         }
 
         @Override
         public <I extends RecipeInput, R extends Recipe<I>> RecipeType<R> getType() {
-            // Убедись, что берешь WELDER_TYPE
             return (RecipeType<R>) CSpringsRecipes.WELDER_TYPE.get();
         }
     };
@@ -65,7 +63,6 @@ public class WelderRecipe extends ProcessingRecipe<WelderRecipeWrapper, WelderRe
         ItemStack stack1 = input.getItem(0);
         ItemStack stack2 = input.getItem(1);
 
-        // Используем стандартную проверку ингредиентов (поддерживает теги!)
         Ingredient first = ingredients.get(0);
         Ingredient second = ingredients.get(1);
 

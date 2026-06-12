@@ -1,12 +1,11 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
 import com.Portality.createsprings.blocks.CSpringsBlockEntities;
-import com.Portality.createsprings.compat.SplashCallback;
+import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.sableCompat.SplashCallback;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import dev.ryanhcode.sable.api.block.BlockWithSubLevelCollisionCallback;
-import dev.ryanhcode.sable.api.physics.callback.BlockSubLevelCollisionCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -33,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock , BlockWithSubLevelCollisionCallback {
+public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBlockEntity>, ISpringBlock {
     public SpringBlock(Properties properties) {
         super(properties);
     }
@@ -63,30 +62,21 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     }
 
     public static float getSpringChargeCoefficient(Direction facing, BlockPos springPos, Vec3 explosionPos) {
+        //calculates how close to front of the spring explosion happend
         facing = facing.getOpposite();
-        // Центр блока пружины
         Vec3 springCenter = Vec3.atCenterOf(springPos);
 
-        // Вектор от пружины к точке взрыва
         Vec3 toExplosion = explosionPos.subtract(springCenter);
-
-        // Вектор нормали направления пружины (уже нормализован)
         Vec3 facingVector = Vec3.atLowerCornerOf(facing.getNormal());
 
-        // Нормализуем вектор к взрыву (с проверкой нулевой длины)
         double distanceSqr = toExplosion.lengthSqr();
         if (distanceSqr < 1e-7) {
-            // Взрыв точно в центре пружины
             return 1.0f;
         }
         Vec3 normalizedToExplosion = toExplosion.normalize();
 
-        // Вычисляем скалярное произведение
         double dotProduct = normalizedToExplosion.dot(facingVector);
 
-        // Преобразуем в коэффициент 0-1:
-        // - Отрицательные значения → 0 (взрыв с обратной стороны)
-        // - Положительные значения → плавно возрастает до 1
         return (float) Math.max(0, dotProduct);
     }
 
@@ -94,7 +84,6 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
     protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         List<ItemStack> drops = super.getDrops(state, params);
 
-        // Получаем BlockEntity из параметров контекста
         BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 
         if(!drops.isEmpty()) drops.set(0, copyFromBe(drops.get(0), blockEntity));
@@ -143,6 +132,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
                     return ItemInteractionResult.FAIL;
                 }
                 if(!player.isCreative()){itemInHand.shrink(1);}
+                be.capacity = (double) ModConfigs.common().SPRING_CAPACITY.get() / ModConfigs.common().SPLASH_REDUCTION.get();
                 be.splashMode = true;
                 AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
                 return ItemInteractionResult.SUCCESS;
@@ -154,6 +144,7 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
                 if(be.splashMode){
                     if(!player.isCreative()){player.addItem(new ItemStack(Blocks.TRIPWIRE_HOOK));}
                     be.splashMode = false;
+                    be.capacity = (double) ModConfigs.common().SPRING_CAPACITY.get();
                     AllSoundEvents.WRENCH_ROTATE.playOnServer(level, pos);
                     return ItemInteractionResult.SUCCESS;
                 }
@@ -228,10 +219,5 @@ public class SpringBlock extends DirectionalKineticBlock implements IBE<SpringBl
             return myBE.getComparatorOutput(); // Получаем значение от BlockEntity
         }
         return 0;
-    }
-
-    @Override
-    public BlockSubLevelCollisionCallback sable$getCallback() {
-        return SplashCallback.INSTANCE;
     }
 }

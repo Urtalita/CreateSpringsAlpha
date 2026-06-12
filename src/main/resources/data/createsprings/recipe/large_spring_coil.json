@@ -1,0 +1,13 @@
+{
+  "type": "createsprings:casting",
+  "ingredients": [
+    {
+      "item": "createsprings:spring_alloy"
+    }
+  ],
+  "results": [
+    {
+      "id": "createsprings:large_spring_coil"
+    }
+  ]
+}

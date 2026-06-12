@@ -25,7 +25,7 @@ public class AnalogLatchRenderer extends SmartBlockEntityRenderer<AnalogLatchBe>
     @Override
     protected void renderSafe(AnalogLatchBe be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         BlockState leverState = be.getBlockState();
-        float state = be.getInterpolatedValue(partialTicks);
+        float state = be.clientState.getValue(partialTicks);
 
         VertexConsumer vb = buffer.getBuffer(RenderType.solid());
 

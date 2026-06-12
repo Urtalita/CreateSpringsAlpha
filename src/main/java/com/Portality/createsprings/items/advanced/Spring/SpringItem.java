@@ -1,13 +1,20 @@
 package com.Portality.createsprings.items.advanced.Spring;
 
+import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.entities.Packages.HatPackageEntity;
+import com.Portality.createsprings.entities.Packages.SusPackageEntity;
 import com.Portality.createsprings.items.BouncyBlockItem;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
+import com.Portality.createsprings.items.advanced.SusPackage.SusPackageItem;
+import com.Portality.createsprings.items.advanced.hat.HatItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItemRenderer;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -42,6 +49,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static com.Portality.createsprings.items.advanced.hat.HatItem.readStackFromNBT;
+import static com.Portality.createsprings.items.advanced.hat.HatItem.setPackageColor;
 import static com.Portality.createsprings.utill.Helpers.EntityHelper.getOppositeHand;
 
 public class SpringItem extends BouncyBlockItem {
@@ -65,10 +74,6 @@ public class SpringItem extends BouncyBlockItem {
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
         }
-        //if(player.getItemInHand(hand2).getItem() instanceof HatItem){
-        //    player.startUsingItem(hand);
-        //    return InteractionResultHolder.consume(stack);
-        //}
 
         return InteractionResultHolder.pass(stack);
     }
@@ -113,20 +118,19 @@ public class SpringItem extends BouncyBlockItem {
     private boolean LaunchItemInHand(Player player, Level level){
         InteractionHand hand = getOppositeHand(player.getUsedItemHand());
         if(player.getItemInHand(hand).getItem() instanceof PackageItem){
-            /*
+
             if(player.getItemInHand(hand).getItem() instanceof SusPackageItem){
                 launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), true, false);
                 return true;
             }
 
-             */
             launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false, false);
             return true;
         } else {
-            //if(player.getItemInHand(hand).getItem() instanceof HatItem){
-            //    launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false, true);
-            //    return true;
-            //}
+            if(player.getItemInHand(hand).getItem() instanceof HatItem){
+                launchPackage(player.getItemInHand(hand), level, player, player.getItemInHand(player.getUsedItemHand()), false, true);
+                return true;
+            }
         }
         return false;
     }
@@ -235,26 +239,21 @@ public class SpringItem extends BouncyBlockItem {
 
         PackageEntity packageEntity;
         if(isSusPackage){
-            /*
             SusPackageEntity SpackageEntity = new SusPackageEntity(world, vec.x, vec.y, vec.z);
             SpackageEntity.power = getStoredSu(springStack);
             packageEntity = SpackageEntity;
             packageEntity.setBox(copy);
-
-             */
         } else if(isHat){
-            /*
+
             HatPackageEntity HpackageEntity = new HatPackageEntity(world, vec.x, vec.y, vec.z);
             HpackageEntity.setContains(readStackFromNBT(stack));
             packageEntity = HpackageEntity;
-            packageEntity.setBox(setPackageColor(new ItemStack(ModItems.HITBOX_HAT.get()), stack));
+            packageEntity.setBox(setPackageColor(new ItemStack(CSpringsItems.HITBOX_HAT.get()), stack));
 
-             */
-        }else {
-
+        } else {
+            packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
+            packageEntity.setBox(copy);
         }
-        packageEntity = new PackageEntity(world, vec.x, vec.y, vec.z);
-        packageEntity.setBox(copy);
         //
         packageEntity.setDeltaMovement(motion);
         packageEntity.tossedBy = new WeakReference<>(player);
@@ -299,7 +298,6 @@ public class SpringItem extends BouncyBlockItem {
     }
 
     private void spawnParticles(Level level, Vec3 pos) {
-        // Генерация частиц вокруг игрока
         for(int i = 0; i < 5; ++i) {
             level.addParticle(ParticleTypes.CLOUD,
                     pos.x + (Math.random() - 0.5),
@@ -313,10 +311,10 @@ public class SpringItem extends BouncyBlockItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
         float stored = getStoredSu(stack);
         float capacity = ModConfigs.common().SPRING_CAPACITY.get();
-        tooltip.add(Component.translatable("create.spring.su").append(": ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
-               .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-               .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE)));
+        tooltip.add(CreateLang.text(" ").add(
+                CSpringsLang.transformTime(stored)
+                ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                .add(CSpringsLang.transformTime(capacity))).component());
     }
 
     @Override

@@ -1,8 +1,15 @@
-package com.Portality.createsprings.compat;
+package com.Portality.sableCompat;
 
+import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
+import com.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
+import com.Portality.createsprings.items.advanced.Spring.SpringItem;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.actors.seat.SeatBlock;
 import com.simibubi.create.content.contraptions.actors.seat.SeatEntity;
+import com.simibubi.create.foundation.data.BlockStateGen;
+import com.simibubi.create.foundation.data.SharedProperties;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.block.BlockWithSubLevelCollisionCallback;
@@ -19,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -32,11 +40,51 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity.canBreakBySpring;
+import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public class SableCompatSpring {
     public static float PUSH_SCALE = 25f;
     public static double STABILISATION_FACTOR = 0.25;
+
+    public static void registerSpring() {
+        CSpringsBlocks.SPRING = CSPRINGS_REGISTRATE.block("spring", SableSpringBlock::new)
+                .initialProperties(SharedProperties::copperMetal)
+                .transform(pickaxeOnly())
+                .properties(p -> p.noOcclusion().isRedstoneConductor((s, l, pos) -> false))
+                .transform(displaySource(CSpringsDisplaySources.CHARGE))
+                .item(SpringItem::new)
+                .build()
+                .blockstate(BlockStateGen.directionalBlockProvider(false))
+                //.onRegister(movementBehaviour(new SpringMovement()))
+                .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
+                .register();
+    }
+
+    public static boolean launchEntitiesInFront(SpringBlockEntity be, Vec3 vector){
+        if(Sable.HELPER.getContaining(be) instanceof ServerSubLevel serverSubLevel){
+            Direction facing = be.getBlockState().getValue(FACING).getOpposite();
+            BlockPos targetPos = be.getBlockPos().relative(facing);
+
+            AABB searchArea = new AABB(targetPos);
+            List<Entity> entities = be.getLevel().getEntitiesOfClass(Entity.class, searchArea);
+
+            vector = new Vec3(1, 1, 1).scale(vector.length());
+            Vec3 vectorFrom = serverSubLevel.logicalPose().transformPosition(be.getBlockPos().getCenter());
+            Vec3 vectorTo = serverSubLevel.logicalPose().transformPosition(be.getFront().getCenter());
+            vector = vectorTo.subtract(vectorFrom).multiply(vector);
+
+            for (Entity entity : entities) {
+                entity.addDeltaMovement(vector);
+                entity.hurtMarked = true;
+            }
+            return true;
+        }
+        return false;
+    }
 
     public static class SubLevelSpringAssemblyHelper implements SubLevelAssemblyHelper.FrontierPredicate {
         private SpringBlockEntity be;

@@ -19,6 +19,7 @@ import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringMoveme
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.client.CSpringsAssetLookup;
 import com.Portality.createsprings.client.CSpringsSpriteShifts;
+import com.Portality.createsprings.compat.SableCompatAbstractionLayer;
 import com.Portality.createsprings.config.CSStress;
 import com.Portality.createsprings.datagen.blockState.AnalogToggleLatchGenerator;
 import com.Portality.createsprings.items.BouncyBlockItem;
@@ -196,19 +197,7 @@ public class CSpringsBlocks {
             .register();
 
 
-    public static final BlockEntry<SpringBlock> SPRING = CSPRINGS_REGISTRATE
-            .block("spring", SpringBlock::new)
-            .initialProperties(SharedProperties::copperMetal)
-            .transform(pickaxeOnly())
-            .properties(p -> p.noOcclusion().isRedstoneConductor((s, l, pos) -> false))
-            .transform(displaySource(CSpringsDisplaySources.CHARGE))
-            .item(SpringItem::new)
-            .build()
-            .blockstate(BlockStateGen.directionalBlockProvider(false))
-            //.onRegister(movementBehaviour(new SpringMovement()))
-            .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
-            .register();
-
+    public static BlockEntry<? extends SpringBlock> SPRING;
 
     public static final BlockEntry<SpringCatapultBlock> SPRING_CATAPULT = CSPRINGS_REGISTRATE
             .block("spring_catapult", SpringCatapultBlock::new)
@@ -289,5 +278,7 @@ public class CSpringsBlocks {
 
 
 
-    public static void register() {}
+    public static void register() {
+        SableCompatAbstractionLayer.registerSpringBlock();
+    }
 }

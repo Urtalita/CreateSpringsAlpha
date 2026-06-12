@@ -1,4 +1,4 @@
-package com.Portality.createsprings.compat;
+package com.Portality.sableCompat;
 
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import com.Portality.createsprings.utill.Helpers.RenderHelper;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity.canBreakBySpring;
-import static com.Portality.createsprings.compat.SableCompatSpring.*;
+import static com.Portality.sableCompat.SableCompatSpring.*;
 
 public class SableCompatLargeSpring {
     public static final double accelerationLimit = 150;

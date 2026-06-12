@@ -338,5 +338,24 @@
 
   "createsprings.ponder.explosion.text_3": "пружина зарядится даже если взрыв произошёл в воде",
   "entity.createsprings.bouncy_item": "Прыгучий предмет",
-  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления"
+  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления",
+
+  "create.spring.saved.minutes": "ЕН-Минут",
+  "create.spring.saved.hours": "ЕН-Часов",
+
+  "block.createsprings.cut_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
+  "block.createsprings.industrial_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
+  "block.minecraft.tripwire_hook.tooltip.behaviour1": "Переключает пружину в _режим всплеска_, смотри _второе размышление пружины_",
+  "block.minecraft.tripwire_hook.tooltip.behaviour2": "Переключает инструмент в _режим всплеска_, при использовании _преобразует_ оставшийся _заряд_ в запредельную _скорость_",
+  "block.minecraft.tripwire_hook.tooltip.condition1": "ПКМ по пружине",
+  "block.minecraft.tripwire_hook.tooltip.condition2": "ЛКМ по пружинному инструменту в инвенторе",
+  "block.minecraft.tripwire_hook.tooltip.summary": "_Переключает_ пружину или пружинный инструмент в _режим всплеска_",
+
+  "createsprings.ponder.spring_sable.header": "Совместимость с Sable(Create Aeronautics)",
+  "createsprings.ponder.spring_sable.text_1": "Этот контент доступен только если Sable(Create Aeronautics) установлен",
+  "createsprings.ponder.spring_sable.text_2": "В режиме всплеска пружины способны отстреливать подуровни",
+  "createsprings.ponder.spring_sable.text_3": "Если пружина на подуровне, она может толкнуть его",
+  "createsprings.ponder.spring_sable.text_4": "Одинаковый импульс применяется к обоим подуровням",
+  "createsprings.ponder.spring_sable.text_5": "На подуровне пружина может отсоединять блоки и отстреливать их",
+  "createsprings.ponder.spring_sable.text_6": "Если пружина сталкивается с достаточной скоростью, она активируется"
 }
