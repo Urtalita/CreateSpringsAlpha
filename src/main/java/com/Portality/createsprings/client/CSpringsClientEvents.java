@@ -5,6 +5,7 @@ import com.Portality.createsprings.items.SpringStufs.ClientSpringAnimation;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.EngineArmorLayer;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.EngineBrokenArmorLayer;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedClientHandler;
+import com.Portality.createsprings.items.advanced.hat.HatArmorLayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.neoforged.api.distmarker.Dist;
@@ -26,6 +27,7 @@ public class CSpringsClientEvents {
             EntityRenderDispatcher dispatcher = Minecraft.getInstance()
                     .getEntityRenderDispatcher();
             EngineArmorLayer.registerOnAll(dispatcher);
+            HatArmorLayer.registerOnAll(dispatcher);
             EngineBrokenArmorLayer.registerOnAll(dispatcher);
         }
     }

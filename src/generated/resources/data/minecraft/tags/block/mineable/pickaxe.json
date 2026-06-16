@@ -12,10 +12,10 @@
     "createsprings:large_spring_extention",
     "createsprings:large_spring_coil",
     "createsprings:friction_welder",
-    "createsprings:spring",
     "createsprings:spring_catapult",
     "createsprings:kinetic_interface",
     "createsprings:spring_alloy_casing",
-    "createsprings:cut_spring_alloy"
+    "createsprings:cut_spring_alloy",
+    "createsprings:spring"
   ]
 }

@@ -46,7 +46,7 @@ public class WelderRenderer extends KineticBlockEntityRenderer<WelderBlockEntity
             if(craftState != null){
                 ItemStack item = craftState.getBlock().asItem().getDefaultInstance();
 
-                BakedModel bakedModel = itemRenderer.getModel(item, be.getLevel(), null, 0);
+                BakedModel bakedModel = itemRenderer.getModel(item, null, null, 0);
 
                 ms.pushPose();
                 float itemScale = 2f;
@@ -54,7 +54,7 @@ public class WelderRenderer extends KineticBlockEntityRenderer<WelderBlockEntity
                 msLocal.translate(trVec.x, trVec.y, trVec.z);
 
                 Direction.Axis axis = be.getBlockState().getValue(FACING).getAxis();
-                if(axis == Direction.Axis.X) msLocal.rotateAround(Axis.XN.rotationDegrees(be.getInterpolatedAngle(partialTicks)), 0, 0, 0);
+                if(axis == Direction.Axis.X) msLocal.rotateAround(Axis.XN.rotationDegrees(-be.getInterpolatedAngle(partialTicks)), 0, 0, 0);
                 if(axis == Direction.Axis.Y) msLocal.rotateAround(Axis.YP.rotationDegrees(be.getInterpolatedAngle(partialTicks)), 0, 0, 0);
                 if(axis == Direction.Axis.Z) msLocal.rotateAround(Axis.ZP.rotationDegrees(be.getInterpolatedAngle(partialTicks)), 0, 0, 0);
 

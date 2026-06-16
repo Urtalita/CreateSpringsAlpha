@@ -163,6 +163,7 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
                 BlockPos pos2 = pos.relative(getBlockState().getValue(FACING));
                 BlockState state = level.getBlockState(pos);
                 BlockState state2 = level.getBlockState(pos2);
+
                 if(!state.isAir() && !state2.isAir()){
                     Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
                     if(OweldBe.isPresent()){
@@ -217,7 +218,11 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
 
     private void Welding(){
         if(!isSpeedRequirementFulfilled()){return;}
-        float combinedSpeed = (Math.abs(this.speed) / 256f) * recipeSpeed.getSpeedValue();
+        Optional<WelderBlockEntity> OweldBe = FindWelderWelding();
+        if(!OweldBe.isPresent()) return;
+
+        float speedDifference = Math.abs(this.speed - OweldBe.get().getSpeed());
+        float combinedSpeed = (speedDifference / 256f / 2) * recipeSpeed.getSpeedValue();
 
         if(HeadMove < 500){
             prevHeadMove = HeadMove;
@@ -273,7 +278,11 @@ public class WelderBlockEntity extends KineticBlockEntity implements IHaveGoggle
             if (!SecondBe.running){
                 return false;
             }
-            if(this.speed + SecondBe.speed == 0){
+
+            if(!isSpeedRequirementFulfilled()) return false;
+            if(!SecondBe.isSpeedRequirementFulfilled()) return false;
+
+            if(Math.abs(this.speed) + Math.abs(SecondBe.speed) != 0){
                 return true;
             }
         }

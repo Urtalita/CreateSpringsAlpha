@@ -234,6 +234,7 @@ public class CreateSprings {
             event.register(CSpringsKeybindings.INSTANCE.PSEOpenKey);
             event.register(CSpringsKeybindings.INSTANCE.PSEBoostKey);
             event.register(CSpringsKeybindings.INSTANCE.PSEDashKey);
+            event.register(CSpringsKeybindings.INSTANCE.PSEReleaseKey);
             event.register(CSpringsKeybindings.INSTANCE.ActivatePunchcard);
         }
     }

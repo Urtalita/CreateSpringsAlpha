@@ -24,11 +24,8 @@ import com.Portality.createsprings.config.CSStress;
 import com.Portality.createsprings.datagen.blockState.AnalogToggleLatchGenerator;
 import com.Portality.createsprings.items.BouncyBlockItem;
 import com.Portality.createsprings.items.CSpringsItems;
-import com.Portality.createsprings.items.advanced.Spring.SpringItem;
 import com.simibubi.create.*;
 import com.simibubi.create.content.decoration.encasing.CasingBlock;
-import com.simibubi.create.content.redstone.diodes.ToggleLatchBlock;
-import com.simibubi.create.content.redstone.diodes.ToggleLatchGenerator;
 import com.simibubi.create.foundation.data.*;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.DataIngredient;
@@ -37,9 +34,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -61,8 +56,8 @@ public class CSpringsBlocks {
 
     private static final CreateRegistrate REGISTRATE = CreateSprings.registrate();
 
-    public static final BlockEntry<Block> SPRING_ALLOY_BLOCK = CSPRINGS_REGISTRATE
-            .block("spring_alloy_block", Block::new)
+    public static final BlockEntry<BouncyCasing> SPRING_ALLOY_BLOCK = CSPRINGS_REGISTRATE
+            .block("spring_alloy_block", BouncyCasing::new)
             .initialProperties(() -> GOLD_BLOCK)
             .initialProperties(SharedProperties::copperMetal)
             .properties(p -> p.mapColor(MapColor.TERRACOTTA_WHITE)
@@ -106,13 +101,12 @@ public class CSpringsBlocks {
     public static final BlockEntry<ObsidianPlateBlock> OBSIDIAN_PLATE = CSPRINGS_REGISTRATE
             .block("obsidian_plate", ObsidianPlateBlock::new)
             .initialProperties(() -> OBSIDIAN)
-            .properties(BlockBehaviour.Properties::noOcclusion)
+            .properties(p -> p.strength(50.0F, 1200.0F))
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.directionalBlockProvider(false))
             .item((block, properties) -> new BlockItem(block, properties.fireResistant()))
             .build()
             .register();
-
 
 
     public static final BlockEntry<CasingBlock> WEATHERED_IRON = CSPRINGS_REGISTRATE
@@ -238,7 +232,7 @@ public class CSpringsBlocks {
             .register();
 
 
-    public static final BlockEntry<CasingBlock> SPRING_ALLOY_CASING = CSPRINGS_REGISTRATE.block("spring_alloy_casing", CasingBlock::new)
+    public static final BlockEntry<BouncyCasing> SPRING_ALLOY_CASING = CSPRINGS_REGISTRATE.block("spring_alloy_casing", BouncyCasing::new)
             .properties(p -> p.mapColor(MapColor.TERRACOTTA_LIGHT_GRAY)
                     .sound(SoundType.COPPER))
             .transform(BuilderTransformers.casing(() -> CSpringsSpriteShifts.SPRING_ALLOY_CASING))

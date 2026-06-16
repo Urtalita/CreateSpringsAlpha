@@ -1,6 +1,7 @@
 package com.Portality.createsprings.items.SpringStufs;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
+import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.client.sounds.CSpringsSounds;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.SpringStufs.ExplosionСhamber.ExplosionChamberFuel;
@@ -65,10 +66,9 @@ public class SpringPoweredCore {
         if(stack.has(CSpringsDataComponents.SPRING_AMOUNT)) springs = stack.get(CSpringsDataComponents.SPRING_AMOUNT);
         float capacity = ModConfigs.common().SPRING_CAPACITY.get() * springs;
         tooltip.add(Component.translatable("createsprings.charge").append(": ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(String.valueOf(stored)).withStyle(ChatFormatting.WHITE))
+                .append(CSpringsLang.transformTime(stored).component())
                 .append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(String.valueOf(capacity)).withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(" ").append(Component.translatable("create.spring.su")).withStyle(ChatFormatting.GRAY))
+                .append(CSpringsLang.transformTime(capacity).component())
         );
 
         if(!hasNoModifies(stack)){return;}
@@ -631,6 +631,10 @@ public class SpringPoweredCore {
 
         copyComponent(stack, paste, CSpringsDataComponents.MODIFIERS);
         copyComponent(stack, paste, CSpringsDataComponents.PUNCHCARD);
+        copyComponent(stack, paste, CSpringsDataComponents.TOOL_SPEED);
+        copyComponent(stack, paste, CSpringsDataComponents.TOOL_LAST_SPEED);
+        copyComponent(stack, paste, CSpringsDataComponents.SPRING_AMOUNT);
+        copyComponent(stack, paste, CSpringsDataComponents.STORED_LIST);
 
         return paste;
     }

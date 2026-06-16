@@ -4,10 +4,16 @@
   "package": "com.Portality.createsprings.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "GogglesMixin",
     "MixinSpoutBe",
+    "WardenMixin",
     "banner.CreativeTabMixin",
     "owerdrive_controller.BoilerDataAcsessor",
-    "owerdrive_controller.BoilerDataMixin"
+    "owerdrive_controller.BoilerDataMixin",
+    "Punchcard.BackTankMixin",
+    "Punchcard.ExtendroGripMixin",
+    "Punchcard.ItemDummyMixin",
+    "Punchcard.PotatoCannonMixin"
   ],
   "client": [
     "banner.MixinCreativeModeInventoryScreen"

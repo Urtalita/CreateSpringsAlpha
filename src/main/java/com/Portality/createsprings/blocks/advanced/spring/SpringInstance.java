@@ -15,6 +15,7 @@ import org.joml.Quaternionf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.Portality.createsprings.blocks.advanced.spring.SpringVisual.epsilon;
 import static com.Portality.createsprings.utill.Helpers.RenderHelper.*;
 
 public class SpringInstance {
@@ -84,7 +85,7 @@ public class SpringInstance {
     }
 
     private void applyBaseRotation(OrientedInstance instance, int index) {
-        Quaternionf rot = rotationAxis.rotationDegrees(45 + index * 90);
+        Quaternionf rot = rotationAxis.rotationDegrees(index * 90);
         instance.rotation(rot).setChanged();
     }
 
@@ -123,7 +124,7 @@ public class SpringInstance {
     }
 
     public void animateInContraption(float progress) {
-        MoveToPos(1/16f, 8/16f, plate, progress, movementDirection, instancePos);
+        MoveToPos(1/16f + epsilon * 2, 8/16f + epsilon * 2, plate, progress, movementDirection, instancePos);
 
         for (int i = 0; i < rings.size(); i++) {
             updateRingPosition(progress, rings.get(i), i);
@@ -131,7 +132,7 @@ public class SpringInstance {
     }
 
     private void updateRingPosition(float progress, OrientedInstance ring, int ringIndex) {
-        MoveToPos(ringPos.get(ringIndex) + 1/16f, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f , ring, progress, movementDirection, instancePos);
+        MoveToPos(ringPos.get(ringIndex) + 1/16f - epsilon, (8f+0.5f*ringIndex - (ringIndex % 4)/2f + 2)/16f - epsilon, ring, progress, movementDirection, instancePos);
     }
 
     public void deleteSpring() {

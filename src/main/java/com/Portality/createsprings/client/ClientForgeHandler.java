@@ -45,6 +45,13 @@ public class ClientForgeHandler {
             }
         }
 
+        if(CSpringsKeybindings.INSTANCE.PSEReleaseKey.consumeClick()){
+            PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(Minecraft.getInstance().player);
+            if(item != null){
+                PacketDistributor.sendToServer(ReleasePSEPacket.INSTANCE);
+            }
+        }
+
         if(CSpringsKeybindings.INSTANCE.ActivatePunchcard.consumeClick()){
             PacketDistributor.sendToServer(ActivatePunchcard.INSTANCE);
         }

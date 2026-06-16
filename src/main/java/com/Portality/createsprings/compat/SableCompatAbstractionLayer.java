@@ -4,6 +4,7 @@ import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlock;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
+import com.Portality.createsprings.blocks.advanced.spring.SpringMovement;
 import com.Portality.createsprings.blocks.displaySource.CSpringsDisplaySources;
 import com.Portality.createsprings.items.advanced.Spring.SpringItem;
 import com.Portality.sableCompat.SableCompatLargeSpring;
@@ -16,6 +17,7 @@ import net.neoforged.fml.ModList;
 
 import static com.Portality.createsprings.CreateSprings.CSPRINGS_REGISTRATE;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
+import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 public class SableCompatAbstractionLayer {
@@ -56,7 +58,7 @@ public class SableCompatAbstractionLayer {
                 .item(SpringItem::new)
                 .build()
                 .blockstate(BlockStateGen.directionalBlockProvider(false))
-                //.onRegister(movementBehaviour(new SpringMovement()))
+                .onRegister(movementBehaviour(new SpringMovement()))
                 .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                 .register();
     }

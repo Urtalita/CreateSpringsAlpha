@@ -18,10 +18,7 @@ import com.Portality.createsprings.items.advanced.Spring.SpringItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.Portality.createsprings.server.PSEHeatEvent;
 import com.Portality.createsprings.utill.Helpers.ParticleHelper;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.AllItems;
-import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.Create;
+import com.simibubi.create.*;
 import com.simibubi.create.content.equipment.armor.BaseArmorItem;
 import com.simibubi.create.content.kinetics.steamEngine.SteamJetParticleData;
 import net.createmod.catnip.math.AngleHelper;
@@ -33,6 +30,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -59,6 +57,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -67,6 +66,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -360,12 +360,14 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
 
         if(!player.level().isClientSide()){return;}
         if (FMLEnvironment.dist.isClient()) {
-            MutableComponent boost, boostComponent, indicator, left, desc, SD;
+            MutableComponent boost, boostComponent, indicator, left, desc, SD, secondDesc, SD2;
             boostComponent = Component.literal("|".repeat((int) (boosted / 100f * 20))).withStyle(ChatFormatting.RED);
 
             boost = Component.translatable(CreateSprings.MODID + ".pse.boost");
             desc = Component.translatable(CreateSprings.MODID + ".pse.dash");
+            secondDesc = Component.translatable(CreateSprings.MODID + ".pse.release");
             Component K = CSpringsKeybindings.INSTANCE.PSEDashKey.getKey().getDisplayName();
+            Component R = CSpringsKeybindings.INSTANCE.PSEReleaseKey.getKey().getDisplayName();
 
             if(boosted >= 70){
                 indicator = Component.literal("|").withStyle(ChatFormatting.DARK_RED);
@@ -378,10 +380,19 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
             SD = Component.literal("[").withStyle(ChatFormatting.GRAY).append(SD).append(Component.literal("]").withStyle(ChatFormatting.GRAY));
             left = Component.literal("|".repeat(20 - (int) (boosted / 100f * 20))).withStyle(ChatFormatting.GRAY);
 
+            if(boosted >= 30){
+                SD2 = Component.literal(R.getString()).withStyle(ChatFormatting.DARK_RED);
+            } else {
+                SD2 = Component.literal(R.getString()).withStyle(ChatFormatting.DARK_GRAY);
+            }
+
+            SD2 = Component.literal("[").withStyle(ChatFormatting.GRAY).append(SD2).append(Component.literal("]").withStyle(ChatFormatting.GRAY));
+
             if(boosted <= 100){
                 if(isBoosted){
                     player.displayClientMessage(boost.append(boostComponent).append(indicator).append(left)
-                            .append(Component.literal(" ").append(desc).append(SD)), true);
+                            .append(Component.literal(" ").append(desc).append(SD)
+                                    .append(Component.literal(" ").append(secondDesc).append(Component.literal(" ").append(SD2)))), true);
                 } else {
                     player.displayClientMessage(boostComponent.append(indicator).append(left), true);
                 }
@@ -482,6 +493,103 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
                         SoundSource.NEUTRAL, 0.5F, 1.2F);
             }
         }
+    }
+
+    public static void steamRelease(Player player){
+        Level level = player.level();
+        if(!(level instanceof ServerLevel serverLevel)) return;
+
+        PortativeSteamEngineItem item = PortativeSteamEngineItem.getWornBy(player);
+        if(item == null) return;
+
+        ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
+        int boosted = getOverdriveProgress(stack);
+        int cost = 20;
+
+        if(boosted < 30) return;
+
+        Vec3 view = player.getViewVector(0.5f);
+        player.setDeltaMovement(new Vec3(view.x * 3, view.y / 2 * 3, view.z * 3));
+
+        if(getDashTicks(stack) > 0){
+            CSpringsAdvancements.DASH.awardTo(player);
+        }
+
+        List<Entity> entitiesInSector = getEntitiesInSector(player, 10, 15);
+        Vec3 lookVec = player.getLookAngle().scale(5);
+
+        for (int i = 0; i < 30; i++) {
+            float xRot = (float) Math.toRadians(level.random.nextDouble() * 30 - 15);
+            float yRot = (float) Math.toRadians(level.random.nextFloat() * 30 - 15);
+
+            float randomSpeed = level.random.nextFloat() * 0.1f + 0.1f;
+
+            Vec3 velocity = lookVec.xRot(xRot).yRot(yRot).scale(randomSpeed);
+
+            serverLevel.sendParticles(
+                    ParticleTypes.CAMPFIRE_COSY_SMOKE,    // Тип частицы (в 1.21.1 getType() обычно не нужен)
+                    player.getX(),              // X спавна
+                    player.getEyeY(),           // Y спавна (лучше на уровне глаз)
+                    player.getZ(),              // Z спавна
+                    0,                          // СТРОГО 0! Иначе скорость проигнорируется
+                    velocity.x,                 // Скорость по X
+                    velocity.y,                 // Скорость по Y
+                    velocity.z,                 // Скорость по Z
+                    1.0                         // Множитель скорости (обычно 1.0)
+            );
+        }
+
+        for(Entity entity : entitiesInSector){
+            entity.setRemainingFireTicks(40);
+            entity.addDeltaMovement(player.getLookAngle().scale(2));
+        }
+
+        stack.set(CSpringsDataComponents.OVERDRIVE_PROGRESS, getOverdriveProgress(stack) - cost);
+
+        level.playSound(null, player.getOnPos().above(2),
+                SoundEvents.LAVA_EXTINGUISH,
+                SoundSource.NEUTRAL, 0.5F, 1.2F);
+    }
+
+    public static ArrayList<Entity> getEntitiesInSector(Player player, double radius, double angleDegrees) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (player == null || player.level() == null) {
+            return result;
+        }
+
+        angleDegrees = 180 - angleDegrees;
+
+        Vec3 eyePosition = player.getEyePosition();
+        AABB searchBox = player.getBoundingBox().inflate(radius);
+        List<Entity> nearbyEntities = player.level().getEntities(player, searchBox);
+
+        double halfAngleRadians = Math.toRadians(angleDegrees);
+        double minCos = Math.cos(halfAngleRadians);
+
+        Vec3 lookVec = player.getLookAngle().normalize().scale(radius);
+
+        for (Entity entity : nearbyEntities) {
+            Vec3 entityVec = entity.position().subtract(eyePosition);
+            double distance = entityVec.length();
+
+            if (distance > radius) {
+                continue;
+            }
+
+            if (distance == 0) {
+                result.add(entity);
+                continue;
+            }
+
+            double dotProduct = lookVec.dot(entityVec);
+            double cosEntityAngle = dotProduct / distance;
+
+            if (cosEntityAngle >= minCos) {
+                result.add(entity);
+            }
+        }
+
+        return result;
     }
 
     public static void spawnItems(Level level, LivingEntity entity, Item items){

@@ -655,6 +655,18 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
         }
     }
 
+    public void reInitLayers(){
+        Direction facing = getFacing();
+
+        for(int i = 0; i < len; i++){
+            removeLayer(i, facing);
+        }
+
+        for(int i = 0; i < curLen; i++){
+            restoreLayer(i, facing);
+        }
+    }
+
     public boolean canDisassemble(Direction facing){
         BlockPos pos = getBlockPos();
         for (int yLevel = (len-1); yLevel > curLen; yLevel--){

@@ -1,5 +1,6 @@
 package com.Portality.createsprings.items.advanced.SusPackage;
 
+import com.Portality.createsprings.client.CSpringsLang;
 import com.Portality.createsprings.client.menus.TooltipDescription;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
@@ -9,6 +10,7 @@ import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -124,10 +126,12 @@ public class SusPackageItem extends PackageItem {
     public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> pTooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, tooltipContext, pTooltipComponents, tooltipFlag);
         float capacity = ModConfigs.common().SPRING_CAPACITY.get();
-        pTooltipComponents.add(Component.literal("su: ").withStyle(ChatFormatting.DARK_GRAY)
-                .append(Component.literal(String.valueOf(getStoredInBox(stack)))).withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
-                .append(Component.literal(String.valueOf(capacity))).withStyle(ChatFormatting.GRAY));
+        float stored = getStoredInBox(stack);
+
+        pTooltipComponents.add(CreateLang.text(" ").add(
+                CSpringsLang.transformTime(stored)
+        ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
+                .add(CSpringsLang.transformTime(capacity))).component());
 
         pTooltipComponents.addAll(TooltipDescription.addShiftThing());
         if(AllKeys.shiftDown()){

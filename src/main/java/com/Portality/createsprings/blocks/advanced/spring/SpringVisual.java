@@ -30,7 +30,7 @@ public class SpringVisual extends ShaftVisual<SpringBlockEntity> implements Simp
     final Direction facing;
     final Axis rotationAxis;
     final Quaternionf blockOrientation;
-    float epsilon = 1/1024f;
+    static final float epsilon = 1/512f;
 
     public SpringVisual(VisualizationContext context, SpringBlockEntity blockEntity, float pt) {
         super(context, blockEntity, pt);

@@ -58,9 +58,9 @@
   "item.createsprings.explosion_chamber.tooltip.behaviour1": "_Charges spring_",
 
   "block.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
-  "block.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
+  "block.createsprings.spring.tooltip.condition1": "При ПКМ на блоке",
   "block.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
-  "block.createsprings.spring.tooltip.condition2": "При ПКМ на _сущности_",
+  "block.createsprings.spring.tooltip.condition2": "При ПКМ на сущности",
   "block.createsprings.spring.tooltip.behaviour2": "_Откинет_ сущность",
   "block.createsprings.spring.tooltip.condition3": "При приземлении",
   "block.createsprings.spring.tooltip.behaviour3": "если игрок _держит_ пружину то она _преобразовывает_ часть урона в _заряд_ тем самым _смягчая_ посадку",
@@ -69,7 +69,11 @@
   "block.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
   "block.createsprings.spring.tooltip.behaviour1": "_Откинет_ игрока держащего предмет в _обратную_ сторону",
 
-  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления",
+  "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления, не может быть _спрессован_",
+
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.summary": "_вязкая_, горячая, густая жидкость с металическим блеском, странно, но она _не обжигает_",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.condition1": "При контакте с водой",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.behaviour1": "Образует _гладкий камень_",
 
   "block.createsprings.industrial_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
   "block.createsprings.industrial_spring_alloy.tooltip.condition1": "При приземлении на блок",
@@ -78,6 +82,17 @@
   "block.createsprings.cut_spring_alloy.tooltip.summary": "_Декоративный_ пружинный сплав, _устойчив_ к взрывам",
   "block.createsprings.cut_spring_alloy.tooltip.condition1": "При приземлении на блок",
   "block.createsprings.cut_spring_alloy.tooltip.behaviour1": "_Смягчает_ урон от падения",
+
+  "block.createsprings.obsidian_plate.tooltip.summary": "_Надёжная защита_ ваших построек от _взрывов_",
+  "block.createsprings.obsidian_slab.tooltip.summary": "Прочная, устойчивая к взрывам плита",
+
+  "block.createsprings.spring_alloy_casing.tooltip.summary": "_Корпус_ для механизмов использующих свойства _пружинного сплава_",
+  "block.createsprings.spring_alloy_casing.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.spring_alloy_casing.tooltip.behaviour1": "_Смягчает_ урон от падения",
+
+  "block.createsprings.spring_alloy_block.tooltip.summary": "_пружинный сплав_ в форме блока",
+  "block.createsprings.spring_alloy_block.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.spring_alloy_block.tooltip.behaviour1": "_Смягчает_ урон от падения",
 
   "block.minecraft.tripwire_hook.tooltip.summary": "_Переключает_ пружину или пружинный инструмент в _режим всплеска_",
   "block.minecraft.tripwire_hook.tooltip.condition1": "ПКМ по пружине",

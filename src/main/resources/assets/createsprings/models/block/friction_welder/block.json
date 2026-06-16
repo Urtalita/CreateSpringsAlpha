@@ -2,9 +2,9 @@
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "createsprings:block/frictionwelder/bottom",
-		"4": "createsprings:block/frictionwelder/side",
-		"particle": "createsprings:block/frictionwelder/side"
+		"2": "createsprings:block/frictionwelder/side",
+		"4": "createsprings:block/frictionwelder/bottom",
+		"particle": "createsprings:block/frictionwelder/bottom"
 	},
 	"elements": [
 		{
@@ -12,12 +12,12 @@
 			"to": [16, 12, 16],
 			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [0, 4, 16, 15], "texture": "#4"},
-				"east": {"uv": [0, 4, 16, 15], "texture": "#4"},
-				"south": {"uv": [0, 4, 16, 15], "texture": "#4"},
-				"west": {"uv": [0, 4, 16, 15], "texture": "#4"},
-				"up": {"uv": [0, 0, 16, 15], "texture": "#1"},
-				"down": {"uv": [0, 0, 16, 15], "texture": "#1"}
+				"north": {"uv": [0, 4, 16, 15], "texture": "#2"},
+				"east": {"uv": [0, 4, 16, 15], "texture": "#2"},
+				"south": {"uv": [0, 4, 16, 15], "texture": "#2"},
+				"west": {"uv": [0, 4, 16, 15], "texture": "#2"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#4"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#4"}
 			}
 		},
 		{
@@ -25,12 +25,12 @@
 			"to": [1, 1, 16],
 			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"east": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"south": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"west": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"up": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#4"},
-				"down": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"}
+				"north": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"east": {"uv": [0, 15, 15, 16], "texture": "#2"},
+				"south": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"west": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"up": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#2"},
+				"down": {"uv": [0, 15, 15, 16], "rotation": 90, "texture": "#2"}
 			}
 		},
 		{
@@ -38,12 +38,12 @@
 			"to": [16, 1, 15],
 			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"east": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"south": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"west": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"up": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#4"},
-				"down": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#4"}
+				"north": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"east": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"south": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"west": {"uv": [0, 15, 15, 16], "texture": "#2"},
+				"up": {"uv": [1, 15, 16, 16], "rotation": 270, "texture": "#2"},
+				"down": {"uv": [1, 15, 16, 16], "rotation": 90, "texture": "#2"}
 			}
 		},
 		{
@@ -51,12 +51,12 @@
 			"to": [16, 1, 16],
 			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"east": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"south": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"west": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"up": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"down": {"uv": [1, 15, 16, 16], "texture": "#4"}
+				"north": {"uv": [0, 15, 15, 16], "texture": "#2"},
+				"east": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"south": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"west": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"up": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"down": {"uv": [1, 15, 16, 16], "texture": "#2"}
 			}
 		},
 		{
@@ -64,12 +64,12 @@
 			"to": [15, 1, 1],
 			"rotation": {"angle": 0, "axis": "x", "origin": [8, 8, 8]},
 			"faces": {
-				"north": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"east": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"south": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"west": {"uv": [0, 15, 1, 16], "texture": "#4"},
-				"up": {"uv": [1, 15, 16, 16], "texture": "#4"},
-				"down": {"uv": [1, 15, 16, 16], "texture": "#4"}
+				"north": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"east": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"south": {"uv": [0, 15, 15, 16], "texture": "#2"},
+				"west": {"uv": [0, 15, 1, 16], "texture": "#2"},
+				"up": {"uv": [1, 15, 16, 16], "texture": "#2"},
+				"down": {"uv": [0, 15, 15, 16], "texture": "#2"}
 			}
 		}
 	],
@@ -77,12 +77,14 @@
 		{
 			"name": "frictionWelder",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [
 				0,
 				{
 					"name": "bottom",
 					"origin": [8, 8, 8],
+					"scope": 0,
 					"color": 0,
 					"children": [1, 2, 3, 4]
 				}

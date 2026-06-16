@@ -3,35 +3,54 @@ package com.Portality.createsprings.blocks.advanced.kinetic_interface;
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
+import com.Portality.createsprings.blocks.advanced.spring.DirectionalSidedValueBox;
+import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
+import com.Portality.createsprings.client.CSpringsLang;
+import com.Portality.createsprings.server.packets.PSKISpringUpdate;
+import com.hlysine.create_connected.ConnectedLang;
+import com.hlysine.create_connected.content.kineticbattery.KineticBatteryValueBox;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
+import com.simibubi.create.content.contraptions.DirectionalExtenderScrollOptionSlot;
+import com.simibubi.create.content.contraptions.bearing.BearingBlock;
+import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity implements IHaveGoggleInformation {
     public static final int ANIMATION = 4;
@@ -48,6 +67,8 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
 
     public int keepAlive = 0;
 
+    protected ScrollOptionBehaviour<WindmillBearingBlockEntity.RotationDirection> rotationDirection;
+
     public KineticInterfaceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         transferTimer = 0;
@@ -56,8 +77,19 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         powered = false;
     }
 
-    public boolean isPowered() {
-        return powered;
+    @Override
+    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        registerAwardables(behaviours, AllAdvancements.PSI);
+
+        rotationDirection = new ScrollOptionBehaviour<>(WindmillBearingBlockEntity.RotationDirection.class,
+                CSpringsLang.translateDirect("pski.direction"),
+                this,
+                new DirectionalSidedValueBox((s) -> s.getValue(FACING), 8, 6));
+        rotationDirection.withCallback(i -> {
+            updateGeneratedRotation();
+            sendData();
+        });
+        behaviours.add(rotationDirection);
     }
 
     float getConnectionDistance() {
@@ -86,10 +118,8 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         connectedSprings = new ArrayList<>();
         for (StructureTemplate.StructureBlockInfo blockInfo : contraption.getBlocks().values()) {
             if (blockInfo.state().getBlock() == CSpringsBlocks.LARGE_SPRING.get()) {
-                // 1. Создаём BE через наш зарегистрированный тип
                 addSpring(blockInfo, true);
             } else if (blockInfo.state().getBlock() == CSpringsBlocks.SPRING.get()) {
-                // 1. Создаём BE через наш зарегистрированный тип
                 addSpring(blockInfo, false);
             }
         }
@@ -110,7 +140,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         }
 
         if (be != null && blockInfo.nbt() != null) {
-            be.loadStatic(BlockPos.ZERO, blockInfo.state(), blockInfo.nbt(), level.registryAccess());
+            be.loadCustomOnly(blockInfo.nbt(), level.registryAccess());
 
             be.setLevel(level);
 
@@ -125,6 +155,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
     public void updateContraptionBlockEntity(Contraption contraption, BlockPos localPos, BlockEntity updatedEntity) {
         Map<BlockPos, StructureTemplate.StructureBlockInfo> blocks = contraption.getBlocks();
         StructureTemplate.StructureBlockInfo info = blocks.get(localPos);
+        if(level == null) return;
 
         if (info != null) {
 
@@ -138,12 +169,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
                     newNbt
             ));
         }
-        //CSpringsPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> contraption.entity), new PSKISpringUpdate(contraption.entity.getUUID(), localPos, updatedEntity));
-    }
-    public boolean canTransfer() {
-        if (connectedEntity != null && !connectedEntity.isAlive())
-            stopTransferring();
-        return connectedEntity != null && isConnected();
+        PacketDistributor.sendToPlayersTrackingEntity(contraption.entity, new PSKISpringUpdate(contraption.entity.getUUID(), localPos, updatedEntity.saveWithoutMetadata(level.registryAccess())));
     }
 
     @Override
@@ -159,9 +185,9 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         if (isBlockPowered == powered) return;
 
         powered = isBlockPowered;
-        isGenerating = powered; // Синхронизируем состояния!
+        isGenerating = powered;
         notifyContraptions();
-        updateGeneratedRotation(); // Важно для пересчета скорости
+        updateGeneratedRotation();
         sendData();
     }
 
@@ -171,7 +197,11 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
             for (ConnectedToPSKIInfo info : connectedSprings) {
                 if (info.connectedEntity.getStored() > 0) {
                     if(level.getBestNeighborSignal(worldPosition) == 0){return 0;}
-                    return 16.0f * level.getBestNeighborSignal(worldPosition) + 16;
+
+                    float modifier = 1;
+                    if(rotationDirection.get() == WindmillBearingBlockEntity.RotationDirection.COUNTER_CLOCKWISE) modifier = -1;
+
+                    return (16.0f * level.getBestNeighborSignal(worldPosition) + 16) * modifier;
                 }
             }
         }
@@ -207,10 +237,9 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         if(connectedSprings != null && !connectedSprings.isEmpty()){
             CreateLang.translate("spring.saved").style(ChatFormatting.GRAY).forGoggles(tooltip);
             CreateLang.text(" ").add(
-                            CreateLang.number(Math.round(storedSum)).style(ChatFormatting.AQUA).space()
+                            CSpringsLang.transformTime(storedSum)
                     ).add(CreateLang.text("/").space().style(ChatFormatting.GRAY)
-                            .add(CreateLang.number(capacitySum).style(ChatFormatting.AQUA).space()
-                                    .add(CreateLang.translate("spring.su").style(ChatFormatting.DARK_GRAY))))
+                            .add(CSpringsLang.transformTime(capacitySum)))
                     .add(Component.literal(" (").withStyle(ChatFormatting.DARK_GRAY))
                     .add(CreateLang.number(Math.round(storedSum / capacitySum * 100)))
                     .add(Component.literal("%").withStyle(ChatFormatting.DARK_GRAY))
@@ -342,9 +371,11 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
 
         int size = compound.getInt("ConnectedSpringsAmount");
         connectedSprings = new ArrayList<>();
+
         for (int i = 0; i < size; i++){
             String key = String.valueOf(i);
             KineticBlockEntity be;
+
             if(compound.getBoolean(key + "isLarge")){
                 be = CSpringsBlockEntities.LARGE_SPRING.get().create(
                         BlockPos.ZERO,
@@ -353,7 +384,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
             } else {
                 be = CSpringsBlockEntities.SPRING.get().create(
                         BlockPos.ZERO,
-                        CSpringsBlocks.LARGE_SPRING.get().defaultBlockState()
+                        CSpringsBlocks.SPRING.get().defaultBlockState()
                 );
             }
 
@@ -364,6 +395,7 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
             Optional<BlockPos> pos = NbtUtils.readBlockPos(compound, key + "pos");
 
             IConnectableToPSKI iConnectableToPSKI = (IConnectableToPSKI) be;
+
             connectedSprings.add(new ConnectedToPSKIInfo(
                     pos.orElse(null),
                     be,
@@ -420,11 +452,6 @@ public class KineticInterfaceBlockEntity extends GeneratingKineticBlockEntity im
         transferTimer = timeUnit + ANIMATION;
         award(AllAdvancements.PSI);
         sendData();
-    }
-
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        registerAwardables(behaviours, AllAdvancements.PSI);
     }
 
     public void setGenerating(boolean hasSignal) {

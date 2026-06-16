@@ -28,13 +28,6 @@ import static com.Portality.createsprings.recipe.CSpringsRecipes.WELDER_TYPE;
 public class JEICreateSpringsPlugin implements IModPlugin {
     private static final ResourceLocation ID = CreateSprings.asResource("jei_plugin");
 
-    public static final mezz.jei.api.recipe.RecipeType<WelderRecipe> WELDER_JEI_TYPE =
-            new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("welding"), WelderRecipe.class);
-
-
-    public static final mezz.jei.api.recipe.RecipeType<CastingRecipe> CASTING_JEI_TYPE =
-            new mezz.jei.api.recipe.RecipeType<>(CreateSprings.asResource("casting"), CastingRecipe.class);
-
     @Override
     @Nonnull
     public ResourceLocation getPluginUid() {
@@ -42,40 +35,41 @@ public class JEICreateSpringsPlugin implements IModPlugin {
     }
 
     public IIngredientManager ingredientManager;
-    static final List<CreateRecipeCategory<?>> ALL = new ArrayList<>();
+
+    public static CreateRecipeCategory<CastingRecipe> CASTING_CATEGORY;
+    public static CreateRecipeCategory<WelderRecipe> WELDER_CATEGORY;
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        ALL.clear();
+        CASTING_CATEGORY = builder(CastingRecipe.class)
+                .addTypedRecipes(CASTING_TYPE::get)
+                .catalyst(ANDESITE_MOLD::get)
+                .itemIcon(ANDESITE_MOLD.get())
+                .emptyBackground(177, 70)
+                .build(CreateSprings.asResource("casting"), CastingCategory::new);
 
-        ALL.add(builder(WelderRecipe.class)
+        WELDER_CATEGORY = builder(WelderRecipe.class)
                 .addTypedRecipes(WELDER_TYPE::get)
                 .catalyst(FRICTION_WELDER::get)
                 .itemIcon(FRICTION_WELDER.get())
                 .emptyBackground(177, 77)
-                .build("welding", WelderCategory::new));
+                .build(CreateSprings.asResource("welding"), WelderCategory::new);
 
-
-        ALL.add(builder(CastingRecipe.class)
-                .addTypedRecipes(CASTING_TYPE::get)
-                .itemIcon(ANDESITE_MOLD.get())
-                .emptyBackground(177, 70)
-                .build("casting", CastingCategory::new));
-
-
-        ALL.forEach(registration::addRecipeCategories);
+        registration.addRecipeCategories(CASTING_CATEGORY, WELDER_CATEGORY);
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        ALL.forEach(c -> c.registerCatalysts(registration));
-        //registration.addRecipeCatalyst(new ItemStack(CAItems.DIAMOND_GRIT_SANDPAPER.get()), new ResourceLocation(Create.ID, "deploying"));
+        CASTING_CATEGORY.registerCatalysts(registration);
+        WELDER_CATEGORY.registerCatalysts(registration);
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         ingredientManager = registration.getIngredientManager();
-        ALL.forEach(c -> c.registerRecipes(registration));
+
+        CASTING_CATEGORY.registerRecipes(registration);
+        WELDER_CATEGORY.registerRecipes(registration);
     }
 
     private <T extends Recipe<?>> CategoryBuilder<T> builder(Class<? extends T> recipeClass) {
@@ -85,13 +79,6 @@ public class JEICreateSpringsPlugin implements IModPlugin {
     private static class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
         public CategoryBuilder(Class<? extends T> recipeClass) {
             super(recipeClass);
-        }
-
-        @Override
-        public CreateRecipeCategory<T> build(ResourceLocation id, CreateRecipeCategory.Factory<T> factory) {
-            CreateRecipeCategory<T> category = super.build(id, factory);
-            ALL.add(category);
-            return category;
         }
 
         @Override

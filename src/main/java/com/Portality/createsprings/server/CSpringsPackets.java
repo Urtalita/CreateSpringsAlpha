@@ -24,6 +24,7 @@ public enum CSpringsPackets implements BasePacketPayload.PacketTypeProvider {
     PUNCHCARD_UPDATE(PunchcardUpdatePacket.class, PunchcardUpdatePacket.STREAM_CODEC),
     PSE_BOOST(BoostPSEPacket.class, BoostPSEPacket.STREAM_CODEC),
     PSE_DASH(DashPSEPacket.class, DashPSEPacket.STREAM_CODEC),
+    PSE_RELEASE(ReleasePSEPacket.class, ReleasePSEPacket.STREAM_CODEC),
     PSE_OPEN(OpenPSEPacket.class, OpenPSEPacket.STREAM_CODEC),
 
     ACTIVATE_PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard.STREAM_CODEC),
@@ -31,7 +32,12 @@ public enum CSpringsPackets implements BasePacketPayload.PacketTypeProvider {
     CATAPULT_TARGET_CLIENT(CatapultPlacementPacket.ClientBoundRequest.class, CatapultPlacementPacket.ClientBoundRequest.STREAM_CODEC),
     PSE_SERVER_UPDATE(PortativeSteamEngineUpdatePacket.class, PortativeSteamEngineUpdatePacket.STREAM_CODEC),
 
-    PSE_CLIENT_UPDATE(PSEClientUpdate.class, PSEClientUpdate.STREAM_CODEC)
+    PSE_CLIENT_UPDATE(PSEClientUpdate.class, PSEClientUpdate.STREAM_CODEC),
+    AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket.STREAM_CODEC),
+    PUSH_OFF_PACKET(PushOffPacket.class, PushOffPacket.STREAM_CODEC),
+    GRAB_PUNCHCARD(GrabPunchcard.class, GrabPunchcard.STREAM_CODEC),
+    ROTATE_PLAYER(RotatePlayerPacket.class, RotatePlayerPacket.STREAM_CODEC),
+    PSKI_SPRING_UPDATE(PSKISpringUpdate.class, PSKISpringUpdate.STREAM_CODEC)
     ;
 
     private final CatnipPacketRegistry.PacketType<?> type;

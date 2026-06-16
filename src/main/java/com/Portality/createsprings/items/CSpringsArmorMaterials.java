@@ -24,13 +24,23 @@ public class CSpringsArmorMaterials {
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, CreateSprings.ID);
 
     public static final Holder<ArmorMaterial> GEAR = register(
-            "hat",
+            "gear",
             new int[] { 6, 6, 6, 6, 6 },
             7,
             SoundEvents.ARMOR_EQUIP_IRON,
             0.0F,
             0.0F,
             () -> Ingredient.of(Items.COPPER_INGOT)
+    );
+
+    public static final Holder<ArmorMaterial> HAT = register(
+            "hat",
+            new int[] { 3, 3, 3, 3, 3 },
+            7,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            0.0F,
+            0.0F,
+            () -> Ingredient.of(CSpringsItems.SPRING_ALLOY_SHEET)
     );
 
     public static final Holder<ArmorMaterial> BROKEN_PSE = register(

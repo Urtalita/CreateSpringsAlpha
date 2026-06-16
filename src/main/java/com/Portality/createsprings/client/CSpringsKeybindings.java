@@ -35,6 +35,13 @@ public final class CSpringsKeybindings {
             CATEGORY
     );
 
+    public final KeyMapping PSEReleaseKey = new KeyMapping(
+            "key." + CreateSprings.MODID + ".pse_release",
+            KeyConflictContext.IN_GAME,
+            InputConstants.getKey(InputConstants.KEY_V, -1),
+            CATEGORY
+    );
+
     public final KeyMapping ActivatePunchcard = new KeyMapping(
             "key." + CreateSprings.MODID + ".activate_punchcard",
             KeyConflictContext.IN_GAME,

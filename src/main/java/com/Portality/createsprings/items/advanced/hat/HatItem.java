@@ -1,11 +1,15 @@
 package com.Portality.createsprings.items.advanced.hat;
 
+import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.Packages.HatPackageEntity;
+import com.Portality.createsprings.items.CSpringsArmorMaterials;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.Create;
+import com.simibubi.create.content.equipment.armor.BaseArmorItem;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -38,24 +42,23 @@ import java.util.function.Consumer;
 
 import static com.simibubi.create.content.logistics.box.PackageItem.getPackageVelocity;
 
-public class HatItem extends Item {
+public class HatItem extends BaseArmorItem {
+    public static final EquipmentSlot SLOT = EquipmentSlot.HEAD;
 
     public HatItem(Properties properties) {
-        super(properties);
+        super(CSpringsArmorMaterials.HAT, Type.HELMET, properties, CreateSprings.asResource("hat"));
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
     }
 
-    @Override
-    public @Nullable EquipmentSlot getEquipmentSlot(ItemStack stack) {
-        return EquipmentSlot.HEAD;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        if (FMLEnvironment.dist.isClient()) {
-            consumer.accept(SimpleCustomRenderer.create(this, new HatRenderer()));
+    @Nullable
+    public static HatItem getWornBy(Entity entity) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
+            return null;
         }
+        if (!(livingEntity.getItemBySlot(SLOT).getItem() instanceof HatItem item)) {
+            return null;
+        }
+        return item;
     }
 
     @Override
@@ -125,7 +128,7 @@ public class HatItem extends Item {
         if(player.isShiftKeyDown()){
             if(!getAnimation(stack)){
                 stack.set(CSpringsDataComponents.HAT_ANIMATION, true);
-                stack.set(CSpringsDataComponents.HAT_ANIMATION_PROGRESS, (int) (level.getGameTime() % HatRenderer.duration));
+                stack.set(CSpringsDataComponents.HAT_ANIMATION_PROGRESS, (int) (level.getGameTime() % HatArmorLayer.duration));
             }
         }
     }

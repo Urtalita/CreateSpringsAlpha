@@ -4,7 +4,7 @@
     "createsprings:large_spring",
     "createsprings:large_spring_coil",
     "createsprings:friction_welder",
-    "createsprings:spring",
-    "createsprings:kinetic_interface"
+    "createsprings:kinetic_interface",
+    "createsprings:spring"
   ]
 }

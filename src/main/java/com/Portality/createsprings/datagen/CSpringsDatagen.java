@@ -4,6 +4,7 @@ import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.client.ponders.CSpringsPonderPlugin;
 import com.Portality.createsprings.datagen.advancement.CSpringsAdvancements;
 import com.Portality.createsprings.datagen.recipes.CSpringsAssemblyRecipeGen;
+import com.Portality.createsprings.datagen.recipes.CastingRecipesGen;
 import com.Portality.createsprings.datagen.recipes.MixingRecipeGen;
 import com.Portality.createsprings.datagen.recipes.WeldingRecipesGen;
 import com.google.gson.JsonElement;
@@ -30,6 +31,7 @@ public class CSpringsDatagen {
         generator.addProvider(event.includeServer(), new WeldingRecipesGen(output, registries));
         generator.addProvider(event.includeServer(), new MixingRecipeGen(output, registries));
         generator.addProvider(event.includeServer(), new CSpringsAssemblyRecipeGen(output, registries));
+        generator.addProvider(event.includeServer(), new CastingRecipesGen(output, registries));
 
         generator.addProvider(event.includeServer(), new CSpringsAdvancements(output, registries));
     }

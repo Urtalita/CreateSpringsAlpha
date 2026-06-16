@@ -3,8 +3,10 @@ package com.Portality.createsprings.recipe.Casting;
 import com.Portality.createsprings.recipe.CSpringsRecipes;
 import com.Portality.createsprings.recipe.Welding.WelderRecipe;
 import com.Portality.createsprings.recipe.Welding.WelderRecipeParams;
+import com.Portality.createsprings.recipe.Welding.WelderRecipeSpeed;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -14,6 +16,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
@@ -21,7 +24,7 @@ public class CastingRecipe extends ProcessingRecipe<CastingRecipeWrapper, Castin
     public static final IRecipeTypeInfo TYPE_INFO = new IRecipeTypeInfo() {
         @Override
         public ResourceLocation getId() {
-            return CSpringsRecipes.CASTING.getId();
+            return ResourceLocation.fromNamespaceAndPath("createsprings", "casting");
         }
 
         @Override
@@ -41,12 +44,12 @@ public class CastingRecipe extends ProcessingRecipe<CastingRecipeWrapper, Castin
 
     @Override
     protected int getMaxInputCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     protected int getMaxOutputCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -60,11 +63,6 @@ public class CastingRecipe extends ProcessingRecipe<CastingRecipeWrapper, Castin
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.of(Ingredient.EMPTY);
-    }
-
-    @Override
     public boolean matches(CastingRecipeWrapper castingRecipeWrapper, Level level) {
         return true;
     }
@@ -74,9 +72,25 @@ public class CastingRecipe extends ProcessingRecipe<CastingRecipeWrapper, Castin
         return true;
     }
 
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return results.getFirst().getStack();
+    @FunctionalInterface
+    public interface Factory<R extends CastingRecipe> extends ProcessingRecipe.Factory<CastingRecipeParams, R> {
+        R create(CastingRecipeParams params);
+    }
+
+    public static class Builder<R extends CastingRecipe> extends ProcessingRecipeBuilder<CastingRecipeParams, R, CastingRecipe.Builder<R>> {
+        public Builder(CastingRecipe.Factory<R> factory, ResourceLocation recipeId) {
+            super(factory, recipeId);
+        }
+
+        @Override
+        protected CastingRecipeParams createParams() {
+            return new CastingRecipeParams();
+        }
+
+        @Override
+        public CastingRecipe.Builder<R> self() {
+            return this;
+        }
     }
 
     public static class Serializer<R extends CastingRecipe> implements RecipeSerializer<R> {

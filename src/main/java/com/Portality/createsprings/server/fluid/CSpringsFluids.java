@@ -7,8 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.SoundActions;
@@ -108,6 +114,34 @@ public class CSpringsFluids {
                     return CreateSprings.asResource("block/spring_alloy_flow");
                 }
             });
+        }
+
+        @Override
+        public boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity) {
+            if(entity.level() instanceof ServerLevel serverLevel){
+                if(entity.level().getGameTime() % 5 == 0){
+                        serverLevel.sendParticles(
+                                ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                                entity.getEyePosition().x(),
+                                entity.getEyePosition().y() - entity.getEyeHeight() / 2,
+                                entity.getEyePosition().z(),
+                                0,
+                                (entity.level().random.nextDouble() - 0.5f) / 4 / 4,
+                                (entity.level().random.nextDouble()) / 4 / 2 / 4,
+                                (entity.level().random.nextDouble() - 0.5f) / 4 / 4,
+                                1.0
+                        );
+                }
+            }
+
+            return super.move(state, entity, movementVector, gravity);
+        }
+
+        public Vec3 getRandomPointInAABB(AABB box, RandomSource random) {
+            double x = box.minX + (random.nextDouble() * (box.maxX - box.minX));
+            double y = box.minY + (random.nextDouble() * (box.maxY - box.minY));
+            double z = box.minZ + (random.nextDouble() * (box.maxZ - box.minZ));
+            return new Vec3(x, y, z);
         }
     }
 }

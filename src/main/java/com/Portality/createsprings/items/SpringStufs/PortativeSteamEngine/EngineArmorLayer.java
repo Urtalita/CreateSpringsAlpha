@@ -9,6 +9,7 @@ import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.simibubi.create.foundation.mixin.accessor.EntityRenderDispatcherAccessor;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.AngleHelper;
@@ -176,8 +177,8 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
     public static void registerOnAll(EntityRenderDispatcher renderManager) {
         for (EntityRenderer<? extends Player> renderer : renderManager.getSkinMap().values())
             registerOn(renderer);
-        //for (EntityRenderer<?> renderer : renderManager.renderers.values())
-        //    registerOn(renderer);
+        for (EntityRenderer<?> renderer : ((EntityRenderDispatcherAccessor) renderManager).create$getRenderers().values())
+            registerOn(renderer);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

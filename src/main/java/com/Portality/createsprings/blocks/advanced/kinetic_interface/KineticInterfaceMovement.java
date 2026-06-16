@@ -1,11 +1,11 @@
 package com.Portality.createsprings.blocks.advanced.kinetic_interface;
 
-import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.simibubi.create.api.behaviour.movement.MovementBehaviour;
 import com.simibubi.create.content.contraptions.actors.psi.PortableStorageInterfaceMovement;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.content.contraptions.render.ContraptionMatrices;
+import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +25,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class KineticInterfaceMovement extends PortableStorageInterfaceMovement implements MovementBehaviour {
@@ -138,6 +140,8 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
         float collectedCapacity = 0;
         stationaryInterface.storedSum = 0;
 
+        ArrayList<ConnectedToPSKIInfo> autoSprings = new ArrayList<>();
+
         for(int i = 0; i < stationaryInterface.connectedSprings.size(); i++) {
             ConnectedToPSKIInfo info = stationaryInterface.connectedSprings.get(i);
 
@@ -150,14 +154,20 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
 
             if(stationaryInterface.isGenerating){
                 float speed = Math.abs(stationaryInterface.getGeneratedSpeed());
+
                 if (info.connectedEntity.getStored() < stress) {
                     connectedEntity.setStored(0);
                     stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
                     continue;
                 }
 
+                if(connectedEntity.getHardness() == 0 && connectedEntity.getStored() > 0){
+                    autoSprings.add(info);
+                    continue;
+                }
+
                 collectedImpact += stress * -1;
-                connectedEntity.setStored(Math.max(0, connectedEntity.getStored() - stress * speed / SpringBlockEntity.DEFAULT_HARDNESS / 2));
+                connectedEntity.setStored(Math.max(0, connectedEntity.getStored() - stress * speed / 16 / 2));
             } else {
                 float speed = Math.abs(stationaryInterface.getSpeed());
 
@@ -167,12 +177,19 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
                     continue;
                 }
 
-                connectedEntity.setStored(Math.min(connectedEntity.getCapacity(), connectedEntity.getStored() + stress * speed / SpringBlockEntity.DEFAULT_HARDNESS / 2));
+                if(connectedEntity.getHardness() == 0){
+                    autoSprings.add(info);
+                    continue;
+                }
+
+                connectedEntity.setStored(Math.min(connectedEntity.getCapacity(), connectedEntity.getStored() + stress * speed / 16 / 2));
                 collectedImpact += stress;
             }
 
             stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
         }
+
+        collectedImpact += chargeAutoSprings(autoSprings, stationaryInterface, context, collectedImpact);
 
         stationaryInterface.capacitySum = collectedCapacity;
         stationaryInterface.sendData();
@@ -192,6 +209,76 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
             stationaryInterface.updateGeneratedRotation();
             // Обновляем клиент
             stationaryInterface.sendData();
+        }
+    }
+
+    private float chargeAutoSprings(ArrayList<ConnectedToPSKIInfo> autoSprings, KineticInterfaceBlockEntity stationaryInterface, MovementContext context, float alreadyCollectedImpact) {
+        if (autoSprings.isEmpty()) return 0f;
+
+        KineticNetwork network = stationaryInterface.getOrCreateNetwork();
+        if (network == null) return 0f;
+
+        float networkCapacity = network.calculateCapacity();
+        float networkStress = network.calculateStress();
+        float speed = Math.abs(stationaryInterface.getSpeed());
+
+        float myCurrentStressContribution = stationaryInterface.stressImpact * speed;
+
+        if (stationaryInterface.isGenerating) {
+            speed = Math.abs(stationaryInterface.getGeneratedSpeed());
+            if (Mth.equal(speed, 0)) return 0f;
+
+            float netLeftInNetwork = (networkCapacity - Math.abs(myCurrentStressContribution)) - networkStress;
+            float neededCapacity = -netLeftInNetwork;
+
+            neededCapacity += alreadyCollectedImpact;
+
+            if (neededCapacity <= 0) {
+                return 0f;
+            }
+
+            float suRemovedPerSpring = -netLeftInNetwork / autoSprings.size();
+            float totalActualGeneratedSU = 0f;
+
+            for (ConnectedToPSKIInfo info : autoSprings) {
+                IConnectableToPSKI connectedEntity = info.connectedEntity;
+                if (connectedEntity.getStored() <= 0) continue;
+
+                float newStored = connectedEntity.getStored() - suRemovedPerSpring / 20;
+                connectedEntity.setStored(Math.max(0, newStored));
+                stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
+                totalActualGeneratedSU += suRemovedPerSpring;
+            }
+
+            return -totalActualGeneratedSU / speed;
+
+        } else {
+            if (Mth.equal(speed, 0)) return 0f;
+
+            float netLeftInNetwork = networkCapacity - (networkStress - myCurrentStressContribution);
+            netLeftInNetwork -= alreadyCollectedImpact;
+
+            if (netLeftInNetwork <= 0) {
+                return 0f;
+            }
+
+            float suAddedPerSpring = netLeftInNetwork / autoSprings.size();
+            float totalActualConsumedSU = 0f;
+
+            for (ConnectedToPSKIInfo info : autoSprings) {
+                IConnectableToPSKI connectedEntity = info.connectedEntity;
+
+                if (connectedEntity.getCapacity() - connectedEntity.getStored() < 1) {
+                    continue;
+                }
+
+                float newStored = connectedEntity.getStored() + suAddedPerSpring / 20;
+                connectedEntity.setStored(Math.max(0, newStored));
+                stationaryInterface.updateContraptionBlockEntity(context.contraption, info.pos, info.entity);
+                totalActualConsumedSU += suAddedPerSpring;
+            }
+
+            return totalActualConsumedSU / speed;
         }
     }
 
@@ -228,7 +315,7 @@ public class KineticInterfaceMovement extends PortableStorageInterfaceMovement i
 
     @Override
     public void stopMoving(MovementContext context) {
-//		reset(context);
+		reset(context);
     }
 
     @Override

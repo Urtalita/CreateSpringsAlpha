@@ -8,6 +8,10 @@ import com.Portality.createsprings.items.SpringStufs.SpringLauncher.SpringLaunch
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
 import com.Portality.createsprings.items.SpringStufs.SpringSpeedSys;
 import com.Portality.createsprings.server.CSpringsDataComponents;
+import com.Portality.createsprings.server.packets.AirDashPlayerPacket;
+import com.Portality.createsprings.server.packets.GrabPunchcard;
+import com.Portality.createsprings.server.packets.PushOffPacket;
+import com.Portality.createsprings.server.packets.RotatePlayerPacket;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
@@ -26,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -253,7 +258,7 @@ public class PunchcardInterpritator {
                         ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof PotatoCannonItem, 60);
                     }
                     if(info.getPlayer() instanceof ServerPlayer serverPlayer){
-                        //CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RotatePlayerPacket(serverPlayer.getXRot()));
+                        PacketDistributor.sendToPlayer(serverPlayer, new RotatePlayerPacket(serverPlayer.getXRot()));
                     }
                 }
             }
@@ -278,7 +283,7 @@ public class PunchcardInterpritator {
                         info.getPlayer().addDeltaMovement(new Vec3(0, 0.8f, 0));
                     }
                     if(info.getPlayer() instanceof ServerPlayer serverPlayer){
-                        //CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new AirDashPlayerPacket());
+                        PacketDistributor.sendToPlayer(serverPlayer, AirDashPlayerPacket.INSTANCE);
                         AllSoundEvents.STEAM.playOnServer(info.getPlayer().level(), BlockPos.containing(info.getPlayer().position()).above(), 0.8f, 1f);
                     }
                     air -= 25;
@@ -298,7 +303,7 @@ public class PunchcardInterpritator {
                         Vec3 newSpeed = getRaycastVector(info.getPlayer());
                         newSpeed = new Vec3(newSpeed.x, newSpeed.y / 3, newSpeed.z);
                         newSpeed = new Vec3(newSpeed.x % 3, newSpeed.y % 3, newSpeed.z % 3);
-                        //CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new GrabPacket(newSpeed));
+                        PacketDistributor.sendToPlayer(serverPlayer, new GrabPunchcard(newSpeed.toVector3f()));
                         serverPlayer.addDeltaMovement(newSpeed);
                         ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 10);
                     }
@@ -310,34 +315,25 @@ public class PunchcardInterpritator {
     }
 
     public static Vec3 getRaycastVector(Player player) {
-        // Получаем позицию глаз игрока
         Vec3 eyePosition = player.getEyePosition();
 
-        // Получаем направление взгляда
         Vec3 lookVector = player.getViewVector(1.0F);
 
-        // Вычисляем конечную точку рейкаста
         Vec3 endPoint = eyePosition.add(lookVector.x * 8, lookVector.y * 8, lookVector.z * 8);
 
-        // Создаем контекст для рейкаста, игнорируя жидкости
         ClipContext clipContext = new ClipContext(
                 eyePosition,
                 endPoint,
-                ClipContext.Block.OUTLINE, // Проверяем collision-боксы блоков
-                ClipContext.Fluid.NONE,    // Игнорируем жидкости
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.NONE,
                 player
         );
 
-        // Выполняем рейкаст
         HitResult hitResult = player.level().clip(clipContext);
 
-        // Если попали в блок или энтити и это не жидкость
         if (hitResult.getType() == HitResult.Type.BLOCK || hitResult.getType() == HitResult.Type.ENTITY) {
-            // Возвращаем разницу между позицией попадания и позицией глаз
             return hitResult.getLocation().subtract(eyePosition);
         }
-
-        // Если блок не найден или попали в жидкость
         return Vec3.ZERO;
     }
 
@@ -349,7 +345,7 @@ public class PunchcardInterpritator {
                 for(ItemStack slot : player.getInventory().items){
                     if(slot.getItem() != CSpringsBlocks.SPRING.asItem()){continue;}
                     float stored = getStoredSu(slot);
-                    if(stored < 5000){continue;}
+                    if(stored < 15000){continue;}
                     found = slot;
                 }
 
@@ -375,7 +371,7 @@ public class PunchcardInterpritator {
                         Vec3 newSpeed = serverPlayer.getViewVector(1).scale(-1);
 
                         if(check != Vec3.ZERO){
-                            //CSpringsPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> serverPlayer), new PushOffPacket());
+                            PacketDistributor.sendToPlayer(serverPlayer, PushOffPacket.INSTANCE);
                             serverPlayer.addDeltaMovement(newSpeed);
                         }
 

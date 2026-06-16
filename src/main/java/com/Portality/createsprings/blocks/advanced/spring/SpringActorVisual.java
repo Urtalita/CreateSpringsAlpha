@@ -1,6 +1,7 @@
 package com.Portality.createsprings.blocks.advanced.spring;
 
 import com.Portality.createsprings.CreateSprings;
+import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
 import com.simibubi.create.content.contraptions.render.ActorVisual;
 import com.simibubi.create.foundation.virtualWorld.VirtualRenderWorld;
@@ -24,7 +25,7 @@ public class SpringActorVisual extends ActorVisual {
 
         CompoundTag be = context.contraption.getActorAt(context.localPos).left.nbt();
         if(be != null){
-            progress = be.getFloat("Stored") / CreateSprings.STANDARD_SPRING_CAPACITY; //ModConfigs.common().SPRING_CAPACITY.get();
+            progress = be.getFloat("Stored") / ModConfigs.common().SPRING_CAPACITY.get();
             prevProgress = progress;
         }
 
@@ -37,7 +38,7 @@ public class SpringActorVisual extends ActorVisual {
         if(context.contraption.entity != null){
             if(contraption.equals(context.contraption.entity.getUUID())){
                 if(localPos.equals(context.localPos)){
-                    float prog = compoundTag.getFloat("Stored") / CreateSprings.STANDARD_SPRING_CAPACITY;;
+                    float prog = compoundTag.getFloat("Stored") / ModConfigs.common().SPRING_CAPACITY.get();
                     this.prevProgress = this.progress;
                     this.progress = prog;
                 }

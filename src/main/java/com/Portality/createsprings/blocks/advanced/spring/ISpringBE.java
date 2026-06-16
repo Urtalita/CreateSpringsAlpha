@@ -26,7 +26,7 @@ public interface ISpringBE extends IConnectableToPSKI {
 
     default String formatter(Integer integer) {
         if(Math.abs(integer) <= 1) return "AUTO";
-        return Integer.toString(Math.abs(integer));
+        return Integer.toString(Math.abs(integer) - 1);
     }
 
     default void updateHardnessSafe(float newHardness) {

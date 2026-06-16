@@ -98,7 +98,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
         int max = 256 + 1;
 
         targetHardness = new SpringValueBehavior(Component.translatable("spring.hardness"),
-                this, new SpringValueBoxTransform());
+                this, new DirectionalSidedValueBox((s) -> s.getValue(FACING).getOpposite(), 8, 4));
         targetHardness.between(-max, max);
         targetHardness.value = (int) DEFAULT_HARDNESS;
         targetHardness.withFormatter(this::formatter);
@@ -181,15 +181,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     @Override
     public boolean isGenerating() {
         return isGenerating;
-    }
-
-    private float calculateStressForHardness(float hardness) {
-        if (stored < capacity && !isGenerating) {
-            return 2f * hardness;
-        } else if (isGenerating && stored >= 2f * hardness) {
-            return -2f * hardness;
-        }
-        return 0;
     }
 
     public Direction getFacing(){
@@ -546,46 +537,6 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     @Override
     public float getImpactCof() {
         return 2;
-    }
-
-    private class SpringValueBoxTransform extends ValueBoxTransform.Sided {
-
-        @Override
-        protected Vec3 getSouthLocation() {
-            return VecHelper.voxelSpace(8, 4, 15.5f);
-        }
-
-        @Override
-        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
-            Vec3 location = getSouthLocation();
-
-            location = VecHelper.rotateCentered(location, AngleHelper.horizontalAngle(getSide()), Direction.Axis.Y);
-            location = VecHelper.rotateCentered(location, AngleHelper.verticalAngle(getSide()), Direction.Axis.X);
-
-            Direction springDirection = state.getValue(FACING);
-            Direction.Axis sideAxis = getSide().getAxis();
-            float angle = 180;
-            if(springDirection.getAxisDirection() == Direction.AxisDirection.NEGATIVE) angle += 180;
-            if(springDirection.getAxis() == Direction.Axis.X) angle -= 90;
-            if(springDirection.getAxis() == Direction.Axis.Z) angle += 90;
-
-            if(springDirection.getAxis() == Direction.Axis.Z && getSide() == Direction.UP) angle += 90;
-            if(springDirection.getAxis() == Direction.Axis.Z && getSide() == Direction.DOWN) angle -= 90;
-
-            location = VecHelper.rotateCentered(location, angle, sideAxis);
-
-            return location;
-        }
-
-        @Override
-        protected boolean isSideActive(BlockState state, Direction direction) {
-            return state.getValue(FACING).getAxis() != direction.getAxis();
-        }
-
-        @Override
-        public float getScale() {
-            return 0.5f;
-        }
     }
 
     //sable compat
