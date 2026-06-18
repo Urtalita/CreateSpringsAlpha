@@ -27,8 +27,8 @@ public class CSpringsClientEvents {
             EntityRenderDispatcher dispatcher = Minecraft.getInstance()
                     .getEntityRenderDispatcher();
             EngineArmorLayer.registerOnAll(dispatcher);
-            HatArmorLayer.registerOnAll(dispatcher);
             EngineBrokenArmorLayer.registerOnAll(dispatcher);
+            HatArmorLayer.registerOnAll(dispatcher);
         }
     }
 

@@ -2,8 +2,10 @@ package com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine;
 
 import com.Portality.createsprings.blocks.CSpringsBlocks;
 import com.Portality.createsprings.client.CSpringsPartalModels;
+import com.Portality.createsprings.items.advanced.hat.HatArmorLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.simibubi.create.foundation.mixin.accessor.EntityRenderDispatcherAccessor;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.model.EntityModel;
@@ -43,6 +45,7 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
         if (!(entityModel instanceof HumanoidModel<?> model))
             return;
 
+        ms.pushPose();
 
         if(entity.getPose() == Pose.CROUCHING){
             ms.translate(0, 0, 5/16f);
@@ -61,9 +64,6 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
 
         double horizontalSpeed = getHorizontalInterpolatedVelocityInLookDirection(entity, partialTick) * 40;
         double angleXAdditional = Math.clamp(horizontalSpeed, -20, 20);
-
-
-        ms.pushPose();
 
         model.body.translateAndRotate(ms);
 
@@ -87,9 +87,6 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
                 .rotateYDegrees(180)
 
                 .rotateXDegrees((float) (angleX + angleXAdditional))
-                //.rotateYDegrees((float) angleY)
-                //.rotateZDegrees((float) angleZ)
-
                 .uncenter();
 
         part.disableDiffuse()
@@ -102,8 +99,8 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
     public static void registerOnAll(EntityRenderDispatcher renderManager) {
         for (EntityRenderer<? extends Player> renderer : renderManager.getSkinMap().values())
             registerOn(renderer);
-        //for (EntityRenderer<?> renderer : renderManager.renderers.values())
-        //    registerOn(renderer);
+        for (EntityRenderer<?> renderer : ((EntityRenderDispatcherAccessor) renderManager).create$getRenderers().values())
+            registerOn(renderer);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -131,7 +128,6 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
     }
 
     public double getHorizontalInterpolatedVelocityInLookDirection(LivingEntity entity, float partialTicks) {
-        // 1. Вычисляем интерполированную скорость за кадр рендера (X и Z)
         double currentX = Mth.lerp(partialTicks, entity.xo, entity.getX());
         double currentZ = Mth.lerp(partialTicks, entity.zo, entity.getZ());
 
@@ -141,17 +137,12 @@ public class EngineBrokenArmorLayer<T extends LivingEntity, M extends EntityMode
         double velocityX = currentX - lastX;
         double velocityZ = currentZ - lastZ;
 
-        // 2. Получаем интерполированное направление взгляда (yaw)
         float interpolatedYaw = Mth.lerp(partialTicks, entity.yRotO, entity.getYRot());
 
-        // 3. Создаем нормализованный горизонтальный вектор взгляда (без учета наклона головы pitch)
-        // В Minecraft угол 0 градусов смотрит на Юг (Z+), расчет идет через радианы
         float angleRad = interpolatedYaw * (Mth.PI / 180.0F);
         double lookX = -Mth.sin(angleRad);
         double lookZ = Mth.cos(angleRad);
 
-        // 4. Скалярное произведение горизонтальной скорости и вектора взгляда
-        // Формула: (V.x * L.x) + (V.z * L.z)
         return (velocityX * lookX) + (velocityZ * lookZ);
     }
 }

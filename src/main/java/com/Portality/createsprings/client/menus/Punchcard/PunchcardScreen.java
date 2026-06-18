@@ -2,6 +2,7 @@ package com.Portality.createsprings.client.menus.Punchcard;
 
 import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.client.CSpringsGuiTextures;
+import com.Portality.createsprings.client.menus.TooltipDescription;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardAction;
 import com.Portality.createsprings.items.advanced.Punchcard.PunchcardExecutor;
@@ -14,9 +15,11 @@ import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -26,6 +29,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.Portality.createsprings.items.advanced.Punchcard.PunchcardFunction.getEndNum;
@@ -37,20 +41,23 @@ public class PunchcardScreen extends AbstractSimiScreen {
 
     private final CSpringsGuiTextures background = CSpringsGuiTextures.PUNCHCARD_BG;
 
-    private int maxActionsZise = 5;
+    private final int maxActionsSise = 5;
 
     private IconButton confirmButton;
     private ScrollInput executorSelector;
     private EditBox nameInput;
-    private ScrollInput[] selectors = new ScrollInput[maxActionsZise];
-    private PunchcardFunction[] actions = new PunchcardFunction[maxActionsZise];
-    private String[] parameters = new String[maxActionsZise];
-    private EditBox[] editBoxes = new EditBox[maxActionsZise];
+    private ScrollInput[] selectors = new ScrollInput[maxActionsSise];
+    private PunchcardFunction[] actions = new PunchcardFunction[maxActionsSise];
+    private String[] parameters = new String[maxActionsSise];
+    private EditBox[] editBoxes = new EditBox[maxActionsSise];
 
     private final CompoundTag tag;
     private boolean canConfigure;
     private String itemName;
     int maxActions;
+
+    private TooltipDescription executorDescription;
+    private TooltipDescription actionDescription;
 
     public PunchcardScreen(ItemStack stack){
         this.tag = stack.getOrDefault(CSpringsDataComponents.PUNCHCARD, new CompoundTag());
@@ -81,8 +88,6 @@ public class PunchcardScreen extends AbstractSimiScreen {
         int x = guiLeft;
         int y = guiTop;
 
-        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
-
         if(!canConfigure){
             initParamsEditBoxesString(x, y, graphics);
         }
@@ -109,6 +114,8 @@ public class PunchcardScreen extends AbstractSimiScreen {
             CSpringsGuiTextures toDraw = CSpringsGuiTextures.PUNCHCARD_ACTION_PARAMETER;
             toDraw.render(graphics, guiLeft + background.getWidth() - 106, guiTop + background.getHeight() - 195 + 23 * i);
         }
+
+        renderAdditional(graphics, mouseX, mouseY, partialTicks, x, y, background);
     }
 
     public static MutableComponent truncateComponent(Component original, int maxLength) {
@@ -135,7 +142,31 @@ public class PunchcardScreen extends AbstractSimiScreen {
         confirmButton.withCallback(() -> {
             program();
         });
+
         addRenderableWidget(confirmButton);
+
+
+        executorDescription = new TooltipDescription(guiLeft + 31 , guiTop + 47, 58, 142, this::updateExecutorDescTooltip, "executor");
+        actionDescription = new TooltipDescription(guiLeft + 90 , guiTop + 50, 100, 136, this::updateMainActionDescTooltip, "action");
+
+        executorDescription.updateIntersected(executorSelector);
+
+        addRenderableWidget(executorDescription);
+        addRenderableWidget(actionDescription);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        List<Renderable> renderables = getRenderables();
+        ArrayList<AbstractSimiWidget> widgets = new ArrayList<>();
+        for(Renderable renderable : renderables){
+            if(renderable instanceof ScrollInput abstractSimiWidget){
+                widgets.add(abstractSimiWidget);
+            }
+        }
+
+        actionDescription.updateIntersected(widgets);
     }
 
     private void reInitMainSelectors(){
@@ -150,10 +181,11 @@ public class PunchcardScreen extends AbstractSimiScreen {
     private void initMainSelectors(int i){
         removeWidget(selectors[i]);
         int finalI = i;
+        boolean forCondition = i == 0;
         selectors[i] = new SelectionScrollInput(guiLeft + background.getWidth() - 173, guiTop + background.getHeight() - 195 + 23 * i, 50, 18)
-                .forOptions(PunchcardFunction.getForSelector(PunchcardExecutor.getFromItem(renderedExecutor.getItem())))
+                .forOptions(PunchcardFunction.getForSelector(PunchcardExecutor.getFromItem(renderedExecutor.getItem()), forCondition))
                 .calling(state -> mainScrollUpdated(state, finalI))
-                .setState(getEndNum(PunchcardExecutor.getFromItem(renderedExecutor.getItem())))
+                .setState(getEndNum(PunchcardExecutor.getFromItem(renderedExecutor.getItem()), i))
                 .titled(Component.translatable(CreateSprings.MODID + ".punchcard.action.title"));
 
         addRenderableWidget(selectors[i]);
@@ -253,10 +285,11 @@ public class PunchcardScreen extends AbstractSimiScreen {
     }
 
     private void mainScrollUpdated(int state, int selector){
-        actions[selector] = PunchcardFunction.getForActions(PunchcardExecutor.getFromItem(renderedExecutor.getItem())).get(state);
+        boolean forCondition = (selector == 0);
+        actions[selector] = PunchcardFunction.getForActions(PunchcardExecutor.getFromItem(renderedExecutor.getItem()), forCondition).get(state);
         initParamsEditBoxes(selector);
 
-        if(state != getEndNum(PunchcardExecutor.getFromItem(renderedExecutor.getItem()))){
+        if(state != getEndNum(PunchcardExecutor.getFromItem(renderedExecutor.getItem()), selector)){
             if(maxActions <= selector){
                 maxActions = selector + 1;
             }
@@ -326,5 +359,29 @@ public class PunchcardScreen extends AbstractSimiScreen {
         }
 
         onClose();
+    }
+
+    private ArrayList<Component> updateExecutorDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.punchcard.tooltip.executor")));
+        return tooltip;
+    }
+
+    private ArrayList<Component> updateMainActionDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.punchcard.tooltip.action")));
+        return tooltip;
+    }
+
+    private ArrayList<Component> updateParamDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.punchcard.tooltip.param")));
+        return tooltip;
+    }
+
+    private ArrayList<Component> updateProgramDescTooltip(){
+        ArrayList<Component> tooltip = new ArrayList<>();
+        tooltip.addAll(TooltipDescription.splitAndFormat(Component.translatable("createsprings.punchcard.tooltip.program")));
+        return tooltip;
     }
 }

@@ -197,7 +197,8 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
 
         if(isGenerating && splashMode && stored != 0){
             prevProgress = progress;
-            progress = ISpringBE.springAnimation(phase) * (stored / capacity);
+            double realProgress = (stored / capacity);
+            progress = Mth.clamp(ISpringBE.springAnimation(phase) * realProgress, -2, 2);
 
             if(phase == 1){
                 SableCompatAbstractionLayer.pushSubLevels(this);
@@ -277,12 +278,14 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag,registries, clientPacket);
         isGenerating = tag.getBoolean("Generating");
+        splashMode = tag.getBoolean("splashMode");
         stored = tag.getFloat("Stored");
         phase = tag.getInt("phase");
-        splashMode = tag.getBoolean("splashMode");
         hardness = tag.getFloat("hardness");
         autoMode = tag.getBoolean("auto");
         reverseRotation = tag.getBoolean("reverseRotation");
+
+        if(splashMode){capacity = (double) ModConfigs.common().SPRING_CAPACITY.get() / ModConfigs.common().SPLASH_REDUCTION.get();}
 
         if (!clientPacket) {
             updateNetwork();
@@ -550,7 +553,7 @@ public class SpringBlockEntity extends GeneratingKineticBlockEntity implements T
                 facing.getStepZ()
         );
 
-        double energyRatio = (double) (stored * 16) / ModConfigs.common().SPRING_CAPACITY.get();
+        double energyRatio = (double) (stored * ModConfigs.common().SPLASH_REDUCTION.get()) / ModConfigs.common().SPRING_CAPACITY.get();
         double speedModifier = Math.sqrt(Math.max(0, energyRatio));
         return direction.scale(ModConfigs.common().KNOCKBACK_COEF.get())
                 .scale(speedModifier);

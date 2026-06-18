@@ -38,6 +38,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import static com.Portality.createsprings.blocks.advanced.spring.SpringInstance.SPRING_LEN;
 import static com.Portality.createsprings.items.advanced.hat.HatItem.readStackFromNBT;
@@ -64,10 +65,6 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
             return;
 
 
-        if(entity.getPose() == Pose.CROUCHING){
-
-        }
-
         ItemStack hatStack = getHatStack(entity.getArmorSlots());
 
         BlockState renderedState = CSpringsBlocks.SPRING.get().defaultBlockState();
@@ -78,6 +75,7 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
         SuperByteBuffer goggles = CachedBuffers.partial(AllPartialModels.GOGGLES, renderedState);
 
         ms.pushPose();
+
         model.hat.translateAndRotate(ms);
 
         renderItem(hatStack, ms, vc, light);
@@ -85,10 +83,17 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
         if(HatItem.getAnimation(hatStack)){
 
             float time = getTime(hatStack);
-            float rotation = time;
-            if(rotation <= -(duration/2)){rotation = (duration - time * -1) * -1;}
+            float rotation = (float) Math.sin(time / duration * Math.PI) * 90 / 2;
             ms.rotateAround(Axis.ZP.rotationDegrees((rotation)), -8/16f, 0/16f, 0);
             if(time * -1 > (duration - 2)){hatStack.set(CSpringsDataComponents.HAT_ANIMATION, false);}
+        }
+        if(HatItem.hasGoggles(hatStack)){
+            Vec3 offset = new Vec3(-8/16f, -18/16f, -8/16f);
+            ms.translate(offset.x, offset.y, offset.z);
+            goggles.disableDiffuse()
+                    .light(light)
+                    .renderInto(ms, vc);
+            ms.translate(-offset.x, -offset.y, -offset.z);
         }
 
         ms.rotateAround(Axis.XP.rotationDegrees(180), 0, 0, 0);
@@ -101,14 +106,6 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
         hat2.disableDiffuse()
                 .light(light)
                 .renderInto(ms, vc);
-
-
-        ms.translate(0, -2.5/16f, 0);
-        if(HatItem.hasGoggles(hatStack)){
-            goggles.disableDiffuse()
-                    .light(light)
-                    .renderInto(ms, vc);
-        }
 
         ms.popPose();
     }

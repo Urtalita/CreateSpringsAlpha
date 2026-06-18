@@ -101,10 +101,10 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
         int y = topPos;
         button = new LampButton(213 + x, 163 + y);
 
-        leverDescription = new TooltipDescription(x + 38, y + 68, 180, 100, this::updateMainDescTooltip);
-        overdriveDescription = new TooltipDescription(x + 255, y + 41, 62, 164, this::updateOverdriveDescTooltip);
-        waterDescription = new TooltipDescription(x - 61, y + 41, 62, 164, this::updateWaterDescTooltip);
-        fuelDescription = new TooltipDescription(x, y + 163, 40, 40, this::updateFuelDescTooltip);
+        leverDescription = new TooltipDescription(x + 38, y + 68, 180, 100, this::updateMainDescTooltip, "level");
+        overdriveDescription = new TooltipDescription(x + 255, y + 41, 62, 164, this::updateOverdriveDescTooltip, "overdrive");
+        waterDescription = new TooltipDescription(x - 61, y + 41, 62, 164, this::updateWaterDescTooltip, "water");
+        fuelDescription = new TooltipDescription(x, y + 163, 40, 40, this::updateFuelDescTooltip, "fuel");
 
         overdriveButtonDescription = new OverdriveButtonDescription(x + 213, y + 163, 40, 40);
 

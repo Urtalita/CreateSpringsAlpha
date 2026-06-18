@@ -53,7 +53,7 @@ public class CSpringsItemColors {
     }
 
     public static int getARGB(int alpha, int red, int green, int blue) {
-        // Обрезаем значения до 8 бит и составляем цвет
+        // restoring colour
         return ((alpha & 0xFF) << 24) |
                 ((red & 0xFF) << 16) |
                 ((green & 0xFF) << 8)  |

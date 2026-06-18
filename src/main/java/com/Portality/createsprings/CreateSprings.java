@@ -19,9 +19,12 @@ import com.Portality.createsprings.entities.CSpringsEntityes;
 import com.Portality.createsprings.entities.renderer.SpringAlloyBlockProjectileRenderer;
 import com.Portality.createsprings.entities.renderer.SpringProjectileRenderer;
 import com.Portality.createsprings.items.CSpringsArmorMaterials;
+import com.Portality.createsprings.items.CSpringsItemColors;
 import com.Portality.createsprings.items.advanced.hat.HatItem;
 import com.Portality.createsprings.recipe.CSpringsRecipes;
+import com.Portality.createsprings.recipe.NBTShapelessRecipe;
 import com.Portality.createsprings.server.contraption.CspringsContraptionTypes;
+import com.Portality.createsprings.server.contraption.SpringContraption;
 import com.Portality.createsprings.server.fluid.CSpringsFluids;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.SpringLauncher.MouseSensitivityHandler;
@@ -31,6 +34,7 @@ import com.Portality.createsprings.items.advanced.Punchcard.PunchcardInterpritat
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.Portality.createsprings.server.CSpringsPackets;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
@@ -52,6 +56,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -75,6 +80,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(CreateSprings.MODID)
@@ -210,17 +217,12 @@ public class CreateSprings {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            //ModItemColors.register();
+            CSpringsItemColors.register();
             EntityRenderers.register(CSpringsEntityes.SPRING_PROJECTILE.get(), SpringProjectileRenderer::new);
             EntityRenderers.register(CSpringsEntityes.SPRING_ALLOY_BLOCK_PROJECTILE.get(), SpringAlloyBlockProjectileRenderer::new);
             CSpringsPartalModels.register();
 
             PonderIndex.addPlugin(new CSpringsPonderPlugin());
-        }
-
-        @SubscribeEvent
-        public static void commonSetup(FMLCommonSetupEvent event){
-            event.enqueueWork(PunchcardInterpritator::registerActions);
         }
 
         @SubscribeEvent
@@ -239,6 +241,21 @@ public class CreateSprings {
         }
     }
 
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
+    public static class CommonModEvents {
+        @SubscribeEvent
+        public static void registerSerializers(RegisterEvent event) {
+            event.register(BuiltInRegistries.RECIPE_SERIALIZER.key(), helper -> {
+                helper.register(ResourceLocation.fromNamespaceAndPath(CreateSprings.MODID, "nbt_shapeless"), NBTShapelessRecipe.Serializer.INSTANCE);
+            });
+        }
+
+        @SubscribeEvent
+        public static void commonSetup(FMLCommonSetupEvent event){
+            event.enqueueWork(PunchcardInterpritator::registerActions);
+        }
+    }
+
     @SubscribeEvent
     public void onExplosionStart(ExplosionEvent.Start event) {
         Explosion explosion = event.getExplosion();
@@ -248,6 +265,10 @@ public class CreateSprings {
         int radius = 3;
         int radiusSquared = radius * radius;
         int distanceSquared;
+
+        AABB aabb = new AABB(explosion.center().add(radius, radius, radius), explosion.center().add(-radius, -radius, -radius));
+
+        List<AbstractContraptionEntity> inArea = level.getEntitiesOfClass(AbstractContraptionEntity.class, aabb);
 
         for(int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {

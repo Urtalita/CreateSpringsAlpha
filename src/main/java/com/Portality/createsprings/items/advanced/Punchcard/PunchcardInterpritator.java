@@ -165,12 +165,12 @@ public class PunchcardInterpritator {
 
     public static Function<ExecutorInfo, Void> waitTicks() {
         return (info) -> {
-            int param = Integer.parseInt(getParam(info.getStack()));
-            if(param <= 10){
+            float param = Integer.parseInt(getParam(info.getStack()));
+            int rounded = Math.round(param / 10) * 10;
+            if(info.getPlayer().level().getGameTime() % rounded == 0){
                 info.nextAction();
                 return null;
             }
-            setParam(String.valueOf(param - 10), info.getStack());
             return null;
         };
     }
@@ -255,7 +255,7 @@ public class PunchcardInterpritator {
                     for(int i = 0; i < 3; i++){
                         info.getItem().use(info.getLevel(), info.getPlayer(), InteractionHand.MAIN_HAND);
                         info.getPlayer().setXRot(info.getPlayer().getXRot() - 5);
-                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof PotatoCannonItem, 60);
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof PotatoCannonItem, 40);
                     }
                     if(info.getPlayer() instanceof ServerPlayer serverPlayer){
                         PacketDistributor.sendToPlayer(serverPlayer, new RotatePlayerPacket(serverPlayer.getXRot()));
@@ -305,7 +305,7 @@ public class PunchcardInterpritator {
                         newSpeed = new Vec3(newSpeed.x % 3, newSpeed.y % 3, newSpeed.z % 3);
                         PacketDistributor.sendToPlayer(serverPlayer, new GrabPunchcard(newSpeed.toVector3f()));
                         serverPlayer.addDeltaMovement(newSpeed);
-                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 10);
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 9);
                     }
                 }
             }
@@ -352,7 +352,7 @@ public class PunchcardInterpritator {
                 if(found == null){return null;}
 
                 if(info.getItem() instanceof ISpringPoweredTool tool){
-                    SpringPoweredCore.detachSpring(info.getStack(), info.getPlayer());
+                    if(PunchcardExecutor.getFromItem(info.getItem()) != PunchcardExecutor.SPRING_LAUNCHER) SpringPoweredCore.detachSpring(info.getStack(), info.getPlayer());
                     tool.getCore().attachSpring(info.getStack(), found);
                 }
             }
@@ -375,7 +375,7 @@ public class PunchcardInterpritator {
                             serverPlayer.addDeltaMovement(newSpeed);
                         }
 
-                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 10);
+                        ShootableGadgetItemMethods.applyCooldown(info.getPlayer(), info.getStack(), InteractionHand.MAIN_HAND, s -> s.getItem() instanceof ExtendoGripItem, 9);
                     }
                 }
             }

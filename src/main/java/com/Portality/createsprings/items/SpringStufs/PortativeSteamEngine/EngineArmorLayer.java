@@ -5,6 +5,7 @@ import com.Portality.createsprings.client.CSpringsPartalModels;
 import com.Portality.createsprings.config.ModConfigs;
 import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.SpringPoweredCore;
+import com.Portality.createsprings.items.advanced.hat.HatArmorLayer;
 import com.Portality.createsprings.server.CSpringsDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -54,7 +55,6 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
         if (!(entityModel instanceof HumanoidModel<?> model))
             return;
 
-
         if(entity.getPose() == Pose.CROUCHING){
             ms.translate(0, 0, 5/16f);
         }
@@ -66,8 +66,6 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
 
         BlockState renderedState = CSpringsBlocks.SPRING.get().defaultBlockState();
         VertexConsumer vc = buffer.getBuffer(Sheets.cutoutBlockSheet());
-        ms.translate(-1 / 2f, 13 / 16f, 12/16f);
-        ms.scale(1, -1, -1);
 
         SuperByteBuffer engine = CachedBuffers.partial(CSpringsPartalModels.PORTATIVE_ENGINE, renderedState);
         SuperByteBuffer shaft = CachedBuffers.partial(CSpringsPartalModels.ENGINE_SHAFT, renderedState);
@@ -79,6 +77,9 @@ public class EngineArmorLayer <T extends LivingEntity, M extends EntityModel<T>>
         }
 
         ms.pushPose();
+
+        ms.translate(-1 / 2f, 13 / 16f, 12/16f);
+        ms.scale(1, -1, -1);
 
         model.body.translateAndRotate(ms);
         float curRot = engineSpeed * AnimationTickHolder.getRenderTime(entity.level()) % 360;

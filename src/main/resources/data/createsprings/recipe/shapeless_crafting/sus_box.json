@@ -1,5 +1,5 @@
 {
-  "type": "createsprings:nbt_aware_shapeless",
+  "type": "createsprings:nbt_shapeless",
   "ingredients": [
     {
       "item": "createsprings:spring"

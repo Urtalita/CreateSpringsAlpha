@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 public class SplashCallback implements BlockSubLevelCollisionCallback {
@@ -23,12 +24,8 @@ public class SplashCallback implements BlockSubLevelCollisionCallback {
         return 5.0;
     }
 
-    public void onHit(final ServerLevel level, final BlockPos pos, final BlockState state, final Vector3d hitPos) {
-
-    }
-
     @Override
-    public CollisionResult sable$onCollision(BlockPos pos, Vector3d hitPos, double impactVelocity) {
+    public CollisionResult sable$onCollision(BlockPos pos, @Nullable BlockPos otherHitBlockPos, Vector3d impactPosition, double impactVelocity) {
         final double triggerVelocity = this.getTriggerVelocity();
 
         if (impactVelocity * impactVelocity < triggerVelocity * triggerVelocity) {

@@ -26,59 +26,44 @@
   "block.createsprings.molten_spring_alloy": "Расплавленный пружинный сплав",
   "block.createsprings.spring_alloy_casing": "Корпус из пружинного сплава",
   "block.createsprings.spring_catapult": "Пружинная катапульта",
-  "block.createsprings.test": "Тестовый блок",
 
   "createsprings.ponder.catapult.header": "Передача предметов с помощью пружинной катапульты",
   "createsprings.ponder.catapult.text_1": "ПКМ крадучись на блок с Пружинной катапультой в руках чтобы выбрать её цель",
   "createsprings.ponder.catapult.text_2": "Установленная катапульта теперь будет запускать предметы в выбранную цель",
-  "createsprings.ponder.catapult.text_3": "Целью может быть любой блок в радиусе 100 блоков",
+  "createsprings.ponder.catapult.text_3": "Целью может быть любой блок в радиусе 150 блоков",
   "createsprings.ponder.catapult.text_4": "Если цель не выбрана, катапульта не будет ничего делать",
   "createsprings.ponder.catapult.text_5": "Попадание предметов на катапульту вызывает срабатывание",
   "createsprings.ponder.catapult.text_6": "Предоставьте вращение чтобы зарядить её",
 
   "createsprings.ponder.catapult_second_target.header": "Типами целей пружинной катапульты",
   "createsprings.ponder.catapult_second_target.text_1": "ПКМ крадучись на блок с Пружинной катапультой в руках чтобы выбрать её Первую цель",
-  "createsprings.ponder.catapult_second_target.text_2": "ПКМ крадучись 2 раза на блок с Пружинной катапультой в руках чтобы выбрать её Вторую цель",
+  "createsprings.ponder.catapult_second_target.text_2": "ПКМ крадучись ещё раз на блок с Пружинной катапультой в руках чтобы выбрать её Вторую цель",
   "createsprings.ponder.catapult_second_target.text_3": "После получения предметов от других катапульт или срабатывания, катапульта будет менять цели",
 
   "createsprings.ponder.explosion.header": "Взрывная зарядка пружин",
   "createsprings.ponder.explosion.text_1": "Когда взрыв происходит возле пружины, она получает немного заряда",
-  "createsprings.ponder.explosion.text_2": "Пружины будут заряжаться, даже если взрыв происходит в воде",
-
-  "createsprings.ponder.hardness.header": "Жёсткость пружин",
-  "createsprings.ponder.hardness.text_1": "Скорость ввода и вывода может быть настроена",
-  "createsprings.ponder.hardness.text_2": "Используя панель сбоку пружины установите её жёсткость",
-  "createsprings.ponder.hardness.text_3": "Чем больше жёсткость пружины, тем больше ен она потребляет во время зарядки ,и тем больше энергии производит при разрядке",
+  "createsprings.ponder.explosion.text_2": "Если пружина не направлена на взыв, она взрывается",
+  "createsprings.ponder.explosion.text_3": "пружина зарядится даже если взрыв произошёл в воде",
 
   "createsprings.ponder.kinetic_interface.header": "Кинетический интерфейс",
   "createsprings.ponder.kinetic_interface.text_1": "К пружинам на штуковинах трудно получить доступ",
   "createsprings.ponder.kinetic_interface.text_2": "Этот компонент позволяет взаимодействовать с пружинами на штуковинах без необходимости остановки",
-  "createsprings.ponder.kinetic_interface.text_3": "Между интерфейсами должнен быть 1 блок свободного пространства",
-  "createsprings.ponder.kinetic_interface.text_4": "При соединении интерфейс будет представлять собой все пружины и большие пружины на штуковине",
+  "createsprings.ponder.kinetic_interface.text_3": "Между интерфейсами должнен быть блок свободного пространства",
+  "createsprings.ponder.kinetic_interface.text_4": "При соединении интерфейс будет представлять собой ВСЕ пружины и большие пружины на штуковине",
   "createsprings.ponder.kinetic_interface.text_5": "Если к интерфейсу подвести вращение, он будет заряжать пружины на штуковине",
   "createsprings.ponder.kinetic_interface.text_6": "Если запитать интерфейс, он будет разряжать пружины на штуковине генерируя энергию",
 
   "createsprings.ponder.large_spring.header": "Сборка больших пружин",
-  "createsprings.ponder.large_spring.text_1": "Чтобы собрать большую пружину, сначала поставьте квадрат 3*3 из колец большой пружины",
-  "createsprings.ponder.large_spring.text_2": "Все кольца должны стоять в одном направлении",
+  "createsprings.ponder.large_spring.text_1": "Чтобы собрать большую пружину, сначала соберите квадрат 3*3 из колец большой пружины",
+  "createsprings.ponder.large_spring.text_2": "Все кольца должны смотреть в одну сторону",
   "createsprings.ponder.large_spring.text_3": "Добавьте полые квадраты 3*3, чтобы сделать пружину длиннее",
   "createsprings.ponder.large_spring.text_4": "Закончите первый слой",
 
-  "createsprings.ponder.large_spring_speed.header": "Использование больших пружин",
-  "createsprings.ponder.large_spring_speed.text_1": "Когда центральный блок первого слоя активирован , пружина начнёт отдавать накопленную энергию",
-  "createsprings.ponder.large_spring_speed.text_2": "Скорость генерируемого вращения зависит от силы сигнала",
-  "createsprings.ponder.large_spring_speed.text_3": "Большую пружину также можно перевести в режим всплеска",
   "createsprings.ponder.spring.header": "Накапливаем кинетическую энергию используя пружины",
-
   "createsprings.ponder.springsplash.header": "Используем кинетическую энергию в пружинах",
 
-  "createsprings.ponder.welding.header": "Сварка трением",
-  "createsprings.ponder.welding.text_1": "Сварка трением это ещё один способ обработки",
-  "createsprings.ponder.welding.text_2": "Оба блока должны вращаться с одинаковой скоростью, но в противоположных направлениях",
-  "createsprings.ponder.welding.text_3": "Когда пространство между сварщиками будет заполнено, сварка начнётся",
-
   "createsprings.pse.tooltip.overdrive": "Когда _форсаж_ включен портативный двигатель будет работать с максимальной отдачей в любом режиме, но _давление_ будет _расти_, Когда _давление_ достигает _100_ двигатель _взрывается_",
-  "createsprings.pse.tooltip.overdrive2": "Вы сможете выполнить _паровой рывок_ если _давление_ больше 70 чтобы снизить его, но это временная мера",
+  "createsprings.pse.tooltip.overdrive2": "Вы сможете выполнить _паровой рывок_ или _паровой выброс_ если чтобы снизить _давление_, но это временная мера",
   "createsprings.pse.tooltip.water": "Когда в двигателе нет _воды_, он попытается найти _ведро воды_ в инвентаре если ведро _найдено_ внутренний _бак_ будет _заполнен_ а ведро _не потратится_",
   "createsprings.punchcard.airDash": "Воздушный рывок",
   "createsprings.punchcard.explodeChamber": "взорвать камеру",
@@ -91,12 +76,16 @@
   "createsprings.punchcard.toggleBoost": "Включить форсаж",
   "createsprings.punchcard.waitForActivation": "Ждать до активации",
   "entity.createsprings.hat": "Шляпа",
-  "entity.createsprings.sus_package": "Подозрительная коробка",
+  "entity.createsprings.sus_package": "Картонная коробка",
   "fluid.createsprings.molten_spring_alloy": "Расплавленный пружинный сплав",
+
   "item.createsprings.explosion_chamber.tooltip.behaviour1": "Заряжает _пружину_",
-  "item.createsprings.explosion_chamber.tooltip.condition1": "ПКМ с пружиной и топливом в камере",
+  "item.createsprings.explosion_chamber.tooltip.condition1": "ПКМ с пружиной и взрывным веществом в камере",
+  "item.createsprings.explosion_chamber.tooltip.behaviour2": "Кладёт вещество внутрь",
+  "item.createsprings.explosion_chamber.tooltip.condition2": "если взрывное вещество стакнуто на камере",
   "item.createsprings.explosion_chamber.tooltip.summary": "Прочная _камера_ для взрывной _зарядки пружин_",
-  "item.createsprings.hat.tooltip.summary": "Шляпа которую можно _покрасить_ или _поставить на землю_ ,также способна хранить _1 стак предметов_. Если внутрь положить _инженерные очки_ будет работать как _инженерные очки_",
+
+  "item.createsprings.hat.tooltip.summary": "Шляпа которую можно _поставить на землю_ ,также способна хранить _1 стак предметов_. Если внутрь положить _инженерные очки_ будет работать как _инженерные очки_",
   "item.createsprings.incomplete_punchcard": "Незаконченная перфокарта",
   "item.createsprings.molten_spring_alloy_bucket": "Расплавленный пружинный сплав",
 
@@ -110,11 +99,13 @@
   "item.createsprings.portative_steam_engine": "Портативный паровой двигатель",
   "item.createsprings.portative_steam_engine.tooltip.behaviour1": "Открывает интерфейс двигателя где можно _Выбрать режим работы_, переключить _Форсаж_ или добавить _Топливо_",
   "item.createsprings.portative_steam_engine.tooltip.behaviour2": "Переключает _Форсаж_ на лету",
-  "item.createsprings.portative_steam_engine.tooltip.behaviour3": "Позволяет совершить _Паровой рывок_ когда _давление_ больше _70_, а также снижает _давление_",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour3": "Совершает _Паровой рывок_ когда _давление_ больше _70_, а также снижает _давление_",
+  "item.createsprings.portative_steam_engine.tooltip.behaviour4": "Выбрасывает _горячий_ пар, _поджигающий мобов_, впереди игрока, снижает _давление_",
   "item.createsprings.portative_steam_engine.tooltip.condition1": "При нажатии Z",
   "item.createsprings.portative_steam_engine.tooltip.condition2": "При нажатии X",
   "item.createsprings.portative_steam_engine.tooltip.condition3": "При нажатии G",
-  "item.createsprings.portative_steam_engine.tooltip.summary": "Маломощный _Паровой двигатель_, способен _заряжать инструменты_, _освещать путь_ ,а также _согревать и ускорять игроков_",
+  "item.createsprings.portative_steam_engine.tooltip.condition4": "При нажатии V",
+  "item.createsprings.portative_steam_engine.tooltip.summary": "Маломощный _Паровой двигатель_, способен _заряжать инструменты_, _освещать путь_ ,а также _защищать и ускорять игроков_",
 
   "item.createsprings.broken_portative_steam_engine.tooltip.summary": "_Механизм_ который стал жертвой неправильных _условий использования_, несмотря на повреждения _подлежит починке_",
 
@@ -122,7 +113,9 @@
   "item.createsprings.punchcard.tooltip.behaviour2": "Если перфокарта находится в инструменте и _ждёт активации_ ,следующая инструкция будет выполненна _моментально_",
   "item.createsprings.punchcard.tooltip.condition1": "При ПКМ крадучись",
   "item.createsprings.punchcard.tooltip.condition2": "При нажатии TAB",
-  "item.createsprings.punchcard.tooltip.summary": "Способна _программировать_ некоторые инструменты исполняя последовательно простые инструкции, может вмещать небольшое количество команд",
+  "item.createsprings.punchcard.tooltip.condition2": "Когда стакнута на подходящем инструменте",
+  "item.createsprings.punchcard.tooltip.condition1": "_кладёт_ перфокарту в инструмент",
+  "item.createsprings.punchcard.tooltip.summary": "Способна _программировать_ некоторые инструменты, может вмещать небольшое количество команд",
 
   "item.createsprings.spring.tooltip.summary": "В форме _предмета_, имея _заряд_ может _откидывать_ сущности",
   "item.createsprings.spring.tooltip.condition1": "При ПКМ на _блоке_",
@@ -140,6 +133,8 @@
   "item.createsprings.spring_drill.tooltip.behaviour2": "Моментально _разряжает_ пружины в инструменте _преобразуя заряд_ достигая _запредельных значений_ скорости",
   "item.createsprings.spring_drill.tooltip.condition1": "ПКМ",
   "item.createsprings.spring_drill.tooltip.condition2": "ПКМ с крюком в инструменте",
+  "item.createsprings.spring_base.tooltip.behaviour3": "Кладёт внутрь _пружину_",
+  "item.createsprings.spring_base.tooltip.condition3": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_drill.tooltip.summary": "Бур работающий на пружинной тяге может держать до _2 пружин_. _Скорость_ бурения зависит от _скорости инструмента_",
 
   "item.createsprings.spring_fan": "Пружинный вентилятор",
@@ -147,12 +142,16 @@
   "item.createsprings.spring_fan.tooltip.behaviour2": "Моментально _разряжает_ пружины в инструменте _преобразуя заряд_ достигая _запредельных значений_ скорости",
   "item.createsprings.spring_fan.tooltip.condition1": "ПКМ",
   "item.createsprings.spring_fan.tooltip.condition2": "ПКМ с крюком в инструменте",
+  "item.createsprings.spring_fan.tooltip.behaviour3": "Кладёт внутрь _пружину_",
+  "item.createsprings.spring_fan.tooltip.condition3": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_fan.tooltip.summary": "Портативный _вентилятор_ работающий на пружинной тяге, может держать до _2 пружин_ притягивает или отталкивает _сущности_ от игрока, _направление_ меняется при нажатии _SHIFT_, работает на _элитрах_",
 
   "item.createsprings.spring_launcher.tooltip.behaviour1": "Выпускает _пружину_ которая, _самонаводиться_ при _отскоке_ от блока или сущности",
   "item.createsprings.spring_launcher.tooltip.behaviour2": "Выпускает _блок пружинного сплава_ который _взрывается_ при приземлении",
   "item.createsprings.spring_launcher.tooltip.condition1": "ПКМ c пружинами в арбалете",
   "item.createsprings.spring_launcher.tooltip.condition2": "ПКМ с пружиной и блоком пружинного сплава в арбалете",
+  "item.createsprings.spring_launcher.tooltip.behaviour3": "Кладёт внутрь _пружину_",
+  "item.createsprings.spring_launcher.tooltip.condition3": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_launcher.tooltip.summary": "_Мощный_ арбалет, может стрелять _пружинами_, либо _блоками пружинного сплава_. Можно добавить _прицел_ положив _подзорную трубу_ внутрь",
 
   "item.createsprings.spring_projectile": "Летящая пружина",
@@ -161,12 +160,16 @@
   "item.createsprings.spring_saw.tooltip.behaviour2": "Моментально _разряжает_ пружины в инструменте _преобразуя заряд_ достигая _запредельных значений_ скорости",
   "item.createsprings.spring_saw.tooltip.condition1": "ПКМ",
   "item.createsprings.spring_saw.tooltip.condition2": "ПКМ с крюком в инструменте",
+  "item.createsprings.spring_saw.tooltip.behaviour3": "Кладёт внутрь _пружину_",
+  "item.createsprings.spring_saw.tooltip.condition3": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_saw.tooltip.summary": "Пила работающая на пружинной тяге, может держать до _2 пружин_. _Скорость_ добычи зависит от _скорости инструмента_",
 
   "item.createsprings.spring_shove.tooltip.behaviour1": "увеличивает _скорость_ инструмента",
   "item.createsprings.spring_shove.tooltip.behaviour2": "моментально _разряжает_ пружины в инструменте _преобразуя заряд_ достигая _запредельных значений_ скорости",
   "item.createsprings.spring_shove.tooltip.condition1": "ПКМ",
   "item.createsprings.spring_shove.tooltip.condition2": "ПКМ с крюком в инструменте",
+  "item.createsprings.spring_shove.tooltip.behaviour3": "Кладёт внутрь _пружину_",
+  "item.createsprings.spring_shove.tooltip.condition3": "Когда пружина стакнута на инструменте",
   "item.createsprings.spring_shove.tooltip.summary": "инструмент работающий на пружинной тяге может держать до _2 пружин_, _скорость_ добычи зависит от _скорости инструмента_",
 
   "item.createsprings.sus_package.tooltip.summary": "Эта, на первый взгляд обычная коробка, при _падении_ с высоты или _разрушении_ выпускает _пружину_ которая, _самонаводиться_ при _отскоке_ от блока или сущности",
@@ -225,14 +228,14 @@
   "createsprings.punchcard.executor.title": "Исполнители:",
   "createsprings.punchcard.action.title": "Инструкция:",
   "createsprings.punchcard.name": "Название:",
-  "createsprings.punchcard.waitForSpeedIncreased": "Ждать пока скорость не уменьшиться до",
-  "createsprings.punchcard.waitForSpeedDecreased": "Ждать пока скорость не увеличется до",
+  "createsprings.punchcard.waitForSpeedIncreased": "при уменьшении скорости до",
+  "createsprings.punchcard.waitForSpeedDecreased": "при увеличении скорости до",
   "createsprings.punchcard.use": "Использовать предмет",
   "createsprings.punchcard.end": "Конец",
   "createsprings.punchcard.detachSpring": "Убрать пружину",
   "createsprings.punchcard.sendMessage": "Отправить сообщение игроку",
   "createsprings.punchcard.push_off": "Оттолкнуться от блока",
-  "createsprings.punchcard.wait": "Ждать тиков",
+  "createsprings.punchcard.wait": "выполнять каждые(тиков):",
   "createsprings.punchcard.waitForSelected": "Ждать пока предмет не будет выбран",
 
   "create.spring.stopped": "Похоже что пружина не может двигаться дальше из за не ломаемых блоков",
@@ -246,6 +249,7 @@
 
   "createsprings.pse.boost": "Давление: ",
   "createsprings.pse.dash": "Паровой рывок: ",
+  "createsprings.pse.release": "Паровой выброс: ",
   "createsprings.pse.fuel_usage": "Использует топливо как: ",
   "createsprings.pse.furnace": " Печек",
 
@@ -257,7 +261,7 @@
 
   "createsprings.ponder.springsplash.text_1": "Кликните крюком по пружине, чтобы перевести её в режим всплеска",
   "createsprings.ponder.springsplash.text_2": "Вы можете убрать крюк, кликнув пустой рукой",
-  "createsprings.ponder.springsplash.text_3": "В режиме всплеска пружины моментально отдают накопленую энергию",
+  "createsprings.ponder.springsplash.text_3": "В режиме всплеска пружины моментально отдают накопленную энергию",
   "createsprings.ponder.springsplash.text_4": "В этом режиме пружины могут толкать сущностей",
   "createsprings.ponder.springsplash.text_5": "Также пружины способны ломать блоки",
   "createsprings.ponder.springsplash.text_6": "Некоторые блоки требую больше заряда",
@@ -269,7 +273,7 @@
   "key.createsprings.pse_open": "Открыть портативный паровой двигатель",
   "advancement.createsprings.programmer": "Программист ",
   "advancement.createsprings.programmer.desc": "Запрограммируйте перфокарту",
-  "key.categories.createsprings": "Create Springs",
+  "key.categories.createsprings": "Create: Springs",
   "tooltip.springstuf.saved": "Запасено:",
   "tooltip.springstuf.speed": "Скорость: ",
 
@@ -277,12 +281,10 @@
   "advancement.createsprings.pea_shooter.desc": "Автоматизируйте картофельную пушку",
   "advancement.createsprings.spring_trap": "Спрингтрап ",
   "advancement.createsprings.spring_trap.desc": "Поставьте подозрительную коробку",
-  "advancement.createsprings.cash_back": "Не рой другому яму",
-  "advancement.createsprings.cash_back.desc": "Получите удар от собственной пружины",
 
   "createsprings.pse.tooltip.overdrive_button": "Эта кнопка включает форсаж",
   "createsprings.pse.tooltip.fuel": "слот для _топлива_, вы можете положить сюда любые _сгораемые_ предметы",
-  "tooltip.springstuf.createsprings.no_modifires": "Положите пружину или модификатор внутрь",
+  "tooltip.springstuf.createsprings.no_modifires": "Стакните пружину или модификатор на инструменте",
 
   "createsprings.punchcard.slim": "Конец",
   "tooltip.springstuf.modifiers": "Содержит:",
@@ -336,7 +338,6 @@
   "createsprings.ponder.analog_latch.text_6": "Сила сигнала: 0",
   "createsprings.ponder.analog_latch.text_7": "Сила сигнала: 4",
 
-  "createsprings.ponder.explosion.text_3": "пружина зарядится даже если взрыв произошёл в воде",
   "entity.createsprings.bouncy_item": "Прыгучий предмет",
   "item.createsprings.spring_alloy.tooltip.summary": "Невероятно _упругий_ материал, устойчив к _взрывам_, имеет низкую температуру плавления",
 
@@ -357,5 +358,45 @@
   "createsprings.ponder.spring_sable.text_3": "Если пружина на подуровне, она может толкнуть его",
   "createsprings.ponder.spring_sable.text_4": "Одинаковый импульс применяется к обоим подуровням",
   "createsprings.ponder.spring_sable.text_5": "На подуровне пружина может отсоединять блоки и отстреливать их",
-  "createsprings.ponder.spring_sable.text_6": "Если пружина сталкивается с достаточной скоростью, она активируется"
+  "createsprings.ponder.spring_sable.text_6": "Если пружина сталкивается с достаточной скоростью, она активируется",
+
+  "block.createsprings.obsidian_plate.tooltip.summary": "_Надёжная защита_ ваших построек от _взрывов_",
+  "block.createsprings.obsidian_slab.tooltip.summary": "Прочная, устойчивая к взрывам плита",
+
+  "block.createsprings.spring_alloy_block.tooltip.behaviour1": "_Смягчает_ урон от падения",
+  "block.createsprings.spring_alloy_block.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.spring_alloy_block.tooltip.summary": "_пружинный сплав_ в форме блока",
+
+  "block.createsprings.spring_alloy_casing.tooltip.behaviour1": "_Смягчает_ урон от падения",
+  "block.createsprings.spring_alloy_casing.tooltip.condition1": "При приземлении на блок",
+  "block.createsprings.spring_alloy_casing.tooltip.summary": "_Корпус_ для механизмов использующих свойства _пружинного сплава_",
+
+  "createsprings.ponder.spring.text_6": "По стандарту пружина автоматически регулирует жёсткость для максимальной эффективности",
+
+  "createsprings.punchcard.tooltip.action": "тут вы можете _выбрать_ инструкции которые будут _выполнять инструменты_, первая инструкция это всегда _условие_ при котором перфокарта будет _активирована_",
+  "createsprings.punchcard.tooltip.executor": "тут вы можете _выбрать_ инструмент который будет _исполнять_ перфокарту, некоторые инструменты имеют _особые возможности_ которые могут быть _активированы перфокартой_",
+
+  "createsprings.tooltip.action": "Инструкции",
+  "createsprings.tooltip.executor": "Исполнители",
+  "createsprings.tooltip.fuel": "топливо",
+  "createsprings.tooltip.level": "информация",
+  "createsprings.tooltip.overdrive": "Форсаж",
+  "createsprings.tooltip.water": "вода",
+
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.behaviour1": "Образует _гладкий камень_",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.condition1": "При контакте с водой",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.summary": "_вязкая_, горячая, густая жидкость с металлическим блеском, странно, но она _не обжигает_",
+
+  "createsprings.ponder.welding.header": "Сварка трением",
+  "createsprings.ponder.welding.text_1": "Сварка трением это новый способ обработки",
+  "createsprings.ponder.welding.text_2": "когда пространство между сварщиками заполнено , и они вращаются достаточно быстро сварка начинается",
+  "createsprings.ponder.welding.text_3": "скорость сварки зависит от разницы скоростей механизмов",
+  "createsprings.ponder.welding.text_4": "разница скоростей 0",
+  "createsprings.ponder.welding.text_5": "разница скоростей 64",
+  "createsprings.ponder.welding.text_6": "разница скоростей 128",
+
+  "createsprings.ponder.large_spring_speed.header": "Использование больших пружин",
+  "createsprings.ponder.large_spring_speed.text_1": "Если любой блок большой пружины активирован ,она будет генерировать энергию",
+  "createsprings.ponder.large_spring_speed.text_2": "Скорость генерируемой энергии зависит от силы сигнала",
+  "createsprings.ponder.large_spring_speed.text_3": "Пружина переключается в режим всплеска при пкм с крюком по центральному блоку первого слоя"
 }

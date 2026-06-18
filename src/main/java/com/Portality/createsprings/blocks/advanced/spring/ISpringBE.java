@@ -124,6 +124,7 @@ public interface ISpringBE extends IConnectableToPSKI {
 
         if(progress < 0) return;
         if(left < 0) return;
+        if(active < 0) return;
 
         LangBuilder builder = CreateLang.builder();
 

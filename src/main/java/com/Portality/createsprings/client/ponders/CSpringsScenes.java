@@ -8,6 +8,7 @@ import com.Portality.createsprings.blocks.advanced.SpringCoil.SpringCoilBlock;
 import com.Portality.createsprings.blocks.advanced.friction_welder.WelderBlockEntity;
 import com.Portality.createsprings.blocks.advanced.kinetic_interface.KineticInterfaceBlockEntity;
 import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlock;
+import com.Portality.createsprings.blocks.advanced.largeSpring.LargeSpringBlockEntity;
 import com.Portality.createsprings.blocks.advanced.spring.SpringBlockEntity;
 import com.Portality.createsprings.config.ModConfigs;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
@@ -73,27 +74,27 @@ public class CSpringsScenes {
                     .text("Springs are able to store rotational force")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 1.5));
-            scene.idle(90);
+            idleCompressing(scene, 90, springSelection, 40);
 
             scene.overlay().showText(70)
                     .placeNearTarget()
                     .text("The direction of rotation does not matter")
                     .pointAt(util.vector().of(2.5, 1.5, 1.5));
-            scene.idle(90);
+            idleCompressing(scene, 90, springSelection, 40);
 
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 64f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
             scene.effects().rotationDirectionIndicator(new BlockPos(2, 1, 1));
-            scene.idle(30);
+            idleCompressing(scene, 30, springSelection, 40);
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> -64f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
             scene.effects().rotationDirectionIndicator(new BlockPos(2, 1, 1));
-            scene.idle(30);
+            idleCompressing(scene, 30, springSelection, 40);
 
             scene.world().showSection(util.select().position(1, 1, 0), Direction.DOWN);
-            scene.idle(20);
+            idleCompressing(scene, 20, springSelection, 40);
             scene.world().showSection(util.select().position(0, 1, 1), Direction.DOWN);
-            scene.idle(20);
+            idleCompressing(scene, 20, springSelection, 40);
 
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 0f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
@@ -113,13 +114,13 @@ public class CSpringsScenes {
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 16f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
 
-            idleUncompressing(scene, 20, springSelection, 16);
+            idleUncompressing(scene, 20, springSelection, 40);
             scene.overlay().showText(70)
                     .placeNearTarget()
                     .text("The speed of generated rotation depends on signal strength")
                     .attachKeyFrame()
                     .pointAt(util.vector().of(1.5, 1.5, 0.5));
-            idleUncompressing(scene, 90, springSelection, 16);
+            idleUncompressing(scene, 90, springSelection, 40);
 
             scene.world().modifyBlockEntityNBT(leverSelection, AnalogLeverBlockEntity.class, nbt ->
                     nbt.putInt("State", 15));
@@ -128,7 +129,7 @@ public class CSpringsScenes {
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 128f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
 
-            idleUncompressing(scene, 90, springSelection, 128);
+            idleUncompressing(scene, 90, springSelection, 320);
             scene.world().modifyBlockEntityNBT(leverSelection, AnalogLeverBlockEntity.class, nbt ->
                     nbt.putInt("State", 0));
             scene.effects().indicateRedstone(BlockPos.containing(leverSelection.getCenter()));
@@ -136,7 +137,7 @@ public class CSpringsScenes {
             scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 16f);
             scene.world().modifyKineticSpeed(cog, f -> -(f / 2));
 
-            scene.overlay().showFilterSlotInput(util.vector().of(1.5, 1.5, 1), Direction.NORTH, 90);
+            scene.overlay().showFilterSlotInput(util.vector().of(1.8, 1.5, 1), Direction.NORTH, 90);
 
             scene.overlay().showText(70)
                     .placeNearTarget()
@@ -145,11 +146,18 @@ public class CSpringsScenes {
                     .pointAt(util.vector().of(1.5, 1.5, 0.5));
             scene.idle(90);
 
-            idleUncompressing(scene, 40, springSelection, -160);
+            idleCompressing(scene, 40, springSelection, 1600);
             scene.world().modifyBlockEntityNBT(leverSelection, AnalogLeverBlockEntity.class, nbt ->
                     nbt.putInt("State", 1));
             scene.effects().indicateRedstone(BlockPos.containing(leverSelection.getCenter()));
-            idleUncompressing(scene, 40, springSelection, 160);
+            idleUncompressing(scene, 40, springSelection, 1600);
+
+            scene.overlay().showText(90)
+                    .placeNearTarget()
+                    .text("By default spring adapts it's stiffness in order to maximise efficiency")
+                    .attachKeyFrame()
+                    .pointAt(util.vector().of(1.5, 1.5, 1.5));
+            scene.idle(110);
 
             scene.markAsFinished();
         }
@@ -160,6 +168,10 @@ public class CSpringsScenes {
                 scene.world().modifyBlockEntityNBT(spring, SpringBlockEntity.class, nbt ->
                         nbt.putFloat("Stored", nbt.getFloat("Stored") - 0.25f * nbt.getFloat("hardness") * kineticSpeed));
             }
+        }
+
+        public static void idleCompressing(CreateSceneBuilder scene, int ticks, Selection spring, float kineticSpeed) {
+            idleUncompressing(scene, ticks, spring, -kineticSpeed);
         }
 
         public static void springSplash(SceneBuilder builder, SceneBuildingUtil util) {
@@ -184,7 +196,7 @@ public class CSpringsScenes {
 
             ItemStack dirt = new ItemStack(Blocks.TRIPWIRE_HOOK);
             scene.overlay()
-                    .showControls(util.vector().of(4.5, 2.5, 2.5), Pointing.DOWN, 40).withItem(dirt);
+                    .showControls(util.vector().of(4.5, 2.5, 2.5), Pointing.DOWN, 40).withItem(dirt).rightClick();
             scene.idle(40);
 
             scene.overlay().showText(70)
@@ -393,7 +405,7 @@ public class CSpringsScenes {
 
             ItemStack dirt = new ItemStack(Blocks.TRIPWIRE_HOOK);
             scene.overlay()
-                    .showControls(util.vector().topOf(firstSpring), Pointing.DOWN, 30).withItem(dirt);
+                    .showControls(util.vector().topOf(firstSpring), Pointing.DOWN, 30).withItem(dirt).rightClick();
             scene.idle(30);
 
             ElementLink<WorldSectionElement> firstSubLevel = scene.world().showIndependentSection(util.select().position(new BlockPos(4, 1, 1)), Direction.DOWN);
@@ -667,7 +679,7 @@ public class CSpringsScenes {
 
                 scene.idle(10);
 
-                scene.world().showSection(util.select().fromTo(missingCoil.below(), missingCoil.above().south(2)), Direction.DOWN);
+                showLayer(missingCoil.south(), scene, util);
 
                 scene.overlay().showText(70)
                         .placeNearTarget()
@@ -686,8 +698,7 @@ public class CSpringsScenes {
                 scene.idle(80);
 
                 for (int i = 1; i < 5; i++) {
-                    scene.world().showSection(util.select().fromTo(missingCoil.below().west(i), missingCoil.above().south(2).west(i)), Direction.EAST);
-                    scene.idle(10);
+                    showLayer(missingCoil.south().west(i), scene, util);
                 }
 
                 scene.overlay().showText(70)
@@ -721,10 +732,20 @@ public class CSpringsScenes {
                 scene.idle(20);
             }
 
+            public static void showLayer(BlockPos center, CreateSceneBuilder scene, SceneBuildingUtil util){
+                for(int y = -1; y <= 1; y++){
+                    for(int z = -1; z <= 1; z++){
+                        BlockPos offsetPose = center.offset(0, y, z);
+                        scene.world().showSection(util.select().position(offsetPose), Direction.DOWN);
+                        scene.idle(5);
+                    }
+                }
+            }
+
             public static void largeSpringSpeed(SceneBuilder builder, SceneBuildingUtil util) {
                 CreateSceneBuilder scene = new CreateSceneBuilder(builder);
                 scene.title("large_spring_speed", "Using large springs");
-                scene.configureBasePlate(0, 0, 5);
+                scene.configureBasePlate(0, 0, 4);
                 scene.world().showSection(util.select().layer(0), Direction.UP);
                 scene.showBasePlate();
 
@@ -744,111 +765,149 @@ public class CSpringsScenes {
                 scene.overlay().showText(90)
                         .placeNearTarget()
                         .attachKeyFrame()
-                        .text("When central block of first layer is powered large spring will start releasing stored energy")
+                        .text("if any block in the spring is powered large spring will start releasing stored energy")
                         .pointAt(util.vector().of(2.5, 2.5, 2.5));
-
                 scene.idle(100);
 
                 scene.world().toggleRedstonePower(util.select().everywhere());
-                scene.world().modifyBlockEntityNBT(util.select().position(spring), LecternBlockEntity.class, (nbt) -> nbt.putBoolean("Generating", true));
-                scene.world().modifyKineticSpeed(util.select().everywhere(), (f) -> 256f);
+                scene.world().modifyKineticSpeed(util.select().everywhere(), (f) -> 32f);
+                scene.world().modifyBlockEntityNBT(util.select().position(lever), AnalogLeverBlockEntity.class, nbt ->
+                        nbt.putInt("State", 1));
+                scene.effects().indicateRedstone(lever);
 
                 scene.idle(20);
 
                 scene.overlay().showText(70)
                         .placeNearTarget()
                         .attachKeyFrame()
-                        .text("Spring speed depends on the signal strength")
+                        .text("Speed of generated rotation depends on the signal strength")
                         .pointAt(util.vector().of(2.5, 2.5, 2.5));
                 scene.idle(80);
 
-                scene.overlay().showText(70)
+                scene.world().modifyKineticSpeed(util.select().everywhere(), (f) -> 256f);
+                scene.world().modifyBlockEntityNBT(util.select().position(lever), AnalogLeverBlockEntity.class, nbt ->
+                        nbt.putInt("State", 15));
+                scene.effects().indicateRedstone(lever);
+
+                scene.idle(40);
+                scene.world().hideSection(util.select().position(speedometer), Direction.UP);
+
+                scene.overlay().showText(90)
                         .placeNearTarget()
                         .attachKeyFrame()
-                        .text("Large springs also support Splash mode")
-                        .pointAt(util.vector().of(2.5, 2.5, 2.5));
-                scene.idle(80);
+                        .text("Large spring mode can be switched by clicking with tripwire hook to the center of the first layer")
+                        .pointAt(spring.getCenter());
+                scene.idle(100);
 
-                scene.world().modifyBlockEntityNBT(util.select().position(spring), LecternBlockEntity.class, (nbt) -> nbt.putBoolean("Generating", true));
-                scene.world().modifyBlockEntityNBT(util.select().position(spring), LecternBlockEntity.class, (nbt) -> nbt.putBoolean("splashMode", true));
+                ItemStack dirt = new ItemStack(Blocks.TRIPWIRE_HOOK);
+                scene.overlay()
+                        .showControls(spring.getCenter(), Pointing.DOWN, 40).withItem(dirt).rightClick();
+                scene.idle(40);
+
+                scene.rotateCameraY(-180);
+                scene.world().showSection(util.select().fromTo(0, 1, 3, 3, 3, 3), Direction.DOWN);
+
+                scene.idle(40);
+
+                scene.world().modifyBlockEntityNBT(util.select().position(spring), LargeSpringBlockEntity.class, nbt ->{
+                            nbt.putBoolean("Generating", true);
+                            nbt.putBoolean("splashMode", true);
+                        });
+
+                scene.world().destroyBlock(new BlockPos(new BlockPos(1, 1, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(1, 2, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(1, 3, 3)));
+
+                scene.world().destroyBlock(new BlockPos(new BlockPos(2, 1, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(2, 2, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(2, 3, 3)));
+
+                scene.world().destroyBlock(new BlockPos(new BlockPos(3, 1, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(3, 2, 3)));
+                scene.world().destroyBlock(new BlockPos(new BlockPos(3, 3, 3)));
 
                 scene.idle(80);
             }
         }
 
     public static void welding(SceneBuilder builder, SceneBuildingUtil util) {
-            CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-            scene.title("welding", "Using welders");
-            scene.configureBasePlate(0, 0, 6);
-            scene.world().showSection(util.select().layer(0), Direction.UP);
-            scene.showBasePlate();
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("welding", "Using welders");
+        scene.configureBasePlate(0, 0, 4);
+        scene.world().showSection(util.select().layer(0), Direction.UP);
+        scene.showBasePlate();
 
-            BlockPos firstWelder = new BlockPos(1, 1, 3);
-            BlockPos firstCog = new BlockPos(0, 1, 3);
-            BlockPos secondWelder = new BlockPos(4, 1, 3);
-            BlockPos secondCog = new BlockPos(5, 1, 3);
+        BlockPos secondWelder = new BlockPos(0, 1, 2);
+        BlockPos cog = new BlockPos(4, 0, 1);
 
-            BlockPos block1 = new BlockPos(2, 1, 3);
-            BlockPos block2 = new BlockPos(3, 1, 3);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 0.00000001f);
 
-            scene.world().showSection(util.select().position(firstCog), Direction.DOWN);
-            scene.world().showSection(util.select().position(secondCog), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(4, 1, 2), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(3, 1, 2), Direction.DOWN);
+        scene.idle(10);
+        scene.world().showSection(util.select().position(0, 1, 2), Direction.DOWN);
 
-            scene.idle(5);
+        scene.idle(10);
+        scene.overlay().showText(70)
+                .placeNearTarget()
+                .text("friction welding is another way to process blocks")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(80);
 
-            scene.world().showSection(util.select().position(firstWelder), Direction.DOWN);
-            scene.idle(5);
-            scene.world().showSection(util.select().position(secondWelder), Direction.DOWN);
-            scene.idle(5);
+        scene.overlay().showText(90)
+                .placeNearTarget()
+                .text("when they rotate with enough speed and there is blocks between welders, welding will start")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(100);
+        scene.idle(20);
 
-            scene.overlay().showText(70)
-                    .placeNearTarget()
-                    .attachKeyFrame()
-                    .text("Friction Welding is an another way to process blocks")
-                    .pointAt(util.vector().of(2.5, 2, 2.5));
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 64f);
+        scene.world().modifyKineticSpeed(util.select().position(cog), f -> -f / 2);
 
-            scene.idle(80);
+        scene.overlay().showText(80)
+                .placeNearTarget()
+                .text("Welding speed depends on the speed difference between welders")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(90);
 
-            scene.overlay().showText(70)
-                    .placeNearTarget()
-                    .attachKeyFrame()
-                    .text("The rotation of both welders must be the same, but opposite by direction")
-                    .pointAt(util.vector().of(2.5, 2, 2.5));
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("speed difference 0")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(50);
 
-            scene.idle(80);
+        scene.world().modifyKineticSpeed(util.select().position(secondWelder), f -> 0.0001f);
 
-            scene.effects().rotationDirectionIndicator(firstCog);
-            scene.effects().rotationDirectionIndicator(secondCog);
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("speed difference 64")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(50);
 
-            scene.idle(30);
+        scene.world().modifyKineticSpeed(util.select().position(secondWelder), f -> -64f);
 
-            ElementLink<WorldSectionElement> structure1 = scene.world().showIndependentSection(util.select().position(block1), Direction.SOUTH);
-            ElementLink<WorldSectionElement> structure2 = scene.world().showIndependentSection(util.select().position(block2), Direction.SOUTH);
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("speed difference 128")
+                .pointAt(new Vec3(1.5f, 2f, 1.5f))
+                .attachKeyFrame();
+        scene.idle(50);
 
-            scene.world().rotateSection(structure1, 0, 0, 0, 0);
-            scene.world().rotateSection(structure2, 0, 0, 0, 0);
+        scene.world().modifyKineticSpeed(util.select().everywhere(), f -> 256f);
+        scene.world().modifyKineticSpeed(util.select().position(cog), f -> -f / 2);
+        scene.world().modifyKineticSpeed(util.select().position(secondWelder), f -> -f);
+        scene.world().modifyBlockEntityNBT(util.select().everywhere(), WelderBlockEntity.class, (nbt) -> nbt.putBoolean("welding", true));
 
-            scene.overlay().showText(70)
-                    .placeNearTarget()
-                    .attachKeyFrame()
-                    .text("when there is some blocks between welders welding will be started")
-                    .pointAt(util.vector().of(2.5, 2, 2.5));
-            scene.idle(80);
-
-            scene.world().modifyBlockEntityNBT(util.select().everywhere(), WelderBlockEntity.class, (nbt) -> nbt.putBoolean("welding", true));
-
-            int duration = 100;
-
-            float angle = duration * 256f / 3;
-
-            scene.world().rotateBearing(firstWelder, angle, duration);
-            scene.world().rotateBearing(secondWelder, angle * -1f, duration);
-
-            scene.world().rotateSection(structure1, angle, 0, 0, duration);
-            scene.world().rotateSection(structure2, -angle, 0, 0, duration);
-
-            scene.idle(duration);
-        }
+        scene.idle(80);
+        scene.markAsFinished();
+    }
 
     public static void PSKI(SceneBuilder builder, SceneBuildingUtil util) {
 
@@ -885,7 +944,7 @@ public class CSpringsScenes {
                     .colored(PonderPalette.RED)
                     .placeNearTarget()
                     .attachKeyFrame()
-                    .text("Moving springs can be tricky to access");
+                    .text("Springs on contraptions can be tricky to access");
             scene.idle(70);
 
             scene.world().showSection(util.select().fromTo(flywheel, staticInterface), Direction.DOWN);
@@ -902,7 +961,7 @@ public class CSpringsScenes {
                     .colored(PonderPalette.RED)
                     .placeNearTarget()
                     .attachKeyFrame()
-                    .text("Place a second one with a gap of 1 block inbetween");
+                    .text("Place a second one with a gap of a block inbetween");
             scene.idle(70);
 
             Selection both = util.select().everywhere();
@@ -926,7 +985,7 @@ public class CSpringsScenes {
             scene.overlay().showOutlineWithText(util.select().position(movingInterface), 80)
                     .placeNearTarget()
                     .attachKeyFrame()
-                    .text("if stationary interface is rotating, springs on contraption will charge");
+                    .text("If stationary interface is rotating, springs on contraption will charge");
 
             scene.idle(90);
 
@@ -937,7 +996,7 @@ public class CSpringsScenes {
             scene.overlay().showOutlineWithText(util.select().position(staticInterface.north()), 90)
                     .placeNearTarget()
                     .attachKeyFrame()
-                    .text("if stationary interface is powered it will generate energy using springs on the contraption");
+                    .text("If stationary interface is powered it will generate energy using charge of the springs on the contraption");
 
             scene.idle(100);
     }
@@ -1047,5 +1106,9 @@ public class CSpringsScenes {
 
         scene.idle(30);
         scene.markAsFinished();
+    }
+
+    public static void setNbt(CreateSceneBuilder scene, Class<? extends BlockEntity> BEClass, Selection be, String key, float data) {
+        scene.world().modifyBlockEntityNBT(be, BEClass, nbt -> nbt.putFloat(key, data));
     }
 }
