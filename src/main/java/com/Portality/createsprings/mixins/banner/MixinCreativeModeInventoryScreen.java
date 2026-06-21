@@ -5,6 +5,7 @@ import com.Portality.createsprings.client.CSpringsGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,8 +36,8 @@ public class MixinCreativeModeInventoryScreen {
             int x = gui.getGuiLeft() + 8;
             int y = gui.getGuiTop() + 17;
 
-            int width = CSpringsGuiTextures.BANNER.getWidth();
-            int height = CSpringsGuiTextures.BANNER.getHeight();
+            int width = CSpringsGuiTextures.BANNER_0.getWidth();
+            int height = CSpringsGuiTextures.BANNER_0.getHeight();
             int frameCount = 10;
 
             boolean isHovering = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
@@ -45,19 +46,34 @@ public class MixinCreativeModeInventoryScreen {
                 csprings$bannerTicks += partialTick * 0.3f;
             }
 
-            // 3. Вычисляем текущий кадр на основе накопленных тиков
             int frame = (int) (csprings$bannerTicks) % frameCount;
 
-            float vOffset = (float) (frame * height);
+            CSpringsGuiTextures currentFrameTexture = getBannerFrameTexture(frame);
 
             guiGraphics.blit(
-                    CSpringsGuiTextures.BANNER.location,
+                    currentFrameTexture.getLocation(),
                     x, y,
                     width, height,
-                    0, vOffset,
+                    0, 0,
                     width, height,
-                    width, height * frameCount
+                    width, height
             );
         }
+    }
+
+    @Unique
+    private CSpringsGuiTextures getBannerFrameTexture(int frame) {
+        return switch (frame) {
+            case 0 -> CSpringsGuiTextures.BANNER_0;
+            case 1 -> CSpringsGuiTextures.BANNER_1;
+            case 2 -> CSpringsGuiTextures.BANNER_2;
+            case 3 -> CSpringsGuiTextures.BANNER_3;
+            case 4 -> CSpringsGuiTextures.BANNER_4;
+            case 5 -> CSpringsGuiTextures.BANNER_5;
+            case 6 -> CSpringsGuiTextures.BANNER_6;
+            case 7 -> CSpringsGuiTextures.BANNER_7;
+            case 8 -> CSpringsGuiTextures.BANNER_8;
+            default -> CSpringsGuiTextures.BANNER_9;
+        };
     }
 }

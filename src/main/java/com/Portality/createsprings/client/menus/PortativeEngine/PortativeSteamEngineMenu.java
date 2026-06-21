@@ -11,10 +11,12 @@ import com.simibubi.create.foundation.gui.menu.MenuBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +24,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -84,7 +87,7 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
             else {
                 // Пытаемся переместить в burnStack слот
                 if (moveItemStackTo(slotStack, 0, 1, false)) {
-                    // Успешно переместили в burnStack
+
                 }
                 else {
                     return ItemStack.EMPTY;
@@ -103,7 +106,6 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
 
             clickedSlot.onTake(pPlayer, slotStack);
 
-            // Обновляем burnStack после любого перемещения, которое могло затронуть burnStack слот
             updateBurnStack(this.slots.get(0).getItem());
         }
 
@@ -131,6 +133,8 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
         if (player instanceof ServerPlayer serverPlayer) {
             ItemStack burnStack = stack;
             ItemStack PSE = player.getItemBySlot(EquipmentSlot.CHEST);
+            if(!(PSE.getItem() instanceof PortativeSteamEngineItem)){PSE = player.getItemInHand(InteractionHand.MAIN_HAND);}
+            if(!(PSE.getItem() instanceof PortativeSteamEngineItem)){PSE = player.getItemInHand(InteractionHand.OFF_HAND);}
 
             if (!burnStack.isEmpty()) {
                 PortativeSteamEngineItem.setBurnStack(PSE, burnStack);
@@ -138,7 +142,9 @@ public class PortativeSteamEngineMenu extends MenuBase<ItemStack> {
                 PortativeSteamEngineItem.removeBurnStack(PSE);
             }
 
-            PacketDistributor.sendToPlayer(serverPlayer, new PSEClientUpdate(PSE));
+            CustomData customData = PSE.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+            CompoundTag nbtData = customData.copyTag();
+            PacketDistributor.sendToPlayer(serverPlayer, new PSEClientUpdate(nbtData));
         }
     }
 

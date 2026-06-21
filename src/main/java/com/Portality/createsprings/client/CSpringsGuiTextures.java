@@ -23,7 +23,17 @@ public enum CSpringsGuiTextures implements ScreenElement, TextureSheetSegment {
     PORTATIVE_STEAM_BOOST("portative_steam_engine_boost", 0, 0, 256, 256),
     PORTATIVE_STEAM_CORNER("portative_steam_engine_corner", 0, 0, 256, 256),
     NO_BOOST("no_boost", 0, 0, 256, 256),
-    BANNER("csprings_banner", 0, 0, 162, 19)
+
+    BANNER_0("sprites/csprings_banner_0", 162, 19),
+    BANNER_1("sprites/csprings_banner_1", 162, 19),
+    BANNER_2("sprites/csprings_banner_2", 162, 19),
+    BANNER_3("sprites/csprings_banner_3", 162, 19),
+    BANNER_4("sprites/csprings_banner_4", 162, 19),
+    BANNER_5("sprites/csprings_banner_5", 162, 19),
+    BANNER_6("sprites/csprings_banner_6", 162, 19),
+    BANNER_7("sprites/csprings_banner_7", 162, 19),
+    BANNER_8("sprites/csprings_banner_8", 162, 19),
+    BANNER_9("sprites/csprings_banner_9", 162, 19)
     ;
 
     public static final int FONT_COLOR = 0x575F7A;

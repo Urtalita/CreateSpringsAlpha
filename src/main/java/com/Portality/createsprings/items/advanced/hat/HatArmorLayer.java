@@ -78,6 +78,10 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 
         model.hat.translateAndRotate(ms);
 
+        if(entity.getPose() == Pose.CROUCHING){
+            ms.translate(0/16f, 2/16f, -5/16f);
+        }
+
         renderItem(hatStack, ms, vc, light);
 
         if(HatItem.getAnimation(hatStack)){
@@ -97,6 +101,7 @@ public class HatArmorLayer<T extends LivingEntity, M extends EntityModel<T>> ext
         }
 
         ms.rotateAround(Axis.XP.rotationDegrees(180), 0, 0, 0);
+
         ms.translate(-8/16f, 6/16f, -8/16f);
 
         hat.disableDiffuse()

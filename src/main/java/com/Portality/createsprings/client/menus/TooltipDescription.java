@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -18,13 +19,13 @@ public class TooltipDescription extends AbstractSimiWidget {
 
     private Supplier<ArrayList<Component>> tip;
     private String nameKey;
-    public ArrayList<AbstractSimiWidget> borderingWidgets;
+    public ArrayList<AbstractWidget> borderingWidgets;
 
     public TooltipDescription(int x, int y, int w, int h, Supplier<ArrayList<Component>> tip, String nameKey) {
         this(x, y, w, h, tip, nameKey, new ArrayList<>());
     }
 
-    public TooltipDescription(int x, int y, int w, int h, Supplier<ArrayList<Component>> tip, String nameKey, ArrayList<AbstractSimiWidget> intersectingWidgets) {
+    public TooltipDescription(int x, int y, int w, int h, Supplier<ArrayList<Component>> tip, String nameKey, ArrayList<AbstractWidget> intersectingWidgets) {
         super(x, y, w, h);
         this.tip = tip;
         this.nameKey = "createsprings.tooltip." + nameKey;
@@ -47,8 +48,7 @@ public class TooltipDescription extends AbstractSimiWidget {
         borderingWidgets.addAll(Arrays.asList(updated));
     }
 
-    public void updateIntersected(AbstractSimiWidget updated){
-        borderingWidgets.clear();
+    public void updateIntersected(AbstractWidget updated){
         borderingWidgets.add(updated);
     }
 
@@ -67,7 +67,7 @@ public class TooltipDescription extends AbstractSimiWidget {
         if(!isHovered()) return false;
         if(borderingWidgets.isEmpty()) return false;
 
-        for(AbstractSimiWidget widget : borderingWidgets){
+        for(AbstractWidget widget : borderingWidgets){
             if(pointingOnWidget(widget, mouseX, mouseY)) return true;
         }
 
@@ -75,8 +75,26 @@ public class TooltipDescription extends AbstractSimiWidget {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        AbstractWidget abstractWidget = getPointingOn(mouseX, mouseY);
+        if(abstractWidget != null){
+            return abstractWidget.mouseClicked(mouseX, mouseY, button);
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    public AbstractWidget getPointingOn(double mouseX, double mouseY) {
+        for (AbstractWidget widget : borderingWidgets){
+            if(pointingOnWidget(widget, (int) mouseX, (int) mouseY)){
+                return widget;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        for(AbstractSimiWidget widget : borderingWidgets){
+        for(AbstractWidget widget : borderingWidgets){
             if(pointingOnWidget(widget, (int) mouseX, (int) mouseY)){
                 if(widget instanceof ScrollInput input){
                     return input.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -86,7 +104,8 @@ public class TooltipDescription extends AbstractSimiWidget {
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
-    public static boolean pointingOnWidget(AbstractSimiWidget firstWidget, int mouseX, int mouseY){
+    public static boolean pointingOnWidget(AbstractWidget firstWidget, int mouseX, int mouseY){
+        if(firstWidget == null) return false;
         return firstWidget.isHovered();
     }
 

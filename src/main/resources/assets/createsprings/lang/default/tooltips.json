@@ -17,7 +17,7 @@
   "item.createsprings.punchcard.tooltip.condition2": "When Tab pressed",
   "item.createsprings.punchcard.tooltip.behaviour2": "if punchcard is in a tool and it is _waiting for activation_, the next _instruction_ will be executed _instantly_",
   "item.createsprings.punchcard.tooltip.condition3": "When stacked on a suitable tool",
-  "item.createsprings.punchcard.tooltip.condition3": "_puts_ punchcard in the tool",
+  "item.createsprings.punchcard.tooltip.behaviour3": "_puts_ punchcard in the tool",
 
   "item.createsprings.sus_package.tooltip.summary": "This package when _dropped_ from a height or _destroyed_, releases a _spring_ that bounces off _blocks_ or _entities_",
 
@@ -79,11 +79,11 @@
   "block.createsprings.spring.tooltip.condition3": "On Landing",
   "block.createsprings.spring.tooltip.behaviour3": "If the player _holds_ the spring, it _converts_ part of the damage into _charge_, reducing fall damage",
 
-  "item.createsprings.spring_alloy.tooltip.summary": "Incredibly _elastic_ material, resistant to _explosions_, has a low melting point, cannot be _compressed_",
+  "item.createsprings.spring_alloy.tooltip.summary": "Incredibly _elastic_ material, resistant to _explosions_, has a low melting point, cannot be _compressed_ with a press",
 
-  "item.createsprings.molten_spring_alloy_bucket.tooltip.summary": "_вязкая_, горячая, густая жидкость с металическим блеском, странно, но она _не обжигает_",
-  "item.createsprings.molten_spring_alloy_bucket.tooltip.condition1": "При контакте с водой",
-  "item.createsprings.molten_spring_alloy_bucket.tooltip.behaviour1": "Образует _гладкий камень_",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.summary": "a viscous, hot liquid with a metallic color, strangely, it _doesn't harm_",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.condition1": "On contact with water",
+  "item.createsprings.molten_spring_alloy_bucket.tooltip.behaviour1": "Forms a _smooth stone_",
 
   "block.createsprings.industrial_spring_alloy.tooltip.summary": "_Decorative_ spring alloy, _explosion-resistant_",
   "block.createsprings.industrial_spring_alloy.tooltip.condition1": "When landing on a block",

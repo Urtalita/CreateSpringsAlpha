@@ -18,6 +18,7 @@ import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.resources.language.I18n;
@@ -147,7 +148,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
 
 
         executorDescription = new TooltipDescription(guiLeft + 31 , guiTop + 47, 58, 142, this::updateExecutorDescTooltip, "executor");
-        actionDescription = new TooltipDescription(guiLeft + 90 , guiTop + 50, 100, 136, this::updateMainActionDescTooltip, "action");
+        actionDescription = new TooltipDescription(guiLeft + 90 , guiTop + 50, 60, 136, this::updateMainActionDescTooltip, "action");
 
         executorDescription.updateIntersected(executorSelector);
 
@@ -159,7 +160,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
     public void tick() {
         super.tick();
         List<Renderable> renderables = getRenderables();
-        ArrayList<AbstractSimiWidget> widgets = new ArrayList<>();
+        ArrayList<AbstractWidget> widgets = new ArrayList<>();
         for(Renderable renderable : renderables){
             if(renderable instanceof ScrollInput abstractSimiWidget){
                 widgets.add(abstractSimiWidget);
@@ -217,6 +218,7 @@ public class PunchcardScreen extends AbstractSimiScreen {
                 }
             });
         }
+
         addRenderableWidget(editBoxes[i]);
     }
 
