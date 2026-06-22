@@ -114,16 +114,18 @@ repositories {
     maven { url = "https://maven.ftb.dev/releases" }
     maven { url = "https://api.modrinth.com/maven"}
 
+    repositories {
         exclusiveContent { // Sable
-        forRepository {
-            maven {
-                url = "https://maven.ryanhcode.dev/releases"
-                name = "RyanHCode Maven"
+            forRepository {
+                maven {
+                    url = "https://maven.ryanhcode.dev/releases"
+                    name = "RyanHCode Maven"
+                }
             }
-        }
-        filter {
-            includeGroup("dev.ryanhcode.sable")
-            includeGroup("dev.ryanhcode.sable-companion")
+            filter {
+                includeGroup("dev.ryanhcode.sable")
+                includeGroup("dev.ryanhcode.sable-companion")
+            }
         }
     }
 
@@ -171,7 +173,6 @@ dependencies {
 
     compileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
     compileOnly("curse.maven:xaeros-world-map-317780:7401095")
-    implementation("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1")
     implementation "curse.maven:create-connected-947914:8221350"
 }
 

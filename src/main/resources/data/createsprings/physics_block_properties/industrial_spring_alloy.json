@@ -1,0 +1,8 @@
+{
+  "selector": "createsprings:industrial_spring_alloy",
+
+  "properties": {
+    "sable:mass": 0.5,
+    "sable:restitution": 0.4
+  }
+}

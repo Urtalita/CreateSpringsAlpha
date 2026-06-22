@@ -1,0 +1,9 @@
+{
+  "selector": "createsprings:large_spring_extention",
+
+  "properties": {
+    "sable:mass": 0.01,
+    "sable:volume": 1.0,
+    "sable:restitution": 0.4
+  }
+}

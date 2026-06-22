@@ -499,6 +499,11 @@ public class LargeSpringBlockEntity extends GeneratingKineticBlockEntity impleme
             calculateIdealHardness(isGenerating);
         }
 
+        if(generating && autoMode){
+            float speed = getTheoreticalSpeed();
+            reverseMode = !(speed >= 0);
+        }
+
         isGenerating = generating;
         updateGeneratedRotation();
         updateNetwork();

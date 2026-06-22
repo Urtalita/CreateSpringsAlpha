@@ -90,7 +90,7 @@ public class SableCompatLargeSpring {
         if (!(subLevelOn instanceof ServerSubLevel serverSubLevel)) return;
 
         if (!hasSublevelOrBlock( scale, normal, serverSubLevel, lbe)){
-            if (!splitAndShootBlock(serverSubLevel, lbe, lbe.getBlockPos())){return;}
+            //if (!splitAndShootBlock(serverSubLevel, lbe, lbe.getBlockPos())){return;}
             return;
         }
 

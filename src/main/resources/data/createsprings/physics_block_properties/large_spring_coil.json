@@ -1,0 +1,8 @@
+{
+  "selector": "createsprings:large_spring_coil",
+
+  "properties": {
+    "sable:mass": 0.5,
+    "sable:restitution": 0.4
+  }
+}
