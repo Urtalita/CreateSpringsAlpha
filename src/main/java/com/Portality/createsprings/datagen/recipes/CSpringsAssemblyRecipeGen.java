@@ -61,7 +61,7 @@ public class CSpringsAssemblyRecipeGen extends SequencedAssemblyRecipeGen {
     OBSIDIAN_PLATE = create("obsidian_plate_craft", b -> b.require(AllItems.STURDY_SHEET)
             .addOutput(new ItemStack(CSpringsBlocks.OBSIDIAN_PLATE, 4), 1)
             .loops(1)
-            .transitionTo(CSpringsBlocks.OBSIDIAN_PLATE)
+            .transitionTo(CSpringsItems.UNFINISHED_OBSIDIAN_PLATE)
             .addStep(PressingRecipe::new, rb -> rb)
             .addStep(PressingRecipe::new, rb -> rb)
             .addStep(CuttingRecipe::new, rb -> rb)

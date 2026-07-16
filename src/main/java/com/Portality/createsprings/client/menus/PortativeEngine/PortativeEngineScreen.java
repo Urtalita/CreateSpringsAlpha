@@ -4,9 +4,11 @@ import com.Portality.createsprings.CreateSprings;
 import com.Portality.createsprings.client.CSpringsGuiTextures;
 import com.Portality.createsprings.client.menus.TooltipDescription;
 import com.Portality.createsprings.config.ModConfigs;
+import com.Portality.createsprings.items.CSpringsItems;
 import com.Portality.createsprings.items.SpringStufs.PortativeSteamEngine.PortativeSteamEngineItem;
 import com.Portality.createsprings.server.CSpringsDataComponents;
-import com.Portality.createsprings.server.packets.PortativeSteamEngineUpdatePacket;
+import com.Portality.createsprings.server.packets.PSEClientUpdate;
+import com.Portality.createsprings.server.packets.PSEServerUpdate;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.createmod.catnip.platform.NeoForgeCatnipServices;
@@ -14,12 +16,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -203,15 +208,18 @@ public class PortativeEngineScreen extends AbstractSimiContainerScreen<Portative
     }
 
     private void sendPacket(){
+
         if(PortativeSteamEngineItem.getSpeed(stack) > selector.getState() * 15){
             stack.set(CSpringsDataComponents.ENGINE_SPEED, selector.getState() * 15);
         }
+
         stack.set(CSpringsDataComponents.TARGET_SPEED, selector.getState() * 15);
         stack.set(CSpringsDataComponents.ENGINE_MODE, selector.getState() * 15);
         stack.set(CSpringsDataComponents.OVERDRIVE, background == CSpringsGuiTextures.PORTATIVE_STEAM_BG_POWERED);
 
         stack.set(CSpringsDataComponents.OVERDRIVE_PROGRESS, boosted);
-        PacketDistributor.sendToServer(new PortativeSteamEngineUpdatePacket(stack));
+
+        PacketDistributor.sendToServer(new PSEServerUpdate(selector.getState(), background == CSpringsGuiTextures.PORTATIVE_STEAM_BG_POWERED, boosted));
     }
 
     private ArrayList<Component> updateMainDescTooltip(){

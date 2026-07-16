@@ -28,9 +28,9 @@ public enum CSpringsPackets implements BasePacketPayload.PacketTypeProvider {
     PSE_OPEN(OpenPSEPacket.class, OpenPSEPacket.STREAM_CODEC),
 
     ACTIVATE_PUNCHCARD(ActivatePunchcard.class, ActivatePunchcard.STREAM_CODEC),
+    PSE_SERVER_UPDATE(PSEServerUpdate.class, PSEServerUpdate.STREAM_CODEC),
     CATAPULT_TARGET(CatapultPlacementPacket.class, CatapultPlacementPacket.STREAM_CODEC),
     CATAPULT_TARGET_CLIENT(CatapultPlacementPacket.ClientBoundRequest.class, CatapultPlacementPacket.ClientBoundRequest.STREAM_CODEC),
-    PSE_SERVER_UPDATE(PortativeSteamEngineUpdatePacket.class, PortativeSteamEngineUpdatePacket.STREAM_CODEC),
 
     PSE_CLIENT_UPDATE(PSEClientUpdate.class, PSEClientUpdate.STREAM_CODEC),
     AIR_DASH(AirDashPlayerPacket.class, AirDashPlayerPacket.STREAM_CODEC),

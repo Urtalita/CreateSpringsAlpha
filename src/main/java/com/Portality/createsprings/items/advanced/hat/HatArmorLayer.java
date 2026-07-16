@@ -14,8 +14,6 @@ import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.item.render.PartialItemModelRenderer;
 import com.simibubi.create.foundation.mixin.accessor.EntityRenderDispatcherAccessor;
-import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.caffeinemc.mods.sodium.mixin.features.render.immediate.matrix_stack.VertexConsumerMixin;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;

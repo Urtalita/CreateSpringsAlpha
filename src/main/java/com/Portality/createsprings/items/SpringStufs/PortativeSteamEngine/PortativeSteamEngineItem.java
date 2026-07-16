@@ -121,8 +121,6 @@ public class PortativeSteamEngineItem extends BaseArmorItem implements MenuProvi
         });
     }
 
-
-    @OnlyIn(Dist.CLIENT)
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
         ItemStack heldItem = player.getMainHandItem();
         return PortativeSteamEngineMenu.create(id, inv, heldItem);

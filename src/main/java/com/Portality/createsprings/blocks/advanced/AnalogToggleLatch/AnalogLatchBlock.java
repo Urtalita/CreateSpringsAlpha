@@ -4,6 +4,7 @@ import com.Portality.createsprings.blocks.CSpringsBlockEntities;
 import com.simibubi.create.content.redstone.diodes.ToggleLatchBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -44,21 +45,5 @@ public class AnalogLatchBlock extends ToggleLatchBlock implements IBE<AnalogLatc
 
         if(powered) return selectedSignal;
         return 0;
-    }
-
-    @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!this.isLocked(level, pos, state)) {
-            boolean flag = (Boolean)state.getValue(POWERED);
-            boolean flag1 = this.shouldTurnOn(level, pos, state);
-            if (flag && !flag1) {
-                level.setBlock(pos, (BlockState)state.setValue(POWERED, false), 2);
-            } else if (!flag) {
-                level.setBlock(pos, (BlockState)state.setValue(POWERED, true), 2);
-                if (!flag1) {
-                    level.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
-                }
-            }
-        }
     }
 }

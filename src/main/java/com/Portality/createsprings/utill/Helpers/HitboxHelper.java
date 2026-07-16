@@ -5,8 +5,31 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.HashMap;
+
 public class HitboxHelper {
-    public static VoxelShape calculateDierectionalVoxelShape(Direction facing, Vec3 dirBoxStart, Vec3 dirBoxEnd) {
+    private static HashMap<Block, HashMap<Direction, VoxelShape>> everyShape = new HashMap<>();
+
+    public static VoxelShape calculateDierectionalVoxelShape(Block block, Direction facing, Vec3 dirBoxStart, Vec3 dirBoxEnd) {
+        if(!everyShape.containsValue(block)){
+            VoxelShape shape = calculateNewDierectionalVoxelShape(facing, dirBoxStart, dirBoxEnd);
+            HashMap<Direction, VoxelShape> blockShapes = new HashMap<>();
+            blockShapes.put(facing, shape);
+            everyShape.put(block, blockShapes);
+            return shape;
+        }
+
+        HashMap<Direction, VoxelShape> blockShapes = everyShape.get(block);
+        if(!blockShapes.containsValue(facing)){
+            VoxelShape shape = calculateNewDierectionalVoxelShape(facing, dirBoxStart, dirBoxEnd);
+            blockShapes.put(facing, shape);
+            everyShape.put(block, blockShapes);
+        }
+
+        return blockShapes.get(facing);
+    }
+
+    public static VoxelShape calculateNewDierectionalVoxelShape(Direction facing, Vec3 dirBoxStart, Vec3 dirBoxEnd) {
         switch (facing) {
             case SOUTH -> {
                 return Block.box(

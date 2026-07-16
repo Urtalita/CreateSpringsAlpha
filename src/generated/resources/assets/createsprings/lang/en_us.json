@@ -300,6 +300,7 @@
   "item.createsprings.spring_shove.tooltip.condition2": "R-click with a tripwire hook in the tool",
   "item.createsprings.spring_shove.tooltip.summary": "A _spring-powered_ shovel, Can hold up to _2 springs_ Harvesting _speed_ depends on the _tool's speed_",
   "item.createsprings.sus_package.tooltip.summary": "This package when _dropped_ from a height or _destroyed_, releases a _spring_ that bounces off _blocks_ or _entities_",
+  "item.createsprings.unfinished_obsidian_plate": "Unfinished Obsidian Plate",
   "key.categories.createsprings": "Create: Springs",
   "key.createsprings.activate_punchcard": "activate punchcard",
   "key.createsprings.pse_boost": "toggle PSE boost",

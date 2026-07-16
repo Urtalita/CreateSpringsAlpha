@@ -33,11 +33,11 @@ public class KineticInterfaceBlock extends DirectionalKineticBlock implements IB
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if(state.getValue(FACING).getAxis() == Direction.Axis.Z){
-            return HitboxHelper.calculateDierectionalVoxelShape(state.getValue(FACING),
+            return HitboxHelper.calculateDierectionalVoxelShape(this, state.getValue(FACING),
                     new Vec3(0, 0, 3),
                     new Vec3(16, 16, 16));
         }
-        return HitboxHelper.calculateDierectionalVoxelShape(state.getValue(FACING),
+        return HitboxHelper.calculateDierectionalVoxelShape(this, state.getValue(FACING),
                 new Vec3(0, 0, 0),
                 new Vec3(16, 16, 13));
     }

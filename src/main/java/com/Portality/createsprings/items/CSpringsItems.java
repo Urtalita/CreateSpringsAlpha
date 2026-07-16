@@ -110,6 +110,11 @@ public class CSpringsItems {
             .model(AssetLookup.itemModelWithPartials())
             .register();  // add to spring tools list
 
+    public static final ItemEntry<SequencedAssemblyItem> UNFINISHED_OBSIDIAN_PLATE = CreateSprings.CSPRINGS_REGISTRATE
+            .item("unfinished_obsidian_plate", SequencedAssemblyItem::new)
+            .properties(p -> p.stacksTo(1))
+            .register();
+
     public static final ItemEntry<BrokenPSEItem> BROKEN_PSE = CreateSprings.CSPRINGS_REGISTRATE
             .item("broken_portative_steam_engine", BrokenPSEItem::new)
             .properties(p -> p.stacksTo(1))
